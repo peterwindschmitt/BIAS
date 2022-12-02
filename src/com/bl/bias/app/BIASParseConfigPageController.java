@@ -47,6 +47,7 @@ public class BIASParseConfigPageController
 	private static String l_linkDestinationNode;
 	private static String l_linkClass;
 	private static String l_linkDirection;
+	private static String l_linkMaxPassengerSpeed;
 
 	// Data from .NODE file
 	private static String n_node;
@@ -167,6 +168,14 @@ public class BIASParseConfigPageController
 	private static String z_trl_serialNumberCheckReference;
 	private static String z_trl_continuationEndCode;
 
+	// Data from .TPC file
+	private static String p_trainSymbol;
+	private static String p_tpcIncrement;
+	private static String p_node;
+	private static String p_fieldMarker;
+	private static String p_designSpeed;
+	private static String p_currentSpeed;
+
 	private static Integer curPage;
 
 	private ObservableList<ParseLocationFormatA> parseData1 = FXCollections.observableArrayList();
@@ -180,6 +189,7 @@ public class BIASParseConfigPageController
 	private ObservableList<ParseLocationFormatB> parseData9 = FXCollections.observableArrayList();
 	private ObservableList<ParseLocationFormatB> parseData10 = FXCollections.observableArrayList();
 	private ObservableList<ParseLocationFormatC> parseData11 = FXCollections.observableArrayList();
+	private ObservableList<ParseLocationFormatB> parseData12 = FXCollections.observableArrayList();
 
 	@FXML TableView<ParseLocationFormatA> parseLocationsTable1;  // Summary type/group
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable2;  // Summary other
@@ -192,6 +202,7 @@ public class BIASParseConfigPageController
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable9;  // Line data
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable10; // Ini data
 	@FXML TableView<ParseLocationFormatC> parseLocationsTable11; // Radixx Res SSIM data
+	@FXML TableView<ParseLocationFormatB> parseLocationsTable12; // TPC data
 
 	@FXML private TableColumn<ParseLocationFormatA, String> parameterName1;
 	@FXML private TableColumn<ParseLocationFormatA, String> registryKey1;
@@ -251,6 +262,11 @@ public class BIASParseConfigPageController
 	@FXML private TableColumn<ParseLocationFormatC, Integer> startColumn11;
 	@FXML private TableColumn<ParseLocationFormatC, Integer> endColumn11;
 
+	@FXML private TableColumn<ParseLocationFormatB, String> parameterName12;
+	@FXML private TableColumn<ParseLocationFormatB, String> registryKey12;
+	@FXML private TableColumn<ParseLocationFormatB, Integer> startColumn12;
+	@FXML private TableColumn<ParseLocationFormatB, Integer> endColumn12;
+
 	@FXML private Label parseRangeLabel;
 
 	@FXML private RadioButton viewEntriesOnlyRadioButton;
@@ -283,6 +299,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable9.setVisible(false);
 		parseLocationsTable10.setVisible(false);
 		parseLocationsTable11.setVisible(false);
+		parseLocationsTable12.setVisible(false);
 
 		// Table 1 - Extract
 		parameterName1.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatA, String>("parameterName"));
@@ -370,7 +387,8 @@ public class BIASParseConfigPageController
 		parseData3.addAll(new ParseLocationFormatB("Link Origin Node", "l_linkOriginNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkOriginNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkOriginNode()[1])),
 				new ParseLocationFormatB("Link Destination Node", "l_linkDestinationNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])),
 				new ParseLocationFormatB("Link Class", "l_linkClass", Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])),
-				new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1]))
+				new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1])),
+				new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1]))
 				);
 
 		parseLocationsTable3.setItems(parseData3);
@@ -677,6 +695,37 @@ public class BIASParseConfigPageController
 		registryKey11.setReorderable(false);
 		startColumn11.setReorderable(false);
 		endColumn11.setReorderable(false);
+
+		// Table 12 - TPC
+		parameterName12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("parameterName"));
+		registryKey12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("registryKey"));
+		startColumn12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("startColumn"));
+		endColumn12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("endColumn"));
+
+		parameterName12.setSortable(false);
+		registryKey12.setSortable(false);
+		startColumn12.setSortable(false);
+		endColumn12.setSortable(false);
+
+		parameterName12.getStyleClass().add("header-style");
+		registryKey12.getStyleClass().add("header-style");
+		startColumn12.setStyle( "-fx-alignment: CENTER;");
+		endColumn12.setStyle( "-fx-alignment: CENTER;");
+
+		parseData12.addAll(new ParseLocationFormatB("Train Symbol", "p_trainSymbol", Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[1])),
+				new ParseLocationFormatB("TPC Increment", "p_tpcIncrement", Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[1])),
+				new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
+				new ParseLocationFormatB("Field Marker", "p_fieldMarker", Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])),
+				new ParseLocationFormatB("Design Speed", "p_designSpeed", Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])),
+				new ParseLocationFormatB("Current Speed", "p_currentSpeed", Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1]))
+				);
+
+		parseLocationsTable12.setItems(parseData12);
+
+		parameterName12.setReorderable(false);
+		registryKey12.setReorderable(false);
+		startColumn12.setReorderable(false);
+		endColumn12.setReorderable(false);
 	}
 
 	@FXML private void handleRestoreDefaultsButton(ActionEvent event) 
@@ -709,7 +758,8 @@ public class BIASParseConfigPageController
 			prefs.remove("l_linkOriginNode");
 			prefs.remove("l_linkDestinationNode");
 			prefs.remove("l_linkClass");
-			prefs.remove("l_linkDirectione");
+			prefs.remove("l_linkDirection");
+			prefs.remove("l_linkMaxPassengerSpeed");
 
 			// Table 4
 			prefs.remove("n_node");
@@ -824,6 +874,14 @@ public class BIASParseConfigPageController
 			prefs.remove("z_trl_serialNumberCheckReference");
 			prefs.remove("z_trl_continuationEndCode");
 
+			// Table 12
+			prefs.remove("p_trainSymbol");
+			prefs.remove("p_tpcIncrement");
+			prefs.remove("p_node");
+			prefs.remove("p_fieldMarker");
+			prefs.remove("p_designSpeed");
+			prefs.remove("p_currentSpeed");
+
 			// Add parameters
 			getParseParameters();
 
@@ -840,6 +898,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setEditable(false);
 			parseLocationsTable10.setEditable(false);
 			parseLocationsTable11.setEditable(false);
+			parseLocationsTable12.setEditable(false);
 
 			// Refresh parseData from registry for table 1 values
 			parseData1.clear();
@@ -871,7 +930,8 @@ public class BIASParseConfigPageController
 			parseData3.addAll(new ParseLocationFormatB("Link Origin Node", "l_linkOriginNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkOriginNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkOriginNode()[1])),
 					new ParseLocationFormatB("Link Destination Node", "l_linkDestinationNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])),
 					new ParseLocationFormatB("Link Class", "l_linkClass", Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])),
-					new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1]))
+					new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1])),
+					new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1]))
 					);
 
 			startColumn3.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1026,6 +1086,19 @@ public class BIASParseConfigPageController
 					);
 			startColumn11.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 			endColumn11.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+			// Refresh parseData from registry for table 12 values
+			parseData12.clear();
+			parseData12.addAll(new ParseLocationFormatB("Train Symbol", "p_trainSymbol", Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[1])),
+					new ParseLocationFormatB("TPC Increment", "p_tpcIncrement", Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[1])),
+					new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
+					new ParseLocationFormatB("Field Marker", "p_fieldMarker", Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])),
+					new ParseLocationFormatB("Design Speed", "p_designSpeed", Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])),
+					new ParseLocationFormatB("Current Speed", "p_currentSpeed", Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1]))
+					);
+
+			startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+			endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		} 
 	}
 
@@ -1042,6 +1115,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable9.setEditable(false);
 		parseLocationsTable10.setEditable(false);
 		parseLocationsTable11.setEditable(false);
+		parseLocationsTable12.setEditable(false);
 
 		typeStartColumn1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		typeEndColumn1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1077,6 +1151,9 @@ public class BIASParseConfigPageController
 
 		startColumn11.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		endColumn11.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+		startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 	}
 
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
@@ -1092,6 +1169,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable9.setEditable(true);
 		parseLocationsTable10.setEditable(true);
 		parseLocationsTable11.setEditable(true);
+		parseLocationsTable12.setEditable(true);
 
 		// Table 1 - typeStartColumn
 		typeStartColumn1.setEditable(true);
@@ -1812,6 +1890,66 @@ public class BIASParseConfigPageController
 				}
 			}
 		});
+
+		// Table 12 - startColumn
+		startColumn12.setEditable(true);
+		startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
+		startColumn12.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+			@Override
+			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+				if (t.getNewValue() != -1)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					String key = parseLocationsTable12.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String[] oldValues = prefs.get(key, null).split(",");
+					String newValue = t.getNewValue()+","+oldValues[1];
+
+					// Update in registry
+					prefs.put(key, newValue);
+
+					// Update value in startColumn which will then update GUI (as it is observable)
+					parseData12.get(row).setStartColumn(t.getNewValue());
+				}
+				else
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+
+					parseData12.get(row).setStartColumn(t.getOldValue());
+					parseLocationsTable12.getColumns().get(row).setVisible(false);
+					parseLocationsTable12.getColumns().get(row).setVisible(true);
+				}
+			}
+		});
+
+		// Table 12 - endColumn
+		endColumn12.setEditable(true);
+		endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
+		endColumn12.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+			@Override
+			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+				if (t.getNewValue() != -1)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					String key = parseLocationsTable12.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String[] oldValues = prefs.get(key, null).split(",");
+					String newValue = oldValues[0]+","+t.getNewValue();
+
+					// Update in registry
+					prefs.put(key, newValue);
+
+					// Update value in endColumn which will then update GUI (as it is observable)
+					parseData12.get(row).setEndColumn(t.getNewValue());
+				}
+				else
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+
+					parseData12.get(row).setEndColumn(t.getOldValue());
+					parseLocationsTable12.getColumns().get(row).setVisible(false);
+					parseLocationsTable12.getColumns().get(row).setVisible(true);
+				}
+			}
+		});
 	}
 
 	@FXML private void handlePreviousPageButton(ActionEvent event) 
@@ -1838,6 +1976,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable1.requestFocus();
 		}
@@ -1859,6 +1998,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable3.requestFocus();
 		}
@@ -1880,6 +2020,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable4.requestFocus();
 		}
@@ -1901,6 +2042,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable5.requestFocus();
 		}
@@ -1922,6 +2064,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable6.requestFocus();
 		}
@@ -1943,6 +2086,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable7.requestFocus();
 		}
@@ -1964,6 +2108,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable8.requestFocus();
 		}
@@ -1985,6 +2130,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(true);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable9.requestFocus();
 		}
@@ -2006,8 +2152,31 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(true);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable10.requestFocus();
+		}
+		else if (curPage == 11) // Going to option (p 10)
+		{
+			curPage--;
+			previousPageButton.setDisable(false);
+			nextPageButton.setDisable(false);
+
+			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM file (scroll down for complete list):");
+			parseLocationsTable1.setVisible(false);
+			parseLocationsTable2.setVisible(false);
+			parseLocationsTable3.setVisible(false);
+			parseLocationsTable4.setVisible(false);
+			parseLocationsTable5.setVisible(false);
+			parseLocationsTable6.setVisible(false);
+			parseLocationsTable7.setVisible(false);
+			parseLocationsTable8.setVisible(false);
+			parseLocationsTable9.setVisible(false);
+			parseLocationsTable10.setVisible(false);
+			parseLocationsTable11.setVisible(true);
+			parseLocationsTable12.setVisible(false);
+
+			parseLocationsTable11.requestFocus();
 		}
 		else
 		{
@@ -2018,7 +2187,7 @@ public class BIASParseConfigPageController
 
 	@FXML private void handleNextPageButton(ActionEvent event) 
 	{
-		if (curPage == 10)  // Highest possible page # here
+		if (curPage == 11)  // Highest possible page # here
 		{
 			// do nothing
 		}
@@ -2040,6 +2209,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable3.requestFocus();
 		}
@@ -2061,6 +2231,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable4.requestFocus();
 		}
@@ -2082,6 +2253,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable5.requestFocus();
 		}
@@ -2103,6 +2275,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable6.requestFocus();
 		}
@@ -2124,6 +2297,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable7.requestFocus();
 		}
@@ -2145,6 +2319,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable8.requestFocus();
 		}
@@ -2166,6 +2341,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(true);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
 			parseLocationsTable9.requestFocus();
 		}
@@ -2187,14 +2363,15 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(true);
 			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
 
-			parseLocationsTable9.requestFocus();
+			parseLocationsTable10.requestFocus();
 		}
 		else if (curPage == 9)  // Going to Radixx Res SSIM (p 10)
 		{
 			curPage++;
 			previousPageButton.setDisable(false);
-			nextPageButton.setDisable(true);
+			nextPageButton.setDisable(false);
 
 			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM file (scroll down for complete list):");
 			parseLocationsTable1.setVisible(false);
@@ -2208,13 +2385,31 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(true);
+			parseLocationsTable12.setVisible(false);
 
-			parseLocationsTable10.requestFocus();
+			parseLocationsTable11.requestFocus();
 		}
-		else
+		else if (curPage == 10)  // Going to TPC (p 11)
 		{
 			curPage++;
 			previousPageButton.setDisable(false);
+			nextPageButton.setDisable(true);
+
+			parseRangeLabel.setText("Parameters parsed from .TPC file:");
+			parseLocationsTable1.setVisible(false);
+			parseLocationsTable2.setVisible(false);
+			parseLocationsTable3.setVisible(false);
+			parseLocationsTable4.setVisible(false);
+			parseLocationsTable5.setVisible(false);
+			parseLocationsTable6.setVisible(false);
+			parseLocationsTable7.setVisible(false);
+			parseLocationsTable8.setVisible(false);
+			parseLocationsTable9.setVisible(false);
+			parseLocationsTable10.setVisible(false);
+			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(true);
+
+			parseLocationsTable12.requestFocus();
 		}
 	}
 
@@ -2339,6 +2534,15 @@ public class BIASParseConfigPageController
 			l_linkDirection = "36,37";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("l_linkDirection", l_linkDirection);
+		}
+
+		// Link max passenger speed
+		if (prefs.get("l_linkMaxPassengerSpeed", null) == null)
+		{
+			// Write value for subsequent runs
+			l_linkMaxPassengerSpeed = "129,132";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("l_linkMaxPassengerSpeed", l_linkMaxPassengerSpeed);
 		}
 
 		// Table 4
@@ -3221,6 +3425,61 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("z_trl_continuationEndCode", z_trl_continuationEndCode);
 		}
+
+		// Table 12
+		// Train Symbol
+		if (prefs.get("p_trainSymbol", null) == null)
+		{
+			// Write value for subsequent runs
+			p_trainSymbol = "41,68";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("p_trainSymbol", p_trainSymbol);
+		}
+
+		// TPC increment
+		if (prefs.get("p_tpcIncrement", null) == null)
+		{
+			// Write value for subsequent runs
+			p_tpcIncrement = "90,122";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("p_tpcIncrement", p_tpcIncrement);
+		}
+
+		// Node (route)
+		if (prefs.get("p_node", null) == null)
+		{
+			// Write value for subsequent runs
+			p_node = "1,15";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("p_node", p_node);
+		}
+
+		// Field marker
+		if (prefs.get("p_fieldMarker", null) == null)
+		{
+			// Write value for subsequent runs
+			p_fieldMarker = "235,244";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("p_fieldMarker", p_fieldMarker);
+		}
+
+		// Design speed
+		if (prefs.get("p_designSpeed", null) == null)
+		{
+			// Write value for subsequent runs
+			p_designSpeed = "127,134";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("p_designSpeed", p_designSpeed);
+		}
+
+		// Current speed
+		if (prefs.get("p_currentSpeed", null) == null)
+		{
+			// Write value for subsequent runs
+			p_currentSpeed = "165,172";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("p_currentSpeed", p_currentSpeed);
+		}
 	}
 
 	public static String[] x_getTrainCat()
@@ -3298,6 +3557,12 @@ public class BIASParseConfigPageController
 	public static String[] l_getLinkDirection()
 	{
 		String[] values = prefs.get("l_linkDirection", l_linkDirection).split(",");
+		return values;
+	}
+
+	public static String[] l_getLinkMaxPassengerSpeed()
+	{
+		String[] values = prefs.get("l_linkMaxPassengerSpeed", l_linkMaxPassengerSpeed).split(",");
 		return values;
 	}
 
@@ -3792,7 +4057,7 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("z_flr_dateVariation", z_flr_dateVariation).split(",");
 		return values;
 	}
-	
+
 	public static String[] z_getSeg_airlineDesignator()
 	{
 		String[] values = prefs.get("z_seg_airlineDesignator", z_seg_airlineDesignator).split(",");
@@ -3883,6 +4148,42 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] p_getTrainSymbol()
+	{
+		String[] values = prefs.get("p_trainSymbol", "p_trainSymbol").split(",");
+		return values;
+	}
+	
+	public static String[] p_getTpcIncrement()
+	{
+		String[] values = prefs.get("p_tpcIncrement", "p_tpcIncrement").split(",");
+		return values;
+	}
+	
+	public static String[] p_getNode()
+	{
+		String[] values = prefs.get("p_node", "p_node").split(",");
+		return values;
+	}
+	
+	public static String[] p_getFieldMarker()
+	{
+		String[] values = prefs.get("p_fieldMarker", "p_fieldMarker").split(",");
+		return values;
+	}
+	
+	public static String[] p_getDesignSpeed()
+	{
+		String[] values = prefs.get("p_designSpeed", "p_designSpeed").split(",");
+		return values;
+	}
+	
+	public static String[] p_getCurrentSpeed()
+	{
+		String[] values = prefs.get("p_currentSpeed", "p_currentSpeed").split(",");
+		return values;
+	}
+	
 	private static class CustomIntegerStringConverter extends IntegerStringConverter 
 	{
 		private final IntegerStringConverter converter = new IntegerStringConverter();

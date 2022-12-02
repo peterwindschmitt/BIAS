@@ -361,8 +361,8 @@ public class BIASRTCResultsAnalysisPageController
 		try
 		{
 			// Check that .OPTION file has time formatted as DD:HH:MM:SS, no CSV delimiters in .ROUTE file and ENGLISH input units
-			BIASValidateOptionsAndINIFile.bIASCheckOptionFiles(directory);
-			if (BIASValidateOptionsAndINIFile.getOptionsFilesFormattedCorrectly())
+			BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(directory);
+			if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
 			{
 				message = "\nValidated date/time format, output format and speed/distance units from .OPTION file\n";
 				displayMessage(message);
@@ -375,8 +375,8 @@ public class BIASRTCResultsAnalysisPageController
 			}
 
 			// Check that not using alpha DOW in RTC.INI
-			BIASValidateOptionsAndINIFile.bIASCheckINIFile(directory);
-			if (BIASValidateOptionsAndINIFile.getINIFileFormattedCorrectly())
+			BIASValidateOptionsAndINIFileSchemeA.bIASCheckINIFile(directory);
+			if (BIASValidateOptionsAndINIFileSchemeA.getINIFileFormattedCorrectly())
 			{
 				message = "Validated DOW output format in .INI file\n";
 				displayMessage(message);

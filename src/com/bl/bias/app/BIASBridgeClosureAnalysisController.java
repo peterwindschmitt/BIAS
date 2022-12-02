@@ -422,8 +422,8 @@ public class BIASBridgeClosureAnalysisController
 		// and ENGLISH input units
 		File optionFile = new File(fullyQualifiedPath);
 		File optionFileFolder = new File(optionFile.getParent());
-		BIASValidateOptionsAndINIFile.bIASCheckOptionFiles(optionFileFolder);
-		if (BIASValidateOptionsAndINIFile.getOptionsFilesFormattedCorrectly())
+		BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
+		if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
 		{
 			message = "\nValidated date/time format, verbose .ROUTE file, output format and speed/distance units from .OPTION file\n";
 			displayMessage(message);
@@ -442,8 +442,8 @@ public class BIASBridgeClosureAnalysisController
 		else
 			iniFolder = new File(optionFile.getParent());
 
-		BIASValidateOptionsAndINIFile.bIASCheckINIFile(iniFolder);
-		if (BIASValidateOptionsAndINIFile.getINIFileFormattedCorrectly())
+		BIASValidateOptionsAndINIFileSchemeA.bIASCheckINIFile(iniFolder);
+		if (BIASValidateOptionsAndINIFileSchemeA.getINIFileFormattedCorrectly())
 		{
 			message = "Validated DOW output format in .INI file\n";
 			displayMessage(message);

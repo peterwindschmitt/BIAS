@@ -7,7 +7,7 @@ import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
 
-public class BIASValidateOptionsAndINIFile 
+public class BIASValidateOptionsAndINIFileSchemeA 
 {
 	private static Boolean optionFilesFormattedCorrectly;
 	private static Boolean INIFileFormattedCorrectly;
@@ -157,7 +157,7 @@ public class BIASValidateOptionsAndINIFile
 			}
 			catch (Exception e) 
 			{
-				ErrorShutdown.displayError(e, "BIASValidateOptionsAndINIFile");
+				ErrorShutdown.displayError(e, "BIASValidateOptionsAndINIFileSchemeA");
 			}
 			finally
 			{

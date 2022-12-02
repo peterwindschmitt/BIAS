@@ -74,7 +74,7 @@
                   <Insets top="-12.0" />
                </GridPane.margin>
             </Label>
-            <Label text="4.  Minimum permitted up-time" GridPane.rowIndex="5">
+            <Label text="4.  Minimum permitted up-time:" GridPane.rowIndex="5">
                <padding>
                   <Insets left="10.0" />
                </padding>
