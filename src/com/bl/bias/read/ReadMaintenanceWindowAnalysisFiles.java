@@ -89,7 +89,6 @@ public class ReadMaintenanceWindowAnalysisFiles
 							nodesFromLineFile.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol12()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol12()[1])).trim());
 					}				
 				}
-				scanner.close();
 			}
 			catch (Exception e) 
 			{

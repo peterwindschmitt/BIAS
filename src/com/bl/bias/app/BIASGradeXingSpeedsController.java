@@ -3,11 +3,14 @@ package com.bl.bias.app;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.prefs.Preferences;
 
+import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadGradeXingAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteGradeXingFiles2;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -353,39 +356,31 @@ public class BIASGradeXingSpeedsController
 	{
 		// Read Objects that are required for the grade xing speed analysis
 		ReadGradeXingAnalysisFiles readData = new ReadGradeXingAnalysisFiles(fullyQualifiedPath);
-		//message = readData.getResultsMessage();
-		//displayMessage(message+"\n");
+		message = readData.getResultsMessage();
+		displayMessage("\n\n"+message+"\n");
 
-		setProgressIndicator(0.25);
+		setProgressIndicator(0.33);
 
-		/*  Perform Analysis
-		if (continueAnalysis)
+		//  Perform Analysis
+		GradeXingSpeedsAnalysis analyzeData = new GradeXingSpeedsAnalysis();
+		message = analyzeData.getResultsMessage();
+		displayMessage(analyzeData.getResultsMessage());
+
+		setProgressIndicator(0.75);
+
+		// Write Results
+		writeFiles();
+		if (!WriteGradeXingFiles2.getErrorFound())
 		{
-			//MaintenanceWindowAnalysis analyze = new MaintenanceWindowAnalysis(segments);
-			//displayMessage(analyze.getResultsMessage());
+			setProgressIndicator(1.0);
+			displayMessage("\n*** PROCESSING COMPLETE ***");
 		}
 		else
 		{
-			//displayMessage("\nError in analyzing files");
-			//displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+			displayMessage("\nError in writing files");
+			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 		}
 
-		// Write Results
-		if (continueAnalysis)
-		{
-			writeFiles();
-			if (!WriteMaintenanceWindowFiles5.getErrorFound())
-			{
-				setProgressIndicator(1.0);
-				displayMessage("\n*** PROCESSING COMPLETE ***");
-			}
-			else
-			{
-				displayMessage("\nError in writing files");
-				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-			}
-		}
-		 */
 		// Prepare for next run
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
@@ -394,8 +389,8 @@ public class BIASGradeXingSpeedsController
 
 	private void writeFiles() 
 	{
-		//WriteMaintenanceWindowFiles5 filesToWrite = new WriteMaintenanceWindowFiles5(textArea.getText(), saveFileLocationForUserSpecifiedFileName);
-		//displayMessage(filesToWrite.getWriteResultsMessage5());
+		WriteGradeXingFiles2 filesToWrite = new WriteGradeXingFiles2(processTextArea.getText(), saveFileLocationForUserSpecifiedFileName);
+		displayMessage(filesToWrite.getResultsMessageWrite2());
 	}
 
 	private void resetMessage()
