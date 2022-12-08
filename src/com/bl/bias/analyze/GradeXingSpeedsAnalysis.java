@@ -96,6 +96,16 @@ public class GradeXingSpeedsAnalysis
 		return sortedTraversals;
 	}
 
+	public static ArrayList<GradeXingLink> getGradeXingLinks()
+	{
+		return gradeXingLinks;
+	}
+	
+	public static HashMap<String, String> getNodeNames()
+	{
+		return nodeNames;
+	}
+	
 	public static void clearTpcEntries()
 	{
 		tpcEntries.clear();
