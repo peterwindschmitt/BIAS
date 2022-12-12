@@ -34,7 +34,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="checkStdsEqualOrLaterThanStasCheckBox" mnemonicParsing="false" onAction="#handleCheckStdsEqualOrLaterThanStasCheckBox" selected="true" text="2. Check that 'Passenger STD' is the same as or after 'Passenger STA'.  Same for 'Train STD' and 'Train STA'." wrapText="true" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkStasEqualOrLaterThanStdsCheckBox" mnemonicParsing="false" onAction="#handleCheckStasEqualOrLaterThanStdsCheckBox" selected="true" text="2. Check that 'Passenger STA' is the same as or after 'Passenger STD'.  Same for 'Train STA' and 'Train STD'." wrapText="true" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>

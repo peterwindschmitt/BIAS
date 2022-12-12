@@ -10,13 +10,13 @@ public class BIASRadixxResSsimConversionConfigPageController
 	private static Preferences prefs;
 
 	private static Boolean checkStasEqual;
-	private static Boolean checkStdsEqualOrLaterThanStas;
+	private static Boolean checkStasEqualOrLaterThanStds;
 	
 	private static Boolean defaultCheckStasEqual = true;
-	private static Boolean defaultCheckStdsEqualOrLaterThanStas = true;
+	private static Boolean defaultCheckStasEqualOrLaterThanStds = true;
 	
 	@FXML private CheckBox checkStasEqualCheckBox;
-	@FXML private CheckBox checkStdsEqualOrLaterThanStasCheckBox;
+	@FXML private CheckBox checkStasEqualOrLaterThanStdsCheckBox;
 
 
 	@FXML private void initialize() 
@@ -37,18 +37,18 @@ public class BIASRadixxResSsimConversionConfigPageController
 			checkStasEqualCheckBox.setSelected(false);
 		}
 
-		// See if preference is stored for checking if Passenger STD is at the same time or after Passenger STA and that Train STD is at the same time or after Train STA
-		if (prefs.getBoolean("rs_checkStdsEqualOrLaterThanStas", defaultCheckStdsEqualOrLaterThanStas))
+		// See if preference is stored for checking if Passenger STA is at the same time or after Passenger STD and that Train STA is at the same time or after Train STD
+		if (prefs.getBoolean("rs_checkStasEqualOrLaterThanStds", defaultCheckStasEqualOrLaterThanStds))
 		{
-			checkStdsEqualOrLaterThanStas = true;
+			checkStasEqualOrLaterThanStds = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rs_checkStdsEqualOrLaterThanStas", true);
-			checkStdsEqualOrLaterThanStasCheckBox.setSelected(true);
+				prefs.putBoolean("rs_checkStasEqualOrLaterThanStds", true);
+			checkStasEqualOrLaterThanStdsCheckBox.setSelected(true);
 		}
 		else
 		{
-			checkStdsEqualOrLaterThanStas = false;
-			checkStdsEqualOrLaterThanStasCheckBox.setSelected(false);
+			checkStasEqualOrLaterThanStds = false;
+			checkStasEqualOrLaterThanStdsCheckBox.setSelected(false);
 		}
 	};
 
@@ -73,24 +73,24 @@ public class BIASRadixxResSsimConversionConfigPageController
 		return checkStasEqual;
 	}
 
-	@FXML private void handleCheckStdsEqualOrLaterThanStasCheckBox()
+	@FXML private void handleCheckStasEqualOrLaterThanStdsCheckBox()
 	{
-		if (checkStdsEqualOrLaterThanStas)
+		if (checkStasEqualOrLaterThanStds)
 		{
-			checkStdsEqualOrLaterThanStas = false;
+			checkStasEqualOrLaterThanStds = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rs_checkStdsEqualOrLaterThanStas", false);
+				prefs.putBoolean("rs_checkStasEqualOrLaterThanStds", false);
 		}
 		else
 		{
-			checkStdsEqualOrLaterThanStas = true;
+			checkStasEqualOrLaterThanStds = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rs_checkStdsEqualOrLaterThanStas", true);
+				prefs.putBoolean("rs_checkStasEqualOrLaterThanStds", true);
 		}
 	}
 
-	public static Boolean getCheckStdsAtSameTimeOrLaterThanStas()
+	public static Boolean getCheckStasAtSameTimeOrLaterThanStds()
 	{
-		return checkStdsEqualOrLaterThanStas;
+		return checkStasEqualOrLaterThanStds;
 	}
 }

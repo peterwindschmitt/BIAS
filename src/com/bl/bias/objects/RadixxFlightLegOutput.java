@@ -246,7 +246,7 @@ public class RadixxFlightLegOutput
 						}
 
 						// Check #3:  Check that Passenger and Train STDs are after their corresponding STAs
-						if (BIASRadixxResSsimConversionConfigPageController.getCheckStdsAtSameTimeOrLaterThanStas())
+						if (BIASRadixxResSsimConversionConfigPageController.getCheckStasAtSameTimeOrLaterThanStds())
 						{
 							SimpleDateFormat sdformat = new SimpleDateFormat("HHmm");
 							
