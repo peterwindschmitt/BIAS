@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.app.BIASParseConfigPageController;
+import com.bl.bias.app.BIASRadixxResSsimConversionConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
 
 import javafx.application.Platform;
@@ -201,7 +203,155 @@ public class RadixxFlightLegOutput
 							usedFlightItinLeg.add(proposedFlightItinLeg);
 						}
 
-						// Check #2:  Check that periodOfOperationEnd is at least equal to periodOfOperationStart
+						// Check #2:  Check that Passenger and Train STAs are the same.  Same for Passenger and Train STDs.
+						if (BIASRadixxResSsimConversionConfigPageController.getCheckStasEqual())
+						{
+							if (!passengerSTA.equals(aircraftSTA))
+							{
+								validInput = false;
+
+								Platform.runLater(new Runnable()
+								{
+									@Override
+									public void run() 
+									{
+										Alert alert = new Alert(AlertType.ERROR);
+										alert.setTitle("Error");
+										alert.setHeaderText(null);
+										alert.setContentText("Passenger STA is not equal to Train STA at spreadsheet row "+(excelRowCounter+1)+".");	
+										alert.showAndWait();
+									}
+								});
+								break;
+							}
+
+							if (!passengerSTD.equals(aircraftSTD))
+							{
+								validInput = false;
+
+								Platform.runLater(new Runnable()
+								{
+									@Override
+									public void run() 
+									{
+										Alert alert = new Alert(AlertType.ERROR);
+										alert.setTitle("Error");
+										alert.setHeaderText(null);
+										alert.setContentText("Passenger STD is not equal to Train STD at spreadsheet row "+(excelRowCounter+1)+".");	
+										alert.showAndWait();
+									}
+								});
+								break;
+							}
+						}
+
+						// Check #3:  Check that Passenger and Train STDs are after their corresponding STAs
+						if (BIASRadixxResSsimConversionConfigPageController.getCheckStdsAtSameTimeOrLaterThanStas())
+						{
+							SimpleDateFormat sdformat = new SimpleDateFormat("HHmm");
+							
+							// Passenger
+							Date passengerDepartureAsDate = sdformat.parse(passengerSTD);
+							Calendar passengerDepartureAsCalendar = Calendar.getInstance();
+							passengerDepartureAsCalendar.setTime(passengerDepartureAsDate);
+							// Adjust for day and time
+							// Adjust day
+							if (dateVariationDeparture != "")
+								passengerDepartureAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationDeparture));
+							// Adjust time offset hour
+							passengerDepartureAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationDeparture.substring(0, timeVariationDeparture.length() - 2)));
+							// Adjust time offset minute
+							if (timeVariationDeparture.contains("-"))
+								passengerDepartureAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
+							else
+								passengerDepartureAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
+													
+							Date passengerArrivalAsDate = sdformat.parse(passengerSTA);
+							Calendar passengerArrivalAsCalendar = Calendar.getInstance();
+							passengerArrivalAsCalendar.setTime(passengerArrivalAsDate);
+							// Adjust for day and time
+							// Adjust day
+							if (dateVariationArrival != "")
+								passengerArrivalAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationArrival));
+							// Adjust time offset hour
+							passengerArrivalAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationArrival.substring(0, timeVariationArrival.length() - 2)));
+							// Adjust time offset minute
+							if (timeVariationArrival.contains("-"))
+								passengerArrivalAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
+							else
+								passengerArrivalAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
+							
+							if (passengerDepartureAsCalendar.after(passengerArrivalAsCalendar))
+							{
+								validInput = false;
+
+								Platform.runLater(new Runnable()
+								{
+									@Override
+									public void run() 
+									{
+										Alert alert = new Alert(AlertType.ERROR);
+										alert.setTitle("Error");
+										alert.setHeaderText(null);
+										alert.setContentText("Passenger STD is after Passenger STA at spreadsheet row "+(excelRowCounter+1)+".");	
+										alert.showAndWait();
+									}
+								});
+								break;
+							}
+														
+							// Aircraft
+							Date aircraftDepartureAsDate = sdformat.parse(aircraftSTD);
+							Calendar aircraftDepartureAsCalendar = Calendar.getInstance();
+							aircraftDepartureAsCalendar.setTime(aircraftDepartureAsDate);
+							// Adjust for day and time
+							// Adjust day
+							if (dateVariationDeparture != "")
+								aircraftDepartureAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationDeparture));
+							// Adjust time offset hour
+							aircraftDepartureAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationDeparture.substring(0, timeVariationDeparture.length() - 2)));
+							// Adjust time offset minute
+							if (timeVariationDeparture.contains("-"))
+								aircraftDepartureAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
+							else
+								aircraftDepartureAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
+													
+							Date aircraftArrivalAsDate = sdformat.parse(aircraftSTA);
+							Calendar aircraftArrivalAsCalendar = Calendar.getInstance();
+							aircraftArrivalAsCalendar.setTime(aircraftArrivalAsDate);
+							// Adjust for day and time
+							// Adjust day
+							if (dateVariationArrival != "")
+								aircraftArrivalAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationArrival));
+							// Adjust time offset hour
+							aircraftArrivalAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationArrival.substring(0, timeVariationArrival.length() - 2)));
+							// Adjust time offset minute
+							if (timeVariationArrival.contains("-"))
+								aircraftArrivalAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
+							else
+								aircraftArrivalAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
+							
+							if (aircraftDepartureAsCalendar.after(aircraftArrivalAsCalendar))
+							{
+								validInput = false;
+
+								Platform.runLater(new Runnable()
+								{
+									@Override
+									public void run() 
+									{
+										Alert alert = new Alert(AlertType.ERROR);
+										alert.setTitle("Error");
+										alert.setHeaderText(null);
+										alert.setContentText("Aircraft STD is after Aircraft STA at spreadsheet row "+(excelRowCounter+1)+".");	
+										alert.showAndWait();
+									}
+								});
+								break;
+							}
+						}
+
+						// Check #4:  Check that periodOfOperationEnd is at least equal to periodOfOperationStart
 						SimpleDateFormat sdformat = new SimpleDateFormat("ddMMMyy");
 						Date d1 = sdformat.parse(periodOfOperationStart);
 						Date d2 = sdformat.parse(periodOfOperationEnd);
@@ -272,7 +422,7 @@ public class RadixxFlightLegOutput
 			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 		}	
 
-		// Check #3:  Make sure that a given O-D pair exists no more than once for each flightNumber for each date for each day of operation
+		// Check #5:  Make sure that a given O-D pair exists no more than once for each flightNumber for each date for each day of operation
 		// during the periodOfOperationStart and periodOfOperationEnd
 		// This check is done without reference to itineraryVariationIdentifier or legSequenceNumber
 		if (validInput)
@@ -470,7 +620,7 @@ public class RadixxFlightLegOutput
 				validInput = false;
 			}
 		}
-		
+
 		// Iterate daysOfOperation hashset and fill in appropriate digits in newString 
 		for (int i = 0; i < 7; i++)
 		{
@@ -483,7 +633,7 @@ public class RadixxFlightLegOutput
 				newString.replace((Integer.valueOf(BIASParseConfigPageController.z_getFlr_dayOfOperation()[0]) + i), (Integer.valueOf(BIASParseConfigPageController.z_getFlr_dayOfOperation()[0]) + i + 1), " ");
 			}
 		}
-		
+
 		// Departure station
 		r = Pattern.compile(pattern_3alpha);
 		m = r.matcher(departureStation);
@@ -741,7 +891,7 @@ public class RadixxFlightLegOutput
 		}
 		else
 			validInput = false;
-		
+
 		// Date variation departure
 		r = Pattern.compile(pattern_dateVariation);
 		m = r.matcher(dateVariationDeparture);
@@ -783,14 +933,14 @@ public class RadixxFlightLegOutput
 		// Record serial number
 		// Remove default contents after previous modification
 		newString.replace(Integer.valueOf(BIASParseConfigPageController.z_getAll_recordSerialNumber()[0]), Integer.valueOf(BIASParseConfigPageController.z_getAll_recordSerialNumber()[1]), "");
-		
+
 		// Insert the record serial number
 		newString.insert(Integer.valueOf(BIASParseConfigPageController.z_getAll_recordSerialNumber()[0]), String.format("%06d", recordSerialNumber));
-		
+
 		// Store for Trailer class
 		if (recordSerialNumber > highestRecordSerialNumber)
 			recordSerialNumberForTrailerRecord = String.format("%06d", recordSerialNumber);
-		
+
 		if ((validInput) && (boardPointIndicator.equals("")) && (offPointIndicator.equals("")) && (dataElementIdentifier.equals("")) && (segmentBoardPoint.equals("")) && (segmentOffPoint.equals("")) && (data.equals("")))
 		{
 			objectsReadCount = objectsReadCount + 28;
@@ -798,7 +948,7 @@ public class RadixxFlightLegOutput
 			//  Create String from StringBuffer for the new text
 			flightLeg = newString.toString()+"\n";
 			flightLegs = flightLegs.concat(flightLeg);
-			
+
 			return validInput;
 		}
 		else if ((validInput) && (!boardPointIndicator.equals("")) && (!offPointIndicator.equals("")) && (!dataElementIdentifier.equals("")) && (!segmentBoardPoint.equals("")) && (!segmentOffPoint.equals("")) && (!data.equals("")))
@@ -970,7 +1120,7 @@ public class RadixxFlightLegOutput
 				flightLeg = newString.toString()+"\n";
 				flightLegs = flightLegs.concat(flightLeg);
 			}
-			
+
 			return validInput;
 		} 
 		else

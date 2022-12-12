@@ -44,6 +44,7 @@
       					<MenuItem fx:id="menuItemRTCResultsAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemRTCResultsAnalysisConfig" text="RTC Results Analysis" visible="false" />
                         <MenuItem fx:id="menuItemTTestConfig" mnemonicParsing="false" onAction="#handleMenuItemTTestConfig" text="T-Test Analysis" visible="false" />
                         <MenuItem fx:id="menuItemBridgeClosureAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemBridgeClosureAnalysisConfig" text="Bridge Closure Analysis" visible="false" />
+                        <MenuItem fx:id="menuItemRadixxResSsimConversionConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimConversionConfig" text="Radixx Res Ssim Conversion" visible="false" />
                         <MenuItem fx:id="menuItemMaintenanceWindowAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemMaintenanceWindowAnalysisConfig" text="Maintenance Window Analysis" visible="false" />
                     	<MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
                     </items>
