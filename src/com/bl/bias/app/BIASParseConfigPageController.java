@@ -169,8 +169,6 @@ public class BIASParseConfigPageController
 	private static String z_trl_continuationEndCode;
 
 	// Data from .TPC file
-	private static String p_trainSymbol;
-	private static String p_tpcIncrement;
 	private static String p_node;
 	private static String p_fieldMarker;
 	private static String p_designSpeed;
@@ -712,9 +710,7 @@ public class BIASParseConfigPageController
 		startColumn12.setStyle( "-fx-alignment: CENTER;");
 		endColumn12.setStyle( "-fx-alignment: CENTER;");
 
-		parseData12.addAll(new ParseLocationFormatB("Train Symbol", "p_trainSymbol", Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[1])),
-				new ParseLocationFormatB("TPC Increment", "p_tpcIncrement", Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[1])),
-				new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
+		parseData12.addAll(new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
 				new ParseLocationFormatB("Field Marker", "p_fieldMarker", Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])),
 				new ParseLocationFormatB("Design Speed", "p_designSpeed", Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])),
 				new ParseLocationFormatB("Current Speed", "p_currentSpeed", Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1]))
@@ -875,8 +871,6 @@ public class BIASParseConfigPageController
 			prefs.remove("z_trl_continuationEndCode");
 
 			// Table 12
-			prefs.remove("p_trainSymbol");
-			prefs.remove("p_tpcIncrement");
 			prefs.remove("p_node");
 			prefs.remove("p_fieldMarker");
 			prefs.remove("p_designSpeed");
@@ -1089,9 +1083,7 @@ public class BIASParseConfigPageController
 
 			// Refresh parseData from registry for table 12 values
 			parseData12.clear();
-			parseData12.addAll(new ParseLocationFormatB("Train Symbol", "p_trainSymbol", Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[1])),
-					new ParseLocationFormatB("TPC Increment", "p_tpcIncrement", Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[1])),
-					new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
+			parseData12.addAll(new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
 					new ParseLocationFormatB("Field Marker", "p_fieldMarker", Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])),
 					new ParseLocationFormatB("Design Speed", "p_designSpeed", Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])),
 					new ParseLocationFormatB("Current Speed", "p_currentSpeed", Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1]))
@@ -3427,24 +3419,6 @@ public class BIASParseConfigPageController
 		}
 
 		// Table 12
-		// Train Symbol
-		if (prefs.get("p_trainSymbol", null) == null)
-		{
-			// Write value for subsequent runs
-			p_trainSymbol = "41,68";
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("p_trainSymbol", p_trainSymbol);
-		}
-
-		// TPC increment
-		if (prefs.get("p_tpcIncrement", null) == null)
-		{
-			// Write value for subsequent runs
-			p_tpcIncrement = "90,122";
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("p_tpcIncrement", p_tpcIncrement);
-		}
-
 		// Node (route)
 		if (prefs.get("p_node", null) == null)
 		{
@@ -4148,18 +4122,6 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
-	public static String[] p_getTrainSymbol()
-	{
-		String[] values = prefs.get("p_trainSymbol", "p_trainSymbol").split(",");
-		return values;
-	}
-	
-	public static String[] p_getTpcIncrement()
-	{
-		String[] values = prefs.get("p_tpcIncrement", "p_tpcIncrement").split(",");
-		return values;
-	}
-	
 	public static String[] p_getNode()
 	{
 		String[] values = prefs.get("p_node", "p_node").split(",");

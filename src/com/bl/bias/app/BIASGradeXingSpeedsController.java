@@ -3,7 +3,7 @@ package com.bl.bias.app;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
@@ -279,44 +279,53 @@ public class BIASGradeXingSpeedsController
 				// Check .TPC file to generate entries for textfield 
 				getPrelimData = new BIASPreprocessTrainsForGradeXingSpeedAalysis(file);
 
-				if (getPrelimData.returnTPCIncrements().size() > 1)
+				if (getPrelimData.returnTPCIncrementsIncludingUnits().size() > 1)
 				{
 					message += "\nUnable to perform analysis due to multiple TPC increments used in TPC file";
 				}
-				else if (getPrelimData.returnTPCIncrements().size() == 0)
+				else if (getPrelimData.returnTPCIncrementsIncludingUnits().size() == 0)
 				{
 					message += "\nUnable to perform analysis due to no TPC increment specified in TPC file";
 				}
 				else
 				{
-					// Check .OPTION file to make sure that correct parameters are selected
-					BIASValidateOptionsSchemeB.bIASCheckOptionFiles(optionFile);
-
-					if (BIASValidateOptionsSchemeB.getOptionsFilesFormattedCorrectly())
+					// Check that .TPC increment is equal to or smaller than the maximum user-configurable TPC increment
+					if (Collections.max(getPrelimData.returnTPCIncrementsDigitsOnly()) <= BIASGradeXingSpeedsConfigController.getMaxTpcIncrement())
 					{
-						if (getPrelimData.returnAvailableTrains().size() > 0)
+						// Check .OPTION file to make sure that correct parameters are selected
+						BIASValidateOptionsSchemeB.bIASCheckOptionFiles(optionFile);
+	
+						if (BIASValidateOptionsSchemeB.getOptionsFilesFormattedCorrectly())
 						{
-							trainsInTpcFileLabel.setDisable(false);
-
-							trainsInTpcFileTextArea.setDisable(false);
-							trainsInTpcFileTextArea.setEditable(false);
-							trainsInTpcFileTextArea.clear();
-
-							for (int i = 0; i < getPrelimData.returnAvailableTrains().size(); i++)
-								trainsInTpcFileTextArea.appendText(getPrelimData.returnAvailableTrains().get(i)+"\n");
-
-							message += "\nFound "+getPrelimData.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimData.returnTPCIncrements().toArray()[0].toString();
-
-							executeButton.setDisable(false);
+							if (getPrelimData.returnAvailableTrains().size() > 0)
+							{
+								trainsInTpcFileLabel.setDisable(false);
+	
+								trainsInTpcFileTextArea.setDisable(false);
+								trainsInTpcFileTextArea.setEditable(false);
+								trainsInTpcFileTextArea.clear();
+	
+								for (int i = 0; i < getPrelimData.returnAvailableTrains().size(); i++)
+									trainsInTpcFileTextArea.appendText(getPrelimData.returnAvailableTrains().get(i)+"\n");
+	
+								message += "\nFound "+getPrelimData.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimData.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
+	
+								executeButton.setDisable(false);
+							}
+							else
+							{
+								message += "\nUnable to perform analysis due to no trains in TPC file";
+							}
 						}
 						else
 						{
-							message += "\nUnable to perform analysis due to no trains in TPC file";
+							message += "\nUnable to perform analysis due to invalid output format and/or speed/distance units in .OPTION file\n";
 						}
+						
 					}
 					else
 					{
-						message += "\nUnable to perform analysis due to invalid output format and/or speed/distance units in .OPTION file\n";
+						message += "\nUnable to perform analysis as TPC increment in TPC file \nis greater than user-specified maximum TPC increment";
 					}
 				}
 			}

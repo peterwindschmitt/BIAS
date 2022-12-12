@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import com.bl.bias.analyze.BridgeClosureAnalysis.TimeSorter;
-import com.bl.bias.objects.BridgeAnalysisCrossing;
 import com.bl.bias.objects.GradeXingLink;
 import com.bl.bias.objects.GradeXingTpcEntry;
 import com.bl.bias.objects.GradeXingTraversal;
@@ -26,8 +24,6 @@ public class GradeXingSpeedsAnalysis
 	private static ArrayList<GradeXingTraversal> traversals = new ArrayList<GradeXingTraversal>();
 	private static ArrayList<GradeXingTraversal> sortedTraversals = new ArrayList<GradeXingTraversal>();
 
-	private static Integer inconsistentNodeNamesOnLink;
-
 	public GradeXingSpeedsAnalysis() 
 	{
 		resultsMessage = "Started analyzing Grade Crossing Speeds at "+ConvertDateTime.getTimeStamp()+"\n";
@@ -36,8 +32,7 @@ public class GradeXingSpeedsAnalysis
 		gradeXingLinks = ReadGradeXingAnalysisFiles.getGradeXingLinks();
 		nodeNames = ReadGradeXingAnalysisFiles.getNodeNames();
 		nodeFieldMPs = ReadGradeXingAnalysisFiles.getNodeFieldMPs();
-		inconsistentNodeNamesOnLink = 0;
-
+		
 		// 1.  Create a traversal object for each road crossing consisting of two node field MPs and the crossing name.  Do not consider direction.  
 		// For each entry in gradeXingLinks
 		for (int i = 0; i < gradeXingLinks.size(); i++)
@@ -57,9 +52,6 @@ public class GradeXingSpeedsAnalysis
 				}
 			if (duplicate == false)
 			{
-				if (!nodeNames.get(gradeXingLinks.get(i).getNodeA()).equals(nodeNames.get(gradeXingLinks.get(i).getNodeB())))
-					inconsistentNodeNamesOnLink++;
-
 				traversals.add(new GradeXingTraversal(nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()), nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()), nodeNames.get(gradeXingLinks.get(i).getNodeA())));
 			}
 		}
@@ -86,7 +78,6 @@ public class GradeXingSpeedsAnalysis
 		Collections.sort(sortedTraversals, new MilepostSorter());
 
 		resultsMessage += "Analyzed "+sortedTraversals.size()+" crossing entries\n";
-		resultsMessage += "Found "+inconsistentNodeNamesOnLink+" crossings with inconsistent node names\n";
 		resultsMessage += "Finished analyzing Grade Crossing Speeds results at "+ConvertDateTime.getTimeStamp()+"\n\n";
 	}
 

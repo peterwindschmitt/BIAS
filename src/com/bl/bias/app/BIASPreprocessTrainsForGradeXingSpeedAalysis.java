@@ -9,17 +9,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.exception.ErrorShutdown; 
 
 public class BIASPreprocessTrainsForGradeXingSpeedAalysis 
 {
-	private static HashSet<String> tpcIncrements = new HashSet<String>();
+	private static HashSet<String> tpcIncrementsIncludingUnits = new HashSet<String>();
+	private static HashSet<Integer> tpcIncrementsDigitsOnly = new HashSet<Integer>();
 	private static HashSet<String> availableTrains = new HashSet<String>();
 	private static List<String> sortedTrains;
 
 	public BIASPreprocessTrainsForGradeXingSpeedAalysis(File tpcFile) 
 	{
-		tpcIncrements.clear();
+		tpcIncrementsIncludingUnits.clear();
+		tpcIncrementsDigitsOnly.clear();
 		availableTrains.clear();
 		
 		Scanner scanner = null;
@@ -35,30 +37,31 @@ public class BIASPreprocessTrainsForGradeXingSpeedAalysis
 				if (lineFromFile.contains("TPC increment is"))
 				{		
 					String tpcIncrement;
-					String tpcIncrement0 = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTpcIncrement()[1])).trim();
-					if (tpcIncrement0.contains("feet"))
+					
+					if (lineFromFile.contains("feet"))
 					{
-						String tpcIncrement1 = tpcIncrement0.replace("TPC increment is", "").trim();
-						String toRemove = tpcIncrement1.substring(tpcIncrement1.lastIndexOf("t") + 1);
-						tpcIncrement = tpcIncrement1.replace(toRemove, "").trim();
+						Integer tpcIncrementStartIndex = lineFromFile.lastIndexOf("TPC increment is") + 17;
+						Integer tpcIncrementEndIndex = lineFromFile.lastIndexOf("feet");
+						tpcIncrement = lineFromFile.substring(tpcIncrementStartIndex, tpcIncrementEndIndex).trim();
+						tpcIncrementsDigitsOnly.add(Integer.valueOf(tpcIncrement));
+						tpcIncrementsIncludingUnits.add(tpcIncrement.concat(" feet"));
 					}
 					else
 					{
-						String tpcIncrement1 = tpcIncrement0.replace("TPC increment is", "").trim();
-						String toRemove = tpcIncrement1.substring(tpcIncrement1.indexOf("M"));
-						tpcIncrement = tpcIncrement1.replace(toRemove, "").trim().concat(" meters");
+						Integer tpcIncrementStartIndex = lineFromFile.lastIndexOf("TPC increment is") + 17;
+						Integer tpcIncrementEndIndex = lineFromFile.lastIndexOf("Max coupler") - 1;
+						tpcIncrement = lineFromFile.substring(tpcIncrementStartIndex, tpcIncrementEndIndex).replace("M","").trim();
+						tpcIncrementsDigitsOnly.add(Integer.valueOf(tpcIncrement));
+						tpcIncrementsIncludingUnits.add(tpcIncrement.concat(" meters"));
 					}	
-					
-					tpcIncrements.add(tpcIncrement);
 				}
 				
 				if (lineFromFile.contains("Seed train"))
 				{
-					String trainName0 = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.p_getTrainSymbol()[1])).trim();
-					String trainName1 = trainName0.replace("Seed train", "");
-					String toRemove = trainName0.substring(trainName0.indexOf("TPC"));
-					String trainName2 = trainName1.replace(toRemove, "").trim();
-					availableTrains.add(trainName2);
+					Integer trainNameStartIndex = lineFromFile.lastIndexOf("Seed train") + 10;
+					Integer trainNameEndIndex = lineFromFile.lastIndexOf("TPC results") - 1;
+					String trainName = lineFromFile.substring(trainNameStartIndex, trainNameEndIndex).trim();
+					availableTrains.add(trainName);
 				}
 			}		
 		}
@@ -97,9 +100,14 @@ public class BIASPreprocessTrainsForGradeXingSpeedAalysis
 		} 
 	}
 
-	public HashSet<String> returnTPCIncrements()
+	public HashSet<String> returnTPCIncrementsIncludingUnits()
 	{
-		return tpcIncrements;
+		return tpcIncrementsIncludingUnits;
+	}
+	
+	public HashSet<Integer> returnTPCIncrementsDigitsOnly()
+	{
+		return tpcIncrementsDigitsOnly;
 	}
 	
 	public List<String> returnAvailableTrains()
