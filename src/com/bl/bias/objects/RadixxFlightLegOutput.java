@@ -47,6 +47,7 @@ public class RadixxFlightLegOutput
 	private static String recordSerialNumberForTrailerRecord;
 
 	private static HashSet<String> usedFlightItinLeg = new HashSet<String>();
+	
 	private static List<RadixxOverlappingFlightOriginDestinationByDate> flightAndODrecords = new ArrayList<RadixxOverlappingFlightOriginDestinationByDate>();
 
 	final String pattern_1alpha = "^[A-Z]$";  								// Regex format for 1 alpha (as in service type)

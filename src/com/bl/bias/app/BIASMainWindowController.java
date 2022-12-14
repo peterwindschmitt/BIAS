@@ -156,7 +156,7 @@ public class BIASMainWindowController
 	    		
 	    		if (i == 0)
 	    		{
-	    			handleMenuItemRadixxResSsimConversionConfig(null);
+	    			handleMenuItemRadixxResSsimConversion(null);
 	    		}
 	    	}
 	    	else if (permittedModules[i].toString().contains("Grade"))

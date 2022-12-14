@@ -27,12 +27,20 @@
 			<menus>
 				<Menu mnemonicParsing="true" text="_Modules">
 					<items>
-						<MenuItem fx:id="menuItemRTCResultsAnalysis" mnemonicParsing="true" onAction="#handleMenuItemRTCResultsAnalysis" text="_RTC Results Analysis" visible="false" />
-						<MenuItem fx:id="menuItemTtest" mnemonicParsing="true" onAction="#handleMenuItemTtest" text="_T-test Analysis" visible="false" />
-						<MenuItem fx:id="menuItemBridgeClosureAnalysis" mnemonicParsing="true" onAction="#handleMenuItemBridgeClosureAnalysis" text="_Bridge Closure Analysis" visible="false" />
-						<MenuItem fx:id="menuItemMaintenanceWindowAnalysis" mnemonicParsing="true" onAction="#handleMenuItemMaintenanceWindowAnalysis" text="_Maintenance Window Analysis" visible="false" />
-						<MenuItem fx:id="menuItemRadixxResSsimConversion" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversion" text="Radixx Res _SSIM Conversion" visible="false" />
-                  		<MenuItem fx:id="menuItemGradeXingSpeeds" mnemonicParsing="true" onAction="#handleMenuItemGradeXingSpeeds" text="Grade _Crossing Speed Analysis" visible="false" />
+                  <Menu mnemonicParsing="false" text="Operations">
+                    <items>
+      						<MenuItem fx:id="menuItemRTCResultsAnalysis" mnemonicParsing="true" onAction="#handleMenuItemRTCResultsAnalysis" text="_RTC Results Analysis" visible="false" />
+      						<MenuItem fx:id="menuItemTtest" mnemonicParsing="true" onAction="#handleMenuItemTtest" text="_T-test Analysis" visible="false" />
+      						<MenuItem fx:id="menuItemBridgeClosureAnalysis" mnemonicParsing="true" onAction="#handleMenuItemBridgeClosureAnalysis" text="_Bridge Closure Analysis" visible="false" />
+      						<MenuItem fx:id="menuItemMaintenanceWindowAnalysis" mnemonicParsing="true" onAction="#handleMenuItemMaintenanceWindowAnalysis" text="_Maintenance Window Analysis" visible="false" />
+                        	<MenuItem fx:id="menuItemGradeXingSpeeds" mnemonicParsing="true" onAction="#handleMenuItemGradeXingSpeeds" text="Grade _Crossing Speed Analysis" visible="false" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Scheduling">
+                    <items>
+      						<MenuItem fx:id="menuItemRadixxResSsimConversion" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversion" text="Radixx Res _SSIM Conversion" visible="false" />
+                    </items>
+                  </Menu>
 						<SeparatorMenuItem />
 						<MenuItem fx:id="menuItemExit" mnemonicParsing="true" onAction="#handleMenuItemExit" text="E_xit" />
 					</items>
@@ -41,12 +49,20 @@
 					<items>
                   <Menu fx:id="subMenuModuleConfig" mnemonicParsing="false" text="Module Config" visible="false">
                     <items>
-      					<MenuItem fx:id="menuItemRTCResultsAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemRTCResultsAnalysisConfig" text="RTC Results Analysis" visible="false" />
-                        <MenuItem fx:id="menuItemTTestConfig" mnemonicParsing="false" onAction="#handleMenuItemTTestConfig" text="T-Test Analysis" visible="false" />
-                        <MenuItem fx:id="menuItemBridgeClosureAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemBridgeClosureAnalysisConfig" text="Bridge Closure Analysis" visible="false" />
-                        <MenuItem fx:id="menuItemRadixxResSsimConversionConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimConversionConfig" text="Radixx Res Ssim Conversion" visible="false" />
-                        <MenuItem fx:id="menuItemMaintenanceWindowAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemMaintenanceWindowAnalysisConfig" text="Maintenance Window Analysis" visible="false" />
-                    	<MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
+                        <Menu mnemonicParsing="false" text="Operations">
+                          <items>
+            					<MenuItem fx:id="menuItemRTCResultsAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemRTCResultsAnalysisConfig" text="RTC Results Analysis" visible="false" />
+                              <MenuItem fx:id="menuItemTTestConfig" mnemonicParsing="false" onAction="#handleMenuItemTTestConfig" text="T-Test Analysis" visible="false" />
+                              <MenuItem fx:id="menuItemBridgeClosureAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemBridgeClosureAnalysisConfig" text="Bridge Closure Analysis" visible="false" />
+                              <MenuItem fx:id="menuItemMaintenanceWindowAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemMaintenanceWindowAnalysisConfig" text="Maintenance Window Analysis" visible="false" />
+                          	<MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
+                          </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Scheduling">
+                          <items>
+                              <MenuItem fx:id="menuItemRadixxResSsimConversionConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimConversionConfig" text="Radixx Res Ssim Conversion" visible="false" />
+                          </items>
+                        </Menu>
                     </items>
                   </Menu>
 						<MenuItem fx:id="menuItemGeneralConfig" mnemonicParsing="false" onAction="#handleMenuItemGeneralConfig" text="General Config" visible="false" />
