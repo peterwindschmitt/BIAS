@@ -147,7 +147,7 @@ public class BIASGradeXingSpeedsConfigController
 		disableEvaluateThroughGradeCrossingSpeeds = passengerSpeedCheckBox.selectedProperty().not().and(localSpeedCheckBox.selectedProperty().not());
 		throughSpeedCheckBox.disableProperty().bind(disableEvaluateThroughGradeCrossingSpeeds);
 		
-		disableEvaluateLocalGradeCrossingSpeeds = passengerSpeedCheckBox.selectedProperty().not().and(throughSpeedCheckBox.selectedProperty().not());
+		disableEvaluateLocalGradeCrossingSpeeds = throughSpeedCheckBox.selectedProperty().not().and(passengerSpeedCheckBox.selectedProperty().not());
 		localSpeedCheckBox.disableProperty().bind(disableEvaluateLocalGradeCrossingSpeeds);
 	}
 

@@ -92,6 +92,10 @@ public class BIASParseConfigPageController
 	private static String o_warmUpExclusion;
 	private static String o_coolDownExclusion;
 	private static String o_commaDelimitedRouteFile;
+	private static String o_trainGroupName;
+	private static String o_trainGroupAbbreviation;
+	private static String o_trainTypeName;
+	private static String o_trainTypeGroup;
 
 	// Data from .LINE file
 	private static String w_lineName;
@@ -545,7 +549,11 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Simulation Duration", "o_simulationDuration", Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[1])),
 				new ParseLocationFormatB("Warm-up Exclusion", "o_warmUpExclusion", Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[1])),
 				new ParseLocationFormatB("Cool-down Exclusion", "o_coolDownExclusion", Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[1])),
-				new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1]))
+				new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1])),
+				new ParseLocationFormatB("Train Group Name", "o_trainGroupName", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])),
+				new ParseLocationFormatB("Train Group Abbreviation", "o_trainGroupAbbreviation", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])),
+				new ParseLocationFormatB("Train Type Name", "o_trainTypeName", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])),
+				new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1]))
 				);
 
 		parseLocationsTable8.setItems(parseData8);
@@ -800,6 +808,10 @@ public class BIASParseConfigPageController
 			prefs.remove("o_warmUpExclusion");
 			prefs.remove("o_coolDownExclusion");
 			prefs.remove("o_commaDelimitedRouteFile");
+			prefs.remove("o_trainGroupName");
+			prefs.remove("o_trainGroupAbbreviation");
+			prefs.remove("o_trainTypeName");
+			prefs.remove("o_trainTypeGroup");
 
 			// Table 9
 			prefs.remove("w_lineName");
@@ -994,7 +1006,11 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Simulation Duration", "o_simulationDuration", Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[1])),
 					new ParseLocationFormatB("Warm-up Exclusion", "o_warmUpExclusion", Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[1])),
 					new ParseLocationFormatB("Cool-down Exclusion", "o_coolDownExclusion", Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[1])),
-					new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1]))
+					new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1])),
+					new ParseLocationFormatB("Train Group Name", "o_trainGroupName", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])),
+					new ParseLocationFormatB("Train Group Abbreviation", "o_trainGroupAbbreviation", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])),
+					new ParseLocationFormatB("Train Type Name", "o_trainTypeName", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])),
+					new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1]))
 					);
 
 			startColumn8.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -2088,7 +2104,7 @@ public class BIASParseConfigPageController
 			previousPageButton.setDisable(false);
 			nextPageButton.setDisable(false);
 
-			parseRangeLabel.setText("Parameters parsed from .OPTION file:");
+			parseRangeLabel.setText("Parameters parsed from .OPTION file (scroll down for complete list):");
 			parseLocationsTable1.setVisible(false);
 			parseLocationsTable2.setVisible(false);
 			parseLocationsTable3.setVisible(false);
@@ -2299,7 +2315,7 @@ public class BIASParseConfigPageController
 			previousPageButton.setDisable(false);
 			nextPageButton.setDisable(false);
 
-			parseRangeLabel.setText("Parameters parsed from .OPTION file:");
+			parseRangeLabel.setText("Parameters parsed from .OPTION file (scroll down for complete list):");
 			parseLocationsTable1.setVisible(false);
 			parseLocationsTable2.setVisible(false);
 			parseLocationsTable3.setVisible(false);
@@ -2846,6 +2862,42 @@ public class BIASParseConfigPageController
 			o_commaDelimitedRouteFile = "46,49";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("o_commaDelimitedRouteFile", o_commaDelimitedRouteFile);
+		}
+
+		// Train group name
+		if (prefs.get("o_trainGroupName", null) == null)
+		{
+			// Write value for subsequent runs
+			o_trainGroupName = "8,25";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_trainGroupName", o_trainGroupName);
+		}
+
+		// Train group abbreviation
+		if (prefs.get("o_trainGroupAbbreviation", null) == null)
+		{
+			// Write value for subsequent runs
+			o_trainGroupAbbreviation = "30,33";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_trainGroupAbbreviation", o_trainGroupAbbreviation);
+		}
+
+		// Train type name
+		if (prefs.get("o_trainTypeName", null) == null)
+		{
+			// Write value for subsequent runs
+			o_trainTypeName = "8,30";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_trainTypeName", o_trainTypeName);
+		}
+
+		// Train type group
+		if (prefs.get("o_trainTypeGroup", null) == null)
+		{
+			// Write value for subsequent runs
+			o_trainTypeGroup = "38,42";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_trainTypeGroup", o_trainTypeGroup);
 		}
 
 		// Table 9
@@ -3744,6 +3796,30 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] o_getTrainGroupName()
+	{
+		String[] values = prefs.get("o_trainGroupName", o_trainGroupName).split(",");
+		return values;
+	}
+
+	public static String[] o_getTrainGroupAbbreviation()
+	{
+		String[] values = prefs.get("o_trainGroupAbbreviation", o_trainGroupAbbreviation).split(",");
+		return values;
+	}
+
+	public static String[] o_getTrainTypeName()
+	{
+		String[] values = prefs.get("o_trainTypeName", o_trainTypeName).split(",");
+		return values;
+	}
+
+	public static String[] o_getTrainTypeGroup()
+	{
+		String[] values = prefs.get("o_trainTypeGroup", o_trainTypeGroup).split(",");
+		return values;
+	}
+	
 	public static String[] w_getLineName()
 	{
 		String[] values = prefs.get("w_lineName", w_lineName).split(",");
@@ -4127,25 +4203,25 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("p_node", "p_node").split(",");
 		return values;
 	}
-	
+
 	public static String[] p_getFieldMarker()
 	{
 		String[] values = prefs.get("p_fieldMarker", "p_fieldMarker").split(",");
 		return values;
 	}
-	
+
 	public static String[] p_getDesignSpeed()
 	{
 		String[] values = prefs.get("p_designSpeed", "p_designSpeed").split(",");
 		return values;
 	}
-	
+
 	public static String[] p_getCurrentSpeed()
 	{
 		String[] values = prefs.get("p_currentSpeed", "p_currentSpeed").split(",");
 		return values;
 	}
-	
+
 	private static class CustomIntegerStringConverter extends IntegerStringConverter 
 	{
 		private final IntegerStringConverter converter = new IntegerStringConverter();

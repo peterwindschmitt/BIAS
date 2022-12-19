@@ -11,14 +11,14 @@ import java.util.Scanner;
 
 import com.bl.bias.exception.ErrorShutdown; 
 
-public class BIASPreprocessTrainsForGradeXingSpeedAalysis 
+public class BIASPreprocessTrainsForGradeXingSpeedAnalysis 
 {
 	private static HashSet<String> tpcIncrementsIncludingUnits = new HashSet<String>();
 	private static HashSet<Integer> tpcIncrementsDigitsOnly = new HashSet<Integer>();
 	private static HashSet<String> availableTrains = new HashSet<String>();
 	private static List<String> sortedTrains;
 
-	public BIASPreprocessTrainsForGradeXingSpeedAalysis(File tpcFile) 
+	public BIASPreprocessTrainsForGradeXingSpeedAnalysis(File tpcFile) 
 	{
 		tpcIncrementsIncludingUnits.clear();
 		tpcIncrementsDigitsOnly.clear();

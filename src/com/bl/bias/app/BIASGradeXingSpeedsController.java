@@ -39,8 +39,9 @@ public class BIASGradeXingSpeedsController
 
 	private static Boolean continueAnalysis = true;
 
-	BIASPreprocessTrainsForGradeXingSpeedAalysis getPrelimData;
-
+	BIASPreprocessTrainsForGradeXingSpeedAnalysis getPrelimDataTPC;
+	BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis getPrelimDataGroupNames;
+	
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
@@ -234,6 +235,7 @@ public class BIASGradeXingSpeedsController
 			Boolean linkFileFound = false;
 			Boolean nodeFileFound = false;
 			Boolean optionFileFound = false;
+			Boolean trainFileFound = false;
 
 			// Reset comobox entries and checkbox status
 			executeButton.setDisable(true);
@@ -254,12 +256,24 @@ public class BIASGradeXingSpeedsController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("gx_lastDirectoryForGradeXingSpeedAnalysis", file.getParent());
 
-			// Check that .LINK, .OPTION and .NODE files exist
+			// Check that .LINK, .OPTION, .TRAIN and .NODE files exist
 			File linkFile = new File(file.getParent(), fileAsString.replace(".TPC", ".LINK"));
 			if (linkFile.exists())
 				linkFileFound = true;
 			else
 				message += "\n.LINK file is missing!";
+
+			File optionFile = new File(file.getParent(), fileAsString.replace(".TPC", ".OPTION"));
+			if (optionFile.exists())
+				optionFileFound = true;
+			else
+				message += "\n.OPTION file is missing!";
+			
+			File trainFile = new File(file.getParent(), fileAsString.replace(".TPC", ".TRAIN"));
+			if (trainFile.exists())
+				trainFileFound = true;
+			else
+				message += "\n.TRAIN file is missing!";
 
 			File nodeFile = new File(file.getParent(), fileAsString.replace(".TPC", ".NODE"));
 			if (nodeFile.exists())
@@ -267,37 +281,33 @@ public class BIASGradeXingSpeedsController
 			else
 				message += "\n.NODE file is missing!";
 
-
-			File optionFile = new File(file.getParent(), fileAsString.replace(".TPC", ".OPTION"));
-			if (optionFile.exists())
-				optionFileFound = true;
-			else
-				message += "\n.OPTION file is missing!";
-
-			if (linkFileFound && nodeFileFound && optionFileFound)
+			if (linkFileFound && optionFileFound && trainFileFound && nodeFileFound )
 			{
+				// Generate group names and abbreviations
+				getPrelimDataGroupNames = new BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis(optionFile);
+				
 				// Check .TPC file to generate entries for textfield 
-				getPrelimData = new BIASPreprocessTrainsForGradeXingSpeedAalysis(file);
+				getPrelimDataTPC = new BIASPreprocessTrainsForGradeXingSpeedAnalysis(file);
 
-				if (getPrelimData.returnTPCIncrementsIncludingUnits().size() > 1)
+				if (getPrelimDataTPC.returnTPCIncrementsIncludingUnits().size() > 1)
 				{
 					message += "\nUnable to perform analysis due to multiple TPC increments used in TPC file";
 				}
-				else if (getPrelimData.returnTPCIncrementsIncludingUnits().size() == 0)
+				else if (getPrelimDataTPC.returnTPCIncrementsIncludingUnits().size() == 0)
 				{
 					message += "\nUnable to perform analysis due to no TPC increment specified in TPC file";
 				}
 				else
 				{
 					// Check that .TPC increment is equal to or smaller than the maximum user-configurable TPC increment
-					if (Collections.max(getPrelimData.returnTPCIncrementsDigitsOnly()) <= BIASGradeXingSpeedsConfigController.getMaxTpcIncrement())
+					if (Collections.max(getPrelimDataTPC.returnTPCIncrementsDigitsOnly()) <= BIASGradeXingSpeedsConfigController.getMaxTpcIncrement())
 					{
 						// Check .OPTION file to make sure that correct parameters are selected
 						BIASValidateOptionsSchemeB.bIASCheckOptionFiles(optionFile);
 	
 						if (BIASValidateOptionsSchemeB.getOptionsFilesFormattedCorrectly())
 						{
-							if (getPrelimData.returnAvailableTrains().size() > 0)
+							if (getPrelimDataTPC.returnAvailableTrains().size() > 0)
 							{
 								trainsInTpcFileLabel.setDisable(false);
 	
@@ -305,10 +315,10 @@ public class BIASGradeXingSpeedsController
 								trainsInTpcFileTextArea.setEditable(false);
 								trainsInTpcFileTextArea.clear();
 	
-								for (int i = 0; i < getPrelimData.returnAvailableTrains().size(); i++)
-									trainsInTpcFileTextArea.appendText(getPrelimData.returnAvailableTrains().get(i)+"\n");
+								for (int i = 0; i < getPrelimDataTPC.returnAvailableTrains().size(); i++)
+									trainsInTpcFileTextArea.appendText(getPrelimDataTPC.returnAvailableTrains().get(i)+"\n");
 	
-								message += "\nFound "+getPrelimData.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimData.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
+								message += "\nFound "+getPrelimDataTPC.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimDataTPC.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
 	
 								executeButton.setDisable(false);
 							}
@@ -320,8 +330,7 @@ public class BIASGradeXingSpeedsController
 						else
 						{
 							message += "\nUnable to perform analysis due to invalid output format and/or speed/distance units in .OPTION file\n";
-						}
-						
+						}			
 					}
 					else
 					{
