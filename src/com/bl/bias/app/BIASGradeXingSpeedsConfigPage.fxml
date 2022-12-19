@@ -40,22 +40,22 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label disable="true" text="1.  In the RTC .TPC file, consider trains from the following 'Train Groups':" GridPane.rowIndex="2">
+            <Label text="1.  In the RTC .TPC file, consider trains from the following 'Train Groups':" GridPane.rowIndex="2">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="passengerSpeedCheckBox" disable="true" mnemonicParsing="false" selected="true" text="Passenger" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <CheckBox fx:id="passengerSpeedCheckBox" mnemonicParsing="false" onAction="#handlePassengerSpeedCheckBox" text="Passenger" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="throughSpeedCheckBox" disable="true" mnemonicParsing="false" selected="true" text="Through" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <CheckBox fx:id="throughSpeedCheckBox" mnemonicParsing="false" onAction="#handleThroughSpeedCheckBox" text="Through" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="100.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="localSpeedCheckBox" disable="true" mnemonicParsing="false" selected="true" text="Local" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <CheckBox fx:id="localSpeedCheckBox" mnemonicParsing="false" onAction="#handleLocalSpeedCheckBox" text="Local" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="190.0" />
                </GridPane.margin>

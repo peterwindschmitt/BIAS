@@ -2,6 +2,7 @@ package com.bl.bias.app;
 
 import java.util.prefs.Preferences;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,16 +16,23 @@ public class BIASGradeXingSpeedsConfigController
 	private static Preferences prefs;
 
 	private static Integer maxTpcIncrement;
-	
+
 	private static Boolean evaluatePassengerGradeCrossingSpeeds;
 	private static Boolean evaluateThroughGradeCrossingSpeeds;
 	private static Boolean evaluateLocalGradeCrossingSpeeds;
 	private static Boolean generateInconsistentNodeNameSheet;
 
+	private static Boolean defaultEvaluatePassengerGradeCrossingSpeeds = true;
+	private static Boolean defaultEvaluateThroughGradeCrossingSpeeds = true;
+	private static Boolean defaultEvaluateLocalGradeCrossingSpeeds = true;
 	private static Boolean defaultGenerateInconsistentNodeNameSheet = true;
 	
-	private static String defaultMaxTpcIncrement = "50";  
+	private static BooleanBinding disableEvaluatePassengerGradeCrossingSpeeds;
+	private static BooleanBinding disableEvaluateThroughGradeCrossingSpeeds;
+	private static BooleanBinding disableEvaluateLocalGradeCrossingSpeeds;
 	
+	private static String defaultMaxTpcIncrement = "50";  
+
 	private static ObservableList<String> tpcIncrementValues =  FXCollections.observableArrayList("25", "50", "100", "250");
 
 	@FXML private ComboBox<String> maxTpcIncrementComboBox;
@@ -38,15 +46,64 @@ public class BIASGradeXingSpeedsConfigController
 
 	@FXML private void initialize()
 	{
-		// Below is hard-coded to only compute all trains in the .TPC file for the time being
-		evaluatePassengerGradeCrossingSpeeds = true;
-		evaluateThroughGradeCrossingSpeeds = true;
-		evaluateLocalGradeCrossingSpeeds = true;
-
 		maxTpcIncrementComboBox.setItems(tpcIncrementValues);
 
 		// Check for prefs
 		prefs = Preferences.userRoot().node("BIAS");
+
+		// See if preference is stored to evaluate Passenger Group crossing speeds
+		if (prefs.getBoolean("gx_evaluatePassengerGradeCrossingSpeeds", defaultEvaluatePassengerGradeCrossingSpeeds))
+		{
+			evaluatePassengerGradeCrossingSpeeds = true;
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.putBoolean("gx_evaluatePassengerGradeCrossingSpeeds", true);
+			}
+
+			passengerSpeedCheckBox.setSelected(true);
+		}
+		else
+		{
+			evaluatePassengerGradeCrossingSpeeds = false;
+			passengerSpeedCheckBox.setSelected(false);
+		}
+
+		// See if preference is stored to evaluate Through Group crossing speeds
+		if (prefs.getBoolean("gx_evaluateThroughGradeCrossingSpeeds", defaultEvaluateThroughGradeCrossingSpeeds))
+		{
+			evaluateThroughGradeCrossingSpeeds = true;
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.putBoolean("gx_evaluateThroughGradeCrossingSpeeds", true);
+			}
+
+			throughSpeedCheckBox.setSelected(true);
+		}
+		else
+		{
+			evaluateThroughGradeCrossingSpeeds = false;
+			throughSpeedCheckBox.setSelected(false);
+		}
+
+		// See if preference is stored to evaluate Local Group crossing speeds
+		if (prefs.getBoolean("gx_evaluateLocalGradeCrossingSpeeds", defaultEvaluateLocalGradeCrossingSpeeds))
+		{
+			evaluateLocalGradeCrossingSpeeds = true;
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.putBoolean("gx_evaluateLocalGradeCrossingSpeeds", true);
+			}
+
+			localSpeedCheckBox.setSelected(true);
+		}
+		else
+		{
+			evaluateLocalGradeCrossingSpeeds = false;
+			localSpeedCheckBox.setSelected(false);
+		}
 
 		// See if preference is stored to generate inconsistently named nodes spreadsheet
 		if (prefs.getBoolean("gx_generateInconsistentNodeNameSheet", defaultGenerateInconsistentNodeNameSheet))
@@ -68,7 +125,7 @@ public class BIASGradeXingSpeedsConfigController
 
 		// See if preference is stored to for max TPC increment
 		boolean maxTpcIncrementExists = prefs.get("gx_maxTpcIncrement", null) != null;
-		
+
 		if (maxTpcIncrementExists)
 		{
 			maxTpcIncrementComboBox.getSelectionModel().select(prefs.get("gx_maxTpcIncrement", defaultMaxTpcIncrement));
@@ -78,10 +135,20 @@ public class BIASGradeXingSpeedsConfigController
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("gx_maxTpcIncrement", defaultMaxTpcIncrement);
-			
+
 			maxTpcIncrementComboBox.getSelectionModel().select(defaultMaxTpcIncrement);
 			maxTpcIncrement = Integer.valueOf(defaultMaxTpcIncrement);
 		}
+		
+		// Set up Boolean Bindings
+        disableEvaluatePassengerGradeCrossingSpeeds = throughSpeedCheckBox.selectedProperty().not().and(localSpeedCheckBox.selectedProperty().not());
+		passengerSpeedCheckBox.disableProperty().bind(disableEvaluatePassengerGradeCrossingSpeeds);
+		
+		disableEvaluateThroughGradeCrossingSpeeds = passengerSpeedCheckBox.selectedProperty().not().and(localSpeedCheckBox.selectedProperty().not());
+		throughSpeedCheckBox.disableProperty().bind(disableEvaluateThroughGradeCrossingSpeeds);
+		
+		disableEvaluateLocalGradeCrossingSpeeds = passengerSpeedCheckBox.selectedProperty().not().and(throughSpeedCheckBox.selectedProperty().not());
+		localSpeedCheckBox.disableProperty().bind(disableEvaluateLocalGradeCrossingSpeeds);
 	}
 
 	public static Boolean getEvaluatePassengerSpeeds()
@@ -103,10 +170,58 @@ public class BIASGradeXingSpeedsConfigController
 	{
 		return generateInconsistentNodeNameSheet;
 	}
-	
+
 	public static Integer getMaxTpcIncrement()
 	{
 		return maxTpcIncrement;
+	}
+
+	@FXML private void handlePassengerSpeedCheckBox(ActionEvent event) 
+	{
+		if (evaluatePassengerGradeCrossingSpeeds)
+		{
+			evaluatePassengerGradeCrossingSpeeds = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("gx_evaluatePassengerGradeCrossingSpeeds", false);
+		}
+		else
+		{
+			evaluatePassengerGradeCrossingSpeeds = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("gx_evaluatePassengerGradeCrossingSpeeds", true);
+		}
+	}
+
+	@FXML private void handleThroughSpeedCheckBox(ActionEvent event) 
+	{
+		if (evaluateThroughGradeCrossingSpeeds)
+		{
+			evaluateThroughGradeCrossingSpeeds = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("gx_evaluateThroughGradeCrossingSpeeds", false);
+		}
+		else
+		{
+			evaluateThroughGradeCrossingSpeeds = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("gx_evaluateThroughGradeCrossingSpeeds", true);
+		}
+	}
+
+	@FXML private void handleLocalSpeedCheckBox(ActionEvent event) 
+	{
+		if (evaluateLocalGradeCrossingSpeeds)
+		{
+			evaluateLocalGradeCrossingSpeeds = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("gx_evaluateLocalGradeCrossingSpeeds", false);
+		}
+		else
+		{
+			evaluateLocalGradeCrossingSpeeds = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("gx_evaluateLocalGradeCrossingSpeeds", true);
+		}
 	}
 
 	@FXML private void handleGenerateInconsistentNodeNameSheetTrueRadioButton(ActionEvent event) 
