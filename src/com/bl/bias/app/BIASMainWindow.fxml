@@ -27,7 +27,7 @@
 			<menus>
 				<Menu mnemonicParsing="true" text="_Modules">
 					<items>
-                  <Menu mnemonicParsing="false" text="Operations">
+                  <Menu mnemonicParsing="false" text="Simulation">
                     <items>
       						<MenuItem fx:id="menuItemRTCResultsAnalysis" mnemonicParsing="true" onAction="#handleMenuItemRTCResultsAnalysis" text="_RTC Results Analysis" visible="false" />
       						<MenuItem fx:id="menuItemTtest" mnemonicParsing="true" onAction="#handleMenuItemTtest" text="_T-test Analysis" visible="false" />
@@ -49,7 +49,7 @@
 					<items>
                   <Menu fx:id="subMenuModuleConfig" mnemonicParsing="false" text="Module Config" visible="false">
                     <items>
-                        <Menu mnemonicParsing="false" text="Operations">
+                        <Menu mnemonicParsing="false" text="Simulation">
                           <items>
             					<MenuItem fx:id="menuItemRTCResultsAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemRTCResultsAnalysisConfig" text="RTC Results Analysis" visible="false" />
                               <MenuItem fx:id="menuItemTTestConfig" mnemonicParsing="false" onAction="#handleMenuItemTTestConfig" text="T-Test Analysis" visible="false" />
