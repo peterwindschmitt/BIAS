@@ -6,16 +6,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
 import com.bl.bias.objects.GradeXingTraversal;
-import com.bl.bias.read.ReadGradeXingAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteGradeXingFiles1
@@ -85,6 +81,9 @@ public class WriteGradeXingFiles1
 		cell = row.createCell(6);
 		cell.setCellStyle(style1);
 		cell.setCellValue("Min Anticipated Speed");
+		cell = row.createCell(7);
+		cell.setCellStyle(style1);
+		cell.setCellValue("Max Design Speed - Max Anticipated Speed");
 		rowCounter++;
 		
 		// For each traversal
@@ -112,6 +111,9 @@ public class WriteGradeXingFiles1
 			cell = row.createCell(6);
 			cell.setCellStyle(style1);
 			cell.setCellValue(traversals.get(i).getLowestObservedSpeed());
+			cell = row.createCell(7);
+			cell.setCellStyle(style1);
+			cell.setCellValue(traversals.get(i).getMaxDesignVsObservedSpeedDifference());
 			
 			rowCounter++;
 		}

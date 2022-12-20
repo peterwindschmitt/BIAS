@@ -75,4 +75,10 @@ public class GradeXingTraversal
 	{
 		return lowestDesignSpeed;
 	}
+
+	public Double getMaxDesignVsObservedSpeedDifference() 
+	{
+		double maxDesignVsObservedSpeedDifference = highestDesignSpeed - highestObservedSpeed;
+		return maxDesignVsObservedSpeedDifference;
+	}
 }
