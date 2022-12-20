@@ -1,21 +1,24 @@
 
-package com.bl.bias.app;
+package com.bl.bias.tools;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown; 
 
-public class BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis 
+public class AssignTrainTypeNameToTrainGroupName 
 {
-	private static HashMap<String, String> trainGroupNamesAndAbbreviations = new HashMap<String, String>();
-	private static HashMap<String, String> trainTypeNameToGroup = new HashMap<String, String>();
+	private static HashMap<String, String> trainGroupAbbreviationToTrainGroupName = new HashMap<String, String>();
+	private static HashMap<String, String> trainTypeNameToTrainGroupAbbreviation = new HashMap<String, String>();
+	private static HashMap<String, String> trainTypeNameToTrainGroupName = new HashMap<String, String>();
 
-	public BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis(File optionFile) 
+	public AssignTrainTypeNameToTrainGroupName(File optionFile) 
 	{
-		trainGroupNamesAndAbbreviations.clear();
-		trainTypeNameToGroup.clear();
+		trainGroupAbbreviationToTrainGroupName.clear();
+		trainTypeNameToTrainGroupAbbreviation.clear();
+		trainTypeNameToTrainGroupName.clear();
 
 		Scanner scanner = null;
 
@@ -48,10 +51,12 @@ public class BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis
 				}
 				else if ((rowNumber >= startRowNumber) && (openingSequence == true))
 				{
-					trainGroupNamesAndAbbreviations.put(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])).trim(),
-							lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])).trim());
+					String keyToWrite = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])).trim();
+					String valueToWrite = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])).trim();
+					
+					trainGroupAbbreviationToTrainGroupName.put(keyToWrite, valueToWrite);
 				}
-			}		
+			}	
 		}
 		catch (Exception e) 
 		{
@@ -62,7 +67,7 @@ public class BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis
 			scanner.close();
 		}
 
-		// Train Type Name to Group
+		// Train Type Name to Train Group Abbreviation
 		try 
 		{
 			scanner = new Scanner(optionFile);
@@ -91,15 +96,15 @@ public class BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis
 				}
 				else if ((rowNumber >= startRowNumber) && (openingSequence == true))
 				{
-					String trainGroupName = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1])).trim();
+					String trainGroupAbbreviation = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1])).trim();
 					String trainTypeName = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])).trim();
 					
 					if (trainTypeName != "")
 					{
-						trainTypeNameToGroup.put(trainTypeName, trainGroupName);
+						trainTypeNameToTrainGroupAbbreviation.put(trainTypeName, trainGroupAbbreviation);
 					}
 				}
-			}		
+			}
 		}
 		catch (Exception e) 
 		{
@@ -109,10 +114,18 @@ public class BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis
 		{
 			scanner.close();
 		}
+		
+		// Join above to create a Train Type Name to Train Group Name
+		for (int i = 0; i < trainTypeNameToTrainGroupAbbreviation.size(); i++)
+		{
+			String keyToWrite = trainTypeNameToTrainGroupAbbreviation.keySet().toArray()[i].toString();
+			String valueToWrite = trainGroupAbbreviationToTrainGroupName.get(trainTypeNameToTrainGroupAbbreviation.get(trainTypeNameToTrainGroupAbbreviation.keySet().toArray()[i].toString()));
+			trainTypeNameToTrainGroupName.put(keyToWrite, valueToWrite);
+		}
 	}
 
-	public HashMap<String, String> returnTrainGroupNamesAndAbbreviations()
+	public static HashMap<String, String> returnTrainTypeNameToTrainGroupName()
 	{
-		return trainGroupNamesAndAbbreviations;
+		return trainTypeNameToTrainGroupName;
 	}
 }

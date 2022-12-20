@@ -9,6 +9,7 @@ import java.util.prefs.Preferences;
 import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadGradeXingAnalysisFiles;
+import com.bl.bias.tools.AssignTrainTypeNameToTrainGroupName;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteGradeXingFiles3;
 
@@ -40,7 +41,7 @@ public class BIASGradeXingSpeedsController
 	private static Boolean continueAnalysis = true;
 
 	BIASPreprocessTrainsForGradeXingSpeedAnalysis getPrelimDataTPC;
-	BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis getPrelimDataGroupNames;
+	AssignTrainTypeNameToTrainGroupName getPrelimDataGroupNames;
 	
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
@@ -284,7 +285,7 @@ public class BIASGradeXingSpeedsController
 			if (linkFileFound && optionFileFound && trainFileFound && nodeFileFound )
 			{
 				// Generate group names and abbreviations
-				getPrelimDataGroupNames = new BIASPreprocessTrainGroupsAndTypesForGradeXingSpeedAnalysis(optionFile);
+				getPrelimDataGroupNames = new AssignTrainTypeNameToTrainGroupName(optionFile);
 				
 				// Check .TPC file to generate entries for textfield 
 				getPrelimDataTPC = new BIASPreprocessTrainsForGradeXingSpeedAnalysis(file);
@@ -378,27 +379,34 @@ public class BIASGradeXingSpeedsController
 		displayMessage("\n\n"+message+"\n");
 
 		setProgressIndicator(0.33);
-
-		//  Perform Analysis
-		GradeXingSpeedsAnalysis analyzeData = new GradeXingSpeedsAnalysis();
-		message = analyzeData.getResultsMessage();
-		displayMessage(analyzeData.getResultsMessage());
-
-		setProgressIndicator(0.75);
-
-		// Write Results
-		writeFiles();
-		if (!WriteGradeXingFiles3.getErrorFound())
+		
+		if (ReadGradeXingAnalysisFiles.getValidTrainCount() > 0)
 		{
-			setProgressIndicator(1.0);
-			displayMessage("\n*** PROCESSING COMPLETE ***");
+			//  Perform Analysis
+			GradeXingSpeedsAnalysis analyzeData = new GradeXingSpeedsAnalysis();
+			message = analyzeData.getResultsMessage();
+			displayMessage(analyzeData.getResultsMessage());
+	
+			setProgressIndicator(0.75);
+	
+			// Write Results
+			writeFiles();
+			if (!WriteGradeXingFiles3.getErrorFound())
+			{
+				setProgressIndicator(1.0);
+				displayMessage("\n*** PROCESSING COMPLETE ***");
+			}
+			else
+			{
+				displayMessage("\nError in writing files");
+				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+			}
 		}
 		else
 		{
-			displayMessage("\nError in writing files");
-			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+			displayMessage("*** PROCESSING NOT COMPLETE!!! ***");
 		}
-
+		
 		// Prepare for next run
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
