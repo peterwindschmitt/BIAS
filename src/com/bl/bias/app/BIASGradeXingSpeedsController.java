@@ -344,7 +344,10 @@ public class BIASGradeXingSpeedsController
 		}
 		else
 			message += "\n\nUnable to perform analysis due to missing TPC file";
-
+		
+		//  Ready to execute
+		message += "\nSet to perform grade crossing speed analysis on case "+fileAsString.replace(".TPC", "");
+		
 		displayMessage(message);
 	}                   
 

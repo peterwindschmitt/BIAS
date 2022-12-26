@@ -375,6 +375,32 @@ public class RadixxFlightLegOutput
 							});
 							break;
 						} 
+						
+						// Check #5:  Check that origin and destination locations are valid
+						HashSet<String> validLocationCodes = new HashSet<String>(); 
+						for (int i = 0; i < BIASRadixxResSsimConversionConfigPageController.getPermittedLocationCodes().split(",").length; i++)
+						{
+							validLocationCodes.add(BIASRadixxResSsimConversionConfigPageController.getPermittedLocationCodes().split(",")[i]);
+						}
+						
+						if ((!validLocationCodes.contains(departureStation)) || (!validLocationCodes.contains(arrivalStation)))   
+						{
+							validInput = false;
+
+							Platform.runLater(new Runnable()
+							{
+								@Override
+								public void run() 
+								{
+									Alert alert = new Alert(AlertType.ERROR);
+									alert.setTitle("Error");
+									alert.setHeaderText(null);
+									alert.setContentText("Invalid location found in spreadsheet row "+(excelRowCounter+1)+".");	
+									alert.showAndWait();
+								}
+							});
+							break;
+						}
 
 						if (validInput)
 						{
@@ -423,7 +449,7 @@ public class RadixxFlightLegOutput
 			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 		}	
 
-		// Check #5:  Make sure that a given O-D pair exists no more than once for each flightNumber for each date for each day of operation
+		// Check #6:  Make sure that a given O-D pair exists no more than once for each flightNumber for each date for each day of operation
 		// during the periodOfOperationStart and periodOfOperationEnd
 		// This check is done without reference to itineraryVariationIdentifier or legSequenceNumber
 		if (validInput)
