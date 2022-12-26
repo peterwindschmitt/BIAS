@@ -50,7 +50,7 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="3. Permissible IATA location codes (3 characters per code, codes separated by commas):" GridPane.rowIndex="5">
+            <Label text="3. Permissible location codes (3 characters per code, codes separated by commas):" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="31.0" />
                </GridPane.margin>
