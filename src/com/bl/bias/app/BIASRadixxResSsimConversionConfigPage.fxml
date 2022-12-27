@@ -27,45 +27,38 @@
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-            <RowConstraints minHeight="130.0" prefHeight="130.0" />
+            <RowConstraints minHeight="175.0" prefHeight="175.0" />
         </rowConstraints>
          <children>
-            <CheckBox fx:id="checkStasEqualCheckBox" disable="false" mnemonicParsing="false" onAction="#handleCheckStasEqualCheckBox" selected="true" text="1. Check that 'Passenger STA' and 'Train STA' are the same.  Same for 'Passenger STD' and 'Train STD'." wrapText="true" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <CheckBox fx:id="checkStasEqualOrLaterThanStdsCheckBox" mnemonicParsing="false" onAction="#handleCheckStasEqualOrLaterThanStdsCheckBox" selected="true" text="2. Check that 'Passenger STA' is the same as or after 'Passenger STD'.  Same for 'Train STA' and 'Train STD'." wrapText="true" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <Label text="Radixx Conversion Parameters (when Converting from Spreadsheet to SSIM)" underline="true">
+            <Label text="Radixx Conversion Parameters from Spreadsheet to SSIM" underline="true">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="3. Permissible location codes (3 characters per code, codes separated by commas):" GridPane.rowIndex="5">
+            <CheckBox fx:id="checkStasEqualCheckBox" disable="false" mnemonicParsing="false" onAction="#handleCheckStasEqualCheckBox" selected="true" text="1. Verify that 'Passenger STA' and 'Train STA' are equal.  Same for 'Passenger STD' and 'Train STD'." wrapText="true" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Label text="2. Permissible location codes (3 characters per code, codes separated by commas):" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="31.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="permissibleLocationCodesTextField" onKeyTyped="#handleTextChangedTextField" GridPane.rowIndex="6">
+            <TextField fx:id="permissibleLocationCodesTextField" onKeyTyped="#handleTextChangedTextField" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="44.0" right="30.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="updateLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateLocationCodesButton" prefWidth="180.0" text="Update Location Codes" GridPane.rowIndex="7">
+            <Button fx:id="updateLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateLocationCodesButton" prefWidth="180.0" text="Update Location Codes" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="45.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="useLastSavedLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedLocationCodesButton" prefWidth="180.0" text="Use Last Saved Location Codes" GridPane.rowIndex="8">
+            <Button fx:id="useLastSavedLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedLocationCodesButton" prefWidth="180.0" text="Use Last Saved Location Codes" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets left="45.0" />
                </GridPane.margin>

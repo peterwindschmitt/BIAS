@@ -23,7 +23,6 @@ public class BIASLaunch extends Application
 	// 3.2 was 10/31/2022 (significantly sped up processing of bridge closure periods)
 	// 3.3 was 12/12/2022 (added checks #3 and #4 for SSIM conversion)
 	// 3.4 was 12/14/2022 (added submenus to GUI to group modules by functionality)
-	// 3.5 is xx/xx/xxxx (Need to finish Grade Xing Speed module configurability (enable train group logic.)
 	private final static String version = "3.4 (December 14, 2022)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 3;
  	//

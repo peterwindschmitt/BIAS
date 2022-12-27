@@ -319,8 +319,10 @@ public class BIASGradeXingSpeedsController
 								for (int i = 0; i < getPrelimDataTPC.returnAvailableTrains().size(); i++)
 									trainsInTpcFileTextArea.appendText(getPrelimDataTPC.returnAvailableTrains().get(i)+"\n");
 	
+								//  Ready to execute
 								message += "\nFound "+getPrelimDataTPC.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimDataTPC.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
-	
+								message += "\nSet to perform grade crossing speed analysis on case "+fileAsString.replace(".TPC", "");
+								
 								executeButton.setDisable(false);
 							}
 							else
@@ -344,9 +346,6 @@ public class BIASGradeXingSpeedsController
 		}
 		else
 			message += "\n\nUnable to perform analysis due to missing TPC file";
-		
-		//  Ready to execute
-		message += "\nSet to perform grade crossing speed analysis on case "+fileAsString.replace(".TPC", "");
 		
 		displayMessage(message);
 	}                   

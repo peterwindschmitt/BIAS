@@ -18,16 +18,13 @@ public class BIASRadixxResSsimConversionConfigPageController
 	private static Preferences prefs;
 
 	private static Boolean checkStasEqual;
-	private static Boolean checkStasEqualOrLaterThanStds;
 	private static String permittedLocationCodes;
 
 	private static Boolean defaultCheckStasEqual = true;
-	private static Boolean defaultCheckStasEqualOrLaterThanStds = true;
 	private static String defaultPermittedLocationCodes = "WPT,RRN,FBT,AVE,EKW"; 
 
 	@FXML private CheckBox checkStasEqualCheckBox;
-	@FXML private CheckBox checkStasEqualOrLaterThanStdsCheckBox;
-
+	
 	@FXML private Button updateLocationCodesButton;
 	@FXML private Button useLastSavedLocationCodesButton;
 
@@ -49,20 +46,6 @@ public class BIASRadixxResSsimConversionConfigPageController
 		{
 			checkStasEqual = false;
 			checkStasEqualCheckBox.setSelected(false);
-		}
-
-		// See if preference is stored for checking if Passenger STA is at the same time or after Passenger STD and that Train STA is at the same time or after Train STD
-		if (prefs.getBoolean("rs_checkStasEqualOrLaterThanStds", defaultCheckStasEqualOrLaterThanStds))
-		{
-			checkStasEqualOrLaterThanStds = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rs_checkStasEqualOrLaterThanStds", true);
-			checkStasEqualOrLaterThanStdsCheckBox.setSelected(true);
-		}
-		else
-		{
-			checkStasEqualOrLaterThanStds = false;
-			checkStasEqualOrLaterThanStdsCheckBox.setSelected(false);
 		}
 
 		// See if location codes are stored
@@ -99,27 +82,6 @@ public class BIASRadixxResSsimConversionConfigPageController
 	public static Boolean getCheckStasEqual()
 	{
 		return checkStasEqual;
-	}
-
-	@FXML private void handleCheckStasEqualOrLaterThanStdsCheckBox()
-	{
-		if (checkStasEqualOrLaterThanStds)
-		{
-			checkStasEqualOrLaterThanStds = false;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rs_checkStasEqualOrLaterThanStds", false);
-		}
-		else
-		{
-			checkStasEqualOrLaterThanStds = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rs_checkStasEqualOrLaterThanStds", true);
-		}
-	}
-
-	public static Boolean getCheckStasAtSameTimeOrLaterThanStds()
-	{
-		return checkStasEqualOrLaterThanStds;
 	}
 
 	@FXML private void handleUpdateLocationCodesButton()
