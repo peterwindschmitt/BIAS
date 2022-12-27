@@ -11,13 +11,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
 import com.bl.bias.app.BIASGradeXingSpeedsConfigController;
-import com.bl.bias.objects.GradeXingLink;
+import com.bl.bias.objects.GradeXingRawLink;
+import com.bl.bias.read.ReadGradeXingAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 {
-	private static ArrayList<GradeXingLink> gradeXingLinks = new ArrayList<GradeXingLink>();
-	
+	private static ArrayList<GradeXingRawLink> gradeXingRawLinks = new ArrayList<GradeXingRawLink>();
+
 	String resultsMessage = getResultsMessageWrite2();
 
 	public WriteGradeXingFiles3(String textAreaContents, String fileAsString)
@@ -26,9 +27,9 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 
 		if (BIASGradeXingSpeedsConfigController.getGenerateInconsisteneMaxSpeedSheet())
 		{	
-			XSSFSheet inconsistentMaxSpeedSheet = workbook.createSheet("Inconsistent Max Link Speeds");
+			XSSFSheet inconsistentMaxSpeedSheet = workbook.createSheet("Inconsistent Link Design Speeds");
 
-			gradeXingLinks = GradeXingSpeedsAnalysis.getGradeXingLinks();
+			gradeXingRawLinks = ReadGradeXingAnalysisFiles.getGradeXingRawLinks();
 
 			// Set styles
 			CellStyle style1 = workbook.createCellStyle();
@@ -70,52 +71,78 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 			cell.setCellValue("Node B"); // Node B
 			cell = row.createCell(2);
 			cell.setCellStyle(style1);
-			cell.setCellValue("A->B Max Passenger Speed");
+			cell.setCellValue("A->B Passenger Max Design Speed");
 			cell = row.createCell(3);
 			cell.setCellStyle(style1);
-			cell.setCellValue("B->A Max Passenger Speed");
+			cell.setCellValue("B->A Passenger Max Design Speed");
 			cell = row.createCell(4);
 			cell.setCellStyle(style1);
-			cell.setCellValue("A->B Max Through Speed");
+			cell.setCellValue("A->B Through Max Design Speed");
 			cell = row.createCell(5);
 			cell.setCellStyle(style1);
-			cell.setCellValue("B->A Max Through Speed");
+			cell.setCellValue("B->A Through Max Design Speed");
 			cell = row.createCell(6);
 			cell.setCellStyle(style1);
-			cell.setCellValue("A->B Max Local Speed");
+			cell.setCellValue("A->B Local Max Design Speed");
 			cell = row.createCell(7);
 			cell.setCellStyle(style1);
-			cell.setCellValue("B->A Max Local Speed");
+			cell.setCellValue("B->A Local Max Design Speed");
+
+
 			rowCounter++;
 
-			/* For each link
-			for (int i = 0; i < gradeXingLinks.size(); i++)
+			// For each link
+			for (int i = 0; i < gradeXingRawLinks.size(); i++)
 			{
-				if (!nodeNames.get(gradeXingLinks.get(i).getNodeA()).equals(nodeNames.get(gradeXingLinks.get(i).getNodeB())))
+				for (int j = 0; j < gradeXingRawLinks.size(); j++)
 				{
-					row = inconsistentMaxSpeedSheet.createRow(rowCounter);
-					cell = row.createCell(0);
-					cell.setCellStyle(style1);
-					cell.setCellValue(gradeXingLinks.get(i).getNodeA());
-					cell = row.createCell(1);
-					cell.setCellStyle(style1);
-					cell.setCellValue(nodeNames.get(gradeXingLinks.get(i).getNodeA()));
-					cell = row.createCell(2);
-					cell.setCellStyle(style1);
-					cell.setCellValue(gradeXingLinks.get(i).getNodeB());
-					cell = row.createCell(3);
-					cell.setCellStyle(style1);
-					cell.setCellValue(nodeNames.get(gradeXingLinks.get(i).getNodeB()));
-					rowCounter++;
+					if ((gradeXingRawLinks.get(i).getNodeA().equals(gradeXingRawLinks.get(j).getNodeB())) && 
+							(gradeXingRawLinks.get(i).getNodeB().equals(gradeXingRawLinks.get(j).getNodeA())))
+					{
+						if ((!gradeXingRawLinks.get(i).getPasssengerSpeed().equals(gradeXingRawLinks.get(j).getPasssengerSpeed())) || 
+								(!gradeXingRawLinks.get(i).getThroughSpeed().equals(gradeXingRawLinks.get(j).getThroughSpeed())) ||
+								(!gradeXingRawLinks.get(i).getLocalSpeed().equals(gradeXingRawLinks.get(j).getLocalSpeed())))
+						{
+							row = inconsistentMaxSpeedSheet.createRow(rowCounter);
+							cell = row.createCell(0);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(i).getNodeA());
+							cell = row.createCell(1);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(i).getNodeB());
+							cell = row.createCell(2);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(i).getPasssengerSpeed());
+							cell = row.createCell(4);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(i).getThroughSpeed());
+							cell = row.createCell(6);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(i).getLocalSpeed());
+							cell = row.createCell(3);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(j).getPasssengerSpeed());
+							cell = row.createCell(5);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(j).getThroughSpeed());
+							cell = row.createCell(7);
+							cell.setCellStyle(style1);
+							cell.setCellValue(gradeXingRawLinks.get(j).getLocalSpeed());
+
+							rowCounter++;
+							
+							break;
+						}
+					}
 				}
-			}*/
+			}
 
 			if (rowCounter == 1)
 			{
 				row = inconsistentMaxSpeedSheet.createRow(rowCounter);
 				cell = row.createCell(0);
 				cell.setCellStyle(style1);
-				cell.setCellValue("No inconsistent max speeds found by link direction!");
+				cell.setCellValue("No inconsistent max design speeds found by link direction!");
 			}
 
 			// Footer rows
@@ -128,13 +155,9 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 			// Resize all columns to fit the content size
 			for (int i = 0; i <= 30; i++) 
 			{
-				if ((i == 0) || (i == 1))
+				if (i < 2) 
 				{
 					inconsistentMaxSpeedSheet.setColumnWidth(i, 6000);
-				}
-				else if ((i == 6) || (i == 7))
-				{
-					inconsistentMaxSpeedSheet.setColumnWidth(i, 2800);
 				}
 				else
 					inconsistentMaxSpeedSheet.setColumnWidth(i, 3000);

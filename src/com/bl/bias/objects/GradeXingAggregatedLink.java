@@ -1,11 +1,11 @@
 package com.bl.bias.objects;
 
-public class GradeXingLink 
+public class GradeXingAggregatedLink 
 {
 	private String nodeA;
 	private String nodeB;
 	
-	public GradeXingLink(String nodeA, String nodeB) 
+	public GradeXingAggregatedLink(String nodeA, String nodeB) 
 	{
 		this.nodeA = nodeA;
 		this.nodeB = nodeB;

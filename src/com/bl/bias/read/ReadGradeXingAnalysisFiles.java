@@ -9,7 +9,8 @@ import java.util.Scanner;
 import com.bl.bias.app.BIASGradeXingSpeedsConfigController;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.objects.GradeXingLink;
+import com.bl.bias.objects.GradeXingAggregatedLink;
+import com.bl.bias.objects.GradeXingRawLink;
 import com.bl.bias.objects.GradeXingTpcEntry;
 import com.bl.bias.tools.AssignTrainTypeNameToTrainGroupName;
 import com.bl.bias.tools.ConvertDateTime;
@@ -17,7 +18,8 @@ import com.bl.bias.tools.ConvertDateTime;
 public class ReadGradeXingAnalysisFiles 
 {
 	private static ArrayList<GradeXingTpcEntry> tpcEntries = new ArrayList<GradeXingTpcEntry>();
-	private static ArrayList<GradeXingLink> gradeXingLinks = new ArrayList<GradeXingLink>();
+	private static ArrayList<GradeXingAggregatedLink> gradeXingAggregatedLinks = new ArrayList<GradeXingAggregatedLink>();
+	private static ArrayList<GradeXingRawLink> gradeXingRawLinks = new ArrayList<GradeXingRawLink>();
 
 	private static HashMap<String, String> nodeNames = new HashMap<>();
 	private static HashMap<String, Double> nodeFieldMPs = new HashMap<>();
@@ -36,14 +38,15 @@ public class ReadGradeXingAnalysisFiles
 	{
 		trainSymbolsToTrainTypes.clear();
 		tpcEntries.clear();
-		gradeXingLinks.clear();
+		gradeXingAggregatedLinks.clear();
+		gradeXingRawLinks.clear();
 		nodeNames.clear();
 		nodeFieldMPs.clear();
 		nodesInTpcFile.clear();
 		trainSymbolsToTrainGroupNames.clear();
 		trainSymbolsInTpcFile.clear();
 		trainSymbolsNotAssignedAGroup.clear();
-		
+				
 		validTrainCount = 0;
 
 		Scanner scanner = null;
@@ -295,16 +298,20 @@ public class ReadGradeXingAnalysisFiles
 						String originNodeId = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkOriginNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkOriginNode()[1])).trim();
 						String destinationNodeId = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])).trim();
 						String linkClass = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])).trim();
-	
+						Integer designPassengerSpeed = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[1])).trim());
+						Integer designThroughSpeed = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[1])).trim());
+						Integer designLocalSpeed = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[1])).trim());
+						
 						// If the link has class grade xing and both nodes are in the nodesInTpcFile, add it to gradeXingLinks 
 						if ((linkClass.equals("Road Crossing")) && (nodesInTpcFile.contains(originNodeId)) && (nodesInTpcFile.contains(destinationNodeId)))
 						{
-							gradeXingLinks.add(new GradeXingLink(originNodeId, destinationNodeId));
+							gradeXingAggregatedLinks.add(new GradeXingAggregatedLink(originNodeId, destinationNodeId));
+							gradeXingRawLinks.add(new GradeXingRawLink(originNodeId, destinationNodeId, designPassengerSpeed, designThroughSpeed, designLocalSpeed));
 						}
 					}
 				}
 	
-				resultsMessage +="Extracted "+gradeXingLinks.size()+" eligible objects from .LINK file\n";
+				resultsMessage +="Extracted "+gradeXingAggregatedLinks.size()+" eligible objects from .LINK file\n";
 			}
 			catch (Exception e) 
 			{
@@ -323,11 +330,17 @@ public class ReadGradeXingAnalysisFiles
 	{
 		return tpcEntries;
 	}
-	public static ArrayList<GradeXingLink> getGradeXingLinks()
+	
+	public static ArrayList<GradeXingAggregatedLink> getGradeXingAggregatedLinks()
 	{
-		return gradeXingLinks;
+		return gradeXingAggregatedLinks;
 	}
 
+	public static ArrayList<GradeXingRawLink> getGradeXingRawLinks()
+	{
+		return gradeXingRawLinks;
+	}
+	
 	public static HashMap<String, String> getNodeNames()
 	{
 		return nodeNames;

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import com.bl.bias.objects.GradeXingLink;
+import com.bl.bias.objects.GradeXingAggregatedLink;
 import com.bl.bias.objects.GradeXingTpcEntry;
 import com.bl.bias.objects.GradeXingTraversal;
 import com.bl.bias.read.ReadGradeXingAnalysisFiles;
@@ -16,7 +16,7 @@ public class GradeXingSpeedsAnalysis
 	private static String resultsMessage;
 
 	private static ArrayList<GradeXingTpcEntry> tpcEntries = new ArrayList<GradeXingTpcEntry>();
-	private static ArrayList<GradeXingLink> gradeXingLinks = new ArrayList<GradeXingLink>();
+	private static ArrayList<GradeXingAggregatedLink> gradeXingLinks = new ArrayList<GradeXingAggregatedLink>();
 
 	private static HashMap<String, String> nodeNames = new HashMap<>();
 	private static HashMap<String, Double> nodeFieldMPs = new HashMap<>();
@@ -29,7 +29,7 @@ public class GradeXingSpeedsAnalysis
 		resultsMessage = "Started analyzing Grade Crossing Speeds at "+ConvertDateTime.getTimeStamp()+"\n";
 
 		tpcEntries = ReadGradeXingAnalysisFiles.getTpcEntries();
-		gradeXingLinks = ReadGradeXingAnalysisFiles.getGradeXingLinks();
+		gradeXingLinks = ReadGradeXingAnalysisFiles.getGradeXingAggregatedLinks();
 		nodeNames = ReadGradeXingAnalysisFiles.getNodeNames();
 		nodeFieldMPs = ReadGradeXingAnalysisFiles.getNodeFieldMPs();
 		
@@ -87,7 +87,7 @@ public class GradeXingSpeedsAnalysis
 		return sortedTraversals;
 	}
 
-	public static ArrayList<GradeXingLink> getGradeXingLinks()
+	public static ArrayList<GradeXingAggregatedLink> getGradeXingLinks()
 	{
 		return gradeXingLinks;
 	}

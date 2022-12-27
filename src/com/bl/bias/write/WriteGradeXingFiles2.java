@@ -12,12 +12,12 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
 import com.bl.bias.app.BIASGradeXingSpeedsConfigController;
-import com.bl.bias.objects.GradeXingLink;
+import com.bl.bias.objects.GradeXingAggregatedLink;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteGradeXingFiles2 extends WriteGradeXingFiles1
 {
-	private static ArrayList<GradeXingLink> gradeXingLinks = new ArrayList<GradeXingLink>();
+	private static ArrayList<GradeXingAggregatedLink> gradeXingLinks = new ArrayList<GradeXingAggregatedLink>();
 	private static HashMap<String, String> nodeNames = new HashMap<String, String>();
 
 	String resultsMessage = getResultsMessageWrite1();
