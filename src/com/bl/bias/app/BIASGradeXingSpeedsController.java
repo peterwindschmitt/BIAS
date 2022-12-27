@@ -11,7 +11,7 @@ import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadGradeXingAnalysisFiles;
 import com.bl.bias.tools.AssignTrainTypeNameToTrainGroupName;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteGradeXingFiles3;
+import com.bl.bias.write.WriteGradeXingFiles4;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -393,7 +393,7 @@ public class BIASGradeXingSpeedsController
 	
 			// Write Results
 			writeFiles();
-			if (!WriteGradeXingFiles3.getErrorFound())
+			if (!WriteGradeXingFiles4.getErrorFound())
 			{
 				setProgressIndicator(1.0);
 				displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -417,8 +417,8 @@ public class BIASGradeXingSpeedsController
 
 	private void writeFiles() 
 	{
-		WriteGradeXingFiles3 filesToWrite = new WriteGradeXingFiles3(processTextArea.getText(), saveFileLocationForUserSpecifiedFileName);
-		displayMessage(filesToWrite.getResultsMessageWrite3());
+		WriteGradeXingFiles4 filesToWrite = new WriteGradeXingFiles4(processTextArea.getText(), saveFileLocationForUserSpecifiedFileName);
+		displayMessage(filesToWrite.getResultsMessageWrite4());
 	}
 
 	private void resetMessage()

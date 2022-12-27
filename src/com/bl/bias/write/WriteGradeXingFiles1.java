@@ -83,7 +83,7 @@ public class WriteGradeXingFiles1
 		cell.setCellValue("Min Anticipated Speed");
 		cell = row.createCell(7);
 		cell.setCellStyle(style1);
-		cell.setCellValue("Max Design Speed - Max Anticipated Speed");
+		cell.setCellValue("Diff Between Max Design Speed and Max Anticipated Speed");
 		rowCounter++;
 		
 		// For each traversal

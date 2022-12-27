@@ -21,16 +21,18 @@ public class BIASGradeXingSpeedsConfigController
 	private static Boolean evaluateThroughGradeCrossingSpeeds;
 	private static Boolean evaluateLocalGradeCrossingSpeeds;
 	private static Boolean generateInconsistentNodeNameSheet;
+	private static Boolean generateInconsistentMaxSpeedSheet;
 
 	private static Boolean defaultEvaluatePassengerGradeCrossingSpeeds = true;
 	private static Boolean defaultEvaluateThroughGradeCrossingSpeeds = true;
 	private static Boolean defaultEvaluateLocalGradeCrossingSpeeds = true;
 	private static Boolean defaultGenerateInconsistentNodeNameSheet = true;
-	
+	private static Boolean defaultGenerateInconsistentMaxSpeedSheet = true;
+
 	private static BooleanBinding disableEvaluatePassengerGradeCrossingSpeeds;
 	private static BooleanBinding disableEvaluateThroughGradeCrossingSpeeds;
 	private static BooleanBinding disableEvaluateLocalGradeCrossingSpeeds;
-	
+
 	private static String defaultMaxTpcIncrement = "50";  
 
 	private static ObservableList<String> tpcIncrementValues =  FXCollections.observableArrayList("25", "50", "100", "250");
@@ -43,6 +45,8 @@ public class BIASGradeXingSpeedsConfigController
 
 	@FXML private RadioButton generateInconsistentNodeNameSheetTrueRadioButton;
 	@FXML private RadioButton generateInconsistentNodeNameSheetFalseRadioButton;
+	@FXML private RadioButton generateInconsistentMaxSpeedSheetTrueRadioButton;
+	@FXML private RadioButton generateInconsistentMaxSpeedSheetFalseRadioButton;
 
 	@FXML private void initialize()
 	{
@@ -105,7 +109,7 @@ public class BIASGradeXingSpeedsConfigController
 			localSpeedCheckBox.setSelected(false);
 		}
 
-		// See if preference is stored to generate inconsistently named nodes spreadsheet
+		// See if preference is stored to generate inconsistently named nodes sheet
 		if (prefs.getBoolean("gx_generateInconsistentNodeNameSheet", defaultGenerateInconsistentNodeNameSheet))
 		{
 			generateInconsistentNodeNameSheet = true;
@@ -121,6 +125,24 @@ public class BIASGradeXingSpeedsConfigController
 		{
 			generateInconsistentNodeNameSheet = false;
 			generateInconsistentNodeNameSheetFalseRadioButton.setSelected(true);
+		}
+
+		// See if preference is stored to generate inconsistent max speed (by direction) sheet
+		if (prefs.getBoolean("gx_generateInconsistentMaxSpeedSheet", defaultGenerateInconsistentMaxSpeedSheet))
+		{
+			generateInconsistentMaxSpeedSheet = true;
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.putBoolean("gx_generateInconsistentMaxSpeedSheet", true);
+			}
+
+			generateInconsistentMaxSpeedSheetTrueRadioButton.setSelected(true);
+		}
+		else
+		{
+			generateInconsistentMaxSpeedSheet = false;
+			generateInconsistentMaxSpeedSheetFalseRadioButton.setSelected(true);
 		}
 
 		// See if preference is stored to for max TPC increment
@@ -139,14 +161,14 @@ public class BIASGradeXingSpeedsConfigController
 			maxTpcIncrementComboBox.getSelectionModel().select(defaultMaxTpcIncrement);
 			maxTpcIncrement = Integer.valueOf(defaultMaxTpcIncrement);
 		}
-		
+
 		// Set up Boolean Bindings
-        disableEvaluatePassengerGradeCrossingSpeeds = throughSpeedCheckBox.selectedProperty().not().and(localSpeedCheckBox.selectedProperty().not());
+		disableEvaluatePassengerGradeCrossingSpeeds = throughSpeedCheckBox.selectedProperty().not().and(localSpeedCheckBox.selectedProperty().not());
 		passengerSpeedCheckBox.disableProperty().bind(disableEvaluatePassengerGradeCrossingSpeeds);
-		
+
 		disableEvaluateThroughGradeCrossingSpeeds = passengerSpeedCheckBox.selectedProperty().not().and(localSpeedCheckBox.selectedProperty().not());
 		throughSpeedCheckBox.disableProperty().bind(disableEvaluateThroughGradeCrossingSpeeds);
-		
+
 		disableEvaluateLocalGradeCrossingSpeeds = throughSpeedCheckBox.selectedProperty().not().and(passengerSpeedCheckBox.selectedProperty().not());
 		localSpeedCheckBox.disableProperty().bind(disableEvaluateLocalGradeCrossingSpeeds);
 	}
@@ -169,6 +191,11 @@ public class BIASGradeXingSpeedsConfigController
 	public static Boolean getGenerateInconsisteneNodeNameSheet()
 	{
 		return generateInconsistentNodeNameSheet;
+	}
+	
+	public static Boolean getGenerateInconsisteneMaxSpeedSheet()
+	{
+		return generateInconsistentMaxSpeedSheet;
 	}
 
 	public static Integer getMaxTpcIncrement()
@@ -238,6 +265,22 @@ public class BIASGradeXingSpeedsConfigController
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.putBoolean("gx_generateInconsistentNodeNameSheet", false);
+	}
+
+	@FXML private void handleGenerateInconsistentMaxSpeedSheetTrueRadioButton(ActionEvent event) 
+	{
+		generateInconsistentMaxSpeedSheet = true;
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putBoolean("gx_generateInconsistentMaxSpeedSheet", true);
+	}
+
+	@FXML private void handleGenerateInconsistentMaxSpeedSheetFalseRadioButton(ActionEvent event) 
+	{
+		generateInconsistentMaxSpeedSheet = false;
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putBoolean("gx_generateInconsistentMaxSpeedSheet", false);
 	}
 
 	@FXML private void handleMaxTpcIncrementComboBox(ActionEvent event) 

@@ -48,6 +48,8 @@ public class BIASParseConfigPageController
 	private static String l_linkClass;
 	private static String l_linkDirection;
 	private static String l_linkMaxPassengerSpeed;
+	private static String l_linkMaxThroughSpeed;
+	private static String l_linkMaxLocalSpeed;
 
 	// Data from .NODE file
 	private static String n_node;
@@ -390,7 +392,9 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Link Destination Node", "l_linkDestinationNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])),
 				new ParseLocationFormatB("Link Class", "l_linkClass", Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])),
 				new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1])),
-				new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1]))
+				new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1])),
+				new ParseLocationFormatB("Link Max Through Speed", "l_linkMaxThroughSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(l_getLinkMaxThroughSpeed()[1])),
+				new ParseLocationFormatB("Link Max Local Speed", "l_linkMaxLocalSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(l_getLinkMaxLocalSpeed()[1]))
 				);
 
 		parseLocationsTable3.setItems(parseData3);
@@ -764,6 +768,8 @@ public class BIASParseConfigPageController
 			prefs.remove("l_linkClass");
 			prefs.remove("l_linkDirection");
 			prefs.remove("l_linkMaxPassengerSpeed");
+			prefs.remove("l_linkMaxThroughSpeed");
+			prefs.remove("l_linkMaxLocalSpeed");
 
 			// Table 4
 			prefs.remove("n_node");
@@ -937,7 +943,9 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Link Destination Node", "l_linkDestinationNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])),
 					new ParseLocationFormatB("Link Class", "l_linkClass", Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])),
 					new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1])),
-					new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1]))
+					new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1])),
+					new ParseLocationFormatB("Link Max Through Speed", "l_linkMaxThroughSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(l_getLinkMaxThroughSpeed()[1])),
+					new ParseLocationFormatB("Link Max Local Speed", "l_linkMaxLocalSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(l_getLinkMaxLocalSpeed()[1]))
 					);
 
 			startColumn3.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -2553,6 +2561,24 @@ public class BIASParseConfigPageController
 				prefs.put("l_linkMaxPassengerSpeed", l_linkMaxPassengerSpeed);
 		}
 
+		// Link max through speed
+		if (prefs.get("l_linkMaxThroughSpeed", null) == null)
+		{
+			// Write value for subsequent runs
+			l_linkMaxThroughSpeed = "133,136";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("l_linkMaxThroughSpeed", l_linkMaxThroughSpeed);
+		}
+
+		// Link max local speed
+		if (prefs.get("l_linkMaxLocalSpeed", null) == null)
+		{
+			// Write value for subsequent runs
+			l_linkMaxLocalSpeed = "137,140";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("l_linkMaxLocalSpeed", l_linkMaxLocalSpeed);
+		}
+
 		// Table 4
 		// Node
 		if (prefs.get("n_node", null) == null)
@@ -3592,6 +3618,18 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] l_getLinkMaxThroughSpeed()
+	{
+		String[] values = prefs.get("l_linkMaxThroughSpeed", l_linkMaxThroughSpeed).split(",");
+		return values;
+	}
+
+	public static String[] l_getLinkMaxLocalSpeed()
+	{
+		String[] values = prefs.get("l_linkMaxLocalSpeed", l_linkMaxLocalSpeed).split(",");
+		return values;
+	}
+
 	public static String[] n_getNode()
 	{
 		String[] values = prefs.get("n_node", n_node).split(",");
@@ -3819,7 +3857,7 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("o_trainTypeGroup", o_trainTypeGroup).split(",");
 		return values;
 	}
-	
+
 	public static String[] w_getLineName()
 	{
 		String[] values = prefs.get("w_lineName", w_lineName).split(",");
