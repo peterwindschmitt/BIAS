@@ -15,6 +15,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 	private static Boolean moveFailedFiles;
 	private static Boolean prependFailedFiles;
 	private static Boolean purgeFailedFiles;
+	private static Boolean checkPtcEquipped;
+	private static Boolean checkAtcEquipped;
 	private static Boolean generateRawData;
 	private static Boolean generateSummaryResults;
 	private static Boolean generateGraphs;
@@ -25,6 +27,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 	private static Boolean defaultMoveFailedFiles = true;
 	private static Boolean defaultPrependFailedFiles = false;
 	private static Boolean defaultPurgeFailedFiles = false;
+	private static Boolean defaultCheckPtcEquipped = true;
+	private static Boolean defaultCheckAtcEquipped = true;
 	private static Boolean defaultGenerateRawData = true;
 	private static Boolean defaultGenerateSummaryResults = true;
 	private static Boolean defaultGenerateGraphs = true;
@@ -41,6 +45,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 
 	@FXML private ComboBox<String> cleanFileCombobox;
 
+	@FXML private CheckBox ptcEquippedCheckBox;
+	@FXML private CheckBox atcEquippedCheckBox;
 	@FXML private CheckBox generateRawDataCheckBox;
 	@FXML private CheckBox generateSummaryResultsCheckBox;
 	@FXML private CheckBox generateGraphsCheckBox;
@@ -101,6 +107,34 @@ public class BIASRTCResultsAnalysisConfigPageController
 			moveFailedFiles = false;
 			prependFailedFiles = false;
 			purgeFailedFiles = true;
+		}
+
+		// See if preference is stored for checking for PTC equipped
+		if (prefs.getBoolean("ra_checkPtcEquipped", defaultCheckPtcEquipped))
+		{
+			checkPtcEquipped = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ra_checkPtcEquipped", true);
+			ptcEquippedCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkPtcEquipped = false;
+			ptcEquippedCheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for checking for ATC equipped
+		if (prefs.getBoolean("ra_checkAtcEquipped", defaultCheckAtcEquipped))
+		{
+			checkAtcEquipped = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ra_checkAtcEquipped", true);
+			atcEquippedCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkAtcEquipped = false;
+			atcEquippedCheckBox.setSelected(false);
 		}
 
 		// See if preference is stored for generating raw data
@@ -248,6 +282,38 @@ public class BIASRTCResultsAnalysisConfigPageController
 				prefs.putBoolean("ra_prependFailedFiles", false);
 				prefs.putBoolean("ra_purgeFailedFiles", true);
 			}
+		}
+	}
+
+	@FXML private void handlePtcEquippedCheckbox(ActionEvent event)
+	{
+		if (checkPtcEquipped)
+		{
+			checkPtcEquipped = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ra_checkPtcEquipped", false);
+		}
+		else
+		{
+			checkPtcEquipped = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ra_checkPtcEquipped", true);
+		}
+	}
+
+	@FXML private void handleAtcEquippedCheckbox(ActionEvent event)
+	{
+		if (checkAtcEquipped)
+		{
+			checkAtcEquipped = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ra_checkAtcEquipped", false);
+		}
+		else
+		{
+			checkAtcEquipped = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ra_checkAtcEquipped", true);
 		}
 	}
 

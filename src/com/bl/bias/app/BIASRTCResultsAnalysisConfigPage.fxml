@@ -27,6 +27,8 @@
           <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -37,57 +39,22 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <ComboBox fx:id="cleanFileCombobox" onAction="#handleCleanFileCombobox" prefWidth="300.0" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets left="340.0" />
-               </GridPane.margin>
-            </ComboBox>
             <Label text="1.  When a failed-dispatch .SUMMARY file is encountered:" GridPane.rowIndex="1">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="2.  Generate output files for:" GridPane.rowIndex="3">
+            <Label text="2.  In .TRAIN file, check that all trains are equipped with:" GridPane.rowIndex="3">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="3.  Generate data in selected output files as:" GridPane.rowIndex="6">
+            <Label text="3.  Generate output files for:" GridPane.rowIndex="5">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="generateRawDataCheckBox" mnemonicParsing="false" onAction="#handleGenerateRawDataCheckbox" text="Raw Data" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="260.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <CheckBox fx:id="outputAsStringCheckBox" mnemonicParsing="false" onAction="#handleOutputAsStringCheckbox" text="Strings (text)" GridPane.rowIndex="6">
-               <GridPane.margin>
-                  <Insets left="260.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <CheckBox fx:id="outputAsSecondsCheckBox" mnemonicParsing="false" onAction="#handleOutputAsSecondsCheckbox" text="Integer Seconds" GridPane.rowIndex="6">
-               <GridPane.margin>
-                  <Insets left="380.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <CheckBox fx:id="outputAsSerialCheckBox" mnemonicParsing="false" onAction="#handleOutputAsSerialCheckbox" text="Serial Date/Time" GridPane.rowIndex="6">
-               <GridPane.margin>
-                  <Insets left="510.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <CheckBox fx:id="generateSummaryResultsCheckBox" mnemonicParsing="false" onAction="#handleGenerateSummaryResultsCheckbox" text="Summary Results" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="380.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <CheckBox fx:id="generateGraphsCheckBox" mnemonicParsing="false" onAction="#handleGenerateGraphsCheckbox" text="Graphs" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="510.0" />
-               </GridPane.margin>
-            </CheckBox>
-            <Label text="(To generate graphs, Summary Results checkbox must be selected.)" GridPane.rowIndex="4">
+            <Label text="(To generate graphs, Summary Results checkbox must be selected.)" GridPane.rowIndex="6">
                <padding>
                   <Insets left="10.0" />
                </padding>
@@ -98,6 +65,56 @@
                   <Font name="System Italic" size="12.0" />
                </font>
             </Label>
+            <Label text="4.  Generate data in selected output files as:" GridPane.rowIndex="8">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <CheckBox fx:id="generateRawDataCheckBox" mnemonicParsing="false" onAction="#handleGenerateRawDataCheckbox" text="Raw Data" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="260.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="ptcEquippedCheckBox" mnemonicParsing="false" onAction="#handlePtcEquippedCheckbox" text="PTC" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="380.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="atcEquippedCheckBox" mnemonicParsing="false" onAction="#handleAtcEquippedCheckbox" text="ATC" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="510.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="generateSummaryResultsCheckBox" mnemonicParsing="false" onAction="#handleGenerateSummaryResultsCheckbox" text="Summary Results" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="380.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="generateGraphsCheckBox" mnemonicParsing="false" onAction="#handleGenerateGraphsCheckbox" text="Graphs" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="510.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="outputAsStringCheckBox" mnemonicParsing="false" onAction="#handleOutputAsStringCheckbox" text="Strings (text)" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="260.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="outputAsSecondsCheckBox" mnemonicParsing="false" onAction="#handleOutputAsSecondsCheckbox" text="Integer Seconds" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="380.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="outputAsSerialCheckBox" mnemonicParsing="false" onAction="#handleOutputAsSerialCheckbox" text="Serial Date/Time" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="510.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="cleanFileCombobox" onAction="#handleCleanFileCombobox" prefWidth="300.0" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="380.0" />
+               </GridPane.margin>
+            </ComboBox>
          </children>
          <opaqueInsets>
             <Insets />

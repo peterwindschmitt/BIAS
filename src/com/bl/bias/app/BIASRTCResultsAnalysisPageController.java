@@ -356,10 +356,12 @@ public class BIASRTCResultsAnalysisPageController
 
 		setProgressIndicator(0.10);
 
-		// Check input files formatting
+		// Check input files formatting and ATC/PTC compliance
 		Boolean formattedCorrectly = true;
 		try
 		{
+			// TODO:  Check that .TRAIN files shows all trains PTC-equipped/ATC-equipped if specified in module config file
+			
 			// Check that .OPTION file has time formatted as DD:HH:MM:SS, no CSV delimiters in .ROUTE file and ENGLISH input units
 			BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(directory);
 			if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
