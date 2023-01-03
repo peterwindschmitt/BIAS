@@ -11,6 +11,7 @@ public class BIASValidateOptionsAndINIFileSchemeA
 {
 	private static Boolean optionFilesFormattedCorrectly;
 	private static Boolean INIFileFormattedCorrectly;
+	private static Boolean trainsEquippedCorrectly;
 
 	private static Preferences prefs;
 
@@ -112,14 +113,14 @@ public class BIASValidateOptionsAndINIFileSchemeA
 		INIFileFormattedCorrectly = true;
 
 		prefs = Preferences.userRoot().node("BIAS");
-		
+
 		// Is .INI file in project folder or in C:\RTC
 		if (prefs.getBoolean("gc_useRtcFolderForIniFile", true))
 		{
 			// Overwrite directory with C:\RTC if using generic RTC file location
 			directory = new File("C:\\RTC");
 		}
-		
+
 		// Determine number of .INI files 
 		File[] files = directory.listFiles(new FilenameFilter() {
 			@Override
@@ -127,7 +128,7 @@ public class BIASValidateOptionsAndINIFileSchemeA
 				return name.toLowerCase().endsWith(".ini");
 			}
 		});
-		
+
 		if (files.length == 1)
 		{
 			Scanner scanner = null;
@@ -170,6 +171,67 @@ public class BIASValidateOptionsAndINIFileSchemeA
 		}
 	}
 
+	public static void bIASCheckTrainFile(File directory) 
+	{
+		trainsEquippedCorrectly = true;
+
+		// Determine number of .OPTION files 
+		File[] files = directory.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File directory, String name) {
+				return name.toLowerCase().endsWith(".train");
+			}
+		});
+
+		if (files.length == 1)
+		{
+			Scanner scanner = null;
+
+			try 
+			{
+				File fileToWorkWith = files[0];
+
+				// For each line
+				scanner = new Scanner(fileToWorkWith);
+
+				while (scanner.hasNextLine()) 
+				{
+					String lineFromFile = scanner.nextLine();
+					if ((lineFromFile.contains("PTC equipped:")) && (BIASRTCResultsAnalysisConfigPageController.getCheckForPtcEquipped()))
+					{
+						// From .TRAIN file:   "PTC equipped: YES"
+						if (lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1])).trim().equals("NO")) 				
+						{
+							trainsEquippedCorrectly = false;
+							break;
+						}
+					}
+					else if ((lineFromFile.contains("ATC:")) && (BIASRTCResultsAnalysisConfigPageController.getCheckForAtcEquipped()))
+					{
+						// From .TRAIN file:   "ATC: YES"
+						if (lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[1])).trim().equals("NO")) 				
+						{
+							trainsEquippedCorrectly = false;
+							break;
+						}
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, "BIASValidateOptionsAndINIFile");
+			}
+			finally
+			{
+				scanner.close();
+			}
+		}
+		else
+		{
+			trainsEquippedCorrectly = false;
+		}
+	}
+
 	public static Boolean getOptionsFilesFormattedCorrectly()
 	{
 		return optionFilesFormattedCorrectly;
@@ -178,5 +240,10 @@ public class BIASValidateOptionsAndINIFileSchemeA
 	public static Boolean getINIFileFormattedCorrectly()
 	{
 		return INIFileFormattedCorrectly;
+	}
+
+	public static Boolean getTrainsEquippedCorrectly()
+	{
+		return trainsEquippedCorrectly;
 	}
 }

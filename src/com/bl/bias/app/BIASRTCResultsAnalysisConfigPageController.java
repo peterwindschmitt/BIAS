@@ -433,6 +433,16 @@ public class BIASRTCResultsAnalysisConfigPageController
 		return purgeFailedFiles;
 	}
 
+	public static Boolean getCheckForPtcEquipped()
+	{
+		return checkPtcEquipped;
+	}
+	
+	public static Boolean getCheckForAtcEquipped()
+	{
+		return checkAtcEquipped;
+	}
+	
 	public static Boolean getGenerateRawData()
 	{
 		return generateRawData;

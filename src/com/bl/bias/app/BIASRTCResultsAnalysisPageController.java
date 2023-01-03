@@ -360,19 +360,29 @@ public class BIASRTCResultsAnalysisPageController
 		Boolean formattedCorrectly = true;
 		try
 		{
-			// TODO:  Check that .TRAIN files shows all trains PTC-equipped/ATC-equipped if specified in module config file
+			message = "\n";
 			
+			// Check that .TRAIN files shows all trains PTC-equipped/ATC-equipped if specified in module config file
+			BIASValidateOptionsAndINIFileSchemeA.bIASCheckTrainFile(directory);
+			if ((BIASValidateOptionsAndINIFileSchemeA.getTrainsEquippedCorrectly()) && ((BIASRTCResultsAnalysisConfigPageController.getCheckForPtcEquipped()) || (BIASRTCResultsAnalysisConfigPageController.getCheckForAtcEquipped()))) 
+			{
+				message += "Validated PTC/ATC compliance in .TRAIN file\n";
+			}
+			else if ((!BIASValidateOptionsAndINIFileSchemeA.getTrainsEquippedCorrectly()) && ((BIASRTCResultsAnalysisConfigPageController.getCheckForPtcEquipped()) || (BIASRTCResultsAnalysisConfigPageController.getCheckForAtcEquipped()))) 
+			{
+				message += "Invalid PTC/ATC compliance in .TRAIN file\n";
+				formattedCorrectly = false;
+			}
+				
 			// Check that .OPTION file has time formatted as DD:HH:MM:SS, no CSV delimiters in .ROUTE file and ENGLISH input units
 			BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(directory);
 			if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
 			{
-				message = "\nValidated date/time format, output format and speed/distance units from .OPTION file\n";
-				displayMessage(message);
+				message += "Validated date/time format, output format and speed/distance units from .OPTION file\n";
 			}
 			else
 			{
-				message = "\nInvalid date/time format, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
-				displayMessage(message);
+				message += "Invalid date/time format, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
 				formattedCorrectly = false;
 			}
 
@@ -380,15 +390,16 @@ public class BIASRTCResultsAnalysisPageController
 			BIASValidateOptionsAndINIFileSchemeA.bIASCheckINIFile(directory);
 			if (BIASValidateOptionsAndINIFileSchemeA.getINIFileFormattedCorrectly())
 			{
-				message = "Validated DOW output format in .INI file\n";
-				displayMessage(message);
+				message += "Validated DOW output format in .INI file\n";
 			}
 			else
 			{
-				message = "Invalid DOW output format in .INI file and/or invalid count of .INI files\n";
-				displayMessage(message);
+				message += "Invalid DOW output format in .INI file and/or invalid count of .INI files\n";
 				formattedCorrectly = false;
 			}
+			
+			displayMessage(message);
+			
 
 			if ((getEligibleFileCount() > 0) && (formattedCorrectly))
 			{
