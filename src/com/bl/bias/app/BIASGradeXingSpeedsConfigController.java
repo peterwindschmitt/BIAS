@@ -16,6 +16,7 @@ public class BIASGradeXingSpeedsConfigController
 	private static Preferences prefs;
 
 	private static Integer maxTpcIncrement;
+	private static Integer minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds;
 
 	private static Boolean evaluatePassengerGradeCrossingSpeeds;
 	private static Boolean evaluateThroughGradeCrossingSpeeds;
@@ -34,10 +35,13 @@ public class BIASGradeXingSpeedsConfigController
 	private static BooleanBinding disableEvaluateLocalGradeCrossingSpeeds;
 
 	private static String defaultMaxTpcIncrement = "50";  
+	private static String defaultMinDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds = "0";
 
 	private static ObservableList<String> tpcIncrementValues =  FXCollections.observableArrayList("25", "50", "100", "250");
+	private static ObservableList<String> minDiffMaxDesignVsMinAnticipatedSpeedValues =  FXCollections.observableArrayList("0", "3", "5", "7", "10");
 
 	@FXML private ComboBox<String> maxTpcIncrementComboBox;
+	@FXML private ComboBox<String> minDiffMaxDesignVsMinAnticipatedSpeedComboBox;
 
 	@FXML private CheckBox passengerSpeedCheckBox;
 	@FXML private CheckBox throughSpeedCheckBox;
@@ -51,6 +55,7 @@ public class BIASGradeXingSpeedsConfigController
 	@FXML private void initialize()
 	{
 		maxTpcIncrementComboBox.setItems(tpcIncrementValues);
+		minDiffMaxDesignVsMinAnticipatedSpeedComboBox.setItems(minDiffMaxDesignVsMinAnticipatedSpeedValues);
 
 		// Check for prefs
 		prefs = Preferences.userRoot().node("BIAS");
@@ -145,7 +150,7 @@ public class BIASGradeXingSpeedsConfigController
 			generateInconsistentMaxSpeedSheetFalseRadioButton.setSelected(true);
 		}
 
-		// See if preference is stored to for max TPC increment
+		// See if preference is stored for max TPC increment
 		boolean maxTpcIncrementExists = prefs.get("gx_maxTpcIncrement", null) != null;
 
 		if (maxTpcIncrementExists)
@@ -160,6 +165,23 @@ public class BIASGradeXingSpeedsConfigController
 
 			maxTpcIncrementComboBox.getSelectionModel().select(defaultMaxTpcIncrement);
 			maxTpcIncrement = Integer.valueOf(defaultMaxTpcIncrement);
+		}
+
+		// See if preference is stored for min difference between max design speed and min anticipated speed
+		boolean minDifferenceBetweenMaxDesignAndMinAnticipatedSpeedsExists = prefs.get("gx_minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds", null) != null;
+
+		if (minDifferenceBetweenMaxDesignAndMinAnticipatedSpeedsExists)
+		{
+			minDiffMaxDesignVsMinAnticipatedSpeedComboBox.getSelectionModel().select(prefs.get("gx_minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds", defaultMinDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds));
+			minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds = Integer.valueOf(prefs.get("gx_minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds", defaultMinDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("gx_minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds", defaultMinDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds);
+
+			minDiffMaxDesignVsMinAnticipatedSpeedComboBox.getSelectionModel().select(defaultMinDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds);
+			minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds = Integer.valueOf(defaultMinDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds);
 		}
 
 		// Set up Boolean Bindings
@@ -192,7 +214,7 @@ public class BIASGradeXingSpeedsConfigController
 	{
 		return generateInconsistentNodeNameSheet;
 	}
-	
+
 	public static Boolean getGenerateInconsisteneMaxSpeedSheet()
 	{
 		return generateInconsistentMaxSpeedSheet;
@@ -201,6 +223,11 @@ public class BIASGradeXingSpeedsConfigController
 	public static Integer getMaxTpcIncrement()
 	{
 		return maxTpcIncrement;
+	}
+	
+	public static Integer getMinDiffMaxDesignVsMinAnticipatedSpeed()
+	{
+		return minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds;
 	}
 
 	@FXML private void handlePassengerSpeedCheckBox(ActionEvent event) 
@@ -288,5 +315,12 @@ public class BIASGradeXingSpeedsConfigController
 		maxTpcIncrement = Integer.valueOf(maxTpcIncrementComboBox.getValue());
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("gx_maxTpcIncrement", maxTpcIncrementComboBox.getValue());
+	}
+
+	@FXML private void handleMinDiffMaxDesignVsMinAnticipatedSpeedComboBox(ActionEvent event) 
+	{
+		minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds = Integer.valueOf(minDiffMaxDesignVsMinAnticipatedSpeedComboBox.getValue());
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("gx_minDifferenceBetweenMaxDesignAndMinAnticipatedSpeeds", minDiffMaxDesignVsMinAnticipatedSpeedComboBox.getValue());
 	}
 }
