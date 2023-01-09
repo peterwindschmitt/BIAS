@@ -38,6 +38,8 @@
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="20.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Grade Crossing Speed Analysis Configuration" underline="true">
@@ -84,6 +86,14 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
+            <Label text="(This sheet includes grade crossings traversed by all trains.  Not limited to Train Groups shown in option 1.)" GridPane.columnSpan="2" GridPane.rowIndex="7">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="25.0" />
+               </GridPane.margin>
+            </Label>
             <RadioButton fx:id="generateInconsistentMaxSpeedSheetTrueRadioButton" mnemonicParsing="false" onAction="#handleGenerateInconsistentMaxSpeedSheetTrueRadioButton" text="Yes" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <toggleGroup>
                   <ToggleGroup fx:id="generateInconsistentMaxSpeedSheetToggleGroup" />
@@ -108,29 +118,21 @@
                   <Insets left="-45.0" />
                </GridPane.margin>
             </Label>
-            <Label text="(This sheet includes grade crossings traversed by all trains.  Not limited to Train Groups shown in option 1.)" GridPane.columnSpan="2" GridPane.rowIndex="7">
-               <font>
-                  <Font name="System Italic" size="12.0" />
-               </font>
-               <GridPane.margin>
-                  <Insets left="25.0" />
-               </GridPane.margin>
-            </Label>
             <Label text="5.  Show grade crossings with a difference of " GridPane.rowIndex="11">
                <padding>
                   <Insets left="10.0" />
                </padding>
-            </Label>
-            <Label text="or more MPH between max design speed and min anticipated speed" GridPane.columnIndex="1" GridPane.rowIndex="11">
-               <GridPane.margin>
-                  <Insets left="-75.0" />
-               </GridPane.margin>
             </Label>
             <ComboBox fx:id="minDiffMaxDesignVsMinAnticipatedSpeedComboBox" onAction="#handleMinDiffMaxDesignVsMinAnticipatedSpeedComboBox" prefHeight="25.0" prefWidth="65.0" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="260.0" />
                </GridPane.margin>
             </ComboBox>
+            <Label text="or more MPH between max design speed and min anticipated speed" GridPane.columnIndex="1" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="-75.0" />
+               </GridPane.margin>
+            </Label>
          </children>
       </GridPane>
    </children>

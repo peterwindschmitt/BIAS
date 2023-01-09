@@ -61,7 +61,7 @@ public class BIASMaintenanceWindowAnalysisPageController
 
 	private static Boolean continueAnalysis = true;
 
-	BIASPreprocessLinesForMaintenanceWindowAnalysis getPrelimData;
+	BIASPreprocessLinesForMaintenanceWindowAndGradeXingSpeedAnalysis getPrelimData;
 
 	@FXML private CheckComboBox<String> selectLineCheckComboBox;
 
@@ -353,7 +353,7 @@ public class BIASMaintenanceWindowAnalysisPageController
 				allLinesCheckBox.setDisable(false);
 
 				// Check .LINE file to generate entries for checkcombobox 
-				getPrelimData = new BIASPreprocessLinesForMaintenanceWindowAnalysis(lineFile);
+				getPrelimData = new BIASPreprocessLinesForMaintenanceWindowAndGradeXingSpeedAnalysis(lineFile);
 				if (getPrelimData.returnAllAvailableLines().size() > 0)
 				{
 					selectLineCheckComboBox.getItems().addAll((getPrelimData.returnAllAvailableLines()));

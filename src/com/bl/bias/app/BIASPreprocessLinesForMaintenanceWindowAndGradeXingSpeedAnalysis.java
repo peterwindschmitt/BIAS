@@ -11,14 +11,14 @@ import java.util.Scanner;
 
 import com.bl.bias.exception.ErrorShutdown;
 
-public class BIASPreprocessLinesForMaintenanceWindowAnalysis 
+public class BIASPreprocessLinesForMaintenanceWindowAndGradeXingSpeedAnalysis 
 {
 	private static HashSet<String> availableLines = new HashSet<String>();
 	private static HashSet<String> availableLinesStartingWithMOW = new HashSet<String>();
 	private static List<String> sortedLines;
 	private static List<String> sortedLinesStartingWithMOW;
 	
-	public BIASPreprocessLinesForMaintenanceWindowAnalysis(File lineFile) 
+	public BIASPreprocessLinesForMaintenanceWindowAndGradeXingSpeedAnalysis(File lineFile) 
 	{
 		availableLines.clear();
 		Scanner scanner = null;
