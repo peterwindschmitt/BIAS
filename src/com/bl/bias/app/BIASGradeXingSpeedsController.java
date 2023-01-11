@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
@@ -14,7 +13,6 @@ import com.bl.bias.tools.AssignTrainTypeNameToTrainGroupName;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteGradeXingFiles4;
 
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -84,13 +82,6 @@ public class BIASGradeXingSpeedsController
 		}
 		else
 		{
-			// Ready to execute
-			message = "\nFound "+getPrelimDataTPC.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimDataTPC.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
-			message += "\nSet to perform grade crossing speed analysis on "+lineToAnalyze+" line ";
-			message += "\n  from case "+fileAsString.replace(".TPC", "");
-			
-			displayMessage(message);
-			
 			executeButton.setDisable(false);
 		}
 	}
@@ -131,8 +122,12 @@ public class BIASGradeXingSpeedsController
 				{
 					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 				}
-
-				message = "\nStarting analysis of grade crossing speeds at "+ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
+				
+				// Ready to execute
+				message = "\nFound "+getPrelimDataTPC.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimDataTPC.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
+				message += "\nSet to perform grade crossing speed analysis on "+lineToAnalyze+" line ";
+				message += "\n  from case "+fileAsString.replace(".TPC", "");
+				message += "\nStarting analysis of grade crossing speeds at "+ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
 				displayMessage(message);
 
 				progressBar.setVisible(true);
@@ -187,9 +182,13 @@ public class BIASGradeXingSpeedsController
 			File directory = directoryChooser.showDialog(stageForFolderChooser);
 			if (directory != null)
 			{
-				message = "\nStarting analysis of grade crossing speeds at "+ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
+				// Ready to execute
+				message = "\nFound "+getPrelimDataTPC.returnAvailableTrains().size()+" trains in TPC file with a reporting increment of "+getPrelimDataTPC.returnTPCIncrementsIncludingUnits().toArray()[0].toString();
+				message += "\nSet to perform grade crossing speed analysis on "+lineToAnalyze+" line ";
+				message += "\n  from case "+fileAsString.replace(".TPC", "");
+				message += "\nStarting analysis of grade crossing speeds at "+ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
 				displayMessage(message);
-
+				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 					prefs.put("gx_lastDirectorySavedTo", directory.toString());
 
