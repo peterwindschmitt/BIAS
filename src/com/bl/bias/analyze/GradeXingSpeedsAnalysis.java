@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.bl.bias.objects.GradeXingAggregatedLink;
 import com.bl.bias.objects.GradeXingTpcEntry;
@@ -14,25 +15,47 @@ import com.bl.bias.tools.ConvertDateTime;
 public class GradeXingSpeedsAnalysis 
 {
 	private static String resultsMessage;
+	private static String line;
 
-	private static ArrayList<GradeXingTpcEntry> tpcEntries = new ArrayList<GradeXingTpcEntry>();
-	private static ArrayList<GradeXingAggregatedLink> gradeXingLinks = new ArrayList<GradeXingAggregatedLink>();
+	private static ArrayList<GradeXingTpcEntry> tpcEntries;
+	private static ArrayList<GradeXingAggregatedLink> gradeXingLinks;
 
-	private static HashMap<String, String> nodeNames = new HashMap<>();
-	private static HashMap<String, Double> nodeFieldMPs = new HashMap<>();
+	private static HashMap<String, String> nodeNames;
+	private static HashMap<String, Double> nodeFieldMPs;
 
-	private static ArrayList<GradeXingTraversal> traversals = new ArrayList<GradeXingTraversal>();
-	private static ArrayList<GradeXingTraversal> sortedTraversals = new ArrayList<GradeXingTraversal>();
+	private static HashSet<String> nodesInLine;
+
+	private static ArrayList<GradeXingTraversal> traversals;
+	private static ArrayList<GradeXingTraversal> sortedTraversals;
 
 	public GradeXingSpeedsAnalysis() 
 	{
 		resultsMessage = "Started analyzing Grade Crossing Speeds at "+ConvertDateTime.getTimeStamp()+"\n";
 
+		tpcEntries = new ArrayList<GradeXingTpcEntry>();
+		gradeXingLinks = new ArrayList<GradeXingAggregatedLink>();
+		nodeNames = new HashMap<>();
+		nodeFieldMPs = new HashMap<>();
+		nodesInLine = new HashSet<>();
+		traversals = new ArrayList<GradeXingTraversal>();
+		sortedTraversals = new ArrayList<GradeXingTraversal>();
+
+		tpcEntries.clear();
+		gradeXingLinks.clear();
+		nodeNames.clear();
+		nodeFieldMPs.clear();
+		nodesInLine.clear();
+		traversals.clear();
+		sortedTraversals.clear();
+
 		tpcEntries = ReadGradeXingAnalysisFiles.getTpcEntries();
 		gradeXingLinks = ReadGradeXingAnalysisFiles.getGradeXingAggregatedLinks();
 		nodeNames = ReadGradeXingAnalysisFiles.getNodeNames();
 		nodeFieldMPs = ReadGradeXingAnalysisFiles.getNodeFieldMPs();
-		
+		nodesInLine = ReadGradeXingAnalysisFiles.getNodesInLine();
+
+		line = ReadGradeXingAnalysisFiles.getLineName();
+
 		// 1.  Create a traversal object for each road crossing consisting of two node field MPs and the crossing name.  Do not consider direction.  
 		// For each entry in gradeXingLinks
 		for (int i = 0; i < gradeXingLinks.size(); i++)
@@ -43,8 +66,8 @@ public class GradeXingSpeedsAnalysis
 				{
 					if ((((nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()).equals(nodeFieldMPs.get(gradeXingLinks.get(j).getNodeB()))))
 							&& (nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()).equals(nodeFieldMPs.get(gradeXingLinks.get(j).getNodeA())))) ||
-						(((nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()).equals(nodeFieldMPs.get(gradeXingLinks.get(j).getNodeA()))))
-							&& (nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()).equals(nodeFieldMPs.get(gradeXingLinks.get(j).getNodeB())))))
+							(((nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()).equals(nodeFieldMPs.get(gradeXingLinks.get(j).getNodeA()))))
+									&& (nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()).equals(nodeFieldMPs.get(gradeXingLinks.get(j).getNodeB())))))
 					{
 						duplicate = true;
 						break innerloop;
@@ -52,7 +75,12 @@ public class GradeXingSpeedsAnalysis
 				}
 			if (duplicate == false)
 			{
-				traversals.add(new GradeXingTraversal(nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()), nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()), nodeNames.get(gradeXingLinks.get(i).getNodeA())));
+				if (line.equals("Entire Network"))
+					traversals.add(new GradeXingTraversal(nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()), nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()), nodeNames.get(gradeXingLinks.get(i).getNodeA())));
+				else if ((nodesInLine.contains(gradeXingLinks.get(i).getNodeA())) || (nodesInLine.contains(gradeXingLinks.get(i).getNodeB())))
+				{
+					traversals.add(new GradeXingTraversal(nodeFieldMPs.get(gradeXingLinks.get(i).getNodeA()), nodeFieldMPs.get(gradeXingLinks.get(i).getNodeB()), nodeNames.get(gradeXingLinks.get(i).getNodeA())));
+				}
 			}
 		}
 
@@ -71,7 +99,7 @@ public class GradeXingSpeedsAnalysis
 				}
 			}
 		}
-		
+
 		// 3.  Sort traversals on field milepost
 		sortedTraversals = new ArrayList <GradeXingTraversal>();
 		sortedTraversals.addAll(traversals);
@@ -80,7 +108,6 @@ public class GradeXingSpeedsAnalysis
 		resultsMessage += "Analyzed "+sortedTraversals.size()+" crossing entries\n";
 		resultsMessage += "Finished analyzing Grade Crossing Speeds results at "+ConvertDateTime.getTimeStamp()+"\n\n";
 	}
-
 
 	public static ArrayList<GradeXingTraversal> getSortedTraversals()
 	{
@@ -91,47 +118,17 @@ public class GradeXingSpeedsAnalysis
 	{
 		return gradeXingLinks;
 	}
-	
+
 	public static HashMap<String, String> getNodeNames()
 	{
 		return nodeNames;
-	}
-	
-	public static void clearTpcEntries()
-	{
-		tpcEntries.clear();
-	}
-
-	public static void clearGradeXingLinks()
-	{
-		gradeXingLinks.clear();
-	}
-
-	public static void clearNodeNames()
-	{
-		nodeNames.clear();
-	}
-
-	public static void clearNodeFieldMPs()
-	{
-		nodeFieldMPs.clear();
-	}
-
-	public static void clearTraversals()
-	{
-		traversals.clear();
-	}
-
-	public static void clearSortedTraversals()
-	{
-		sortedTraversals.clear();
 	}
 
 	public String getResultsMessage()
 	{
 		return resultsMessage;
 	}
-	
+
 	class MilepostSorter implements Comparator<GradeXingTraversal> 
 	{ 
 		@Override

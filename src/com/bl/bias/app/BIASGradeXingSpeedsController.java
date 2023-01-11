@@ -164,7 +164,7 @@ public class BIASGradeXingSpeedsController
 				trainsInTpcFileTextArea.setText("Select TPC file...");
 				lineLabel.setDisable(true);
 				lineComboBox.setDisable(true);
-				lineComboBox.getItems().removeAll(getPrelimDataLines.returnAllAvailableLines());
+				lineComboBox.getItems().clear();
 				fileNameLabel.setText("");
 			}	
 		}
@@ -225,7 +225,7 @@ public class BIASGradeXingSpeedsController
 				fileNameLabel.setText("");
 				lineLabel.setDisable(true);
 				lineComboBox.setDisable(true);
-				lineComboBox.getItems().removeAll(getPrelimDataLines.returnAllAvailableLines());
+				lineComboBox.getItems().clear();
 			}	
 		}
 	}
@@ -245,7 +245,7 @@ public class BIASGradeXingSpeedsController
 		fileNameLabel.setText("");
 		lineLabel.setDisable(true);
 		lineComboBox.setDisable(true);
-		lineComboBox.getItems().removeAll(getPrelimDataLines.returnAllAvailableLines());
+		lineComboBox.getItems().clear();
 	}
 
 	private void chooseFile()
@@ -295,6 +295,7 @@ public class BIASGradeXingSpeedsController
 			// Reset line labels and combobox
 			lineLabel.setDisable(true);
 			lineComboBox.setDisable(true);
+			lineComboBox.getItems().clear();
 
 			// Store path for subsequent runs and set labels
 			fileAsString = file.getName().toString();
@@ -353,10 +354,6 @@ public class BIASGradeXingSpeedsController
 				{
 					message += "\nUnable to perform analysis due to no TPC increment specified in .TPC file";
 				}
-				else if (getPrelimDataLines.returnAllAvailableLines().size() == 0)
-				{
-					message += "\nUnable to perform analysis due to no lines defined in .LINE file";
-				}
 				else
 				{
 					// Check that .TPC increment is equal to or smaller than the maximum user-configurable TPC increment
@@ -380,8 +377,9 @@ public class BIASGradeXingSpeedsController
 
 								// Select LINE
 								lineLabel.setDisable(false);
-								lineComboBox.setDisable(false);
 								lineComboBox.getItems().addAll(getPrelimDataLines.returnAllAvailableLines());
+								lineComboBox.getItems().add(0, "Entire Network");
+								lineComboBox.setDisable(false);
 							}
 							else
 							{
@@ -418,7 +416,7 @@ public class BIASGradeXingSpeedsController
 			fileNameLabel.setText("");
 			lineLabel.setDisable(true);
 			lineComboBox.setDisable(true);
-			lineComboBox.getItems().removeAll(getPrelimDataLines.returnAllAvailableLines());
+			lineComboBox.getItems().clear();
 		}
 
 		displayMessage(message);
@@ -450,7 +448,7 @@ public class BIASGradeXingSpeedsController
 	private void runTask()
 	{
 		// Read Objects that are required for the grade xing speed analysis
-		ReadGradeXingAnalysisFiles readData = new ReadGradeXingAnalysisFiles(fullyQualifiedPath);
+		ReadGradeXingAnalysisFiles readData = new ReadGradeXingAnalysisFiles(fullyQualifiedPath, lineToAnalyze);
 		message = readData.getResultsMessage();
 		displayMessage("\n\n"+message+"\n");
 

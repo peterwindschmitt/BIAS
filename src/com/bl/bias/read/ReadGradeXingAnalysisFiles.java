@@ -17,25 +17,41 @@ import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadGradeXingAnalysisFiles 
 {
-	private static ArrayList<GradeXingTpcEntry> tpcEntries = new ArrayList<GradeXingTpcEntry>();
-	private static ArrayList<GradeXingAggregatedLink> gradeXingAggregatedLinks = new ArrayList<GradeXingAggregatedLink>();
-	private static ArrayList<GradeXingRawLink> gradeXingRawLinks = new ArrayList<GradeXingRawLink>();
+	private static ArrayList<GradeXingTpcEntry> tpcEntries;
+	private static ArrayList<GradeXingAggregatedLink> gradeXingAggregatedLinks;
+	private static ArrayList<GradeXingRawLink> gradeXingRawLinks;
 
-	private static HashMap<String, String> nodeNames = new HashMap<>();
-	private static HashMap<String, Double> nodeFieldMPs = new HashMap<>();
-	private static HashMap<String, String> trainSymbolsToTrainTypes = new HashMap<>();
-	private static HashMap<String, String> trainSymbolsToTrainGroupNames = new HashMap<>();
+	private static HashMap<String, String> nodeNames;
+	private static HashMap<String, Double> nodeFieldMPs;
+	private static HashMap<String, String> trainSymbolsToTrainTypes;
+	private static HashMap<String, String> trainSymbolsToTrainGroupNames;
 
-	private static HashSet<String> nodesInTpcFile = new HashSet<String>();
-	private static HashSet<String> trainSymbolsInTpcFile = new HashSet<String>();
-	private static HashSet<String> trainSymbolsNotAssignedAGroup = new HashSet<String>();
+	private static HashSet<String> nodesInTpcFile;
+	private static HashSet<String> nodesInLine;
+	private static HashSet<String> trainSymbolsInTpcFile;
+	private static HashSet<String> trainSymbolsNotAssignedAGroup;
 
 	private static String resultsMessage;
-	
+	private static String lineName;
+
 	private static Integer validTrainCount;
 
-	public ReadGradeXingAnalysisFiles(String file)
+	public ReadGradeXingAnalysisFiles(String file, String line)
 	{
+		lineName = line;
+
+		tpcEntries = new ArrayList<GradeXingTpcEntry>();
+		gradeXingAggregatedLinks = new ArrayList<GradeXingAggregatedLink>();
+		nodeNames = new HashMap<>();
+		nodeFieldMPs = new HashMap<>();
+		trainSymbolsToTrainTypes = new HashMap<>();
+		trainSymbolsToTrainGroupNames = new HashMap<>();
+		gradeXingRawLinks = new ArrayList<GradeXingRawLink>();
+		nodesInTpcFile = new HashSet<String>();
+		nodesInLine = new HashSet<String>();
+		trainSymbolsInTpcFile = new HashSet<String>();
+		trainSymbolsNotAssignedAGroup = new HashSet<String>();
+		
 		trainSymbolsToTrainTypes.clear();
 		tpcEntries.clear();
 		gradeXingAggregatedLinks.clear();
@@ -43,10 +59,11 @@ public class ReadGradeXingAnalysisFiles
 		nodeNames.clear();
 		nodeFieldMPs.clear();
 		nodesInTpcFile.clear();
+		nodesInLine.clear();
 		trainSymbolsToTrainGroupNames.clear();
 		trainSymbolsInTpcFile.clear();
 		trainSymbolsNotAssignedAGroup.clear();
-				
+
 		validTrainCount = 0;
 
 		Scanner scanner = null;
@@ -206,7 +223,7 @@ public class ReadGradeXingAnalysisFiles
 					}
 				}
 			}
-			
+
 			if (validTrainCount > 0)
 				resultsMessage +="Extracted "+tpcEntries.size()+" eligible objects from "+validTrainCount+" trains in the .TPC file\n";
 			scanner.close();
@@ -231,11 +248,11 @@ public class ReadGradeXingAnalysisFiles
 			{
 				File nodeFile = new File(file.replace("TPC","NODE"));
 				scanner = new Scanner(nodeFile);
-	
+
 				boolean openingSequence = false;
-	
+
 				String targetSequence0 = "xxxxxxxxxxxx";
-	
+
 				while (scanner.hasNextLine()) 
 				{
 					String lineFromFile = scanner.nextLine();
@@ -249,7 +266,7 @@ public class ReadGradeXingAnalysisFiles
 						String nodeId = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.n_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.n_getNode()[1])).trim();
 						String nodeName = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.n_getNodeName()[0]), Integer.valueOf(BIASParseConfigPageController.n_getNodeName()[1])).trim();
 						Double nodeFieldMP = Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.n_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.n_getFieldMarker()[1])).trim());
-	
+
 						// Iterate through nodesFromLine
 						for (int j = 0; j < nodesInTpcFile.size(); j++)
 						{
@@ -262,7 +279,7 @@ public class ReadGradeXingAnalysisFiles
 						}
 					}
 				}
-	
+
 				resultsMessage +="Extracted "+nodeNames.size()+" eligible objects from .NODE file\n";
 				scanner.close();
 			}
@@ -274,17 +291,17 @@ public class ReadGradeXingAnalysisFiles
 			{
 				scanner.close();
 			}
-	
+
 			// Parse links in .LINK file	
 			try 
 			{
 				File linkFile = new File(file.replace("TPC","LINK"));
 				scanner = new Scanner(linkFile);
-	
+
 				boolean openingSequence = false;
-	
+
 				String targetSequence0 = "xxxxxxxxxxxx";
-	
+
 				while (scanner.hasNextLine()) 
 				{
 					String lineFromFile = scanner.nextLine();
@@ -301,7 +318,7 @@ public class ReadGradeXingAnalysisFiles
 						Integer designPassengerSpeed = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[1])).trim());
 						Integer designThroughSpeed = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[1])).trim());
 						Integer designLocalSpeed = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[1])).trim());
-						
+
 						// If the link has class grade xing and both nodes are in the nodesInTpcFile, add it to gradeXingLinks 
 						if ((linkClass.equals("Road Crossing")) && (nodesInTpcFile.contains(originNodeId)) && (nodesInTpcFile.contains(destinationNodeId)))
 						{
@@ -310,7 +327,7 @@ public class ReadGradeXingAnalysisFiles
 						}
 					}
 				}
-	
+
 				resultsMessage +="Extracted "+gradeXingAggregatedLinks.size()+" eligible objects from .LINK file\n";
 			}
 			catch (Exception e) 
@@ -321,7 +338,75 @@ public class ReadGradeXingAnalysisFiles
 			{
 				scanner.close();
 			}
-	
+
+			// Parse nodes for selected line in .LINE file
+			if (!line.equals("Entire Network"))
+			{
+				try 
+				{
+					File lineFile = new File(file.replace("TPC","LINE"));
+					scanner = new Scanner(lineFile);
+
+					boolean openingSequence = false;
+
+					String targetSequence0 = "Line #";
+					String targetSequence1 = "-------";
+
+					while (scanner.hasNextLine()) 
+					{
+						String lineFromFile = scanner.nextLine();
+						if((lineFromFile.contains(targetSequence0))
+								&& (lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getLineName()[0]), Integer.valueOf(BIASParseConfigPageController.w_getLineName()[1])).trim().equals(line)))
+						{ 
+							openingSequence = true;
+						}
+						else if ((lineFromFile.contains(targetSequence1)) && (openingSequence))
+						{
+							resultsMessage +="Extracted "+nodesInLine.size()+" eligible objects from .LINE file\n";
+							break;
+						}
+						else if (openingSequence)
+						{ 
+							nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol1()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol1()[1])).trim());							
+							if (lineFromFile.length()>14)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol2()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol2()[1])).trim());							
+							if (lineFromFile.length()>28)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol3()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol3()[1])).trim());							
+							if (lineFromFile.length()>42)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol4()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol4()[1])).trim());							
+							if (lineFromFile.length()>56)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol5()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol5()[1])).trim());							
+							if (lineFromFile.length()>70)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol6()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol6()[1])).trim());							
+							if (lineFromFile.length()>84)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol7()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol7()[1])).trim());							
+							if (lineFromFile.length()>98)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol8()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol8()[1])).trim());							
+							if (lineFromFile.length()>112)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol9()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol9()[1])).trim());							
+							if (lineFromFile.length()>126)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol10()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol10()[1])).trim());							
+							if (lineFromFile.length()>140)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol11()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol11()[1])).trim());
+							if (lineFromFile.length()>154)
+								nodesInLine.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.w_getCol12()[0]), Integer.valueOf(BIASParseConfigPageController.w_getCol12()[1])).trim());
+						}				
+					}
+				}
+				catch (Exception e) 
+				{
+					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				}
+				finally
+				{
+					scanner.close();
+				}
+			}
+			else
+			{
+				resultsMessage +=".LINE file not considered\n";
+			}
+
 			resultsMessage += "Finished parsing Grade Crossing Speeds input files at "+ConvertDateTime.getTimeStamp()+"\n";
 		}
 	}
@@ -330,7 +415,7 @@ public class ReadGradeXingAnalysisFiles
 	{
 		return tpcEntries;
 	}
-	
+
 	public static ArrayList<GradeXingAggregatedLink> getGradeXingAggregatedLinks()
 	{
 		return gradeXingAggregatedLinks;
@@ -340,7 +425,7 @@ public class ReadGradeXingAnalysisFiles
 	{
 		return gradeXingRawLinks;
 	}
-	
+
 	public static HashMap<String, String> getNodeNames()
 	{
 		return nodeNames;
@@ -356,11 +441,21 @@ public class ReadGradeXingAnalysisFiles
 		return nodesInTpcFile;
 	}
 
+	public static HashSet<String> getNodesInLine()
+	{
+		return nodesInLine;
+	}
+
+	public static String getLineName()
+	{
+		return lineName;
+	}
+
 	public static String getResultsMessage()
 	{
 		return resultsMessage;
 	}
-	
+
 	public static Integer getValidTrainCount()
 	{
 		return validTrainCount;
