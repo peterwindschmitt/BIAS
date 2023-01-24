@@ -41,6 +41,7 @@ public class RadixxFlightLegOutput
 	private Integer excelRowCounter = 16;
 	private Integer recordSerialNumber = 3;
 	private Integer highestRecordSerialNumber = 3;
+	private Integer highestFlightNumber = 0;
 
 	private static Integer objectsReadCount = 0;
 
@@ -397,6 +398,31 @@ public class RadixxFlightLegOutput
 								}
 							});
 							break;
+						}
+						
+						// Check #7:  Make sure that flight numbers are in order
+						if (validInput)
+						{
+							if (Integer.valueOf(flightNumber) < highestFlightNumber)
+							{
+								validInput = false;
+
+								Platform.runLater(new Runnable()
+								{
+									@Override
+									public void run() 
+									{
+										Alert alert = new Alert(AlertType.ERROR);
+										alert.setTitle("Error");
+										alert.setHeaderText(null);
+										alert.setContentText("Train numbers are out of sequence at spreadsheet row "+(excelRowCounter+1)+".");	
+										alert.showAndWait();
+									}
+								});
+								break;
+							}
+							else if (Integer.valueOf(flightNumber) > highestFlightNumber)
+								highestFlightNumber = Integer.valueOf(flightNumber);
 						}
 
 						if (validInput)
