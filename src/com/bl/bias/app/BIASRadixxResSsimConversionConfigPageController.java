@@ -19,16 +19,21 @@ public class BIASRadixxResSsimConversionConfigPageController
 
 	private static Boolean checkStasEqual;
 	private static String permittedLocationCodes;
+	private static String permittedTraversalTimes;
 
 	private static Boolean defaultCheckStasEqual = true;
 	private static String defaultPermittedLocationCodes = "WPT,RRN,FBT,AVE,EKW"; 
+	private static String defaultPermittedTraversalTimes = "14,16,17,22,27,30,35,40";
 
 	@FXML private CheckBox checkStasEqualCheckBox;
-	
+
 	@FXML private Button updateLocationCodesButton;
 	@FXML private Button useLastSavedLocationCodesButton;
+	@FXML private Button updateTraversalTimesButton;
+	@FXML private Button useLastTraversalTimesButton;
 
 	@FXML private TextField permissibleLocationCodesTextField;
+	@FXML private TextField permissibleTraversalTimesTextField;
 
 	@FXML private void initialize() 
 	{
@@ -61,6 +66,20 @@ public class BIASRadixxResSsimConversionConfigPageController
 			permissibleLocationCodesTextField.setText(prefs.get("rs_permittedLocationCodes", defaultPermittedLocationCodes));
 		}
 		permittedLocationCodes = prefs.get("rs_permittedLocationCodes", defaultPermittedLocationCodes);
+
+		// See if location codes are stored
+		boolean permittedTraversalTimesExist = prefs.get("rs_permittedTraversalTimes", null) != null;
+		if (permittedTraversalTimesExist)
+		{
+			permissibleTraversalTimesTextField.setText(prefs.get("rs_permittedTraversalTimes", defaultPermittedTraversalTimes));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("rs_permittedTraversalTimes", defaultPermittedTraversalTimes);
+			permissibleTraversalTimesTextField.setText(prefs.get("rs_permittedTraversalTimes", defaultPermittedTraversalTimes));
+		}
+		permittedTraversalTimes = prefs.get("rs_permittedTraversalTimes", defaultPermittedTraversalTimes);
 	};
 
 	@FXML private void handleCheckStasEqualCheckBox()
@@ -88,21 +107,43 @@ public class BIASRadixxResSsimConversionConfigPageController
 	{
 		validateLocationCodes();
 	}
-	
+
 	@FXML private void handleUseLastSavedLocationCodesButton()
 	{
 		permissibleLocationCodesTextField.setText(permittedLocationCodes);
 		permissibleLocationCodesTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleTextChangedTextField()
+	@FXML private void handleTextChangedPermissibleLocationsTextField()
 	{
 		permissibleLocationCodesTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
+	@FXML private void handleTextChangedPermissibleTraversalTimesTextField()
+	{
+		permissibleTraversalTimesTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+
+	@FXML private void handleUpdateTraversalTimesButton()
+	{
+		validateTraversalTimes();
+	}
+
+	@FXML private void handleUseLastSavedTraversalTimesButton()
+	{
+		permissibleTraversalTimesTextField.setText(permittedTraversalTimes);
+		permissibleTraversalTimesTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+	}
+
 	public static String getPermittedLocationCodes()
 	{
 		return permittedLocationCodes;
+	}
+	
+	public static String getPermittedTraversalTimes()
+	{
+		return permittedTraversalTimes;
 	}
 
 	private void validateLocationCodes()
@@ -152,9 +193,78 @@ public class BIASRadixxResSsimConversionConfigPageController
 			permittedLocationCodes = formattedLocationList;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("rs_permittedLocationCodes", formattedLocationList);
-			
+
 			permissibleLocationCodesTextField.setText(formattedLocationList);
 			permissibleLocationCodesTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+	}
+
+	private void validateTraversalTimes()
+	{
+		Boolean traversalTimesCorrectlyFormatted = true;
+
+		Integer validTraversalTimesCount = 0;
+
+		String textToValidate = permissibleTraversalTimesTextField.getText();
+		String formattedTraversalTimesList = "";
+		List<String> inputtedTraversalTimesList = Arrays.asList(textToValidate.split("\\s*,\\s*"));
+
+		for (int i=0; i < inputtedTraversalTimesList.size(); i++)
+		{
+			char[] traversalTime = inputtedTraversalTimesList.get(i).toCharArray();
+			for (int j = 0; j < traversalTime.length; j++)
+			{
+				if(!Character.isDigit(traversalTime[j]))
+				{
+					traversalTimesCorrectlyFormatted = false;
+					break;
+				}				
+			}
+			
+			if ((traversalTimesCorrectlyFormatted == true) && (traversalTime.length > 0))
+			{
+				validTraversalTimesCount++;
+				if (validTraversalTimesCount == 1)
+				{
+					formattedTraversalTimesList = Integer.valueOf(inputtedTraversalTimesList.get(i).trim()).toString();
+				}
+				else
+				{	
+					formattedTraversalTimesList += ","+Integer.valueOf(inputtedTraversalTimesList.get(i).trim()).toString();
+				}
+			}
+			else
+				break;
+		}
+
+		if (traversalTimesCorrectlyFormatted == false) 
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("At least one traversal time is not formatted properly!  Please try again.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
+		}
+		else if (validTraversalTimesCount == 0)
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("At least one traversal time must be specified!  Please try again.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
+		}
+		else
+		{
+			permittedTraversalTimes = formattedTraversalTimesList;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("rs_permittedTraversalTimes", formattedTraversalTimesList);
+
+			permissibleTraversalTimesTextField.setText(formattedTraversalTimesList);
+			permissibleTraversalTimesTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 	}
 }

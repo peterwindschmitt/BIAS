@@ -17,13 +17,16 @@ public class BIASLaunch extends Application
 {
 	// Version = Major release.minor release followed by date of software
 	// 1.0 was 8/4/2021
-	// 2.0 was 1/18/22
-	// 3.0 was 9/21/22
+	// 2.0 was 1/18/2022
+	// 3.0 was 9/21/2022
 	// 3.1 was 10/16/2022 (fixed bug in SSIM day of week)
 	// 3.2 was 10/31/2022 (significantly sped up processing of bridge closure periods)
 	// 3.3 was 12/12/2022 (added checks #3 and #4 for SSIM conversion)
 	// 3.4 was 12/14/2022 (added submenus to GUI to group modules by functionality)
-	private final static String version = "3.4 (December 14, 2022)";
+	// 3.5 was 1/26/2023 (added checks #5, #6 and #7 for SSIM conversion, added grade crossing speed analysis)
+	// 3.6 was 2/15/2023 (added check #8 for SSIM conversion)
+	
+	private final static String version = "3.6 (February 15, 2023)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 3;
  	//
 	// Session validity
