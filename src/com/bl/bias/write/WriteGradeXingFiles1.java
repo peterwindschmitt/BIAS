@@ -160,7 +160,7 @@ public class WriteGradeXingFiles1
 		{
 			if ((i == 0) || (i == 1))
 			{
-				gradeXingTraversalsSheet.setColumnWidth(i, 4000);
+				gradeXingTraversalsSheet.setColumnWidth(i, 4900);
 			}
 			else if (i == 2)
 			{
@@ -177,7 +177,7 @@ public class WriteGradeXingFiles1
 		// Freeze first row and show sort
 		gradeXingTraversalsSheet.createFreezePane(0, 1);
 		gradeXingTraversalsSheet.setAutoFilter(CellRangeAddress.valueOf("A1:C5"));
-		gradeXingTraversalsSheet.setAutoFilter(new CellRangeAddress(0, rowCounter - 1, 0, 8));
+		gradeXingTraversalsSheet.setAutoFilter(new CellRangeAddress(0, rowCounter - 1, 0, 10));
 	}
 
 	public String getResultsMessageWrite1()
