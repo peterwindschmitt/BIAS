@@ -2,6 +2,8 @@ package com.bl.bias.objects;
 
 public class GradeXingTraversal 
 {
+	private String highestSpeedTrainSymbol;
+	private String lowestSpeedTrainSymbol;
 	private String nodeAName;
 	private Double nodeAFieldMP;
 	private Double nodeBFieldMP;
@@ -17,28 +19,38 @@ public class GradeXingTraversal
 		this.nodeBFieldMP = nodeBFieldMP;
 	}
 
-	public void setHighestObservedSpeed(Double speed)
+	public void setHighestObservedSpeed(String trainSymbol, Double speed)
 	{
 		if (speed > highestObservedSpeed)
+		{
 			highestObservedSpeed = speed;
+			highestSpeedTrainSymbol = trainSymbol;
+		}
 	}
 	
-	public void setLowestObservedSpeed(Double speed)
+	public void setLowestObservedSpeed(String trainSymbol, Double speed)
 	{
 		if (speed < lowestObservedSpeed)
+		{
 			lowestObservedSpeed = speed;
+			lowestSpeedTrainSymbol = trainSymbol;
+		}
 	}
 		
 	public void setHighestDesignSpeed(Double speed)
 	{
 		if (speed > highestDesignSpeed)
+		{
 			highestDesignSpeed = speed;
+		}
 	}
 	
 	public void setLowestDesignSpeed(Double speed)
 	{
 		if (speed < lowestDesignSpeed)
+		{
 			lowestDesignSpeed = speed;
+		}
 	}
 	
 	public String getNodeAName()
@@ -56,7 +68,17 @@ public class GradeXingTraversal
 		return nodeBFieldMP;
 	}
 
-	public Double getHighestObservedSpeed()
+	public String getHighestSpeedTrainSymbol()
+	{
+		return highestSpeedTrainSymbol;
+	}
+	
+	public String getLowestSpeedTrainSymbol()
+	{
+		return lowestSpeedTrainSymbol;
+	}
+	
+		public Double getHighestObservedSpeed()
 	{
 		return highestObservedSpeed;
 	}

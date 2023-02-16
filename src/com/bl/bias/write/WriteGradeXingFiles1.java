@@ -84,11 +84,17 @@ public class WriteGradeXingFiles1
 		cell.setCellValue("Max Anticipated Speed");
 		cell = row.createCell(6);
 		cell.setCellStyle(style1);
-		cell.setCellValue("Min Anticipated Speed");
+		cell.setCellValue("Max Speed Symbol");
 		cell = row.createCell(7);
 		cell.setCellStyle(style1);
-		cell.setCellValue("Diff Between Max Design Speed and Max Anticipated Speed");
+		cell.setCellValue("Min Anticipated Speed");
 		cell = row.createCell(8);
+		cell.setCellStyle(style1);
+		cell.setCellValue("Min Speed Symbol");
+		cell = row.createCell(9);
+		cell.setCellStyle(style1);
+		cell.setCellValue("Diff Between Max Design Speed and Max Anticipated Speed");
+		cell = row.createCell(10);
 		cell.setCellStyle(style1);
 		cell.setCellValue("Diff Between Max Design Speed and Min Anticipated Speed");
 		rowCounter++;
@@ -119,11 +125,17 @@ public class WriteGradeXingFiles1
 				cell.setCellValue(traversals.get(i).getHighestObservedSpeed());
 				cell = row.createCell(6);
 				cell.setCellStyle(style1);
-				cell.setCellValue(traversals.get(i).getLowestObservedSpeed());
+				cell.setCellValue(traversals.get(i).getHighestSpeedTrainSymbol());
 				cell = row.createCell(7);
 				cell.setCellStyle(style1);
-				cell.setCellValue(traversals.get(i).getMaxDesignVsMaxObservedSpeedDifference());
+				cell.setCellValue(traversals.get(i).getLowestObservedSpeed());
 				cell = row.createCell(8);
+				cell.setCellStyle(style1);
+				cell.setCellValue(traversals.get(i).getLowestSpeedTrainSymbol());
+				cell = row.createCell(9);
+				cell.setCellStyle(style1);
+				cell.setCellValue(traversals.get(i).getMaxDesignVsMaxObservedSpeedDifference());
+				cell = row.createCell(10);
 				cell.setCellStyle(style1);
 				cell.setCellValue(traversals.get(i).getMaxDesignVsMinObservedSpeedDifference());
 
@@ -152,7 +164,11 @@ public class WriteGradeXingFiles1
 			}
 			else if (i == 2)
 			{
-				gradeXingTraversalsSheet.setColumnWidth(i, 6600);
+				gradeXingTraversalsSheet.setColumnWidth(i, 6600);  // Crossing name
+			}
+			else if ((i == 6) || (i == 8))
+			{
+				gradeXingTraversalsSheet.setColumnWidth(i, 6200);  // Train symbols
 			}
 			else
 				gradeXingTraversalsSheet.setColumnWidth(i, 3300);

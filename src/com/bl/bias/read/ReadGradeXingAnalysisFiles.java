@@ -130,12 +130,13 @@ public class ReadGradeXingAnalysisFiles
 		{
 			File tpcFile = new File(file);
 			scanner = new Scanner(tpcFile);
+			
+			String trainSymbol = null;
 
 			while (scanner.hasNextLine()) 
 			{
 				String lineFromFile = scanner.nextLine();
-				String trainSymbol = null;
-
+				
 				if (lineFromFile.length() > 0)
 				{
 					// Check if a valid train to consider
@@ -208,6 +209,9 @@ public class ReadGradeXingAnalysisFiles
 
 					if (parseThisTrain)
 					{
+						Integer trainNameStartIndex = lineFromFile.lastIndexOf("Seed train") + 10;
+						Integer trainNameEndIndex = lineFromFile.lastIndexOf("TPC results") - 1;
+						
 						// If valid train, then continue parsing route for the train.  Otherwise, go to next valid train or EOF, whichever occurs first
 						String tpcNode = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])).trim();
 						if ((!tpcNode.trim().equals("")) && (!tpcNode.trim().contains("---")) && (!tpcNode.trim().contains("Route node")) && (!tpcNode.trim().contains("Case:")))
@@ -216,8 +220,7 @@ public class ReadGradeXingAnalysisFiles
 							Double tpcFieldMarker = Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])).trim());
 							Double tpcDesignSpeed =  Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])).trim());
 							Double tpcCurrentSpeed =  Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1])).trim());
-
-							tpcEntries.add(new GradeXingTpcEntry(tpcNode, tpcFieldMarker, tpcDesignSpeed, tpcCurrentSpeed));
+							tpcEntries.add(new GradeXingTpcEntry(trainSymbol, tpcNode, tpcFieldMarker, tpcDesignSpeed, tpcCurrentSpeed));
 							nodesInTpcFile.add(tpcNode);  // Use this hashset to determine which nodes and links to examine
 						}
 					}

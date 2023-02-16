@@ -1,4 +1,4 @@
-package com.bl.bias.analyze;
+	package com.bl.bias.analyze;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,8 +92,8 @@ public class GradeXingSpeedsAnalysis
 				if ((Double.valueOf(traversals.get(i).getNodeAFieldMP()).equals(tpcEntries.get(j).getFieldMarker())) || (Double.valueOf(traversals.get(i).getNodeBFieldMP()).equals(tpcEntries.get(j).getFieldMarker())))
 
 				{
-					traversals.get(i).setHighestObservedSpeed(tpcEntries.get(j).getCurrentSpeed());
-					traversals.get(i).setLowestObservedSpeed(tpcEntries.get(j).getCurrentSpeed());
+					traversals.get(i).setHighestObservedSpeed(tpcEntries.get(j).getTrainSymbol(), tpcEntries.get(j).getCurrentSpeed());
+					traversals.get(i).setLowestObservedSpeed(tpcEntries.get(j).getTrainSymbol(), tpcEntries.get(j).getCurrentSpeed());
 					traversals.get(i).setHighestDesignSpeed(tpcEntries.get(j).getDesignSpeed());
 					traversals.get(i).setLowestDesignSpeed(tpcEntries.get(j).getDesignSpeed());
 				}
