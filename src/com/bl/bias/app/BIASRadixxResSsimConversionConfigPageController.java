@@ -159,6 +159,9 @@ public class BIASRadixxResSsimConversionConfigPageController
 
 		for (int i=0; i < inputtedLocationList.size(); i++)
 		{
+			if (inputtedLocationList.get(i) == "")
+				continue;
+			
 			if (inputtedLocationList.get(i).length() != 3)
 			{
 				locationsCorrectlyFormatted = false;
@@ -207,13 +210,18 @@ public class BIASRadixxResSsimConversionConfigPageController
 
 		String textToValidate = permissibleTraversalTimesTextField.getText();
 		String formattedTraversalTimesList = "";
-		List<String> inputtedTraversalTimesList = Arrays.asList(textToValidate.split("\\s*,\\s*"));
-
+		List<String> inputtedTraversalTimesList = Arrays.asList(textToValidate.split(",+\\s*"));
+		
 		for (int i=0; i < inputtedTraversalTimesList.size(); i++)
 		{
+			if (inputtedTraversalTimesList.get(i) == "")
+				continue;
+			
 			char[] traversalTime = inputtedTraversalTimesList.get(i).toCharArray();
+						
 			for (int j = 0; j < traversalTime.length; j++)
 			{
+				
 				if(!Character.isDigit(traversalTime[j]))
 				{
 					traversalTimesCorrectlyFormatted = false;
