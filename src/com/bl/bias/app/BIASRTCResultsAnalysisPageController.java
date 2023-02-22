@@ -370,7 +370,7 @@ public class BIASRTCResultsAnalysisPageController
 			}
 			else if ((!BIASValidateOptionsAndINIFileSchemeA.getTrainsEquippedCorrectly()) && ((BIASRTCResultsAnalysisConfigPageController.getCheckForPtcEquipped()) || (BIASRTCResultsAnalysisConfigPageController.getCheckForAtcEquipped()))) 
 			{
-				message += "Invalid PTC/ATC compliance in .TRAIN file\n";
+				message += "Invalid PTC/ATC compliance in .TRAIN file and/or invalid count of .TRAIN files\n";
 				formattedCorrectly = false;
 			}
 				
