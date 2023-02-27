@@ -39,6 +39,7 @@
                   <Menu mnemonicParsing="false" text="Scheduling">
                     <items>
       						<MenuItem fx:id="menuItemRadixxResSsimConversion" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversion" text="Radixx Res _SSIM Conversion" visible="false" />
+                   			<MenuItem fx:id="menuItemRadixxResSsimComparison" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimComparison" text="Radixx Res _SSIM Comparison" visible="false" />
                     </items>
                   </Menu>
 						<SeparatorMenuItem />

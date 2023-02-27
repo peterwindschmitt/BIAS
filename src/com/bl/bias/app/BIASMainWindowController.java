@@ -24,6 +24,7 @@ public class BIASMainWindowController
     @FXML private MenuItem menuItemBridgeClosureAnalysis;
     @FXML private MenuItem menuItemMaintenanceWindowAnalysis;
     @FXML private MenuItem menuItemRadixxResSsimConversion;
+    @FXML private MenuItem menuItemRadixxResSsimComparison;
     @FXML private MenuItem menuItemGradeXingSpeeds;
     @FXML private MenuItem menuItemExit; 
     @FXML private MenuItem menuItemRTCResultsAnalysisConfig;
@@ -31,6 +32,7 @@ public class BIASMainWindowController
     @FXML private MenuItem menuItemBridgeClosureAnalysisConfig;
     @FXML private MenuItem menuItemMaintenanceWindowAnalysisConfig;
     @FXML private MenuItem menuItemRadixxResSsimConversionConfig;
+    //@FXML private MenuItem menuItemRadixxResSsimComparisonConfig;
     @FXML private MenuItem menuItemGradeXingSpeedsConfig;
     @FXML private MenuItem menuItemGeneralConfig;
     @FXML private MenuItem menuItemParseConfig;
@@ -48,7 +50,9 @@ public class BIASMainWindowController
     @FXML private Node nodeBridgeClosureAnalysis;
     @FXML private Node nodeBridgeClosureAnalysisConfig;
     @FXML private Node nodeRadixxResSsimConversion;
+    @FXML private Node nodeRadixxResSsimComparison;
     @FXML private Node nodeRadixxResSsimConversionConfig;
+    //@FXML private Node nodeRadixxResSsimComparisonConfig;
     @FXML private Node nodeGradeXingSpeeds;
     @FXML private Node nodeGradeXingSpeedsConfig;
        
@@ -73,7 +77,9 @@ public class BIASMainWindowController
         nodeBridgeClosureAnalysis = FXMLLoader.load(getClass().getResource("BIASBridgeClosureAnalysisPage.fxml"));
         nodeBridgeClosureAnalysisConfig = FXMLLoader.load(getClass().getResource("BIASBridgeClosureAnalysisConfigPage.fxml"));
         nodeRadixxResSsimConversion = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimConversionPage.fxml"));
+        nodeRadixxResSsimComparison = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimComparisonPage.fxml"));
         nodeRadixxResSsimConversionConfig = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimConversionConfigPage.fxml"));
+        //nodeRadixxResSsimComparisonConfig = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimComparisonConfigPage.fxml"));
         nodeGradeXingSpeeds = FXMLLoader.load(getClass().getResource("BIASGradeXingSpeedsPage.fxml"));
         nodeGradeXingSpeedsConfig = FXMLLoader.load(getClass().getResource("BIASGradeXingSpeedsConfigPage.fxml"));
         // LOADING BELOW nodes will throw exception if trying to launch as JAR
@@ -148,7 +154,7 @@ public class BIASMainWindowController
 	    			handleMenuItemBridgeClosureAnalysis(null);
 	    		}
 	    	}
-	    	else if (permittedModules[i].toString().contains("Radixx"))
+	    	else if (permittedModules[i].toString().contains("SSIM Conversion"))
 	    	{
 	    		menuItemRadixxResSsimConversion.setVisible(true);
 	    		subMenuModuleConfig.setVisible(true);
@@ -157,6 +163,16 @@ public class BIASMainWindowController
 	    		if (i == 0)
 	    		{
 	    			handleMenuItemRadixxResSsimConversion(null);
+	    		}
+	    	}
+	    	else if (permittedModules[i].toString().contains("SSIM Comparison"))
+	    	{
+	    		menuItemRadixxResSsimComparison.setVisible(true);
+	    		//subMenuModuleConfig.setVisible(true);
+	    		//menuItemRadixxResSsimComparisonConfig.setVisible(true);
+	    		if (i == 0)
+	    		{
+	    			handleMenuItemRadixxResSsimComparison(null);
 	    		}
 	    	}
 	    	else if (permittedModules[i].toString().contains("Grade"))
@@ -183,6 +199,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
 	    	mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -206,6 +224,8 @@ public class BIASMainWindowController
     		mainGridPane.getChildren().remove(nodeParseConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
     		mainGridPane.getChildren().remove(nodeTTestConfig);
     		mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -229,6 +249,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
@@ -252,6 +274,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
@@ -275,6 +299,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
 	    	mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -298,6 +324,8 @@ public class BIASMainWindowController
            	mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
            	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
            	mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -319,8 +347,10 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeRTCResultsAnalysis);
 	    	mainGridPane.getChildren().remove(nodeTTest);
 	    	mainGridPane.getChildren().remove(nodeGeneralConfig);
-	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
@@ -344,6 +374,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
 	    	mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -367,6 +399,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeTTestConfig);
 	    	mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -390,6 +424,8 @@ public class BIASMainWindowController
 		    mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 		    mainGridPane.getChildren().remove(nodeTTestConfig);
 		    mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -413,6 +449,8 @@ public class BIASMainWindowController
 		    mainGridPane.getChildren().remove(nodeGeneralConfig);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 		    mainGridPane.getChildren().remove(nodeTTestConfig);
 		    mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -435,6 +473,8 @@ public class BIASMainWindowController
 		    mainGridPane.getChildren().remove(nodeTTest);
 		    mainGridPane.getChildren().remove(nodeGeneralConfig);
 		    mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+		    mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeParseConfig);
 		    mainGridPane.getChildren().remove(nodeTTestConfig);
 		    mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
@@ -447,6 +487,31 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeGradeXingSpeedsConfig);
 	    		    	
 		    mainGridPane.add(nodeRadixxResSsimConversion, 0, 2);
+	    }
+    }
+    
+    @FXML private void handleMenuItemRadixxResSsimComparison(ActionEvent event) throws IOException
+    {
+    	if (!mainGridPane.getChildren().contains(nodeRadixxResSsimComparison))
+    	{	
+	    	mainGridPane.getChildren().remove(nodeRTCResultsAnalysis);
+		    mainGridPane.getChildren().remove(nodeTTest);
+		    mainGridPane.getChildren().remove(nodeGeneralConfig);
+		    mainGridPane.getChildren().remove(nodeParseConfig);
+		    mainGridPane.getChildren().remove(nodeTTestConfig);
+		    mainGridPane.getChildren().remove(nodeRTCResultsAnalysisConfig);
+	    	mainGridPane.getChildren().remove(nodeMaintenanceWindowAnalysis);
+	    	mainGridPane.getChildren().remove(nodeMaintenanceWindowAnalysisConfig);
+	    	mainGridPane.getChildren().remove(nodeBridgeClosureAnalysis);
+	    	mainGridPane.getChildren().remove(nodeBridgeClosureAnalysisConfig);
+	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
+	    	mainGridPane.getChildren().remove(nodeGradeXingSpeeds);
+	    	mainGridPane.getChildren().remove(nodeGradeXingSpeedsConfig);
+	    		    	
+		    mainGridPane.add(nodeRadixxResSsimComparison, 0, 2);
 	    }
     }
      
@@ -467,6 +532,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeGradeXingSpeedsConfig);
 	    		    	
 		    mainGridPane.add(nodeGradeXingSpeeds, 0, 2);
@@ -490,6 +557,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversionConfig);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeGradeXingSpeeds);
 	    		    	
 		    mainGridPane.add(nodeGradeXingSpeedsConfig, 0, 2);
@@ -512,6 +581,8 @@ public class BIASMainWindowController
 	    	mainGridPane.getChildren().remove(nodeBridgeClosureAnalysisConfig);
 	    	mainGridPane.getChildren().remove(nodeVersioningAndPermissions);
 	    	mainGridPane.getChildren().remove(nodeRadixxResSsimConversion);
+	    	mainGridPane.getChildren().remove(nodeRadixxResSsimComparison);
+	    	//mainGridPane.getChildren().remove(nodeRadixxResSsimComparisonConfig);
 	    	mainGridPane.getChildren().remove(nodeGradeXingSpeeds);
 	    	mainGridPane.getChildren().remove(nodeGradeXingSpeedsConfig);
 	    		    	

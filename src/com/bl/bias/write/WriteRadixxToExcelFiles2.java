@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.bl.bias.app.BIASGeneralConfigController;
-import com.bl.bias.app.BIASRadixxResSsimConversionController;
+import com.bl.bias.app.BIASRadixxResSsimConversionPageController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.RadixxScheduleInput;
 import com.bl.bias.tools.ConvertDateTime;
@@ -39,14 +39,14 @@ public class WriteRadixxToExcelFiles2 extends WriteRadixxToExcelFiles1
 			//  Determine whether file name should be system serial time or if it should be user-specified
 	    	if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(BIASRadixxResSsimConversionController.getSaveFileFolderForSerialFileName()+"\\RadixxResSSIMConversion_"+System.nanoTime()+".xlsx");
+	    		FileOutputStream outputStream = new FileOutputStream(BIASRadixxResSsimConversionPageController.getSaveFileFolderForSerialFileName()+"\\RadixxResSSIMConversion_"+System.nanoTime()+".xlsx");
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();  
 	    	}
 	    	else
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(BIASRadixxResSsimConversionController.getSaveFileLocationForUserSpecifiedFileNameToSpreadsheet());
+	    		FileOutputStream outputStream = new FileOutputStream(BIASRadixxResSsimConversionPageController.getSaveFileLocationForUserSpecifiedFileNameToSpreadsheet());
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();
