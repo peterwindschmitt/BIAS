@@ -77,13 +77,13 @@ public class RadixxFlightLegOutput
 		LocalDate periodOfValidityStartDate = LocalDate.parse(RadixxCarrierOutput.getPeriodOfValidityStart(), formatter_ddMMMyy);
 		LocalDate periodOfValidityEndDate = LocalDate.parse(RadixxCarrierOutput.getPeriodOfValidityEnd(), formatter_ddMMMyy);
 		long numOfDaysInCarrierPeriodOfValidity = ChronoUnit.DAYS.between(periodOfValidityStartDate, periodOfValidityEndDate) + 1;
-		
+
 		HashSet<String> validLocationCodes = new HashSet<String>(); 
 		for (int i = 0; i < BIASRadixxResSsimConversionConfigPageController.getPermittedLocationCodes().split(",").length; i++)
 		{
 			validLocationCodes.add(BIASRadixxResSsimConversionConfigPageController.getPermittedLocationCodes().split(",")[i]);
 		}
-		
+
 		HashSet<Long> validTraversalTimes = new HashSet<Long>(); 
 		for (int i = 0; i < BIASRadixxResSsimConversionConfigPageController.getPermittedTraversalTimes().split(",").length; i++)
 		{
@@ -405,36 +405,39 @@ public class RadixxFlightLegOutput
 							});
 							break;
 						}
-						
-						// Check #7:  Make sure that flight numbers are in order
-						if (validInput)
-						{
-							if (Integer.valueOf(flightNumber) < highestFlightNumber)
-							{
-								validInput = false;
 
-								Platform.runLater(new Runnable()
+						// Check #7:  Make sure that flight numbers are in order
+						if (BIASRadixxResSsimConversionConfigPageController.getEnforceTrainsInOrder())
+						{
+							if (validInput)
+							{
+								if (Integer.valueOf(flightNumber) < highestFlightNumber)
 								{
-									@Override
-									public void run() 
+									validInput = false;
+
+									Platform.runLater(new Runnable()
 									{
-										Alert alert = new Alert(AlertType.ERROR);
-										alert.setTitle("Error");
-										alert.setHeaderText(null);
-										alert.setContentText("Train numbers are out of sequence at spreadsheet row "+(excelRowCounter+1)+".");	
-										alert.showAndWait();
-									}
-								});
-								break;
+										@Override
+										public void run() 
+										{
+											Alert alert = new Alert(AlertType.ERROR);
+											alert.setTitle("Error");
+											alert.setHeaderText(null);
+											alert.setContentText("Train numbers are out of sequence at spreadsheet row "+(excelRowCounter+1)+".");	
+											alert.showAndWait();
+										}
+									});
+									break;
+								}
+								else if (Integer.valueOf(flightNumber) > highestFlightNumber)
+									highestFlightNumber = Integer.valueOf(flightNumber);
 							}
-							else if (Integer.valueOf(flightNumber) > highestFlightNumber)
-								highestFlightNumber = Integer.valueOf(flightNumber);
 						}
-						
+
 						// Check #8:  Check that aircraft (train) traversal time between origin and destination is an expected amount
 						long diffInMillis = aircraftArrivalAsCalendar.getTimeInMillis() - aircraftDepartureAsCalendar.getTimeInMillis();
 						long diffInMinutes = (diffInMillis / 1000) / 60;
-						
+
 						if (!validTraversalTimes.contains(diffInMinutes))   
 						{
 							validInput = false;
@@ -453,6 +456,9 @@ public class RadixxFlightLegOutput
 							});
 							break;
 						}
+						
+						// Check #9: Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'
+						
 
 						if (validInput)
 						{

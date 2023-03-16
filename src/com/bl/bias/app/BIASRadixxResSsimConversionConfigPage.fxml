@@ -25,12 +25,15 @@
         <rowConstraints>
             <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="30.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" />
@@ -42,51 +45,61 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
+            <Label text="4. Permissible location codes (3 characters per code, codes separated by commas):" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="31.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="permissibleLocationCodesTextField" onKeyTyped="#handleTextChangedPermissibleLocationsTextField" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="44.0" right="30.0" />
+               </GridPane.margin>
+            </TextField>
+            <Button fx:id="updateLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateLocationCodesButton" prefWidth="180.0" text="Update Location Codes" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="45.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="useLastSavedLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedLocationCodesButton" prefWidth="180.0" text="Use Last Saved Location Codes" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="245.0" />
+               </GridPane.margin>
+            </Button>
+            <Label text="5. Permissible station-to-station traversal times (train STA - train STD in minutes, separated by commas):" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="31.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="permissibleTraversalTimesTextField" onKeyTyped="#handleTextChangedPermissibleTraversalTimesTextField" GridPane.rowIndex="12">
+               <GridPane.margin>
+                  <Insets left="44.0" right="30.0" />
+               </GridPane.margin>
+            </TextField>
+            <Button fx:id="updateTraversalTimesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateTraversalTimesButton" prefWidth="180.0" text="Update Traversal Times" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets left="45.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="useLastSavedTraversalTimesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedTraversalTimesButton" prefWidth="180.0" text="Use Last Saved Traversal Times" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets left="245.0" />
+               </GridPane.margin>
+            </Button>
             <CheckBox fx:id="checkStasEqualCheckBox" disable="false" mnemonicParsing="false" onAction="#handleCheckStasEqualCheckBox" selected="true" text="1. Verify that 'Passenger STA' and 'Train STA' are equal.  Same for 'Passenger STD' and 'Train STD'." wrapText="true" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <Label text="2. Permissible location codes (3 characters per code, codes separated by commas):" GridPane.rowIndex="3">
+            <CheckBox fx:id="enforceTrainNumbersInOrderCheckBox" disable="false" mnemonicParsing="false" onAction="#handleEnforceTrainNumbersInOrderCheckBox" selected="true" text="2. Enforce ordering of train numbers (designators)" wrapText="true" GridPane.rowIndex="3">
                <GridPane.margin>
-                  <Insets left="31.0" />
+                  <Insets left="10.0" />
                </GridPane.margin>
-            </Label>
-            <TextField fx:id="permissibleLocationCodesTextField" onKeyTyped="#handleTextChangedPermissibleLocationsTextField" GridPane.rowIndex="4">
+            </CheckBox>
+            <CheckBox fx:id="enforceValidityStartDateCheckBox" disable="false" mnemonicParsing="false" onAction="#handleEnforceValidityStartDateCheckBox" selected="true" text="3. Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'" wrapText="true" GridPane.rowIndex="5">
                <GridPane.margin>
-                  <Insets left="44.0" right="30.0" />
+                  <Insets left="10.0" />
                </GridPane.margin>
-            </TextField>
-            <Button fx:id="updateLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateLocationCodesButton" prefWidth="180.0" text="Update Location Codes" GridPane.rowIndex="5">
-               <GridPane.margin>
-                  <Insets left="45.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="useLastSavedLocationCodesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedLocationCodesButton" prefWidth="180.0" text="Use Last Saved Location Codes" GridPane.rowIndex="6">
-               <GridPane.margin>
-                  <Insets left="45.0" />
-               </GridPane.margin>
-            </Button>
-            <Label text="3. Permissible station-to-station traversal times (train STA - train STD in minutes, separated by commas):" GridPane.rowIndex="8">
-               <GridPane.margin>
-                  <Insets left="31.0" />
-               </GridPane.margin>
-            </Label>
-            <TextField fx:id="permissibleTraversalTimesTextField" onKeyTyped="#handleTextChangedPermissibleTraversalTimesTextField" GridPane.rowIndex="9">
-               <GridPane.margin>
-                  <Insets left="44.0" right="30.0" />
-               </GridPane.margin>
-            </TextField>
-            <Button fx:id="updateTraversalTimesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateTraversalTimesButton" prefWidth="180.0" text="Update Traversal Times" GridPane.rowIndex="10">
-               <GridPane.margin>
-                  <Insets left="45.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="useLastSavedTraversalTimesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedTraversalTimesButton" prefWidth="180.0" text="Use Last Saved Traversal Times" GridPane.rowIndex="11">
-               <GridPane.margin>
-                  <Insets left="45.0" />
-               </GridPane.margin>
-            </Button>
+            </CheckBox>
          </children>
          <opaqueInsets>
             <Insets />
