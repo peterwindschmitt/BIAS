@@ -76,6 +76,8 @@ public class RadixxFlightLegOutput
 
 		LocalDate periodOfValidityStartDate = LocalDate.parse(RadixxCarrierOutput.getPeriodOfValidityStart(), formatter_ddMMMyy);
 		LocalDate periodOfValidityEndDate = LocalDate.parse(RadixxCarrierOutput.getPeriodOfValidityEnd(), formatter_ddMMMyy);
+		LocalDate earliestTrainsPeriodOfOperationStartDate = LocalDate.now();
+		
 		long numOfDaysInCarrierPeriodOfValidity = ChronoUnit.DAYS.between(periodOfValidityStartDate, periodOfValidityEndDate) + 1;
 
 		HashSet<String> validLocationCodes = new HashSet<String>(); 
@@ -457,13 +459,14 @@ public class RadixxFlightLegOutput
 							break;
 						}
 						
-						// Check #9: Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'
-						
-
+						// Check #9 (part I): Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'
+						LocalDate periodOfOperationStartDate = LocalDate.parse(periodOfOperationStart, formatter_ddMMMyy);
+						if (periodOfOperationStartDate.isBefore(earliestTrainsPeriodOfOperationStartDate))
+							earliestTrainsPeriodOfOperationStartDate = 	periodOfOperationStartDate;
+											
 						if (validInput)
 						{
 							// Create a RadixxOverlappingFlightOriginDestinationByDate object -- one for each date that the flight operates
-							LocalDate periodOfOperationStartDate = LocalDate.parse(periodOfOperationStart, formatter_ddMMMyy);
 							LocalDate periodOfOperationEndDate = LocalDate.parse(periodOfOperationEnd, formatter_ddMMMyy);
 							long numOfDaysInFlightRecordPeriodOfValidity = ChronoUnit.DAYS.between(periodOfOperationStartDate, periodOfOperationEndDate) + 1;
 
@@ -570,6 +573,31 @@ public class RadixxFlightLegOutput
 						}
 					}
 				}
+			}
+		}
+		
+		// Check #9 (part II): Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'
+		if (BIASRadixxResSsimConversionConfigPageController.getEnforceValidityStartDate())
+		{
+			if ((validInput) && (periodOfValidityStartDate.isBefore(earliestTrainsPeriodOfOperationStartDate)))
+			{
+				validInput = false;
+
+				String errorMessage = " Earliest train's Period of Operation Start Date ("+earliestTrainsPeriodOfOperationStartDate
+						+ ") \nis after the SSIM's Period of Schedule Validity Start Date ("+periodOfValidityStartDate+")";
+
+				Platform.runLater(new Runnable()
+				{
+					@Override
+					public void run() 
+					{
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error");
+						alert.setHeaderText(null);
+						alert.setContentText(errorMessage);	
+						alert.showAndWait();
+					}
+				});
 			}
 		}
 	}
