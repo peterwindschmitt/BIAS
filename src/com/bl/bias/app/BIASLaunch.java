@@ -26,7 +26,6 @@ public class BIASLaunch extends Application
 	// 3.5 was 1/26/2023 (added checks #5, #6 and #7 for SSIM conversion, added grade crossing speed analysis)
 	// 3.6 was 2/15/2023 (added check #8 for SSIM conversion)
 	// 3.7 was 3/20/2023 (added check #9 for SSIM conversion)
-	
 	private final static String version = "3.7 (March 20, 2023)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 3;
  	//
