@@ -101,7 +101,7 @@ public class BIASRadixxResSsimConversionConfigPageController
 		}
 		permittedLocationCodes = prefs.get("rs_permittedLocationCodes", defaultPermittedLocationCodes);
 
-		// See if location codes are stored
+		// See if traversal times are stored
 		boolean permittedTraversalTimesExist = prefs.get("rs_permittedTraversalTimes", null) != null;
 		if (permittedTraversalTimesExist)
 		{
@@ -199,7 +199,6 @@ public class BIASRadixxResSsimConversionConfigPageController
 	{
 		permissibleTraversalTimesTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-
 
 	@FXML private void handleUpdateTraversalTimesButton()
 	{
