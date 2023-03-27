@@ -95,7 +95,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="enforceValidityStartDateCheckBox" disable="false" mnemonicParsing="false" onAction="#handleEnforceValidityStartDateCheckBox" selected="true" text="3. Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'" wrapText="true" GridPane.rowIndex="5">
+            <CheckBox fx:id="enforceValidityStartDateCheckBox" disable="false" mnemonicParsing="false" onAction="#handleEnforceValidityStartDateCheckBox" selected="true" text="3. Check that SSIM's 'Period of Schedule Validity' starts no earlier than the earliest train's 'Period of Operation'" wrapText="true" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
