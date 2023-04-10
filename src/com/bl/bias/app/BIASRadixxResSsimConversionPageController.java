@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.read.ReadExcelFileForRadixxResSSIM;
-import com.bl.bias.read.ReadRadixxResSSIMFileForExcel;
+import com.bl.bias.read.ReadExcelFileForConversionToRadixxResSSIM;
+import com.bl.bias.read.ReadRadixxResSSIMFileForConversionToExcel;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteExcelToRadixxFile1;
 import com.bl.bias.write.WriteRadixxToExcelFiles2;
@@ -140,7 +140,7 @@ public class BIASRadixxResSsimConversionPageController
 		if (ssimToExcel)
 		{
 			// Read all objects that are required for the conversion from Radixx to Excel
-			ReadRadixxResSSIMFileForExcel readData = new ReadRadixxResSSIMFileForExcel(fullyQualifiedPath);
+			ReadRadixxResSSIMFileForConversionToExcel readData = new ReadRadixxResSSIMFileForConversionToExcel(fullyQualifiedPath);
 			message = readData.getResultsMessage();
 			displayMessage(message+"\n");
 
@@ -166,7 +166,7 @@ public class BIASRadixxResSsimConversionPageController
 		// Excel to SSIM
 		else if (excelToSsim)
 		{
-			ReadExcelFileForRadixxResSSIM readData = new ReadExcelFileForRadixxResSSIM(fullyQualifiedPath);
+			ReadExcelFileForConversionToRadixxResSSIM readData = new ReadExcelFileForConversionToRadixxResSSIM(fullyQualifiedPath);
 			if (readData.getValidFile())
 			{
 				WriteExcelToRadixxFile1 writeData = new WriteExcelToRadixxFile1(readData.getSsimText());			
@@ -383,7 +383,7 @@ public class BIASRadixxResSsimConversionPageController
 
 	private void writeFiles() 
 	{
-		WriteRadixxToExcelFiles2 fileToConvert = new WriteRadixxToExcelFiles2(textArea.getText(), saveFileLocationForUserSpecifiedFileNameToSpreadsheet, fileAsString, ReadRadixxResSSIMFileForExcel.getSchedule());
+		WriteRadixxToExcelFiles2 fileToConvert = new WriteRadixxToExcelFiles2(textArea.getText(), saveFileLocationForUserSpecifiedFileNameToSpreadsheet, fileAsString, ReadRadixxResSSIMFileForConversionToExcel.getSchedule());
 		displayMessage(fileToConvert.getResultsMessageWrite2());
 	}
 

@@ -68,20 +68,28 @@ public class BIASRadixxResSsimComparisonConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType3Records", true);
 			type3CheckBox.setSelected(true);
+			
+			type4CheckBox.setDisable(false);
 		}
 		else
 		{
 			checkType3Records = false;
 			type3CheckBox.setSelected(false);
+			
+			type4CheckBox.setSelected(false);
+			type4CheckBox.setDisable(true);
 		}
 
 		// See if preference is stored for comparing Type 4 records in SSIM files
 		if (prefs.getBoolean("rc_checkType4Records", defaultCheckType4Records))
 		{
-			checkType4Records = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("rc_checkType4Records", true);
-			type4CheckBox.setSelected(true);
+			if (checkType3Records)
+			{
+				checkType4Records = true;
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.putBoolean("rc_checkType4Records", true);
+				type4CheckBox.setSelected(true);
+			}
 		}
 		else
 		{
@@ -143,12 +151,20 @@ public class BIASRadixxResSsimComparisonConfigPageController
 			checkType3Records = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType3Records", false);
+			checkType4Records = false;
+			
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rc_checkType4Records", false);
+			type4CheckBox.setSelected(false);
+			type4CheckBox.setDisable(true);
 		}
 		else
 		{
 			checkType3Records = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType3Records", true);
+			
+			type4CheckBox.setDisable(false);
 		}
 	}
 

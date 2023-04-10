@@ -13,20 +13,21 @@ import com.bl.bias.objects.RadixxSegmentDataRecordInput;
 import com.bl.bias.objects.RadixxTrailerInput;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class ReadRadixxResSSIMFileForExcel 
+public class ReadRadixxResSSIMFileForComparison 
 {
 	private String resultsMessage;
 
-	private Integer objectCount = 0;
 	private Integer lastRecordSerialNumber = 0;
 	
-	private static RadixxScheduleInput schedule = new RadixxScheduleInput();
+	private RadixxScheduleInput schedule = new RadixxScheduleInput();
 	
-	private static RadixxFlightLegInput lastFlightLeg;
+	private RadixxFlightLegInput lastFlightLeg;
 
-	public ReadRadixxResSSIMFileForExcel(String file) 
+	private Boolean error = false;
+	
+	public Boolean read(String file, String designation) 
 	{
-		resultsMessage = "\nStarted parsing Radixx Res SSIM file at "+ConvertDateTime.getTimeStamp()+"\n";
+		resultsMessage = "\nStarted parsing Radixx Res SSIM file " + designation + " at "+ConvertDateTime.getTimeStamp()+"\n";
 
 		Scanner scanner = null;
 
@@ -47,14 +48,13 @@ public class ReadRadixxResSSIMFileForExcel
 				Integer recordType = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.z_getAll_recordType()[0]), Integer.valueOf(BIASParseConfigPageController.z_getAll_recordType()[1])).trim());
 				Integer recordSerialNumber = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.z_getAll_recordSerialNumber()[0]), Integer.valueOf(BIASParseConfigPageController.z_getAll_recordSerialNumber()[1])).trim());
 
-				objectCount = objectCount + 2;
-				
 				if (recordType == 0) // Nothing on this line
 				{
 					continue;
 				}
 				else if (lastRecordSerialNumber + 1 != recordSerialNumber) // Throw exception
 				{
+					error = true;
 					throw new Exception ("Malformed Radixx Res SSIM file");
 				}
 				else if (recordType == 1) // Header
@@ -64,8 +64,6 @@ public class ReadRadixxResSSIMFileForExcel
 										
 					RadixxHeaderInput header = new RadixxHeaderInput(z_hdr_titleOfContents, z_hdr_dataSetSerialNumber, recordSerialNumber.toString());
 					schedule.setHeader(header);
-					
-					objectCount = objectCount + 2;
 				}
 				else if (recordType == 2) // Carrier
 				{
@@ -79,8 +77,6 @@ public class ReadRadixxResSSIMFileForExcel
 					
 					RadixxCarrierInput carrier = new RadixxCarrierInput(z_car_timeMode, z_car_airlineDesignator, z_car_creatorReference, z_car_periodOfValidity, z_car_creationDate, z_car_titleOfData, z_car_releaseDate, recordSerialNumber.toString());
 					schedule.setCarrier(carrier);
-					
-					objectCount = objectCount + 7;
 				}
 				else if (recordType == 3) // Flight
 				{
@@ -113,8 +109,6 @@ public class ReadRadixxResSSIMFileForExcel
 							z_flr_arrivalTerminal, z_flr_aircraftType, z_flr_onwardAirlineDesignator, z_flr_onwardFlightNumber, z_flr_onwardFlightTransitLayover, z_flr_aircraftConfiguration, z_flr_dateVariation, recordSerialNumber.toString());
 					schedule.setFlightLeg(flightLeg);
 					lastFlightLeg = flightLeg;
-					
-					objectCount = objectCount + 23;
 				}
 				else if (recordType == 4) // Segment
 				{
@@ -134,8 +128,6 @@ public class ReadRadixxResSSIMFileForExcel
 					RadixxSegmentDataRecordInput segment = new RadixxSegmentDataRecordInput(z_seg_airlineDesignator, z_seg_flightNumber, z_seg_itineraryVariationNumber, z_seg_legSequenceNumber, z_seg_serviceType, z_seg_boardPointIndicator, 
 							z_seg_offPointIndicator, z_seg_dataElementIdentifier, z_seg_segmentBoardPoint, z_seg_segmentOffPoint, z_seg_data, recordSerialNumber.toString());
 					lastFlightLeg.setSegmentDataRecord(segment);	
-					
-					objectCount = objectCount + 11;
 				}
 				else if (recordType == 5) // Trailer
 				{
@@ -146,18 +138,16 @@ public class ReadRadixxResSSIMFileForExcel
 					
 					RadixxTrailerInput trailer = new RadixxTrailerInput(z_trl_airlineDesignator,  z_trl_releaseDate, z_trl_serialNumberCheckReference, z_trl_continuationEndCode, recordSerialNumber.toString());
 					schedule.setTrailer(trailer);
-							
-					objectCount = objectCount + 4;
 				}
 				else // Throw exception
 				{
+					error = true;
 					throw new Exception ("Malformed Radixx Res SSIM file");
 				}
 
 				lastRecordSerialNumber = recordSerialNumber;
 			}
 
-			resultsMessage +="Extracted "+objectCount+" eligible objects from SSIM file\n";
 			scanner.close();
 		}
 		catch (Exception e) 
@@ -169,10 +159,12 @@ public class ReadRadixxResSSIMFileForExcel
 			scanner.close();
 		}
 		
-		resultsMessage += "Finished parsing Radixx Res SSIM file at "+ConvertDateTime.getTimeStamp()+"\n";
+		resultsMessage += "Finished parsing Radixx Res SSIM file " + designation + " at "+ConvertDateTime.getTimeStamp()+"\n";
+		
+		return error;
 	}
 	
-	public static RadixxScheduleInput getSchedule()
+	public RadixxScheduleInput getSchedule()
 	{
 		return schedule;
 	}

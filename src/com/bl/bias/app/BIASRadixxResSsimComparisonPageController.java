@@ -1,10 +1,13 @@
 package com.bl.bias.app;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -14,8 +17,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
+import com.bl.bias.analyze.SSIMComparisonAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.read.ReadRadixxResSSIMFileForComparison;
+import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteSSIMComparisonFile;
 
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -58,6 +66,11 @@ public class BIASRadixxResSsimComparisonPageController
 	private static BooleanBinding disableSelectFileB;
 	private static BooleanBinding disableExecuteButton;
 
+	private static ReadRadixxResSSIMFileForComparison readDataA;
+	private static ReadRadixxResSSIMFileForComparison readDataB;
+	
+	SSIMComparisonAnalysis scheduleComparison;
+
 	@FXML private void initialize() 
 	{
 		// Set up prefs
@@ -89,164 +102,185 @@ public class BIASRadixxResSsimComparisonPageController
 
 	@FXML public void handleExecuteButton()
 	{
-		selectFileAButton.disableProperty().unbind();
-		selectFileAButton.setDisable(true);
-		selectFileBButton.disableProperty().unbind();
-		selectFileBButton.setDisable(true);
+		if ((BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records()) ||
+				(BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records())) 
+		{
+			selectFileAButton.disableProperty().unbind();
+			selectFileAButton.setDisable(true);
+			selectFileBButton.disableProperty().unbind();
+			selectFileBButton.setDisable(true);
 
-		selectA.disableProperty().unbind();
-		selectA.setDisable(true);
-		selectB.disableProperty().unbind();
-		selectB.setDisable(true);
+			selectA.disableProperty().unbind();
+			selectA.setDisable(true);
+			selectB.disableProperty().unbind();
+			selectB.setDisable(true);
 
-		progressBar.setVisible(true);
-		executeButton.disableProperty().unbind();
-		executeButton.setDisable(true);
+			progressBar.setVisible(true);
+			executeButton.disableProperty().unbind();
+			executeButton.setDisable(true);
 
-		// User specified
-		if (!BIASGeneralConfigController.getUseSerialTimeAsFileName())
-		{	
-			// Get location to save file to
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Select Location to Save Results");
+			// User specified
+			if (!BIASGeneralConfigController.getUseSerialTimeAsFileName())
+			{	
+				// Get location to save file to
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Select Location to Save Results");
 
-			// Check if previous location is available
-			if ((prefs.get("sm_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
-			{
-				Path path = Paths.get(prefs.get("sm_lastDirectorySavedTo", null));
-				if ((path.toFile().exists()) && (path !=null))
+				// Check if previous location is available
+				if ((prefs.get("sm_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 				{
-					fileChooser.setInitialDirectory(path.toFile());
-				}
-			}
-
-			Stage stageForFolderChooser = (Stage) executeButton.getScene().getWindow();
-			File file = null;
-
-			file = fileChooser.showSaveDialog(stageForFolderChooser);
-
-			if (file != null) 
-			{
-				try 
-				{
-					saveFileLocation = file;
-					if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-						prefs.put("sm_lastDirectorySavedTo", file.getParent());
-				} 
-				catch (Exception e) 
-				{
-					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+					Path path = Paths.get(prefs.get("sm_lastDirectorySavedTo", null));
+					if ((path.toFile().exists()) && (path !=null))
+					{
+						fileChooser.setInitialDirectory(path.toFile());
+					}
 				}
 
-				startTask();
+				Stage stageForFolderChooser = (Stage) executeButton.getScene().getWindow();
+				File file = null;
+
+				file = fileChooser.showSaveDialog(stageForFolderChooser);
+
+				if (file != null) 
+				{
+					try 
+					{
+						saveFileLocation = file;
+						if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+							prefs.put("sm_lastDirectorySavedTo", file.getParent());
+					} 
+					catch (Exception e) 
+					{
+						ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+					}
+
+					startTask();
+				}
+				else
+				{
+					//  User did not commit so reset
+					resetMessage();
+
+					executeButton.setVisible(true);
+					resetButton.setVisible(false);
+					progressBar.setProgress(0);
+					progressBar.setVisible(false);
+
+					// Reset bindings and properties
+					// Bind B to A
+					aSelected = new SimpleBooleanProperty();
+					aSelected.set(false);
+					disableSelectFileB = aSelected.not();
+					selectB.disableProperty().bind(disableSelectFileB);
+					selectFileBButton.disableProperty().bind(disableSelectFileB);
+
+					// Bind Checkboxes to B
+					bSelected = new SimpleBooleanProperty();
+					bSelected.set(false);
+
+					disableExecuteButton = bSelected.not();
+					executeButton.disableProperty().bind(disableExecuteButton);
+
+					// Reset parameters to allow A to be again selected
+					selectA.setDisable(false);
+					selectFileAButton.setDisable(false);		
+
+					fileANameLabel.setText("");
+					fileBNameLabel.setText("");
+
+					// Reset for next run
+					fileAAsString = null;
+					fileBAsString = null;
+				}
 			}
 			else
 			{
-				//  User did not commit so reset
-				resetMessage();
+				DirectoryChooser directoryChooser = new DirectoryChooser();
 
-				executeButton.setVisible(true);
-				resetButton.setVisible(false);
-				progressBar.setProgress(0);
-				progressBar.setVisible(false);
+				// See if last location is stored
+				if ((prefs.get("sm_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+				{
+					Path path = Paths.get(prefs.get("sm_lastDirectorySavedTo", null));
+					if ((path.toFile().exists()) && (path !=null))
+					{
+						directoryChooser.setInitialDirectory(path.toFile());
+					}
+				}
 
-				// Reset bindings and properties
-				// Bind B to A
-				aSelected = new SimpleBooleanProperty();
-				aSelected.set(false);
-				disableSelectFileB = aSelected.not();
-				selectB.disableProperty().bind(disableSelectFileB);
-				selectFileBButton.disableProperty().bind(disableSelectFileB);
+				directoryChooser.setTitle("Select Folder");
 
-				// Bind Checkboxes to B
-				bSelected = new SimpleBooleanProperty();
-				bSelected.set(false);
+				Stage stageForFolderChooser = (Stage) executeButton.getScene().getWindow();
 
-				disableExecuteButton = bSelected.not();
-				executeButton.disableProperty().bind(disableExecuteButton);
+				directory = directoryChooser.showDialog(stageForFolderChooser);
+				if (directory != null)
+				{
+					try 
+					{
+						saveDirectoryLocation = directory;
+						if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+							prefs.put("sm_lastDirectorySavedTo", directory.toString());
+					} 
+					catch (Exception e) 
+					{
+						ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+					}
 
-				// Reset parameters to allow A to be again selected
-				selectA.setDisable(false);
-				selectFileAButton.setDisable(false);		
+					startTask();
+				}
+				else
+				{
+					//  User did not commit so reset
+					resetMessage();
 
-				fileANameLabel.setText("");
-				fileBNameLabel.setText("");
+					executeButton.setVisible(true);
+					resetButton.setVisible(false);
+					progressBar.setProgress(0);
+					progressBar.setVisible(false);
 
-				// Reset for next run
-				fileAAsString = null;
-				fileBAsString = null;
+					// Reset bindings and properties
+					// Bind B to A
+					aSelected = new SimpleBooleanProperty();
+					aSelected.set(false);
+					disableSelectFileB = aSelected.not();
+					selectB.disableProperty().bind(disableSelectFileB);
+					selectFileBButton.disableProperty().bind(disableSelectFileB);
+
+					// Bind Checkboxes to B
+					bSelected = new SimpleBooleanProperty();
+					bSelected.set(false);
+
+					disableExecuteButton = bSelected.not();
+					executeButton.disableProperty().bind(disableExecuteButton);
+
+					// Reset parameters to allow A to be again selected
+					selectA.setDisable(false);
+					selectFileAButton.setDisable(false);		
+
+					fileANameLabel.setText("");
+					fileBNameLabel.setText("");
+
+					// Reset for next run
+					fileAAsString = null;
+					fileBAsString = null;
+				}
 			}
 		}
 		else
-		{
-			DirectoryChooser directoryChooser = new DirectoryChooser();
+		{	
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error Dialog");
+					alert.setHeaderText(null);
+					alert.setContentText("No comparisons are requested.  Select record types to be compared in the module's configuration settings!");
 
-			// See if last location is stored
-			if ((prefs.get("sm_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
-			{
-				Path path = Paths.get(prefs.get("sm_lastDirectorySavedTo", null));
-				if ((path.toFile().exists()) && (path !=null))
-				{
-					directoryChooser.setInitialDirectory(path.toFile());
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+
+					alert.showAndWait();
 				}
-			}
-
-			directoryChooser.setTitle("Select Folder");
-
-			Stage stageForFolderChooser = (Stage) executeButton.getScene().getWindow();
-
-			directory = directoryChooser.showDialog(stageForFolderChooser);
-			if (directory != null)
-			{
-				try 
-				{
-					saveDirectoryLocation = directory;
-					if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-						prefs.put("sm_lastDirectorySavedTo", directory.toString());
-				} 
-				catch (Exception e) 
-				{
-					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
-				}
-
-				startTask();
-			}
-			else
-			{
-				//  User did not commit so reset
-				resetMessage();
-
-				executeButton.setVisible(true);
-				resetButton.setVisible(false);
-				progressBar.setProgress(0);
-				progressBar.setVisible(false);
-
-				// Reset bindings and properties
-				// Bind B to A
-				aSelected = new SimpleBooleanProperty();
-				aSelected.set(false);
-				disableSelectFileB = aSelected.not();
-				selectB.disableProperty().bind(disableSelectFileB);
-				selectFileBButton.disableProperty().bind(disableSelectFileB);
-
-				// Bind Checkboxes to B
-				bSelected = new SimpleBooleanProperty();
-				bSelected.set(false);
-
-				disableExecuteButton = bSelected.not();
-				executeButton.disableProperty().bind(disableExecuteButton);
-
-				// Reset parameters to allow A to be again selected
-				selectA.setDisable(false);
-				selectFileAButton.setDisable(false);		
-
-				fileANameLabel.setText("");
-				fileBNameLabel.setText("");
-
-				// Reset for next run
-				fileAAsString = null;
-				fileBAsString = null;
-			}
+			});
 		}
 	}
 
@@ -365,8 +399,8 @@ public class BIASRadixxResSsimComparisonPageController
 
 			if ((fileAAsString != null) && (fileBAsString != null))
 			{
-				String tempMessageA = "\n\nSet to compare Radixx Res SSIM files from "+fileAAsString;
-				String tempMessageB = "\nversus "+fileBAsString+"\n";
+				String tempMessageA = "\n\nSet to compare Radixx Res SSIM files from "+fileAAsString+" (file A) ";
+				String tempMessageB = " versus "+fileBAsString+" (file B)\n";
 
 				message += tempMessageA;
 				message += tempMessageB;
@@ -406,29 +440,23 @@ public class BIASRadixxResSsimComparisonPageController
 
 	private void runTask()
 	{
-		/*Boolean error = false;
-		// Read data
-		if ((readData(fullyQualifiedPathA, fullyQualifiedPathB)) == false)
+		Boolean error = false;
+
+		// Check if A and B are pointing to the same file
+		if (fullyQualifiedPathA.equals(fullyQualifiedPathB))
 		{
-			// Analyze data
-			if(analyzeData() == false)
+			error = true;
+			displayMessage("\nInput files must be different");
+			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+		}
+
+		// Read data
+		if (error == false)
+		{
+			if (readData(fullyQualifiedPathA, fullyQualifiedPathB) == true)
 			{
-				// Write data
-				if(writeResults() == false)
-				{
-					// At this point process is complete
-					displayMessage("\n*** PROCESSING COMPLETE ***");
-				}
-				else
-				{
-					error = true;
-					displayMessage("\nError in writing files");
-					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-				}
-			}
-			else 
-			{
-				displayMessage("\nError in analyzing files");
+				error = true;
+				displayMessage("\nError in reading files");
 				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 
 				Platform.runLater(new Runnable() {
@@ -447,124 +475,151 @@ public class BIASRadixxResSsimComparisonPageController
 				});
 			}
 		}
-		else
+
+		// Analyze data
+		if (error == false)
 		{
-			error = true;
-			displayMessage("\nError in reading files");
-			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+			if(analyzeData() == false)
+			{
+				//	Write data
+				if(writeResults() == false)
+				{
+					// At this point process is complete
+					displayMessage("\n*** PROCESSING COMPLETE ***");
+				}
+				else
+				{
+					error = true;
+					displayMessage("\nError in writing files");
+					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							Alert alert = new Alert(AlertType.ERROR);
+							alert.setTitle("Error Dialog");
+							alert.setHeaderText(null);
+							alert.setContentText("There are errors writing the comparison log!  \n\nSee log window.");
+
+							Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+							stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+
+							alert.showAndWait();
+						}
+					});
+				}
+			}
+			else 
+			{
+				displayMessage("\nError in analyzing files");
+				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error Dialog");
+						alert.setHeaderText(null);
+						alert.setContentText("There are errors analyzing the SSIM files!  \n\nSee log window.");
+
+						Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+						stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+
+						alert.showAndWait();
+					}
+				});
+			}
 		}
-		*/
+
 		//  Now reset for next case
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);   
 	}
 
-	/*
 	private Boolean readData(String fullyQualifiedPathA, String fullyQualifiedPathB)
 	{
-		ReadTTestFiles readData = new ReadTTestFiles();
-		Boolean error = readData.read(fullyQualifiedPathA, fullyQualifiedPathB, requestGenerateVelocity, requestGenerateTrueDelayMinutesPer100TrainMiles, requestGenerateElapsedRunTimePerTrain, requestGenerateOtp, requestGenerateType, requestGenerateGroup);
-		if (requestGenerateType)
-		{
-			byTypeDataA = readData.getTypeDataA();
-			byTypeDataB = readData.getTypeDataB();
-		}
-		if (requestGenerateGroup) 
-		{
-			byGroupDataA = readData.getGroupDataA();
-			byGroupDataB = readData.getGroupDataB();
-		}
+		readDataA = new ReadRadixxResSSIMFileForComparison();
+		Boolean errorReadingA = readDataA.read(fullyQualifiedPathA, "A");
+		progressBar.setProgress(.10);
 
-		lines = readData.getLines();
-		categoriesForTypes = readData.getCategoriesForTypes();
-		categoriesForGroups = readData.getCategoriesForGroups();
+		readDataB = new ReadRadixxResSSIMFileForComparison();
+		Boolean errorReadingB = readDataB.read(fullyQualifiedPathB, "B");
+		progressBar.setProgress(.20);
 
-		fileACount = readData.getFilesASize();
-		fileBCount = readData.getFilesBSize();
+		displayMessage(readDataA.getResultsMessage());
+		displayMessage(readDataB.getResultsMessage());
 
-		displayMessage(readData.getResultsMessage());
-		if (!error)
-			progressBar.setProgress(.40);
-		return error;
+		if ((errorReadingA) || (errorReadingB))
+			return true;
+		else 
+			return false;
 	}
 
 	private Boolean analyzeData()
 	{
-		LocalTime startAnalyzingFilesTime = LocalTime.now();
-		message = "\nStarted analyzing files at "+startAnalyzingFilesTime+"\n";
+		message = "\nStarted analyzing files at "+ConvertDateTime.getTimeStamp()+"\n";
 		displayMessage(message);
 
-		Boolean error = false;
-		if ((requestGenerateGroup) && (!error))
+		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA.getSchedule(), readDataB.getSchedule(), BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records(),
+				BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records());
+
+		Boolean errorAnalyzing = scheduleComparison.analyze();
+
+		displayMessage(scheduleComparison.getResultsMessage());
+
+		if (!errorAnalyzing)
 		{
-			criticalT = Double.MAX_VALUE;
-			RTCResultsAnalysisAnalyzeTTestByGroup analyzeDataByGroup = new RTCResultsAnalysisAnalyzeTTestByGroup(fileACount, fileBCount, lines, categoriesForGroups, byGroupDataA, byGroupDataB, requestGenerateVelocity, requestGenerateTrueDelayMinutesPer100TrainMiles, requestGenerateElapsedRunTimePerTrain, requestGenerateOtp);
-			Boolean errorGroup = analyzeDataByGroup.analyzeByGroup();
-			displayMessage(analyzeDataByGroup.getResultsMessage());
-			if (!errorGroup)
-				progressBar.setProgress(.50);
-			else 
-				error = true;
+			progressBar.setProgress(.80);
+
+			message = "\nFinished analyzing files at "+ConvertDateTime.getTimeStamp()+"\n";
+			displayMessage(message);
+		}
+		else 
+		{
+			progressBar.setProgress(.50);
+
+			message = "\nError encountered analyzing files at "+ConvertDateTime.getTimeStamp()+"\n";
+			displayMessage(message);
 		}
 
-		if ((requestGenerateType) && (!error))
-		{
-			criticalT = Double.MAX_VALUE;
-			RTCResultsAnalysisAnalyzeTTestByType analyzeDataByType = new RTCResultsAnalysisAnalyzeTTestByType(fileACount, fileBCount, lines, categoriesForTypes, byTypeDataA, byTypeDataB, requestGenerateVelocity, requestGenerateTrueDelayMinutesPer100TrainMiles, requestGenerateElapsedRunTimePerTrain, requestGenerateOtp);
-			Boolean errorType = analyzeDataByType.analyzeByType();
-			displayMessage(analyzeDataByType.getResultsMessage());
-			if (!errorType)
-				progressBar.setProgress(.50);
-			else
-				error = true;
-		}
-
-		LocalTime endAnalyzeFilesTime = LocalTime.now();
-		message = "Finished analyzing files at "+endAnalyzeFilesTime+"\n";
-		displayMessage(message);
-
-		return error;
+		return errorAnalyzing;
 	}
 
 	private Boolean writeResults()
 	{
-		Boolean error = false;
+		message = "\nStarted writing results file at "+ConvertDateTime.getTimeStamp();
+		
+		displayMessage(message);
+		
+		Boolean errorWriting = false;
 
 		try
 		{
-			new WriteTTestFiles1(textArea.getText(), RTCResultsAnalysisAnalyzeTTestByType.getTypeTTestResults(), RTCResultsAnalysisAnalyzeTTestByGroup.getGroupTTestResults());
-			new WriteTTestFiles2(textArea.getText(), RTCResultsAnalysisAnalyzeTTestByType.getTypeTTestResults(), RTCResultsAnalysisAnalyzeTTestByGroup.getGroupTTestResults());
-			new WriteTTestFiles3(textArea.getText(), RTCResultsAnalysisAnalyzeTTestByType.getTypeTTestResults(), RTCResultsAnalysisAnalyzeTTestByGroup.getGroupTTestResults());
-			new WriteTTestFiles4(textArea.getText(), RTCResultsAnalysisAnalyzeTTestByType.getTypeTTestResults(), RTCResultsAnalysisAnalyzeTTestByGroup.getGroupTTestResults());
-			new WriteTTestFiles5(textArea.getText(), RTCResultsAnalysisAnalyzeTTestByType.getTypeTTestResults(), RTCResultsAnalysisAnalyzeTTestByGroup.getGroupTTestResults());			
-			new WriteTTestFiles6(textArea.getText(), RTCResultsAnalysisAnalyzeTTestByType.getTypeTTestResults(), RTCResultsAnalysisAnalyzeTTestByGroup.getGroupTTestResults());			
-
-			int totalResultsToWrite = WriteTTestFiles1.getResultsSetSize1() + WriteTTestFiles2.getResultsSetSize2() + WriteTTestFiles3.getResultsSetSize3() + WriteTTestFiles4.getResultsSetSize4() + WriteTTestFiles5.getResultsSetSize5() + WriteTTestFiles6.getResultsSetSize6();
-			if (totalResultsToWrite > 0)
-			{
-				WriteTTestFiles7 writeTTestSpreadsheet7 = new WriteTTestFiles7(textArea.getText());
-				message = writeTTestSpreadsheet7.getResultsWriteMessage7();
-				error = writeTTestSpreadsheet7.getErrorFound();
-			}
-			else
-			{
-				message = "\nAfter peforming t-tests, no valid results to write were found";
-			}
+			new WriteSSIMComparisonFile(scheduleComparison.getTextForComparisonFile());
 		}
 		catch (Exception e)
 		{
-			error = true;
+			errorWriting = true;
 		}
 
-		if (!error)
+		if (!errorWriting)
+		{
+			progressBar.setProgress(1);
+
+			message = "\nFinished writing results file at "+ConvertDateTime.getTimeStamp()+"\n";
 			displayMessage(message);
+		}
+		else 
+		{
+			progressBar.setProgress(.80);
 
-		progressBar.setProgress(1);
+			message = "\nError encountered writing results file at "+ConvertDateTime.getTimeStamp()+"\n";
+			displayMessage(message);
+		}
 
-		return error;
+		return errorWriting;
 	}
-	*/
 
 	private void resetMessage()
 	{

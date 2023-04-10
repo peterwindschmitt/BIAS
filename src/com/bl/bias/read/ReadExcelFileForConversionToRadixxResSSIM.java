@@ -12,7 +12,7 @@ import com.bl.bias.objects.RadixxHeaderOutput;
 import com.bl.bias.objects.RadixxTrailerOutput;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class ReadExcelFileForRadixxResSSIM 
+public class ReadExcelFileForConversionToRadixxResSSIM 
 {
 	private String resultsMessage;
 	private String ssimText = "";
@@ -21,7 +21,7 @@ public class ReadExcelFileForRadixxResSSIM
 
 	private Integer objectCount = 0;
 
-	public ReadExcelFileForRadixxResSSIM(String file) throws Exception 
+	public ReadExcelFileForConversionToRadixxResSSIM(String file) throws Exception 
 	{
 		resultsMessage = "\nStarted parsing Excel file at "+ConvertDateTime.getTimeStamp()+"\n";
 
