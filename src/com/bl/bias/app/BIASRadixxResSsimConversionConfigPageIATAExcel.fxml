@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="TOP_CENTER" centerShape="true" maxHeight="407.0" maxWidth="800.0" minHeight="407.0" minWidth="800.0" prefHeight="407.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRadixxResSsimConversionConfigPageController">
+<GridPane alignment="TOP_CENTER" centerShape="true" maxHeight="407.0" maxWidth="800.0" minHeight="407.0" minWidth="800.0" prefHeight="407.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRadixxResSsimConversionConfigPageIATAExcelController">
        <columnConstraints>
              <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="481.0" />
        </columnConstraints>
@@ -40,7 +40,7 @@
             <RowConstraints minHeight="30.0" prefHeight="30.0" />
         </rowConstraints>
          <children>
-            <Label text="Radixx Conversion Parameters from Spreadsheet to SSIM" underline="true">
+            <Label text="Conversion Parameters from Spreadsheet to SSIM (IATA)" underline="true">
                <padding>
                   <Insets left="10.0" />
                </padding>

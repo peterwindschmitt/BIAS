@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.bl.bias.app.BIASGeneralConfigController;
-import com.bl.bias.app.BIASRadixxResSsimComparisonPageController;
+import com.bl.bias.app.BIASRadixxResSsimComparisonPageIATAController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -22,11 +22,11 @@ public class WriteSSIMComparisonFile
 			FileWriter fileWriter;
 			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 			{
-				fileWriter = new FileWriter(BIASRadixxResSsimComparisonPageController.getSaveDirectoryLocation()+"\\SSIMComparisonFile_"+System.nanoTime()+".txt");
+				fileWriter = new FileWriter(BIASRadixxResSsimComparisonPageIATAController.getSaveDirectoryLocation()+"\\SSIMComparisonFile_"+System.nanoTime()+".txt");
 			}
 			else
 			{
-				fileWriter = new FileWriter(BIASRadixxResSsimComparisonPageController.getSaveFileLocation());
+				fileWriter = new FileWriter(BIASRadixxResSsimComparisonPageIATAController.getSaveFileLocation());
 			}
 			
 			ssimText += "\n\nGenerated at "+ ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();

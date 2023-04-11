@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.bl.bias.app.BIASRadixxResSsimConversionPageController">
+<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.bl.bias.app.BIASRadixxResSsimConversionPageIATAExcelController">
 	<columnConstraints>
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
 		<ColumnConstraints hgrow="SOMETIMES" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
@@ -84,11 +84,11 @@
             <Insets left="20.0" />
          </GridPane.margin>
       </Label>
-      <RadioButton fx:id="convertSsimToExcelRadioButton" mnemonicParsing="false" onAction="#handleConvertSsimToExcelRadioButton" selected="true" text="SSIM to spreadsheet" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <RadioButton fx:id="convertSsimToExcelRadioButton" mnemonicParsing="false" onAction="#handleConvertSsimToExcelRadioButton" selected="true" text="SSIM (IATA) to spreadsheet" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <toggleGroup>
             <ToggleGroup fx:id="conversionTypeToggleGroup" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="convertExcelToSsimRadioButton" mnemonicParsing="false" onAction="#handleConvertExceltoSsimRadioButton" text="Spreadsheet to SSIM" toggleGroup="$conversionTypeToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <RadioButton fx:id="convertExcelToSsimRadioButton" mnemonicParsing="false" onAction="#handleConvertExceltoSsimRadioButton" text="Spreadsheet to SSIM (IATA)" toggleGroup="$conversionTypeToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="4" />
    </children>
 </GridPane>

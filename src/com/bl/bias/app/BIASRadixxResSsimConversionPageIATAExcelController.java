@@ -24,7 +24,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class BIASRadixxResSsimConversionPageController 
+public class BIASRadixxResSsimConversionPageIATAExcelController 
 {
 	private static String saveFileLocationForUserSpecifiedFileNameToSpreadsheet;
 	private static String saveFileLocationForUserSpecifiedFileNameToRadixx;

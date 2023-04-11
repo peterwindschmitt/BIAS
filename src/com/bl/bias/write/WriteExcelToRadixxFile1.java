@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.bl.bias.app.BIASGeneralConfigController;
-import com.bl.bias.app.BIASRadixxResSsimConversionPageController;
+import com.bl.bias.app.BIASRadixxResSsimConversionPageIATAExcelController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -22,11 +22,11 @@ public class WriteExcelToRadixxFile1
 			FileWriter fileWriter;
 			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 			{
-				fileWriter = new FileWriter(BIASRadixxResSsimConversionPageController.getSaveFileFolderForSerialFileName()+"\\SSIMConversionFromExcel_"+System.nanoTime()+".txt");
+				fileWriter = new FileWriter(BIASRadixxResSsimConversionPageIATAExcelController.getSaveFileFolderForSerialFileName()+"\\SSIMConversionFromExcel_"+System.nanoTime()+".txt");
 			}
 			else
 			{
-				fileWriter = new FileWriter(BIASRadixxResSsimConversionPageController.getSaveFileLocationForUserSpecifiedFileNameToRadixx());
+				fileWriter = new FileWriter(BIASRadixxResSsimConversionPageIATAExcelController.getSaveFileLocationForUserSpecifiedFileNameToRadixx());
 			}
 			
 			fileWriter.write(ssimText);

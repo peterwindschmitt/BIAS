@@ -7,7 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 
-public class BIASRadixxResSsimComparisonConfigPageController 
+public class BIASRadixxResSsimComparisonConfigPageIATAController 
 {
 	private static Preferences prefs;
 

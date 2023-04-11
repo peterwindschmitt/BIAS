@@ -29,7 +29,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 import javafx.event.ActionEvent;
 
-public class BIASRadixxResSsimComparisonPageController 
+public class BIASRadixxResSsimComparisonPageIATAController 
 {
 	@FXML private Label selectA;
 	@FXML private Label selectB;
@@ -102,8 +102,8 @@ public class BIASRadixxResSsimComparisonPageController
 
 	@FXML public void handleExecuteButton()
 	{
-		if ((BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records()) ||
-				(BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records())) 
+		if ((BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType1Records()) || (BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType2Records()) ||
+				(BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType3Records()) || (BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType4Records()) || (BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType5Records())) 
 		{
 			selectFileAButton.disableProperty().unbind();
 			selectFileAButton.setDisable(true);
@@ -561,8 +561,8 @@ public class BIASRadixxResSsimComparisonPageController
 		message = "\nStarted analyzing files at "+ConvertDateTime.getTimeStamp()+"\n";
 		displayMessage(message);
 
-		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA.getSchedule(), readDataB.getSchedule(), BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records(),
-				BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records());
+		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA.getSchedule(), readDataB.getSchedule(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType2Records(),
+				BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType5Records());
 
 		Boolean errorAnalyzing = scheduleComparison.analyze();
 

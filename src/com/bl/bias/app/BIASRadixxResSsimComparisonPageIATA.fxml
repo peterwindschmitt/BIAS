@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRadixxResSsimComparisonPageController">
+<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRadixxResSsimComparisonPageIATAController">
 	<columnConstraints>
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
@@ -47,7 +47,7 @@
 				<Insets left="10.0" />
 			</padding>
 		</Label>
-		<Label fx:id="selectA" prefHeight="17.0" prefWidth="210.0" text="Select SSIM file A" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+		<Label fx:id="selectA" prefHeight="17.0" prefWidth="210.0" text="Select SSIM (IATA) file A" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
 			<GridPane.margin>
 				<Insets left="10.0" />
 			</GridPane.margin>
@@ -62,7 +62,7 @@
 				<Insets left="10.0" />
 			</padding>
 		</Label>
-      <Label fx:id="selectB" disable="true" prefHeight="17.0" prefWidth="210.0" text="Select SSIM file B" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
+      <Label fx:id="selectB" disable="true" prefHeight="17.0" prefWidth="210.0" text="Select SSIM (IATA) file B" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin>

@@ -38,8 +38,8 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Scheduling">
                     <items>
-      						<MenuItem fx:id="menuItemRadixxResSsimConversion" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversion" text="Radixx Res _SSIM Conversion" visible="false" />
-                   			<MenuItem fx:id="menuItemRadixxResSsimComparison" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimComparison" text="Radixx Res SSIM Comparison" visible="false" />
+      						<MenuItem fx:id="menuItemRadixxResSsimConversionIATAExcel" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversionIATAExcel" text="Radixx Res _SSIM Conversion (IATA&lt;-&gt;Excel)" visible="false" />
+                   			<MenuItem fx:id="menuItemRadixxResSsimComparisonIATA" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimComparisonIATA" text="Radixx Res SSIM Comparison (IATA)" visible="false" />
                     </items>
                   </Menu>
 						<SeparatorMenuItem />
@@ -56,13 +56,13 @@
                               <MenuItem fx:id="menuItemTTestConfig" mnemonicParsing="false" onAction="#handleMenuItemTTestConfig" text="T-Test Analysis" visible="false" />
                               <MenuItem fx:id="menuItemBridgeClosureAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemBridgeClosureAnalysisConfig" text="Bridge Closure Analysis" visible="false" />
                               <MenuItem fx:id="menuItemMaintenanceWindowAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemMaintenanceWindowAnalysisConfig" text="Maintenance Window Analysis" visible="false" />
-                          	<MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
+                          	  <MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
                           </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Scheduling">
                           <items>
-                              <MenuItem fx:id="menuItemRadixxResSsimConversionConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimConversionConfig" text="Radixx Res Ssim Conversion" visible="false" />
-                              <MenuItem fx:id="menuItemRadixxResSsimComparisonConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimComparisonConfig" text="Radixx Res Ssim Comparison" visible="false" />
+                              <MenuItem fx:id="menuItemRadixxResSsimConversionConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimConversionConfig" text="Radixx Res SSIM (IATA&lt;-&gt;Excel) Conversion" visible="false" />
+                              <MenuItem fx:id="menuItemRadixxResSsimComparisonConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimComparisonConfig" text="Radixx Res SSIM (IATA) Comparison" visible="false" />
                           </items>
                         </Menu>
                     </items>

@@ -20,7 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.app.BIASParseConfigPageController;
-import com.bl.bias.app.BIASRadixxResSsimConversionConfigPageController;
+import com.bl.bias.app.BIASRadixxResSsimConversionConfigPageIATAExcelController;
 import com.bl.bias.exception.ErrorShutdown;
 
 import javafx.application.Platform;
@@ -81,15 +81,15 @@ public class RadixxFlightLegOutput
 		long numOfDaysInCarrierPeriodOfValidity = ChronoUnit.DAYS.between(periodOfValidityStartDate, periodOfValidityEndDate) + 1;
 
 		HashSet<String> validLocationCodes = new HashSet<String>(); 
-		for (int i = 0; i < BIASRadixxResSsimConversionConfigPageController.getPermittedLocationCodes().split(",").length; i++)
+		for (int i = 0; i < BIASRadixxResSsimConversionConfigPageIATAExcelController.getPermittedLocationCodes().split(",").length; i++)
 		{
-			validLocationCodes.add(BIASRadixxResSsimConversionConfigPageController.getPermittedLocationCodes().split(",")[i]);
+			validLocationCodes.add(BIASRadixxResSsimConversionConfigPageIATAExcelController.getPermittedLocationCodes().split(",")[i]);
 		}
 
 		HashSet<Long> validTraversalTimes = new HashSet<Long>(); 
-		for (int i = 0; i < BIASRadixxResSsimConversionConfigPageController.getPermittedTraversalTimes().split(",").length; i++)
+		for (int i = 0; i < BIASRadixxResSsimConversionConfigPageIATAExcelController.getPermittedTraversalTimes().split(",").length; i++)
 		{
-			validTraversalTimes.add(Long.valueOf(BIASRadixxResSsimConversionConfigPageController.getPermittedTraversalTimes().split(",")[i]));
+			validTraversalTimes.add(Long.valueOf(BIASRadixxResSsimConversionConfigPageIATAExcelController.getPermittedTraversalTimes().split(",")[i]));
 		}
 
 		try
@@ -220,7 +220,7 @@ public class RadixxFlightLegOutput
 						}
 
 						// Check #2:  Check that Passenger and Train STAs are the same.  Same for Passenger and Train STDs.
-						if (BIASRadixxResSsimConversionConfigPageController.getCheckStasEqual())
+						if (BIASRadixxResSsimConversionConfigPageIATAExcelController.getCheckStasEqual())
 						{
 							if (!passengerSTA.equals(aircraftSTA))
 							{
@@ -409,7 +409,7 @@ public class RadixxFlightLegOutput
 						}
 
 						// Check #7:  Make sure that flight numbers are in order
-						if (BIASRadixxResSsimConversionConfigPageController.getEnforceTrainsInOrder())
+						if (BIASRadixxResSsimConversionConfigPageIATAExcelController.getEnforceTrainsInOrder())
 						{
 							if (validInput)
 							{
@@ -577,7 +577,7 @@ public class RadixxFlightLegOutput
 		}
 		
 		// Check #9 (part II): Check that SSIM's 'Period of Schedule Validity' starts no earlier than any train's 'Period of Operation'
-		if (BIASRadixxResSsimConversionConfigPageController.getEnforceValidityStartDate())
+		if (BIASRadixxResSsimConversionConfigPageIATAExcelController.getEnforceValidityStartDate())
 		{
 			if ((validInput) && (periodOfValidityStartDate.isBefore(earliestTrainsPeriodOfOperationStartDate)))
 			{
