@@ -1,12 +1,12 @@
 package com.bl.bias.objects;
 
-public class RadixxHeaderInput 
+public class RadixxHeaderInputIATA 
 {
 	private String titleOfContents;
 	private String dataSetSerialNumber;
 	private String recordSerialNumber;
 	
-	public RadixxHeaderInput(String titleOfContents, String dataSetSerialNumber, String recordSerialNumber)
+	public RadixxHeaderInputIATA(String titleOfContents, String dataSetSerialNumber, String recordSerialNumber)
 	{
 		this.titleOfContents = titleOfContents;
 		this.dataSetSerialNumber = dataSetSerialNumber;

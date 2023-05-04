@@ -8,15 +8,15 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.bl.bias.app.BIASGeneralConfigController;
 import com.bl.bias.app.BIASRadixxResSsimConversionPageIATAExcelController;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.objects.RadixxScheduleInput;
+import com.bl.bias.objects.RadixxScheduleInputIATA;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteRadixxToExcelFiles2 extends WriteRadixxToExcelFiles1
+public class WriteRadixxIATAToExcelFiles2 extends WriteRadixxIATAToExcelFiles1
 {
 	String resultsMessage = getResultsMessageWrite1();
 	static Boolean error = false;
 	
-	public WriteRadixxToExcelFiles2(String textAreaContents, String locationOfInputFiles, String fileAsString, RadixxScheduleInput schedule)
+	public WriteRadixxIATAToExcelFiles2(String textAreaContents, String locationOfInputFiles, String fileAsString, RadixxScheduleInputIATA schedule)
 	{
 		super(textAreaContents, locationOfInputFiles, fileAsString, schedule);
 		

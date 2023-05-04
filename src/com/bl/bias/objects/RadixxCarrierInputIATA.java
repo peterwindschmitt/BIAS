@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class RadixxCarrierInput 
+public class RadixxCarrierInputIATA 
 {
 	private String timeMode;
 	private String airlineDesignator;
@@ -11,7 +11,7 @@ public class RadixxCarrierInput
 	private String releaseDate;
 	private String recordSerialNumber;
 	
-	public RadixxCarrierInput(String timeMode, String airlineDesignator, String creatorReference, String periodOfValidity, String creationDate, String titleOfData, String releaseDate, String recordSerialNumber)
+	public RadixxCarrierInputIATA(String timeMode, String airlineDesignator, String creatorReference, String periodOfValidity, String creationDate, String titleOfData, String releaseDate, String recordSerialNumber)
 	{
 		this.timeMode = timeMode;
 		this.airlineDesignator = airlineDesignator;

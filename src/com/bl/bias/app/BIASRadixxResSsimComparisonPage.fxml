@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRadixxResSsimComparisonPageController">
+	<columnConstraints>
+		<ColumnConstraints hgrow="ALWAYS" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
+		<ColumnConstraints hgrow="ALWAYS" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
+		<ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+      <ColumnConstraints />
+      <ColumnConstraints />
+	</columnConstraints>
+	<rowConstraints>
+		<RowConstraints />
+		<RowConstraints maxHeight="35.0" minHeight="35.0" percentHeight="0.0" prefHeight="35.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="30.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="60.0" minHeight="60.0" percentHeight="0.0" prefHeight="60.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="30.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="60.0" minHeight="60.0" percentHeight="0.0" prefHeight="60.0" vgrow="NEVER" />
+        <RowConstraints minHeight="153.0" percentHeight="0.0" vgrow="ALWAYS" />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+	</rowConstraints>
+	<children>
+		<Button fx:id="selectFileAButton" mnemonicParsing="false" onAction="#handleSelectFileAButton" text="Select File" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+			<GridPane.margin>
+				<Insets bottom="-5.0" right="10.0" />
+			</GridPane.margin>
+		</Button>
+      <Button fx:id="selectFileBButton" disable="true" mnemonicParsing="false" onAction="#handleSelectFileBButton" text="Select File" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets right="10.0" />
+         </GridPane.margin>
+      </Button>
+		<Label text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+			<padding>
+				<Insets left="10.0" />
+			</padding>
+		</Label>
+		<Label fx:id="selectA" prefHeight="17.0" prefWidth="210.0" text="Select SSIM file A" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+			<GridPane.margin>
+				<Insets left="10.0" />
+			</GridPane.margin>
+		</Label>
+		<Label fx:id="fileANameLabel" alignment="TOP_LEFT" maxWidth="255.0" minWidth="255.0" prefHeight="60.0" prefWidth="255.0" textFill="#e80909" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+			<GridPane.margin>
+				<Insets left="10.0" right="-90.0" top="5.0" />
+			</GridPane.margin>
+		</Label>
+		<Label text="2." GridPane.rowIndex="4">
+			<padding>
+				<Insets left="10.0" />
+			</padding>
+		</Label>
+      <Label fx:id="selectB" disable="true" prefHeight="17.0" prefWidth="210.0" text="Select SSIM file B" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Label>
+      <Label fx:id="fileBNameLabel" alignment="TOP_LEFT" maxWidth="255.0" minWidth="255.0" prefHeight="60.0" prefWidth="255.0" textFill="#e80909" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets left="10.0" right="-90.0" />
+         </GridPane.margin>
+      </Label>
+		<TextArea fx:id="textArea" editable="false" text="Select processing options..." GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" GridPane.rowSpan="8">
+			<GridPane.margin>
+				<Insets bottom="10.0" left="100.0" right="10.0" top="15.0" />
+			</GridPane.margin>
+		</TextArea>
+      <ProgressBar fx:id="progressBar" prefWidth="180.0" progress="0.0" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets bottom="15.0" left="80.0" />
+         </GridPane.margin>
+      </ProgressBar>
+		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+			<GridPane.margin>
+				<Insets bottom="10.0" left="10.0" />
+			</GridPane.margin>
+		</Button>
+      <Button fx:id="resetButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleResetButton" prefHeight="30.0" prefWidth="80.0" text="Reset" visible="false" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" />
+         </GridPane.margin>
+      </Button>
+      <RadioButton fx:id="fileATypeIATARadioButton" mnemonicParsing="false" onAction="#handleFileATypeRadioButtonIATA" selected="true" text="IATA" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+         <toggleGroup>
+            <ToggleGroup fx:id="fileATypeToggleGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="fileATypeS3RadioButton" mnemonicParsing="false" onAction="#handleFileATypeRadioButtonS3" text="S3" toggleGroup="$fileATypeToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="80.0" />
+         </GridPane.margin>
+      </RadioButton>
+      <RadioButton fx:id="fileBTypeIATARadioButton" disable="true" mnemonicParsing="false" onAction="#handleFileBTypeRadioButtonIATA" selected="true" text="IATA" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <GridPane.margin>
+            <Insets left="10.0" top="-7.0" />
+         </GridPane.margin>
+         <toggleGroup>
+            <ToggleGroup fx:id="fileBTypeToggleGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="fileBTypeS3RadioButton" disable="true" mnemonicParsing="false" onAction="#handleFileBTypeRadioButtonS3" text="S3" toggleGroup="$fileBTypeToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <GridPane.margin>
+            <Insets left="80.0" top="-7.0" />
+         </GridPane.margin>
+      </RadioButton>
+	</children>
+</GridPane>

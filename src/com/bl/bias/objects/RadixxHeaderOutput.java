@@ -35,8 +35,8 @@ public class RadixxHeaderOutput
 	{
 		try
 		{
-			// Get dataSetSerialNumber from cell B5	
-			String dataSetSerialNumber = sheet.getRow(4).getCell(1).toString().trim();
+			// Get dataSetSerialNumber from cell B6	
+			String dataSetSerialNumber = sheet.getRow(5).getCell(1).toString().trim();
 
 			// Create header
 			defaultHeaderPart1 = 

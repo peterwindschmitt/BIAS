@@ -38,7 +38,7 @@ public class RadixxFlightLegOutput
 
 	private Boolean validInput = true;
 
-	private Integer excelRowCounter = 16;
+	private Integer excelRowCounter = 17;
 	private Integer recordSerialNumber = 3;
 	private Integer highestRecordSerialNumber = 3;
 	private Integer highestFlightNumber = 0;
@@ -145,7 +145,7 @@ public class RadixxFlightLegOutput
 			{
 				Row row = rowIterator.next();
 
-				if (row.getRowNum() > 15)
+				if (row.getRowNum() > 16)
 				{
 					if (row.getCell(0).toString().contains("*****"))
 					{
@@ -273,12 +273,19 @@ public class RadixxFlightLegOutput
 						if (dateVariationDeparture != "")
 							passengerDepartureAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationDeparture));
 						// Adjust time offset hour
-						passengerDepartureAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationDeparture.substring(0, timeVariationDeparture.length() - 2)));
+						if (timeVariationDeparture.contains("-"))
+						{
+							passengerDepartureAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationDeparture.substring(1, 3)));
+						}
+						else
+						{
+							passengerDepartureAsCalendar.add(Calendar.HOUR, -1 * Integer.valueOf(timeVariationDeparture.substring(0, 2)));
+						}
 						// Adjust time offset minute
 						if (timeVariationDeparture.contains("-"))
-							passengerDepartureAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
-						else
 							passengerDepartureAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
+						else
+							passengerDepartureAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
 
 						Date passengerArrivalAsDate = sdformatHHmm.parse(passengerSTA);
 						Calendar passengerArrivalAsCalendar = Calendar.getInstance();
@@ -288,17 +295,24 @@ public class RadixxFlightLegOutput
 						if (dateVariationArrival != "")
 							passengerArrivalAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationArrival));
 						// Adjust time offset hour
-						passengerArrivalAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationArrival.substring(0, timeVariationArrival.length() - 2)));
+						if (timeVariationArrival.contains("-"))
+						{
+							passengerArrivalAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationArrival.substring(1, 3)));
+						}
+						else
+						{
+							passengerArrivalAsCalendar.add(Calendar.HOUR, -1 * Integer.valueOf(timeVariationArrival.substring(0, 2)));
+						}
 						// Adjust time offset minute
 						if (timeVariationArrival.contains("-"))
-							passengerArrivalAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
-						else
 							passengerArrivalAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
+						else
+							passengerArrivalAsCalendar.add(Calendar.MINUTE,  -1 * Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
 
 						if (passengerDepartureAsCalendar.after(passengerArrivalAsCalendar))
 						{
 							validInput = false;
-
+							
 							Platform.runLater(new Runnable()
 							{
 								@Override
@@ -323,12 +337,19 @@ public class RadixxFlightLegOutput
 						if (dateVariationDeparture != "")
 							aircraftDepartureAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationDeparture));
 						// Adjust time offset hour
-						aircraftDepartureAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationDeparture.substring(0, timeVariationDeparture.length() - 2)));
+						if (timeVariationDeparture.contains("-"))
+						{
+							aircraftDepartureAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationDeparture.substring(1, 3)));
+						}
+						else
+						{
+							aircraftDepartureAsCalendar.add(Calendar.HOUR, -1 * Integer.valueOf(timeVariationDeparture.substring(0, 2)));
+						}
 						// Adjust time offset minute
 						if (timeVariationDeparture.contains("-"))
-							aircraftDepartureAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
-						else
 							aircraftDepartureAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
+						else
+							aircraftDepartureAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationDeparture.substring(timeVariationDeparture.length() - 2)));
 
 						Date aircraftArrivalAsDate = sdformatHHmm.parse(aircraftSTA);
 						Calendar aircraftArrivalAsCalendar = Calendar.getInstance();
@@ -338,17 +359,24 @@ public class RadixxFlightLegOutput
 						if (dateVariationArrival != "")
 							aircraftArrivalAsCalendar.add(Calendar.DATE, Integer.valueOf(dateVariationArrival));
 						// Adjust time offset hour
-						aircraftArrivalAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationArrival.substring(0, timeVariationArrival.length() - 2)));
+						if (timeVariationArrival.contains("-"))
+						{
+							aircraftArrivalAsCalendar.add(Calendar.HOUR, Integer.valueOf(timeVariationArrival.substring(1, 3)));
+						}
+						else
+						{
+							aircraftArrivalAsCalendar.add(Calendar.HOUR, -1 * Integer.valueOf(timeVariationArrival.substring(0, 2)));
+						}
 						// Adjust time offset minute
 						if (timeVariationArrival.contains("-"))
-							aircraftArrivalAsCalendar.add(Calendar.MINUTE, -1 * Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
-						else
 							aircraftArrivalAsCalendar.add(Calendar.MINUTE, Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
+						else
+							aircraftArrivalAsCalendar.add(Calendar.MINUTE,  -1 * Integer.valueOf(timeVariationArrival.substring(timeVariationArrival.length() - 2)));
 
 						if (aircraftDepartureAsCalendar.after(aircraftArrivalAsCalendar))
 						{
 							validInput = false;
-
+							
 							Platform.runLater(new Runnable()
 							{
 								@Override
@@ -357,7 +385,7 @@ public class RadixxFlightLegOutput
 									Alert alert = new Alert(AlertType.ERROR);
 									alert.setTitle("Error");
 									alert.setHeaderText(null);
-									alert.setContentText("Aircraft STD is after Aircraft STA at spreadsheet row "+(excelRowCounter+1)+".");	
+									alert.setContentText("aircraft STD is after aircraft STA at spreadsheet row "+(excelRowCounter+1)+".");	
 									alert.showAndWait();
 								}
 							});

@@ -40,7 +40,7 @@
             <RowConstraints minHeight="30.0" prefHeight="30.0" />
         </rowConstraints>
          <children>
-            <Label text="Conversion Parameters from Spreadsheet to SSIM (IATA)" underline="true">
+            <Label text="Conversion Parameters Between Excel and SSIM (IATA)" underline="true">
                <padding>
                   <Insets left="10.0" />
                </padding>

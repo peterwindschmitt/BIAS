@@ -41,14 +41,14 @@ public class RadixxCarrierOutput
 		try
 		{
 			// Get data from cells
-			String timeMode = sheet.getRow(7).getCell(5).toString().trim().toUpperCase();
-			String airlineDesignator = sheet.getRow(8).getCell(5).toString().trim().toUpperCase();
-			String creatorReference = sheet.getRow(8).getCell(1).toString().trim().toUpperCase();
-			String periodOfValidtyStart = sheet.getRow(10).getCell(1).toString().trim().toUpperCase();
-			String periodOfValidtyEnd = sheet.getRow(11).getCell(1).toString().trim().toUpperCase();
-			String creationDate = sheet.getRow(9).getCell(5).toString().trim().toUpperCase();
-			String titleOfData = sheet.getRow(7).getCell(1).toString().trim().toUpperCase();
-			String releaseDate = sheet.getRow(9).getCell(1).toString().trim().toUpperCase();
+			String timeMode = sheet.getRow(8).getCell(5).toString().trim().toUpperCase();
+			String airlineDesignator = sheet.getRow(9).getCell(5).toString().trim().toUpperCase();
+			String creatorReference = sheet.getRow(9).getCell(1).toString().trim().toUpperCase();
+			String periodOfValidtyStart = sheet.getRow(11).getCell(1).toString().trim().toUpperCase();
+			String periodOfValidtyEnd = sheet.getRow(12).getCell(1).toString().trim().toUpperCase();
+			String creationDate = sheet.getRow(10).getCell(5).toString().trim().toUpperCase();
+			String titleOfData = sheet.getRow(8).getCell(1).toString().trim().toUpperCase();
+			String releaseDate = sheet.getRow(10).getCell(1).toString().trim().toUpperCase();
 
 			defaultCarrierPart1 = 
 					"2***          *********************************************************P***********************************                                                                                   0000000002";

@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class RadixxSegmentDataRecordInput 
+public class RadixxSegmentDataRecordInputIATA 
 {
 	private String airlineDesignator;
 	private String flightNumber;
@@ -15,7 +15,7 @@ public class RadixxSegmentDataRecordInput
 	private String data;
 	private String recordSerialNumber;
 	
-	public RadixxSegmentDataRecordInput(String airlineDesignator, String flightNumber, String itineraryVariationNumber, String legSequenceNumber, String serviceType, String boardPointIndicator, String offPointIndicator, 
+	public RadixxSegmentDataRecordInputIATA(String airlineDesignator, String flightNumber, String itineraryVariationNumber, String legSequenceNumber, String serviceType, String boardPointIndicator, String offPointIndicator, 
 			String dataElementIdentifier, String segmentBoardPoint, String segmentOffPoint, String data, String recordSerialNumber) 
 	{
 		this.airlineDesignator = airlineDesignator;

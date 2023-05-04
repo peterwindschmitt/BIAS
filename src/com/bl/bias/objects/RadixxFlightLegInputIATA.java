@@ -2,7 +2,7 @@ package com.bl.bias.objects;
 
 import java.util.ArrayList;
 
-public class RadixxFlightLegInput 
+public class RadixxFlightLegInputIATA 
 {
 	private String airlineDesignator;
 	private String flightNumber;
@@ -29,9 +29,9 @@ public class RadixxFlightLegInput
 	private String dateVariation;
 	private String recordSerialNumber;
 	
-	private ArrayList<RadixxSegmentDataRecordInput> segmentDataRecords;
+	private ArrayList<RadixxSegmentDataRecordInputIATA> segmentDataRecords;
 
-	public RadixxFlightLegInput(String airlineDesignator, String flightNumber, String itineraryVariationIdentifier,
+	public RadixxFlightLegInputIATA(String airlineDesignator, String flightNumber, String itineraryVariationIdentifier,
 			String legSequenceNumber, String serviceType, String periodOfOperation, String dayOfOperation,
 			String departureStation, String passengerSTD, String aircraftSTD, String timeVariationDeparture,
 			String departureTerminal, String arrivalStation, String passengerSTA, String aircraftSTA,
@@ -63,7 +63,7 @@ public class RadixxFlightLegInput
 		this.dateVariation = dateVariation;
 		this.recordSerialNumber = recordSerialNumber;
 		
-		this.segmentDataRecords = new ArrayList <RadixxSegmentDataRecordInput>();
+		this.segmentDataRecords = new ArrayList <RadixxSegmentDataRecordInputIATA>();
 	}
 
 	public String getAirlineDesignator()
@@ -186,7 +186,7 @@ public class RadixxFlightLegInput
 		return recordSerialNumber;
 	}
 	
-	public ArrayList<RadixxSegmentDataRecordInput> getSegmentDataRecords()
+	public ArrayList<RadixxSegmentDataRecordInputIATA> getSegmentDataRecords()
 	{
 		return segmentDataRecords;
 	}
@@ -311,7 +311,7 @@ public class RadixxFlightLegInput
 		this.recordSerialNumber = recordSerialNumber;
 	}
 	
-	public void setSegmentDataRecord(RadixxSegmentDataRecordInput segmentDataRecord)
+	public void setSegmentDataRecord(RadixxSegmentDataRecordInputIATA segmentDataRecord)
 	{
 		segmentDataRecords.add(segmentDataRecord);
 	}

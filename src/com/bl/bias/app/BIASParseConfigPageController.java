@@ -117,7 +117,7 @@ public class BIASParseConfigPageController
 	// Data from RTC.INI file
 	private static String i_allowAlphaDOW;
 
-	// Data from Radixx Res SSIM file
+	// Data from Radixx Res SSIM (IATA) file
 	// For all rows
 	private static String z_all_recordType;
 	private static String z_all_recordSerialNumber;
@@ -174,6 +174,44 @@ public class BIASParseConfigPageController
 	private static String z_trl_serialNumberCheckReference;
 	private static String z_trl_continuationEndCode;
 
+	// Data from Radixx Res SSIM (S3) file
+	// For all rows
+	private static String y_all_recordType;
+	private static String y_all_recordSerialNumber;
+	// Type 1 - Header
+	private static String y_hdr_titleOfContents;
+	// Type 2 - Company/Carrier
+	private static String y_com_timeMode;
+	private static String y_com_companyCode;
+	private static String y_com_description;
+	private static String y_com_periodOfValidity;
+	private static String y_com_creationDate;
+	// Type 3 - Timetable/Flight Leg Record
+	private static String y_ttb_companyCode;
+	private static String y_ttb_trainNumber;
+	private static String y_ttb_itineraryVariationIdentifier;
+	private static String y_ttb_legSequenceNumber;
+	private static String y_ttb_serviceType;
+	private static String y_ttb_periodOfOperation;
+	private static String y_ttb_dayOfOperation;
+	private static String y_ttb_departureStation;
+	private static String y_ttb_passengerSTD;
+	private static String y_ttb_trainSTD;
+	private static String y_ttb_timeVariationDeparture;
+	private static String y_ttb_departureTerminal;
+	private static String y_ttb_arrivalStation;
+	private static String y_ttb_trainSTA;
+	private static String y_ttb_passengerSTA;
+	private static String y_ttb_timeVariationArrival;
+	private static String y_ttb_arrivalTerminal;
+	private static String y_ttb_commercialCategory;
+	// Type 4 - Segment Data Record - Not supported
+	// Type 5 - Trailer Record
+	private static String y_trl_companyCode;
+	private static String y_trl_startDate;
+	private static String y_trl_serialNumberCheckReference;
+	private static String y_trl_continuationEndCode;
+
 	// Data from .TPC file
 	private static String p_node;
 	private static String p_fieldMarker;
@@ -193,7 +231,8 @@ public class BIASParseConfigPageController
 	private ObservableList<ParseLocationFormatB> parseData9 = FXCollections.observableArrayList();
 	private ObservableList<ParseLocationFormatB> parseData10 = FXCollections.observableArrayList();
 	private ObservableList<ParseLocationFormatC> parseData11 = FXCollections.observableArrayList();
-	private ObservableList<ParseLocationFormatB> parseData12 = FXCollections.observableArrayList();
+	private ObservableList<ParseLocationFormatC> parseData12 = FXCollections.observableArrayList();
+	private ObservableList<ParseLocationFormatB> parseData13 = FXCollections.observableArrayList();
 
 	@FXML TableView<ParseLocationFormatA> parseLocationsTable1;  // Summary type/group
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable2;  // Summary other
@@ -205,8 +244,9 @@ public class BIASParseConfigPageController
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable8;  // Option data
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable9;  // Line data
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable10; // Ini data
-	@FXML TableView<ParseLocationFormatC> parseLocationsTable11; // Radixx Res SSIM data
-	@FXML TableView<ParseLocationFormatB> parseLocationsTable12; // TPC data
+	@FXML TableView<ParseLocationFormatC> parseLocationsTable11; // Radixx Res SSIM (IATA) data
+	@FXML TableView<ParseLocationFormatC> parseLocationsTable12; // Radixx Res SSIM (S3) data
+	@FXML TableView<ParseLocationFormatB> parseLocationsTable13; // TPC data
 
 	@FXML private TableColumn<ParseLocationFormatA, String> parameterName1;
 	@FXML private TableColumn<ParseLocationFormatA, String> registryKey1;
@@ -266,10 +306,16 @@ public class BIASParseConfigPageController
 	@FXML private TableColumn<ParseLocationFormatC, Integer> startColumn11;
 	@FXML private TableColumn<ParseLocationFormatC, Integer> endColumn11;
 
-	@FXML private TableColumn<ParseLocationFormatB, String> parameterName12;
-	@FXML private TableColumn<ParseLocationFormatB, String> registryKey12;
-	@FXML private TableColumn<ParseLocationFormatB, Integer> startColumn12;
-	@FXML private TableColumn<ParseLocationFormatB, Integer> endColumn12;
+	@FXML private TableColumn<ParseLocationFormatC, String> parameterName12;
+	@FXML private TableColumn<ParseLocationFormatC, String> displayedName12;
+	@FXML private TableColumn<ParseLocationFormatC, String> registryKey12;
+	@FXML private TableColumn<ParseLocationFormatC, Integer> startColumn12;
+	@FXML private TableColumn<ParseLocationFormatC, Integer> endColumn12;
+
+	@FXML private TableColumn<ParseLocationFormatB, String> parameterName13;
+	@FXML private TableColumn<ParseLocationFormatB, String> registryKey13;
+	@FXML private TableColumn<ParseLocationFormatB, Integer> startColumn13;
+	@FXML private TableColumn<ParseLocationFormatB, Integer> endColumn13;
 
 	@FXML private Label parseRangeLabel;
 
@@ -304,6 +350,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable10.setVisible(false);
 		parseLocationsTable11.setVisible(false);
 		parseLocationsTable12.setVisible(false);
+		parseLocationsTable13.setVisible(false);
 
 		// Table 1 - Extract
 		parameterName1.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatA, String>("parameterName"));
@@ -629,7 +676,7 @@ public class BIASParseConfigPageController
 		startColumn10.setReorderable(false);
 		endColumn10.setReorderable(false);
 
-		// Table 11 - Radixx Res SSim
+		// Table 11 - Radixx Res SSSIM (IATA)
 		parameterName11.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, String>("parameterName"));
 		displayedName11.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, String>("displayedName"));
 		registryKey11.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, String>("registryKey"));
@@ -706,34 +753,92 @@ public class BIASParseConfigPageController
 		startColumn11.setReorderable(false);
 		endColumn11.setReorderable(false);
 
-		// Table 12 - TPC
-		parameterName12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("parameterName"));
-		registryKey12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("registryKey"));
-		startColumn12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("startColumn"));
-		endColumn12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("endColumn"));
+		// Table 12 - Radixx Res SSSIM (S3)
+		parameterName12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, String>("parameterName"));
+		displayedName12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, String>("displayedName"));
+		registryKey12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, String>("registryKey"));
+		startColumn12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, Integer>("startColumn"));
+		endColumn12.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatC, Integer>("endColumn"));
 
 		parameterName12.setSortable(false);
+		displayedName12.setSortable(false);
 		registryKey12.setSortable(false);
 		startColumn12.setSortable(false);
 		endColumn12.setSortable(false);
 
 		parameterName12.getStyleClass().add("header-style");
+		displayedName12.getStyleClass().add("header-style");
 		registryKey12.getStyleClass().add("header-style");
 		startColumn12.setStyle( "-fx-alignment: CENTER;");
 		endColumn12.setStyle( "-fx-alignment: CENTER;");
 
-		parseData12.addAll(new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
+		parseData12.addAll(new ParseLocationFormatC("All Rows - Record Type", "", "y_all_recordType", Integer.valueOf(BIASParseConfigPageController.y_getAll_recordType()[0]), Integer.valueOf(BIASParseConfigPageController.y_getAll_recordType()[1])),
+				new ParseLocationFormatC("All Rows - Record Serial Number", "", "y_all_recordSerialNumber", Integer.valueOf(BIASParseConfigPageController.y_getAll_recordSerialNumber()[0]), Integer.valueOf(BIASParseConfigPageController.y_getAll_recordSerialNumber()[1])),
+				new ParseLocationFormatC("Header - Title of Contents", "", "y_hdr_titleOfContents", Integer.valueOf(BIASParseConfigPageController.y_getHdr_titleOfContents()[0]), Integer.valueOf(BIASParseConfigPageController.y_getHdr_titleOfContents()[1])),
+				new ParseLocationFormatC("Company - Time Mode", "", "y_com_timeMode", Integer.valueOf(BIASParseConfigPageController.y_getCom_timeMode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_timeMode()[1])),
+				new ParseLocationFormatC("Company - Company Code", "", "y_com_companyCode", Integer.valueOf(BIASParseConfigPageController.y_getCom_companyCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_companyCode()[1])),
+				new ParseLocationFormatC("Company - Description", "", "y_com_description", Integer.valueOf(BIASParseConfigPageController.y_getCom_description()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_description()[1])),
+				new ParseLocationFormatC("Company - Period of Validity", "", "y_com_periodOfValidity", Integer.valueOf(BIASParseConfigPageController.y_getCom_periodOfValidity()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_periodOfValidity()[1])),
+				new ParseLocationFormatC("Company - Creation Date", "", "y_com_creationDate", Integer.valueOf(BIASParseConfigPageController.y_getCom_creationDate()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_creationDate()[1])),
+				new ParseLocationFormatC("Timetable - Company Code", "", "y_ttb_companyCode", Integer.valueOf(BIASParseConfigPageController.y_getTtb_companyCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_companyCode()[1])),
+				new ParseLocationFormatC("Timetable - Train Number", "", "y_ttb_trainNumber", Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainNumber()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainNumber()[1])),
+				new ParseLocationFormatC("Timetable - Itinerary Variation Identifier", "", "y_ttb_itineraryVariationIdentifier", Integer.valueOf(BIASParseConfigPageController.y_getTtb_itineraryVariationIdentifier()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_itineraryVariationIdentifier()[1])),
+				new ParseLocationFormatC("Timetable - Leg Sequence Number", "", "y_ttb_legSequenceNumber", Integer.valueOf(BIASParseConfigPageController.y_getTtb_legSequenceNumber()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_legSequenceNumber()[1])),
+				new ParseLocationFormatC("Timetable - Commercial Category", "", "y_ttb_commercialCategory", Integer.valueOf(BIASParseConfigPageController.y_getTtb_commercialCategory()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_commercialCategory()[1])),
+				new ParseLocationFormatC("Timetable - Period of Operation", "", "y_ttb_periodOfOperation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_periodOfOperation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_periodOfOperation()[1])),
+				new ParseLocationFormatC("Timetable - Day of Operation", "", "y_ttb_dayOfOperation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_dayOfOperation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_dayOfOperation()[1])),
+				new ParseLocationFormatC("Timetable - Departure Station", "", "y_ttb_departureStation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureStation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureStation()[1])),
+				new ParseLocationFormatC("Timetable - Passenger STD", "", "y_ttb_passengerSTD", Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTD()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTD()[1])),
+				new ParseLocationFormatC("Timetable - Train STD", "", "y_ttb_trainSTD", Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTD()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTD()[1])),
+				new ParseLocationFormatC("Timetable - Time Variation Departure", "", "y_ttb_timeVariationDeparture", Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationDeparture()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationDeparture()[1])),
+				new ParseLocationFormatC("Timetable - Departure Terminal", "", "y_ttb_departureTerminal", Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureTerminal()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureTerminal()[1])),
+				new ParseLocationFormatC("Timetable - Arrival Station", "", "y_ttb_arrivalStation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalStation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalStation()[1])),
+				new ParseLocationFormatC("Timetable - Train STA", "", "y_ttb_trainSTA", Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTA()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTA()[1])),
+				new ParseLocationFormatC("Timetable - Passenger STA", "", "y_ttb_passengerSTA", Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTA()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTA()[1])),
+				new ParseLocationFormatC("Timetable - Time Variation Arrival", "", "y_ttb_timeVariationArrival", Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationArrival()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationArrival()[1])),
+				new ParseLocationFormatC("Timetable - Arrival Terminal", "", "y_ttb_arrivalTerminal", Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalTerminal()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalTerminal()[1])),
+				new ParseLocationFormatC("Timetable - Service Type", "", "y_ttb_serviceType", Integer.valueOf(BIASParseConfigPageController.y_getTtb_serviceType()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_serviceType()[1])),
+				new ParseLocationFormatC("Trailer - Company Code", "", "y_trl_companyCode", Integer.valueOf(BIASParseConfigPageController.y_getTrl_companyCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_companyCode()[1])),
+				new ParseLocationFormatC("Trailer - Start Date", "", "y_trl_startDate", Integer.valueOf(BIASParseConfigPageController.y_getTrl_startDate()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_startDate()[1])),
+				new ParseLocationFormatC("Trailer - Serial Number Check Reference", "", "y_trl_serialNumberCheckReference", Integer.valueOf(BIASParseConfigPageController.y_getTrl_serialNumberCheckReference()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_serialNumberCheckReference()[1])),
+				new ParseLocationFormatC("Trailer - Continuation End Code", "", "y_trl_continuationEndCode", Integer.valueOf(BIASParseConfigPageController.y_getTrl_continuationEndCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_continuationEndCode()[1]))
+				);
+		parseLocationsTable12.setItems(parseData12);
+
+		parameterName12.setReorderable(false);
+		displayedName12.setReorderable(false);
+		registryKey12.setReorderable(false);
+		startColumn12.setReorderable(false);
+		endColumn12.setReorderable(false);
+
+		// Table 13 - TPC
+		parameterName13.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("parameterName"));
+		registryKey13.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("registryKey"));
+		startColumn13.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("startColumn"));
+		endColumn13.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("endColumn"));
+
+		parameterName13.setSortable(false);
+		registryKey13.setSortable(false);
+		startColumn13.setSortable(false);
+		endColumn13.setSortable(false);
+
+		parameterName13.getStyleClass().add("header-style");
+		registryKey13.getStyleClass().add("header-style");
+		startColumn13.setStyle( "-fx-alignment: CENTER;");
+		endColumn13.setStyle( "-fx-alignment: CENTER;");
+
+		parseData13.addAll(new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
 				new ParseLocationFormatB("Field Marker", "p_fieldMarker", Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])),
 				new ParseLocationFormatB("Design Speed", "p_designSpeed", Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])),
 				new ParseLocationFormatB("Current Speed", "p_currentSpeed", Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1]))
 				);
 
-		parseLocationsTable12.setItems(parseData12);
+		parseLocationsTable13.setItems(parseData13);
 
-		parameterName12.setReorderable(false);
-		registryKey12.setReorderable(false);
-		startColumn12.setReorderable(false);
-		endColumn12.setReorderable(false);
+		parameterName13.setReorderable(false);
+		registryKey13.setReorderable(false);
+		startColumn13.setReorderable(false);
+		endColumn13.setReorderable(false);
 	}
 
 	@FXML private void handleRestoreDefaultsButton(ActionEvent event) 
@@ -889,6 +994,38 @@ public class BIASParseConfigPageController
 			prefs.remove("z_trl_continuationEndCode");
 
 			// Table 12
+			prefs.remove("y_all_recordType");
+			prefs.remove("y_all_recordSerialNumber");
+			prefs.remove("y_hdr_titleOfContents");
+			prefs.remove("y_com_timeMode");
+			prefs.remove("y_com_companyCode");
+			prefs.remove("y_com_description");
+			prefs.remove("y_com_periodOfValidity");
+			prefs.remove("y_com_creationDate");
+			prefs.remove("y_ttb_companyCode");
+			prefs.remove("y_ttb_trainNumber");
+			prefs.remove("y_ttb_itineraryVariationIdentifier");
+			prefs.remove("y_ttb_legSequenceNumber");
+			prefs.remove("y_ttb_commercialCategory");
+			prefs.remove("y_ttb_periodOfOperation");
+			prefs.remove("y_ttb_dayOfOperation");
+			prefs.remove("y_ttb_departureStation");
+			prefs.remove("y_ttb_passengerSTD");
+			prefs.remove("y_ttb_trainSTD");
+			prefs.remove("y_ttb_timeVariationDeparture");
+			prefs.remove("y_ttb_departureTerminal");
+			prefs.remove("y_ttb_arrivalStation");
+			prefs.remove("y_ttb_trainSTA");
+			prefs.remove("y_ttb_passengerSTA");
+			prefs.remove("y_ttb_timeVariationArrival");
+			prefs.remove("y_ttb_arrivalTerminal");
+			prefs.remove("y_ttb_serviceType");
+			prefs.remove("y_trl_companyCode");
+			prefs.remove("y_trl_startDate");
+			prefs.remove("y_trl_serialNumberCheckReference");
+			prefs.remove("y_trl_continuationEndCode");
+
+			// Table 13
 			prefs.remove("p_node");
 			prefs.remove("p_fieldMarker");
 			prefs.remove("p_designSpeed");
@@ -911,6 +1048,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setEditable(false);
 			parseLocationsTable11.setEditable(false);
 			parseLocationsTable12.setEditable(false);
+			parseLocationsTable13.setEditable(false);
 
 			// Refresh parseData from registry for table 1 values
 			parseData1.clear();
@@ -1107,14 +1245,50 @@ public class BIASParseConfigPageController
 
 			// Refresh parseData from registry for table 12 values
 			parseData12.clear();
-			parseData12.addAll(new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
+			parseData12.addAll(new ParseLocationFormatC("All Rows - Record Type", "", "y_all_recordType", Integer.valueOf(BIASParseConfigPageController.y_getAll_recordType()[0]), Integer.valueOf(BIASParseConfigPageController.y_getAll_recordType()[1])),
+					new ParseLocationFormatC("All Rows - Record Serial Number", "", "y_all_recordSerialNumber", Integer.valueOf(BIASParseConfigPageController.y_getAll_recordSerialNumber()[0]), Integer.valueOf(BIASParseConfigPageController.y_getAll_recordSerialNumber()[1])),
+					new ParseLocationFormatC("Header - Title of Contents", "", "y_hdr_titleOfContents", Integer.valueOf(BIASParseConfigPageController.y_getHdr_titleOfContents()[0]), Integer.valueOf(BIASParseConfigPageController.y_getHdr_titleOfContents()[1])),
+					new ParseLocationFormatC("Company - Time Mode", "", "y_com_timeMode", Integer.valueOf(BIASParseConfigPageController.y_getCom_timeMode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_timeMode()[1])),
+					new ParseLocationFormatC("Company - Company Code", "", "y_com_companyCode", Integer.valueOf(BIASParseConfigPageController.y_getCom_companyCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_companyCode()[1])),
+					new ParseLocationFormatC("Company - Description", "", "y_com_description", Integer.valueOf(BIASParseConfigPageController.y_getCom_description()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_description()[1])),
+					new ParseLocationFormatC("Company - Period of Validity", "", "y_com_periodOfValidity", Integer.valueOf(BIASParseConfigPageController.y_getCom_periodOfValidity()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_periodOfValidity()[1])),
+					new ParseLocationFormatC("Company - Creation Date", "", "y_com_creationDate", Integer.valueOf(BIASParseConfigPageController.y_getCom_creationDate()[0]), Integer.valueOf(BIASParseConfigPageController.y_getCom_creationDate()[1])),
+					new ParseLocationFormatC("Timetable - Company Code", "", "y_ttb_companyCode", Integer.valueOf(BIASParseConfigPageController.y_getTtb_companyCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_companyCode()[1])),
+					new ParseLocationFormatC("Timetable - Train Number", "", "y_ttb_trainNumber", Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainNumber()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainNumber()[1])),
+					new ParseLocationFormatC("Timetable - Itinerary Variation Identifier", "", "y_ttb_itineraryVariationIdentifier", Integer.valueOf(BIASParseConfigPageController.y_getTtb_itineraryVariationIdentifier()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_itineraryVariationIdentifier()[1])),
+					new ParseLocationFormatC("Timetable - Leg Sequence Number", "", "y_ttb_legSequenceNumber", Integer.valueOf(BIASParseConfigPageController.y_getTtb_legSequenceNumber()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_legSequenceNumber()[1])),
+					new ParseLocationFormatC("Timetable - Commercial Category", "", "y_ttb_commercialCategory", Integer.valueOf(BIASParseConfigPageController.y_getTtb_commercialCategory()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_commercialCategory()[1])),
+					new ParseLocationFormatC("Timetable - Period of Operation", "", "y_ttb_periodOfOperation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_periodOfOperation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_periodOfOperation()[1])),
+					new ParseLocationFormatC("Timetable - Day of Operation", "", "y_ttb_dayOfOperation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_dayOfOperation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_dayOfOperation()[1])),
+					new ParseLocationFormatC("Timetable - Departure Station", "", "y_ttb_departureStation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureStation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureStation()[1])),
+					new ParseLocationFormatC("Timetable - Passenger STD", "", "y_ttb_passengerSTD", Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTD()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTD()[1])),
+					new ParseLocationFormatC("Timetable - Train STD", "", "y_ttb_trainSTD", Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTD()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTD()[1])),
+					new ParseLocationFormatC("Timetable - Time Variation Departure", "", "y_ttb_timeVariationDeparture", Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationDeparture()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationDeparture()[1])),
+					new ParseLocationFormatC("Timetable - Departure Terminal", "", "y_ttb_departureTerminal", Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureTerminal()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_departureTerminal()[1])),
+					new ParseLocationFormatC("Timetable - Arrival Station", "", "y_ttb_arrivalStation", Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalStation()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalStation()[1])),
+					new ParseLocationFormatC("Timetable - Train STA", "", "y_ttb_trainSTA", Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTA()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_trainSTA()[1])),
+					new ParseLocationFormatC("Timetable - Passenger STA", "", "y_ttb_passengerSTA", Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTA()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_passengerSTA()[1])),
+					new ParseLocationFormatC("Timetable - Time Variation Arrival", "", "y_ttb_timeVariationArrival", Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationArrival()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_timeVariationArrival()[1])),
+					new ParseLocationFormatC("Timetable - Arrival Terminal", "", "y_ttb_arrivalTerminal", Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalTerminal()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_arrivalTerminal()[1])),
+					new ParseLocationFormatC("Timetable - Service Type", "", "y_ttb_serviceType", Integer.valueOf(BIASParseConfigPageController.y_getTtb_serviceType()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTtb_serviceType()[1])),
+					new ParseLocationFormatC("Trailer - Company Code", "", "y_trl_companyCode", Integer.valueOf(BIASParseConfigPageController.y_getTrl_companyCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_companyCode()[1])),
+					new ParseLocationFormatC("Trailer - Start Date", "", "y_trl_startDate", Integer.valueOf(BIASParseConfigPageController.y_getTrl_startDate()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_startDate()[1])),
+					new ParseLocationFormatC("Trailer - Serial Number Check Reference", "", "y_trl_serialNumberCheckReference", Integer.valueOf(BIASParseConfigPageController.y_getTrl_serialNumberCheckReference()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_serialNumberCheckReference()[1])),
+					new ParseLocationFormatC("Trailer - Continuation End Code", "", "y_trl_continuationEndCode", Integer.valueOf(BIASParseConfigPageController.y_getTrl_continuationEndCode()[0]), Integer.valueOf(BIASParseConfigPageController.y_getTrl_continuationEndCode()[1]))
+					);
+			startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+			endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+			// Refresh parseData from registry for table 13 values
+			parseData13.clear();
+			parseData13.addAll(new ParseLocationFormatB("Node", "p_node", Integer.valueOf(BIASParseConfigPageController.p_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.p_getNode()[1])),
 					new ParseLocationFormatB("Field Marker", "p_fieldMarker", Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[0]), Integer.valueOf(BIASParseConfigPageController.p_getFieldMarker()[1])),
 					new ParseLocationFormatB("Design Speed", "p_designSpeed", Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getDesignSpeed()[1])),
 					new ParseLocationFormatB("Current Speed", "p_currentSpeed", Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.p_getCurrentSpeed()[1]))
 					);
 
-			startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-			endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+			startColumn13.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+			endColumn13.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		} 
 	}
 
@@ -1132,6 +1306,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable10.setEditable(false);
 		parseLocationsTable11.setEditable(false);
 		parseLocationsTable12.setEditable(false);
+		parseLocationsTable13.setEditable(false);
 
 		typeStartColumn1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		typeEndColumn1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1170,6 +1345,9 @@ public class BIASParseConfigPageController
 
 		startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+		startColumn13.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		endColumn13.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 	}
 
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
@@ -1186,6 +1364,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable10.setEditable(true);
 		parseLocationsTable11.setEditable(true);
 		parseLocationsTable12.setEditable(true);
+		parseLocationsTable13.setEditable(true);
 
 		// Table 1 - typeStartColumn
 		typeStartColumn1.setEditable(true);
@@ -1910,13 +2089,13 @@ public class BIASParseConfigPageController
 		// Table 12 - startColumn
 		startColumn12.setEditable(true);
 		startColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
-		startColumn12.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+		startColumn12.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatC, Integer>>() {      
 			@Override
-			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+			public void handle(CellEditEvent<ParseLocationFormatC, Integer> t) {
 				if (t.getNewValue() != -1)
 				{
 					int row = t.getTableView().getEditingCell().getRow();
-					String key = parseLocationsTable12.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String key = parseLocationsTable12.getColumns().get(2).getCellObservableValue(row).getValue().toString(); 
 					String[] oldValues = prefs.get(key, null).split(",");
 					String newValue = t.getNewValue()+","+oldValues[1];
 
@@ -1940,13 +2119,13 @@ public class BIASParseConfigPageController
 		// Table 12 - endColumn
 		endColumn12.setEditable(true);
 		endColumn12.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
-		endColumn12.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+		endColumn12.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatC, Integer>>() {      
 			@Override
-			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+			public void handle(CellEditEvent<ParseLocationFormatC, Integer> t) {
 				if (t.getNewValue() != -1)
 				{
 					int row = t.getTableView().getEditingCell().getRow();
-					String key = parseLocationsTable12.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String key = parseLocationsTable12.getColumns().get(2).getCellObservableValue(row).getValue().toString(); 
 					String[] oldValues = prefs.get(key, null).split(",");
 					String newValue = oldValues[0]+","+t.getNewValue();
 
@@ -1963,6 +2142,66 @@ public class BIASParseConfigPageController
 					parseData12.get(row).setEndColumn(t.getOldValue());
 					parseLocationsTable12.getColumns().get(row).setVisible(false);
 					parseLocationsTable12.getColumns().get(row).setVisible(true);
+				}
+			}
+		});
+
+		// Table 13 - startColumn
+		startColumn13.setEditable(true);
+		startColumn13.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
+		startColumn13.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+			@Override
+			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+				if (t.getNewValue() != -1)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					String key = parseLocationsTable13.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String[] oldValues = prefs.get(key, null).split(",");
+					String newValue = t.getNewValue()+","+oldValues[1];
+
+					// Update in registry
+					prefs.put(key, newValue);
+
+					// Update value in startColumn which will then update GUI (as it is observable)
+					parseData13.get(row).setStartColumn(t.getNewValue());
+				}
+				else
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+
+					parseData13.get(row).setStartColumn(t.getOldValue());
+					parseLocationsTable13.getColumns().get(row).setVisible(false);
+					parseLocationsTable13.getColumns().get(row).setVisible(true);
+				}
+			}
+		});
+
+		// Table 13 - endColumn
+		endColumn13.setEditable(true);
+		endColumn13.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
+		endColumn13.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+			@Override
+			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+				if (t.getNewValue() != -1)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					String key = parseLocationsTable13.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String[] oldValues = prefs.get(key, null).split(",");
+					String newValue = oldValues[0]+","+t.getNewValue();
+
+					// Update in registry
+					prefs.put(key, newValue);
+
+					// Update value in endColumn which will then update GUI (as it is observable)
+					parseData13.get(row).setEndColumn(t.getNewValue());
+				}
+				else
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+
+					parseData13.get(row).setEndColumn(t.getOldValue());
+					parseLocationsTable13.getColumns().get(row).setVisible(false);
+					parseLocationsTable13.getColumns().get(row).setVisible(true);
 				}
 			}
 		});
@@ -1993,6 +2232,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable1.requestFocus();
 		}
@@ -2015,6 +2255,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable3.requestFocus();
 		}
@@ -2037,6 +2278,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable4.requestFocus();
 		}
@@ -2059,6 +2301,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable5.requestFocus();
 		}
@@ -2081,6 +2324,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable6.requestFocus();
 		}
@@ -2103,6 +2347,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable7.requestFocus();
 		}
@@ -2125,6 +2370,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable8.requestFocus();
 		}
@@ -2147,6 +2393,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable9.requestFocus();
 		}
@@ -2169,16 +2416,17 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(true);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable10.requestFocus();
 		}
-		else if (curPage == 11) // Going to option (p 10)
+		else if (curPage == 11) // Going to SSIM (p 10)
 		{
 			curPage--;
 			previousPageButton.setDisable(false);
 			nextPageButton.setDisable(false);
 
-			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM file (scroll down for complete list):");
+			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM (IATA) file (scroll down for complete list):");
 			parseLocationsTable1.setVisible(false);
 			parseLocationsTable2.setVisible(false);
 			parseLocationsTable3.setVisible(false);
@@ -2191,10 +2439,33 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(true);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable11.requestFocus();
 		}
-		else
+		else if (curPage == 12) // Going to SSIM (p 11)
+		{
+			curPage--;
+			previousPageButton.setDisable(false);
+			nextPageButton.setDisable(false);
+
+			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM (S3) file (scroll down for complete list):");
+			parseLocationsTable1.setVisible(false);
+			parseLocationsTable2.setVisible(false);
+			parseLocationsTable3.setVisible(false);
+			parseLocationsTable4.setVisible(false);
+			parseLocationsTable5.setVisible(false);
+			parseLocationsTable6.setVisible(false);
+			parseLocationsTable7.setVisible(false);
+			parseLocationsTable8.setVisible(false);
+			parseLocationsTable9.setVisible(false);
+			parseLocationsTable10.setVisible(false);
+			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(true);
+			parseLocationsTable13.setVisible(false);
+
+			parseLocationsTable12.requestFocus();
+		}else
 		{
 			curPage--;
 			nextPageButton.setDisable(false);
@@ -2203,7 +2474,7 @@ public class BIASParseConfigPageController
 
 	@FXML private void handleNextPageButton(ActionEvent event) 
 	{
-		if (curPage == 11)  // Highest possible page # here
+		if (curPage == 12)  // Highest possible page # here
 		{
 			// do nothing
 		}
@@ -2226,6 +2497,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable3.requestFocus();
 		}
@@ -2248,6 +2520,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable4.requestFocus();
 		}
@@ -2270,6 +2543,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable5.requestFocus();
 		}
@@ -2292,6 +2566,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable6.requestFocus();
 		}
@@ -2314,6 +2589,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable7.requestFocus();
 		}
@@ -2336,6 +2612,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable8.requestFocus();
 		}
@@ -2358,6 +2635,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable9.requestFocus();
 		}
@@ -2380,6 +2658,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(true);
 			parseLocationsTable11.setVisible(false);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable10.requestFocus();
 		}
@@ -2389,7 +2668,7 @@ public class BIASParseConfigPageController
 			previousPageButton.setDisable(false);
 			nextPageButton.setDisable(false);
 
-			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM file (scroll down for complete list):");
+			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM (IATA) file (scroll down for complete list):");
 			parseLocationsTable1.setVisible(false);
 			parseLocationsTable2.setVisible(false);
 			parseLocationsTable3.setVisible(false);
@@ -2402,10 +2681,34 @@ public class BIASParseConfigPageController
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(true);
 			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable11.requestFocus();
 		}
-		else if (curPage == 10)  // Going to TPC (p 11)
+		else if (curPage == 10)  // Going to Radixx Res SSIM (p 11)
+		{
+			curPage++;
+			previousPageButton.setDisable(false);
+			nextPageButton.setDisable(false);
+
+			parseRangeLabel.setText("Parameters parsed from Radixx Res SSIM (S3) file (scroll down for complete list):");
+			parseLocationsTable1.setVisible(false);
+			parseLocationsTable2.setVisible(false);
+			parseLocationsTable3.setVisible(false);
+			parseLocationsTable4.setVisible(false);
+			parseLocationsTable5.setVisible(false);
+			parseLocationsTable6.setVisible(false);
+			parseLocationsTable7.setVisible(false);
+			parseLocationsTable8.setVisible(false);
+			parseLocationsTable9.setVisible(false);
+			parseLocationsTable10.setVisible(false);
+			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(true);
+			parseLocationsTable13.setVisible(false);
+
+			parseLocationsTable12.requestFocus();
+		}
+		else if (curPage == 11)  // Going to TPC (p 12)
 		{
 			curPage++;
 			previousPageButton.setDisable(false);
@@ -2423,9 +2726,10 @@ public class BIASParseConfigPageController
 			parseLocationsTable9.setVisible(false);
 			parseLocationsTable10.setVisible(false);
 			parseLocationsTable11.setVisible(false);
-			parseLocationsTable12.setVisible(true);
+			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(true);
 
-			parseLocationsTable12.requestFocus();
+			parseLocationsTable13.requestFocus();
 		}
 	}
 
@@ -3497,6 +3801,277 @@ public class BIASParseConfigPageController
 		}
 
 		// Table 12
+		// All rows - record type
+		if (prefs.get("y_all_recordType", null) == null)
+		{
+			// Write value for subsequent runs
+			y_all_recordType = "0,1";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_all_recordType", y_all_recordType);
+		}
+
+		// All rows - record serial number
+		if (prefs.get("y_all_recordSerialNumber", null) == null)
+		{
+			// Write value for subsequent runs
+			y_all_recordSerialNumber = "208,216";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_all_recordSerialNumber", y_all_recordSerialNumber);
+		}
+
+		// Header Record - title of contents
+		if (prefs.get("y_hdr_titleOfContents", null) == null)
+		{
+			// Write value for subsequent runs
+			y_hdr_titleOfContents = "1,40";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_hdr_titleOfContents", y_hdr_titleOfContents);
+		}
+
+		// Company Record - time mode
+		if (prefs.get("y_com_timeMode", null) == null)
+		{
+			// Write value for subsequent runs
+			y_com_timeMode = "1,2";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_com_timeMode", y_com_timeMode);
+		}
+
+		// Company Record - company code
+		if (prefs.get("y_com_companyCode", null) == null)
+		{
+			// Write value for subsequent runs
+			y_com_companyCode = "2,4";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_com_companyCode", y_com_companyCode);
+		}
+
+		// Company Record - description
+		if (prefs.get("y_com_description", null) == null)
+		{
+			// Write value for subsequent runs
+			y_com_description = "35,62";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_com_description", y_com_description);
+		}
+
+		// Company Record - period of validity
+		if (prefs.get("y_com_periodOfValidity", null) == null)
+		{
+			// Write value for subsequent runs
+			y_com_periodOfValidity = "14,28";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_com_periodOfValidity", y_com_periodOfValidity);
+		}
+
+		// Company Record - creation date
+		if (prefs.get("y_com_creationDate", null) == null)
+		{
+			// Write value for subsequent runs
+			y_com_creationDate = "28,35";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_com_creationDate", y_com_creationDate);
+		}
+
+		// Timetable Record - company code
+		if (prefs.get("y_ttb_companyCode", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_companyCode = "2,4";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_companyCode", y_ttb_companyCode);
+		}
+
+		// Timetable Record - train number
+		if (prefs.get("y_ttb_trainNumber", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_trainNumber = "148,154";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_trainNumber", y_ttb_trainNumber);
+		}
+
+		// Timetable Record - itinerary variation identifier
+		if (prefs.get("y_ttb_itineraryVariationIdentifier", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_itineraryVariationIdentifier = "11,13";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_itineraryVariationIdentifier", y_ttb_itineraryVariationIdentifier);
+		}
+
+		// Timetable Record - leg sequence Number
+		if (prefs.get("y_ttb_legSequenceNumber", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_legSequenceNumber = "13,15";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_legSequenceNumber", y_ttb_legSequenceNumber);
+		}
+
+		// Timetable Record - commercial category
+		if (prefs.get("y_ttb_commercialCategory", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_commercialCategory = "15,16";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_commercialCategory", y_ttb_commercialCategory);
+		}
+
+		// Timetable Record - period of operation
+		if (prefs.get("y_ttb_periodOfOperation", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_periodOfOperation = "16,30";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_periodOfOperation", y_ttb_periodOfOperation);
+		}
+
+		// Timetable Record - day of operation
+		if (prefs.get("y_ttb_dayOfOperation", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_dayOfOperation = "30,37";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_dayOfOperation", y_ttb_dayOfOperation);
+		}
+
+		// Timetable Record - departure station
+		if (prefs.get("y_ttb_departureStation", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_departureStation = "38,43";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_departureStation", y_ttb_departureStation);
+		}
+
+		// Timetable - passenger STD
+		if (prefs.get("y_ttb_passengerSTD", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_passengerSTD = "43,47";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_passengerSTD", y_ttb_passengerSTD);
+		}
+
+		// Timetable - train STD
+		if (prefs.get("y_ttb_trainSTD", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_trainSTD = "47,51";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_trainSTD", y_ttb_trainSTD);
+		}
+
+		// Timetable - time variation departure
+		if (prefs.get("y_ttb_timeVariationDeparture", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_timeVariationDeparture = "51,56";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_timeVariationDeparture", y_ttb_timeVariationDeparture);
+		}
+
+		// Timetable - departure terminal
+		if (prefs.get("y_ttb_departureTerminal", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_departureTerminal = "56,58";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_departureTerminal", y_ttb_departureTerminal);
+		}
+
+		// Timetable Record - arrival station
+		if (prefs.get("y_ttb_arrivalStation", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_arrivalStation = "58,63";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_arrivalStation", y_ttb_arrivalStation);
+		}
+
+		// Timetable - passenger STA
+		if (prefs.get("y_ttb_passengerSTA", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_passengerSTA = "63,67";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_passengerSTA", y_ttb_passengerSTA);
+		}
+
+		// Timetable - train STA
+		if (prefs.get("y_ttb_trainSTA", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_trainSTA = "67,71";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_trainSTA", y_ttb_trainSTA);
+		}
+
+		// Timetable - time variation arrival
+		if (prefs.get("y_ttb_timeVariationArrival", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_timeVariationArrival = "71,76";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_timeVariationArrival", y_ttb_timeVariationArrival);
+		}
+
+		// Timetable - arrival terminal
+		if (prefs.get("y_ttb_arrivalTerminal", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_arrivalTerminal = "76,78";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_arrivalTerminal", y_ttb_arrivalTerminal);
+		}
+
+		// Timetable Record - service type
+		if (prefs.get("y_ttb_serviceType", null) == null)
+		{
+			// Write value for subsequent runs
+			y_ttb_serviceType = "78,81";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_ttb_serviceType", y_ttb_serviceType);
+		}
+
+		// Trailer record - companyCode
+		if (prefs.get("y_trl_companyCode", null) == null)
+		{
+			// Write value for subsequent runs
+			y_trl_companyCode = "2,4";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_trl_companyCode", y_trl_companyCode);
+		}
+
+		// Trailer record - start date
+		if (prefs.get("y_trl_startDate", null) == null)
+		{
+			// Write value for subsequent runs
+			y_trl_startDate = "5,12";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_trl_startDate", y_trl_startDate);
+		}
+
+		// Trailer record - serial number check reference
+		if (prefs.get("y_trl_serialNumberCheckReference", null) == null)
+		{
+			// Write value for subsequent runs
+			y_trl_serialNumberCheckReference = "183,191";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_trl_serialNumberCheckReference", y_trl_serialNumberCheckReference);
+		}
+
+		// Trailer record - continuation end code
+		if (prefs.get("y_trl_continuationEndCode", null) == null)
+		{
+			// Write value for subsequent runs
+			y_trl_continuationEndCode = "191,192";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("y_trl_continuationEndCode", y_trl_continuationEndCode);
+		}
+
+		// Table 13
 		// Node (route)
 		if (prefs.get("p_node", null) == null)
 		{
@@ -4233,6 +4808,187 @@ public class BIASParseConfigPageController
 	public static String[] z_getTrl_continuationEndCode()
 	{
 		String[] values = prefs.get("z_trl_continuationEndCode", z_trl_continuationEndCode).split(",");
+		return values;
+	}
+
+	public static String[] y_getAll_recordType()
+	{
+		String[] values = prefs.get("y_all_recordType", y_all_recordType).split(",");
+		return values;
+	}
+
+	public static String[] y_getAll_recordSerialNumber()
+	{
+		String[] values = prefs.get("y_all_recordSerialNumber", y_all_recordSerialNumber).split(",");
+		return values;
+	}
+
+	public static String[] y_getHdr_titleOfContents() 
+	{
+		String[] values = prefs.get("y_hdr_titleOfContents", y_hdr_titleOfContents).split(",");
+		return values;
+	}
+
+	public static String[] y_getCom_timeMode() 
+	{
+		String[] values = prefs.get("y_com_timeMode", y_com_timeMode).split(",");
+		return values;
+	}
+
+	public static String[] y_getCom_creationDate() 
+	{
+		String[] values = prefs.get("y_com_creationDate", y_com_creationDate).split(",");
+		return values;
+	}
+
+	public static String[] y_getCom_periodOfValidity() 
+	{
+		String[] values = prefs.get("y_com_periodOfValidity", y_com_periodOfValidity).split(",");
+		return values;
+	}
+
+	public static String[] y_getCom_description() 
+	{
+		String[] values = prefs.get("y_com_description", y_com_description).split(",");
+		return values;
+	}
+
+	public static String[] y_getCom_companyCode() 
+	{
+		String[] values = prefs.get("y_com_companyCode", y_com_companyCode).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_companyCode() 
+	{
+		String[] values = prefs.get("y_ttb_companyCode", y_ttb_companyCode).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_trainNumber() 
+	{
+		String[] values = prefs.get("y_ttb_trainNumber", y_ttb_trainNumber).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_itineraryVariationIdentifier()
+	{
+		String[] values = prefs.get("y_ttb_itineraryVariationIdentifier", y_ttb_itineraryVariationIdentifier).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_legSequenceNumber() 
+	{
+		String[] values = prefs.get("y_ttb_legSequenceNumber", y_ttb_legSequenceNumber).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_commercialCategory() 
+	{
+		String[] values = prefs.get("y_ttb_commercialCategory", y_ttb_commercialCategory).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_periodOfOperation() 
+	{
+		String[] values = prefs.get("y_ttb_periodOfOperation", y_ttb_periodOfOperation).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_dayOfOperation() 
+	{
+		String[] values = prefs.get("y_ttb_dayOfOperation", y_ttb_dayOfOperation).split(",");
+		return values;
+	}
+
+
+	public static String[] y_getTtb_departureStation() 
+	{
+		String[] values = prefs.get("y_ttb_departureStation", y_ttb_departureStation).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_passengerSTD() 
+	{
+		String[] values = prefs.get("y_ttb_passengerSTD", y_ttb_passengerSTD).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_trainSTD() 
+	{
+		String[] values = prefs.get("y_ttb_trainSTD", y_ttb_trainSTD).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_timeVariationDeparture() 
+	{
+		String[] values = prefs.get("y_ttb_timeVariationDeparture", y_ttb_timeVariationDeparture).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_departureTerminal() 
+	{
+		String[] values = prefs.get("y_ttb_departureTerminal", y_ttb_departureTerminal).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_arrivalStation() 
+	{
+		String[] values = prefs.get("y_ttb_arrivalStation", y_ttb_arrivalStation).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_passengerSTA() 
+	{
+		String[] values = prefs.get("y_ttb_passengerSTA", y_ttb_passengerSTA).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_trainSTA() 
+	{
+		String[] values = prefs.get("y_ttb_trainSTA", y_ttb_trainSTA).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_timeVariationArrival() 
+	{
+		String[] values = prefs.get("y_ttb_timeVariationArrival", y_ttb_timeVariationArrival).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_arrivalTerminal() 
+	{
+		String[] values = prefs.get("y_ttb_arrivalTerminal", y_ttb_arrivalTerminal).split(",");
+		return values;
+	}
+
+	public static String[] y_getTtb_serviceType() 
+	{
+		String[] values = prefs.get("y_ttb_serviceType", y_ttb_serviceType).split(",");
+		return values;
+	}
+	
+	public static String[] y_getTrl_companyCode()
+	{
+		String[] values = prefs.get("y_trl_companyCode", y_trl_companyCode).split(",");
+		return values;
+	}
+
+	public static String[] y_getTrl_startDate()
+	{
+		String[] values = prefs.get("y_trl_startDate", y_trl_startDate).split(",");
+		return values;
+	}
+
+	public static String[] y_getTrl_serialNumberCheckReference()
+	{
+		String[] values = prefs.get("y_trl_serialNumberCheckReference", y_trl_serialNumberCheckReference).split(",");
+		return values;
+	}
+
+	public static String[] y_getTrl_continuationEndCode()
+	{
+		String[] values = prefs.get("y_trl_continuationEndCode", y_trl_continuationEndCode).split(",");
 		return values;
 	}
 

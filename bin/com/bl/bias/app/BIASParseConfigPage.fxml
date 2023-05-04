@@ -147,12 +147,24 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </TableView>
-       <TableView fx:id="parseLocationsTable12" maxHeight="218.0" maxWidth="495.0" minHeight="218.0" minWidth="495.0" prefHeight="218.0" prefWidth="495.0" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+      <TableView fx:id="parseLocationsTable12" maxHeight="290.0" maxWidth="781.0" minHeight="290.0" minWidth="781.0" prefHeight="290.0" prefWidth="781.0" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
          <columns>
-            <TableColumn fx:id="parameterName12" editable="false" maxWidth="138.0" minWidth="138.0" prefWidth="138.0" sortable="false" text="Parameter" />
-            <TableColumn fx:id="registryKey12" editable="false" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" resizable="false" sortable="false" text="Registry Entry" />
-            <TableColumn fx:id="startColumn12" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" sortable="false" text="Start Column" />
-            <TableColumn fx:id="endColumn12" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" sortable="false" text="End Column" />
+            <TableColumn fx:id="parameterName12" editable="false" maxWidth="228.0" minWidth="228.0" prefWidth="228.0" sortable="false" text="Parameter" />
+            <TableColumn fx:id="displayedName12" editable="false" maxWidth="171.0" minWidth="171.0" prefWidth="171.0" resizable="false" sortable="false" text="Alt Spreadsheet Display" />
+         	<TableColumn fx:id="registryKey12" editable="false" maxWidth="195.0" minWidth="195.0" prefWidth="195.0" resizable="false" sortable="false" text="Registry Entry" />
+            <TableColumn fx:id="startColumn12" editable="false" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" sortable="false" text="Start Column" />
+            <TableColumn fx:id="endColumn12" editable="false" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" resizable="false" sortable="false" text="End Column" />
+         	</columns>
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </TableView>
+       <TableView fx:id="parseLocationsTable13" maxHeight="218.0" maxWidth="495.0" minHeight="218.0" minWidth="495.0" prefHeight="218.0" prefWidth="495.0" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+         <columns>
+            <TableColumn fx:id="parameterName13" editable="false" maxWidth="138.0" minWidth="138.0" prefWidth="138.0" sortable="false" text="Parameter" />
+            <TableColumn fx:id="registryKey13" editable="false" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" resizable="false" sortable="false" text="Registry Entry" />
+            <TableColumn fx:id="startColumn13" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" sortable="false" text="Start Column" />
+            <TableColumn fx:id="endColumn13" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" sortable="false" text="End Column" />
          </columns>
          <GridPane.margin>
             <Insets left="10.0" />

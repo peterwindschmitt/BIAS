@@ -3,8 +3,9 @@ package com.bl.bias.analyze;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import com.bl.bias.objects.RadixxFlightLegInput;
-import com.bl.bias.objects.RadixxScheduleInput;
+import com.bl.bias.objects.RadixxFlightLegInputIATA;
+import com.bl.bias.objects.RadixxScheduleInputIATA;
+import com.bl.bias.read.ReadRadixxResSSIMFileForComparison;
 
 public class SSIMComparisonAnalysis 
 {
@@ -15,8 +16,8 @@ public class SSIMComparisonAnalysis
 	private String message = "";
 	private String textForComparisonFile = "";
 
-	private static RadixxScheduleInput fileASchedule;
-	private static RadixxScheduleInput fileBSchedule;
+	private static RadixxScheduleInputIATA fileASchedule;
+	private static RadixxScheduleInputIATA fileBSchedule;
 
 	private Boolean checkType1;
 	private Boolean checkType2;
@@ -26,7 +27,7 @@ public class SSIMComparisonAnalysis
 	
 	private Integer comparisonCount = 0;
 
-	public SSIMComparisonAnalysis(String fileAName, String fileBName, String fileALocation, String fileBLocation, RadixxScheduleInput fileASchedule, RadixxScheduleInput fileBSchedule, Boolean checkType1, Boolean checkType2, Boolean checkType3, Boolean checkType4, Boolean checkType5)
+	public SSIMComparisonAnalysis(String fileAName, String fileBName, String fileALocation, String fileBLocation, ReadRadixxResSSIMFileForComparison readDataA, ReadRadixxResSSIMFileForComparison readDataB, Boolean checkType1, Boolean checkType2, Boolean checkType3, Boolean checkType4, Boolean checkType5)
 	{
 		this.fileAName = fileAName;
 		this.fileBName = fileBName;
@@ -34,8 +35,8 @@ public class SSIMComparisonAnalysis
 		this.fileALocation = fileALocation;
 		this.fileBLocation = fileBLocation;
 
-		this.fileASchedule = fileASchedule;
-		this.fileBSchedule = fileBSchedule;
+		this.fileASchedule = readDataA.getScheduleIATA();  // Need to use S3 here, too
+		this.fileBSchedule = readDataB.getScheduleIATA();
 
 		this.checkType1 = checkType1;
 		this.checkType2 = checkType2;
@@ -177,15 +178,15 @@ public class SSIMComparisonAnalysis
 			{
 				textForComparisonFile += "\nType 3 (but not Type 4) record comparison:";
 
-				ArrayList<RadixxFlightLegInput> fileALegs = fileASchedule.getFlightLegs();
-				ArrayList<RadixxFlightLegInput> fileBLegs = fileBSchedule.getFlightLegs();
+				ArrayList<RadixxFlightLegInputIATA> fileALegs = fileASchedule.getFlightLegs();
+				ArrayList<RadixxFlightLegInputIATA> fileBLegs = fileBSchedule.getFlightLegs();
 
-				ListIterator<RadixxFlightLegInput> fileALegsIterator = fileALegs.listIterator();
-				ListIterator<RadixxFlightLegInput> fileBLegsIterator = fileBLegs.listIterator();
+				ListIterator<RadixxFlightLegInputIATA> fileALegsIterator = fileALegs.listIterator();
+				ListIterator<RadixxFlightLegInputIATA> fileBLegsIterator = fileBLegs.listIterator();
 
 				while(fileALegsIterator.hasNext())  // For each Flight Leg in A
 				{
-					RadixxFlightLegInput thisFileALeg= fileALegsIterator.next();
+					RadixxFlightLegInputIATA thisFileALeg= fileALegsIterator.next();
 
 					fileBLegsIterator = fileBLegs.listIterator();
 					
@@ -194,7 +195,7 @@ public class SSIMComparisonAnalysis
 					inner:
 						while(fileBLegsIterator.hasNext())  // For each Flight Leg in B
 						{
-							RadixxFlightLegInput thisFileBLeg= fileBLegsIterator.next();
+							RadixxFlightLegInputIATA thisFileBLeg= fileBLegsIterator.next();
 
 							if ((thisFileALeg.getAirlineDesignator().equals(thisFileBLeg.getAirlineDesignator())) &&
 									(thisFileALeg.getFlightNumber().equals(thisFileBLeg.getFlightNumber())) &&
@@ -237,7 +238,7 @@ public class SSIMComparisonAnalysis
 				while(fileALegsIterator.hasNext())  
 				{
 					foundDiscrepancies++;
-					RadixxFlightLegInput remainingFileALeg= fileALegsIterator.next();
+					RadixxFlightLegInputIATA remainingFileALeg= fileALegsIterator.next();
 					textForComparisonFile += "\n\t\t\t\t\t*** Schedule elements for record serial number "+remainingFileALeg.getRecordSerialNumber()+" occur in A but not B ***";
 				}
 
@@ -246,7 +247,7 @@ public class SSIMComparisonAnalysis
 				while(fileBLegsIterator.hasNext())  
 				{
 					foundDiscrepancies++;
-					RadixxFlightLegInput remainingFileBLeg= fileBLegsIterator.next();
+					RadixxFlightLegInputIATA remainingFileBLeg= fileBLegsIterator.next();
 					textForComparisonFile += "\n\t\t\t\t\t*** Schedule elements for record serial number "+remainingFileBLeg.getRecordSerialNumber()+" occur in B but not A ***";
 				}
 
@@ -259,15 +260,15 @@ public class SSIMComparisonAnalysis
 			{
 				textForComparisonFile += "\nType 3 and Type 4 record comparison:";
 
-				ArrayList<RadixxFlightLegInput> fileALegs = fileASchedule.getFlightLegs();
-				ArrayList<RadixxFlightLegInput> fileBLegs = fileBSchedule.getFlightLegs();
+				ArrayList<RadixxFlightLegInputIATA> fileALegs = fileASchedule.getFlightLegs();
+				ArrayList<RadixxFlightLegInputIATA> fileBLegs = fileBSchedule.getFlightLegs();
 
-				ListIterator<RadixxFlightLegInput> fileALegsIterator = fileALegs.listIterator();
-				ListIterator<RadixxFlightLegInput> fileBLegsIterator = fileBLegs.listIterator();
+				ListIterator<RadixxFlightLegInputIATA> fileALegsIterator = fileALegs.listIterator();
+				ListIterator<RadixxFlightLegInputIATA> fileBLegsIterator = fileBLegs.listIterator();
 
 				while(fileALegsIterator.hasNext())  // For each Flight Leg in A
 				{
-					RadixxFlightLegInput thisFileALeg= fileALegsIterator.next();
+					RadixxFlightLegInputIATA thisFileALeg= fileALegsIterator.next();
 
 					fileBLegsIterator = fileBLegs.listIterator();
 					
@@ -276,7 +277,7 @@ public class SSIMComparisonAnalysis
 					inner:
 						while(fileBLegsIterator.hasNext())  // For each Flight Leg in B
 						{
-							RadixxFlightLegInput thisFileBLeg= fileBLegsIterator.next();
+							RadixxFlightLegInputIATA thisFileBLeg= fileBLegsIterator.next();
 							
 							// Type 3
 							if ((thisFileALeg.getAirlineDesignator().equals(thisFileBLeg.getAirlineDesignator())) &&
@@ -335,7 +336,7 @@ public class SSIMComparisonAnalysis
 				while(fileALegsIterator.hasNext())  
 				{
 					foundDiscrepancies++;
-					RadixxFlightLegInput remainingFileALeg= fileALegsIterator.next();
+					RadixxFlightLegInputIATA remainingFileALeg= fileALegsIterator.next();
 					textForComparisonFile += "\n\t\t\t\t\t*** Schedule elements for record serial number "+remainingFileALeg.getRecordSerialNumber()+" (or the subsequent type 4 row, if applicable) occur in A but not B ***";
 				}
 
@@ -344,7 +345,7 @@ public class SSIMComparisonAnalysis
 				while(fileBLegsIterator.hasNext())  
 				{
 					foundDiscrepancies++;
-					RadixxFlightLegInput remainingFileBLeg= fileBLegsIterator.next();
+					RadixxFlightLegInputIATA remainingFileBLeg= fileBLegsIterator.next();
 					textForComparisonFile += "\n\t\t\t\t\t*** Schedule elements for record serial number "+remainingFileBLeg.getRecordSerialNumber()+" (or the subsequent type 4 row, if applicable) occur in B but not A ***";		
 				}
 

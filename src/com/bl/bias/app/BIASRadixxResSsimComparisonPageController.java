@@ -6,6 +6,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
@@ -29,7 +30,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 import javafx.event.ActionEvent;
 
-public class BIASRadixxResSsimComparisonPageIATAController 
+public class BIASRadixxResSsimComparisonPageController 
 {
 	@FXML private Label selectA;
 	@FXML private Label selectB;
@@ -44,7 +45,12 @@ public class BIASRadixxResSsimComparisonPageIATAController
 	@FXML private ProgressBar progressBar;
 
 	@FXML private TextArea textArea;
-
+	
+	@FXML private RadioButton fileATypeIATARadioButton;
+	@FXML private RadioButton fileATypeS3RadioButton;
+	@FXML private RadioButton fileBTypeIATARadioButton;
+	@FXML private RadioButton fileBTypeS3RadioButton;
+	
 	private static Preferences prefs;
 
 	private static String fileAAsString;
@@ -53,6 +59,11 @@ public class BIASRadixxResSsimComparisonPageIATAController
 	private static String dirBAsString;
 	private static String fullyQualifiedPathA;
 	private static String fullyQualifiedPathB;
+	
+	private static Boolean fileATypeIATA = true;
+	private static Boolean fileBTypeIATA = true;
+	private static Boolean fileATypeS3 = false;
+	private static Boolean fileBTypeS3 = false;
 
 	private static File saveFileLocation;
 	private static File saveDirectoryLocation;
@@ -81,9 +92,11 @@ public class BIASRadixxResSsimComparisonPageIATAController
 		aSelected.set(false);
 		disableSelectFileB = aSelected.not();
 		selectB.disableProperty().bind(disableSelectFileB);
+		fileBTypeIATARadioButton.disableProperty().bind(disableSelectFileB);
+		fileBTypeS3RadioButton.disableProperty().bind(disableSelectFileB);
 		selectFileBButton.disableProperty().bind(disableSelectFileB);
 
-		// Bind Checkboxes to B
+		// Bind Execute Button to B
 		bSelected = new SimpleBooleanProperty();
 		bSelected.set(false);
 		disableExecuteButton = bSelected.not();
@@ -93,6 +106,8 @@ public class BIASRadixxResSsimComparisonPageIATAController
 	@FXML public void handleSelectFileAButton(ActionEvent event) 
 	{
 		chooseFile("sm_lastDirectoryReadFromA");
+		fileBTypeIATARadioButton.disableProperty().bind(disableSelectFileB);
+		fileBTypeS3RadioButton.disableProperty().bind(disableSelectFileB);
 	}
 
 	@FXML public void handleSelectFileBButton(ActionEvent event) 
@@ -102,8 +117,8 @@ public class BIASRadixxResSsimComparisonPageIATAController
 
 	@FXML public void handleExecuteButton()
 	{
-		if ((BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType1Records()) || (BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType2Records()) ||
-				(BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType3Records()) || (BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType4Records()) || (BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType5Records())) 
+		if ((BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records()) ||
+				(BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records()) || (BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records())) 
 		{
 			selectFileAButton.disableProperty().unbind();
 			selectFileAButton.setDisable(true);
@@ -114,7 +129,15 @@ public class BIASRadixxResSsimComparisonPageIATAController
 			selectA.setDisable(true);
 			selectB.disableProperty().unbind();
 			selectB.setDisable(true);
-
+			
+			fileBTypeIATARadioButton.disableProperty().unbind();
+			fileBTypeS3RadioButton.disableProperty().unbind();
+			
+			fileATypeIATARadioButton.setDisable(true);
+			fileATypeS3RadioButton.setDisable(true);
+			fileBTypeIATARadioButton.setDisable(true);
+			fileBTypeS3RadioButton.setDisable(true);
+			
 			progressBar.setVisible(true);
 			executeButton.disableProperty().unbind();
 			executeButton.setDisable(true);
@@ -161,6 +184,18 @@ public class BIASRadixxResSsimComparisonPageIATAController
 					//  User did not commit so reset
 					resetMessage();
 
+					fileATypeIATARadioButton.setDisable(false);
+					fileATypeS3RadioButton.setDisable(false);
+					fileBTypeIATARadioButton.setDisable(true);
+					fileBTypeS3RadioButton.setDisable(true);
+					fileATypeIATARadioButton.setSelected(true);
+					fileBTypeIATARadioButton.setSelected(true);
+					
+					fileATypeIATA = true;
+					fileBTypeIATA = true;
+					fileATypeS3 = false;
+					fileBTypeS3 = false;
+					
 					executeButton.setVisible(true);
 					resetButton.setVisible(false);
 					progressBar.setProgress(0);
@@ -172,9 +207,11 @@ public class BIASRadixxResSsimComparisonPageIATAController
 					aSelected.set(false);
 					disableSelectFileB = aSelected.not();
 					selectB.disableProperty().bind(disableSelectFileB);
+					fileBTypeIATARadioButton.disableProperty().bind(disableSelectFileB);
+					fileBTypeS3RadioButton.disableProperty().bind(disableSelectFileB);
 					selectFileBButton.disableProperty().bind(disableSelectFileB);
 
-					// Bind Checkboxes to B
+					// Bind Execute Button to B
 					bSelected = new SimpleBooleanProperty();
 					bSelected.set(false);
 
@@ -232,6 +269,18 @@ public class BIASRadixxResSsimComparisonPageIATAController
 					//  User did not commit so reset
 					resetMessage();
 
+					fileATypeIATARadioButton.setDisable(false);
+					fileATypeS3RadioButton.setDisable(false);
+					fileBTypeIATARadioButton.setDisable(true);
+					fileBTypeS3RadioButton.setDisable(true);
+					fileATypeIATARadioButton.setSelected(true);
+					fileBTypeIATARadioButton.setSelected(true);
+					
+					fileATypeIATA = true;
+					fileBTypeIATA = true;
+					fileATypeS3 = false;
+					fileBTypeS3 = false;
+										
 					executeButton.setVisible(true);
 					resetButton.setVisible(false);
 					progressBar.setProgress(0);
@@ -243,9 +292,11 @@ public class BIASRadixxResSsimComparisonPageIATAController
 					aSelected.set(false);
 					disableSelectFileB = aSelected.not();
 					selectB.disableProperty().bind(disableSelectFileB);
+					fileBTypeIATARadioButton.disableProperty().bind(disableSelectFileB);
+					fileBTypeS3RadioButton.disableProperty().bind(disableSelectFileB);
 					selectFileBButton.disableProperty().bind(disableSelectFileB);
 
-					// Bind Checkboxes to B
+					// Bind Execute Button to B
 					bSelected = new SimpleBooleanProperty();
 					bSelected.set(false);
 
@@ -288,6 +339,18 @@ public class BIASRadixxResSsimComparisonPageIATAController
 	{
 		resetMessage();
 
+		fileATypeIATARadioButton.setDisable(false);
+		fileATypeS3RadioButton.setDisable(false);
+		fileBTypeIATARadioButton.setDisable(true);
+		fileBTypeS3RadioButton.setDisable(true);
+		fileATypeIATARadioButton.setSelected(true);
+		fileBTypeIATARadioButton.setSelected(true);
+		
+		fileATypeIATA = true;
+		fileBTypeIATA = true;
+		fileATypeS3 = false;
+		fileBTypeS3 = false;
+						
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		progressBar.setProgress(0);
@@ -301,7 +364,7 @@ public class BIASRadixxResSsimComparisonPageIATAController
 		selectB.disableProperty().bind(disableSelectFileB);
 		selectFileBButton.disableProperty().bind(disableSelectFileB);
 
-		// Bind Checkboxes to B
+		// Bind Execute Button to B
 		bSelected = new SimpleBooleanProperty();
 		bSelected.set(false);
 
@@ -319,7 +382,31 @@ public class BIASRadixxResSsimComparisonPageIATAController
 		fileAAsString = null;
 		fileBAsString = null;
 	}
+	
+	@FXML private void handleFileATypeRadioButtonIATA(ActionEvent event) 
+	{
+		fileATypeIATA = true;
+		fileATypeS3 = false;
+	}
+	
+	@FXML private void handleFileATypeRadioButtonS3(ActionEvent event) 
+	{
+		fileATypeIATA = false;
+		fileATypeS3 = true;
+	}
 
+	@FXML private void handleFileBTypeRadioButtonIATA(ActionEvent event) 
+	{
+		fileBTypeIATA = true;
+		fileBTypeS3 = false;
+	}
+	
+	@FXML private void handleFileBTypeRadioButtonS3(ActionEvent event) 
+	{
+		fileBTypeIATA = false;
+		fileBTypeS3 = true;
+	}
+	
 	private void chooseFile(String directory)
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -393,17 +480,8 @@ public class BIASRadixxResSsimComparisonPageIATAController
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 					prefs.put(directory, file.getParent());
 
-				// Enable selections for checkboxes and execute button
+				// Enable selections for execute button
 				bSelected.set(true);
-			}
-
-			if ((fileAAsString != null) && (fileBAsString != null))
-			{
-				String tempMessageA = "\n\nSet to compare Radixx Res SSIM files from "+fileAAsString+" (file A) ";
-				String tempMessageB = " versus "+fileBAsString+" (file B)\n";
-
-				message += tempMessageA;
-				message += tempMessageB;
 			}
 
 			displayMessage(message);
@@ -440,10 +518,35 @@ public class BIASRadixxResSsimComparisonPageIATAController
 
 	private void runTask()
 	{
+		if ((fileAAsString != null) && (fileBAsString != null))
+		{
+			clearMessage();
+			
+			String tempMessageA;
+			if (fileATypeIATA)
+				tempMessageA = "\n\nSet to compare Radixx Res SSIM IATA file "+fileAAsString+" (file A) ";
+			else
+				tempMessageA = "\n\nSet to compare Radixx Res SSIM S3 file "+fileAAsString+" (file A) ";
+			
+			String tempMessageB;
+			if (fileBTypeIATA)
+				tempMessageB = "\nversus Radixx Res SSIM IATA file "+fileBAsString+" (file B)\n";
+			else
+				tempMessageB = "\nversus Radixx Res SSIM S3 file "+fileBAsString+" (file B)\n";
+
+			message = "BIAS Radixx Res SSIM Comparison Module - "+BIASLaunch.getSoftwareVersion();
+			message += tempMessageA;
+			message += tempMessageB;
+		}
+
+		displayMessage(message);
+		
 		Boolean error = false;
 
 		// Check if A and B are pointing to the same file
-		if (fullyQualifiedPathA.equals(fullyQualifiedPathB))
+		if ((fullyQualifiedPathA.equals(fullyQualifiedPathB)) &&
+		(((fileATypeIATA) && (fileBTypeIATA)) ||
+		((fileATypeS3) && (fileBTypeS3))))
 		{
 			error = true;
 			displayMessage("\nInput files must be different");
@@ -453,7 +556,7 @@ public class BIASRadixxResSsimComparisonPageIATAController
 		// Read data
 		if (error == false)
 		{
-			if (readData(fullyQualifiedPathA, fullyQualifiedPathB) == true)
+			if (readData(fullyQualifiedPathA, fullyQualifiedPathB, fileATypeIATA, fileBTypeIATA, fileATypeS3, fileBTypeS3) == true)
 			{
 				error = true;
 				displayMessage("\nError in reading files");
@@ -537,14 +640,14 @@ public class BIASRadixxResSsimComparisonPageIATAController
 		resetButton.setDisable(false);   
 	}
 
-	private Boolean readData(String fullyQualifiedPathA, String fullyQualifiedPathB)
+	private Boolean readData(String fullyQualifiedPathA, String fullyQualifiedPathB, Boolean fileATypeIATA, Boolean fileBTypeIATA, Boolean fileATypeS3, Boolean fileBTypeS3)
 	{
 		readDataA = new ReadRadixxResSSIMFileForComparison();
-		Boolean errorReadingA = readDataA.read(fullyQualifiedPathA, "A");
+		Boolean errorReadingA = readDataA.read(fullyQualifiedPathA, "A", fileATypeIATA, fileATypeS3);
 		progressBar.setProgress(.10);
 
 		readDataB = new ReadRadixxResSSIMFileForComparison();
-		Boolean errorReadingB = readDataB.read(fullyQualifiedPathB, "B");
+		Boolean errorReadingB = readDataB.read(fullyQualifiedPathB, "B", fileBTypeIATA, fileBTypeS3);
 		progressBar.setProgress(.20);
 
 		displayMessage(readDataA.getResultsMessage());
@@ -561,8 +664,8 @@ public class BIASRadixxResSsimComparisonPageIATAController
 		message = "\nStarted analyzing files at "+ConvertDateTime.getTimeStamp()+"\n";
 		displayMessage(message);
 
-		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA.getSchedule(), readDataB.getSchedule(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType2Records(),
-				BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageIATAController.getCheckType5Records());
+		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA, readDataB, BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records(),
+				BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records());
 
 		Boolean errorAnalyzing = scheduleComparison.analyze();
 

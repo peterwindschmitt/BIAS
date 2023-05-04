@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class RadixxTrailerInput 
+public class RadixxTrailerInputIATA 
 {
 	private String airlineDesignator;
 	private String releaseDate;
@@ -8,7 +8,7 @@ public class RadixxTrailerInput
 	private String continuationEndCode;
 	private String recordSerialNumber;
 		
-	public RadixxTrailerInput(String airlineDesignator, String releaseDate, String serialNumberCheckReference, String continuationEndCode, String recordSerialNumber)
+	public RadixxTrailerInputIATA(String airlineDesignator, String releaseDate, String serialNumberCheckReference, String continuationEndCode, String recordSerialNumber)
 	{
 		this.airlineDesignator = airlineDesignator;
 		this.releaseDate = releaseDate;

@@ -7,11 +7,11 @@ import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.read.ReadExcelFileForConversionToRadixxResSSIM;
 import com.bl.bias.read.ReadRadixxResSSIMIATAFileForConversionToExcel;
+import com.bl.bias.read.ReadRadixxResSSIMS3FileForConversionToExcel;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteExcelToRadixxFile1;
 import com.bl.bias.write.WriteRadixxIATAToExcelFiles2;
+import com.bl.bias.write.WriteRadixxS3ToExcelFiles2;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,10 +24,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class BIASRadixxResSsimConversionPageIATAExcelController 
+public class BIASRadixxResSsimConversionPageS3ExcelController 
 {
 	private static String saveFileLocationForUserSpecifiedFileNameToSpreadsheet;
-	private static String saveFileLocationForUserSpecifiedFileNameToRadixx;
 	private static String saveFileFolderForSerialFileName;
 	private static String fileAsString;
 	private static String fullyQualifiedPath;
@@ -36,8 +35,6 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 	private static Preferences prefs;
 
 	private static Boolean continueAnalysis = true;
-	private static Boolean ssimToExcel = true;
-	private static Boolean excelToSsim = false;
 
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
@@ -46,11 +43,9 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 	@FXML private TextArea textArea;
 
 	@FXML private Label	fileNameLabel;
-	@FXML private Label	orLabel;
 	@FXML private Label	convertLabel;
 
 	@FXML private RadioButton convertSsimToExcelRadioButton;
-	@FXML private RadioButton convertExcelToSsimRadioButton;
 
 	@FXML private ProgressIndicator progressBar;
 
@@ -64,25 +59,15 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Select File");
 
-		if (ssimToExcel)
-		{
-			FileChooser.ExtensionFilter fileExtensions = 
-					new FileChooser.ExtensionFilter(
-							"SSIM Files", "*.txt");
-			fileChooser.getExtensionFilters().add(fileExtensions);		
-		}
-		else if (excelToSsim)
-		{
-			FileChooser.ExtensionFilter fileExtensions = 
-					new FileChooser.ExtensionFilter(
-							"Excel", "*.xlsx");
-			fileChooser.getExtensionFilters().add(fileExtensions);		
-		}
+		FileChooser.ExtensionFilter fileExtensions = 
+				new FileChooser.ExtensionFilter(
+						"SSIM Files", "*.txt");
+		fileChooser.getExtensionFilters().add(fileExtensions);		
 
 		// See if last directory is stored
-		if ((prefs.get("sc_lastDirectoryForRadixxResSsimConversion", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+		if ((prefs.get("sd_lastDirectoryForRadixxResSsimConversion", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 		{
-			Path path = Paths.get(prefs.get("sc_lastDirectoryForRadixxResSsimConversion", null));
+			Path path = Paths.get(prefs.get("sd_lastDirectoryForRadixxResSsimConversion", null));
 
 			if ((path.toFile().exists()) && (path !=null))
 				fileChooser.setInitialDirectory(path.toFile());
@@ -99,14 +84,14 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 			// Write message
 			clearMessage();
-			message = "BIAS Radixx Res SSIM (IATA)/Excel Conversion Module - "+BIASLaunch.getSoftwareVersion()+"\n";
+			message = "BIAS Radixx Res SSIM (S3)/Excel Conversion Module - "+BIASLaunch.getSoftwareVersion()+"\n";
 
 			// Store path for subsequent runs and set labels
 			fileAsString = file.getName().toString();
 			fullyQualifiedPath = file.toString();
 			fileNameLabel.setText(fullyQualifiedPath);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("sc_lastDirectoryForRadixxResSsimConversion", file.getParent());
+				prefs.put("sd_lastDirectoryForRadixxResSsimConversion", file.getParent());
 			displayMessage(message);
 		}                   
 	}
@@ -137,62 +122,30 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 	private void runTask() throws Exception
 	{
 		// SSIM to Excel
-		if (ssimToExcel)
-		{
-			// Read all objects that are required for the conversion from Radixx to Excel
-			ReadRadixxResSSIMIATAFileForConversionToExcel readData = new ReadRadixxResSSIMIATAFileForConversionToExcel(fullyQualifiedPath);
-			message = readData.getResultsMessage();
-			displayMessage(message+"\n");
-
-			// Write Results
-			if (continueAnalysis)
-			{
-				writeFiles();
-			}
-
-			if (!WriteRadixxIATAToExcelFiles2.getErrorFound())
-			{
-				setProgressIndicator(1.0);
-				displayMessage("\n*** PROCESSING COMPLETE ***");
-			}
-			else
-			{
-				displayMessage("\nError in writing files");
-				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-			}
-			displayMessage("\n");
-		}
+		// Read all objects that are required for the conversion from Radixx to Excel
+		ReadRadixxResSSIMS3FileForConversionToExcel readData = new ReadRadixxResSSIMS3FileForConversionToExcel(fullyQualifiedPath);
+		message = readData.getResultsMessage();
+		displayMessage(message+"\n");
+		setProgressIndicator(0.5);
 		
-		// Excel to SSIM
-		else if (excelToSsim)
+		// Write Results
+		if (continueAnalysis)
 		{
-			ReadExcelFileForConversionToRadixxResSSIM readData = new ReadExcelFileForConversionToRadixxResSSIM(fullyQualifiedPath);
-			if (readData.getValidFile())
-			{
-				WriteExcelToRadixxFile1 writeData = new WriteExcelToRadixxFile1(readData.getSsimText());			
-				message = readData.getResultsMessage().concat(writeData.getResultsMessageWrite1());
-				displayMessage(message+"\n");
-				
-				if (!WriteExcelToRadixxFile1.getErrorFound())
-				{
-					setProgressIndicator(1.0);
-					displayMessage("*** PROCESSING COMPLETE ***");
-				}
-				else
-				{
-					displayMessage("\nError in writing files");
-					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-				}
-			}
-			else
-			{
-				message = readData.getResultsMessage();
-				displayMessage(message+"\n");
-				displayMessage("*** PROCESSING NOT COMPLETE!!! ***");
-			}
-			displayMessage("\n");
+			writeFiles();
 		}
 
+		if (!WriteRadixxS3ToExcelFiles2.getErrorFound())
+		{
+			setProgressIndicator(1.0);
+			displayMessage("\n*** PROCESSING COMPLETE ***");
+		}
+		else
+		{
+			displayMessage("\nError in writing files");
+			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+		}
+		displayMessage("\n");
+		
 		// Prepare for next run
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
@@ -201,24 +154,6 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 	@FXML private void handleConvertSsimToExcelRadioButton(ActionEvent event) throws IOException
 	{
-		ssimToExcel = true;
-		excelToSsim = false;
-		
-		resetMessage();
-
-		executeButton.setDisable(true);
-		executeButton.setVisible(true);
-		resetButton.setVisible(false);
-		selectFileButton.setDisable(false);
-
-		fileNameLabel.setText("");
-	}
-
-	@FXML private void handleConvertExceltoSsimRadioButton(ActionEvent event) throws IOException
-	{
-		ssimToExcel = false;
-		excelToSsim = true;
-		
 		resetMessage();
 
 		executeButton.setDisable(true);
@@ -243,9 +178,9 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 			fileChooser.setTitle("Select Location to Save Results");
 
 			// Check if previous location is available
-			if ((prefs.get("sc_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			if ((prefs.get("sd_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 			{
-				Path path = Paths.get(prefs.get("sc_lastDirectorySavedTo", null));
+				Path path = Paths.get(prefs.get("sd_lastDirectorySavedTo", null));
 				if ((path.toFile().exists()) && (path !=null))
 				{
 					fileChooser.setInitialDirectory(path.toFile());
@@ -262,13 +197,10 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 			{
 				try 
 				{
-					if (ssimToExcel)
-						saveFileLocationForUserSpecifiedFileNameToSpreadsheet = file.toString();
-					else
-						saveFileLocationForUserSpecifiedFileNameToRadixx = file.toString();
+					saveFileLocationForUserSpecifiedFileNameToSpreadsheet = file.toString();
 					
 					if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-						prefs.put("sc_lastDirectorySavedTo", file.getParent());
+						prefs.put("sd_lastDirectorySavedTo", file.getParent());
 				} 
 				catch (Exception e) 
 				{
@@ -280,10 +212,8 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
-				convertExcelToSsimRadioButton.setDisable(true);
 				convertSsimToExcelRadioButton.setDisable(true);
 				convertLabel.setDisable(true);
-				orLabel.setDisable(true);
 				executeButton.setDisable(true);
 				selectFileButton.setDisable(true);
 
@@ -309,9 +239,9 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 
 			// See if last location is stored
-			if ((prefs.get("sc_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			if ((prefs.get("sd_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 			{
-				Path path = Paths.get(prefs.get("sc_lastDirectorySavedTo", null));
+				Path path = Paths.get(prefs.get("sd_lastDirectorySavedTo", null));
 				if ((path.toFile().exists()) && (path !=null))
 					directoryChooser.setInitialDirectory(path.toFile());
 			}
@@ -327,16 +257,14 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 				displayMessage(message);
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-					prefs.put("sc_lastDirectorySavedTo", directory.toString());
+					prefs.put("sd_lastDirectorySavedTo", directory.toString());
 
 				saveFileFolderForSerialFileName = directory.toString();
 
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
-				convertExcelToSsimRadioButton.setDisable(true);
 				convertSsimToExcelRadioButton.setDisable(true);
 				convertLabel.setDisable(true);
-				orLabel.setDisable(true);
 				executeButton.setDisable(true);
 				selectFileButton.setDisable(true);
 
@@ -367,14 +295,9 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 		setProgressIndicator(0.00);
 
 		convertLabel.setDisable(false);
-		
-		orLabel.setDisable(false);
-		convertExcelToSsimRadioButton.setDisable(false);
-		
+
 		convertSsimToExcelRadioButton.setDisable(false);
 		convertSsimToExcelRadioButton.setSelected(true);
-		ssimToExcel = true;
-		excelToSsim = false;
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
@@ -383,7 +306,7 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 	private void writeFiles() 
 	{
-		WriteRadixxIATAToExcelFiles2 fileToConvert = new WriteRadixxIATAToExcelFiles2(textArea.getText(), saveFileLocationForUserSpecifiedFileNameToSpreadsheet, fileAsString, ReadRadixxResSSIMIATAFileForConversionToExcel.getSchedule());
+		WriteRadixxS3ToExcelFiles2 fileToConvert = new WriteRadixxS3ToExcelFiles2(textArea.getText(), saveFileLocationForUserSpecifiedFileNameToSpreadsheet, fileAsString, ReadRadixxResSSIMS3FileForConversionToExcel.getSchedule());
 		displayMessage(fileToConvert.getResultsMessageWrite2());
 	}
 
@@ -422,15 +345,5 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 		}
 
 		return saveFileLocationForUserSpecifiedFileNameToSpreadsheet;
-	}
-	
-	public static String getSaveFileLocationForUserSpecifiedFileNameToRadixx()
-	{
-		if (!saveFileLocationForUserSpecifiedFileNameToRadixx.toLowerCase().endsWith(".txt"))
-		{
-			saveFileLocationForUserSpecifiedFileNameToRadixx += ".txt";
-		}
-
-		return saveFileLocationForUserSpecifiedFileNameToRadixx;
 	}
 }

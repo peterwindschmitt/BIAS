@@ -17,16 +17,16 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.bl.bias.objects.RadixxScheduleInput;
+import com.bl.bias.objects.RadixxScheduleInputS3;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteRadixxToExcelFiles1
+public class WriteRadixxS3ToExcelFiles1
 {
 	protected String resultsMessage = "Started writing output file at "+ConvertDateTime.getTimeStamp();
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
 
-	public WriteRadixxToExcelFiles1(String textAreaContents, String locationOfInputFiles, String fileAsString, RadixxScheduleInput schedule)
+	public WriteRadixxS3ToExcelFiles1(String textAreaContents, String locationOfInputFiles, String fileAsString, RadixxScheduleInputS3 schedule)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -185,46 +185,36 @@ public class WriteRadixxToExcelFiles1
 		cell.setCellStyle(style10);
 		cell.setCellValue("Elements with an * have additional notes at the bottom of this sheet!");
 		rowCounter++;
+		row = convertedRadixxDataSheet.createRow(rowCounter);
+		cell = row.createCell(0);
+		cell.setCellStyle(style2);
+		cell.setCellValue("Source Format:");
+		cell = row.createCell(1);
+		cell.setCellStyle(style2);
+		cell.setCellValue("S3");
+		cell = row.createCell(2);
+		rowCounter++;
 		rowCounter++;
 
 		// Header record - type 1
-		resultsMessage += "\nConverting header record to spreadsheet";
-
-		row = convertedRadixxDataSheet.createRow(rowCounter);
-		cell = row.createCell(0);
-		cell.setCellStyle(style0);
-		cell.setCellValue("Header Record ");
-		rowCounter++;
-
-		row = convertedRadixxDataSheet.createRow(rowCounter);
-		cell = row.createCell(0);
-		cell.setCellStyle(style2);
-		cell.setCellValue("Data Set Serial Number: ");
-		cell = row.createCell(1);
-		cell.setCellStyle(style11);
-		cell.setCellValue(schedule.getHeader().getDataSetSerialNumber());
-		cell = row.createCell(2);
-		cell.setCellStyle(style2);
-		cell.setCellValue("3 digits");
-		rowCounter++;
-		rowCounter++;
+		// Not used
 
 		// Carrier record - type 2
-		resultsMessage += "\nConverting carrier record to spreadsheet";
+		resultsMessage += "\nConverting company record to spreadsheet";
 
 		row = convertedRadixxDataSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue("Carrier Record ");
+		cell.setCellValue("Company Record");
 		rowCounter++;
 
 		row = convertedRadixxDataSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
-		cell.setCellValue("Title of Data: ");
+		cell.setCellValue("Description: ");
 		cell = row.createCell(1);
 		cell.setCellStyle(style11);
-		cell.setCellValue(schedule.getCarrier().getTitleOfData());
+		cell.setCellValue(schedule.getCarrier().getDescription());
 		cell = row.createCell(2);
 		cell.setCellStyle(style2);
 		cell.setCellValue("0 - 29 chars");
@@ -232,53 +222,11 @@ public class WriteRadixxToExcelFiles1
 		cell.setCellStyle(style2);
 		cell.setCellValue("Time Mode: ");
 		cell = row.createCell(5);
-		cell.setCellStyle(style11);
+		cell.setCellStyle(style2);
 		cell.setCellValue(schedule.getCarrier().getTimeMode());
 		cell = row.createCell(6);
 		cell.setCellStyle(style2);
 		cell.setCellValue("'L' or 'U'");
-		rowCounter++;
-
-		row = convertedRadixxDataSheet.createRow(rowCounter);
-		cell = row.createCell(0);
-		cell.setCellStyle(style2);
-		cell.setCellValue("Creator Reference: ");
-		cell = row.createCell(1);
-		cell.setCellStyle(style11);
-		cell.setCellValue(schedule.getCarrier().getCreatorReference());
-		cell = row.createCell(2);
-		cell.setCellStyle(style2);
-		cell.setCellValue("0 - 35 chars");
-		cell = row.createCell(4);
-		cell.setCellStyle(style2);
-		cell.setCellValue("Railroad ID: "); // Airline Designator in IATA doc
-		cell = row.createCell(5);
-		cell.setCellStyle(style11);
-		cell.setCellValue(schedule.getCarrier().getAirlineDesignator());
-		cell = row.createCell(6);
-		cell.setCellStyle(style2);
-		cell.setCellValue("1 - 3 chars");
-		rowCounter++;
-
-		row = convertedRadixxDataSheet.createRow(rowCounter);
-		cell = row.createCell(0);
-		cell.setCellStyle(style2);
-		cell.setCellValue("Release (sell) date: ");
-		cell = row.createCell(1);
-		cell.setCellStyle(style11);
-		cell.setCellValue(schedule.getCarrier().getReleaseDate());
-		cell = row.createCell(2);
-		cell.setCellStyle(style9);
-		cell.setCellValue("DDMMMYY or blank");
-		cell = row.createCell(4);
-		cell.setCellStyle(style2);
-		cell.setCellValue("Creation Date: ");
-		cell = row.createCell(5);
-		cell.setCellStyle(style11);
-		cell.setCellValue(schedule.getCarrier().getCreationDate());
-		cell = row.createCell(6);
-		cell.setCellStyle(style2);
-		cell.setCellValue("DDMMMYY");
 		rowCounter++;
 
 		row = convertedRadixxDataSheet.createRow(rowCounter);
@@ -292,8 +240,17 @@ public class WriteRadixxToExcelFiles1
 		cell = row.createCell(2);
 		cell.setCellStyle(style2);
 		cell.setCellValue("DDMMMYY");
+		cell = row.createCell(4);
+		cell.setCellStyle(style2);
+		cell.setCellValue("Company Code: "); // Airline Designator in IATA doc
+		cell = row.createCell(5);
+		cell.setCellStyle(style11);
+		cell.setCellValue(schedule.getCarrier().getCompanyCode());
+		cell = row.createCell(6);
+		cell.setCellStyle(style2);
+		cell.setCellValue("1 - 3 chars");
 		rowCounter++;
-
+		
 		row = convertedRadixxDataSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
@@ -305,16 +262,25 @@ public class WriteRadixxToExcelFiles1
 		cell = row.createCell(2);
 		cell.setCellStyle(style2);
 		cell.setCellValue("DDMMMYY");
+		cell = row.createCell(4);
+		cell.setCellStyle(style2);
+		cell.setCellValue("Creation Date: ");
+		cell = row.createCell(5);
+		cell.setCellStyle(style11);
+		cell.setCellValue(schedule.getCarrier().getCreationDate());
+		cell = row.createCell(6);
+		cell.setCellStyle(style2);
+		cell.setCellValue("DDMMMYY");
 		rowCounter++;
 		rowCounter++;
 
 		// Flight Leg Records and Segment Data Records are combined in the spreadsheet generated
-		resultsMessage += "\nConverting leg records and segment data records to spreadsheet";
+		resultsMessage += "\nConverting timetable records to spreadsheet";
 
 		row = convertedRadixxDataSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style5);
-		cell.setCellValue("Leg/Segment Data Records*");
+		cell.setCellValue("Timetable Records*");
 		rowCounter++;
 
 		// Flight Records
@@ -322,7 +288,8 @@ public class WriteRadixxToExcelFiles1
 		row = convertedRadixxDataSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Railroad ID"); // Airline Designator in IATA doc
+		//cell.setCellValue("Railroad ID"); // Airline Designator in IATA doc
+		cell.setCellValue("Company Code"); // Airline Designator in IATA doc
 		cell = row.createCell(1);
 		cell.setCellStyle(style6);
 		cell.setCellValue("Train Number"); // Flight Number in IATA doc
@@ -334,7 +301,7 @@ public class WriteRadixxToExcelFiles1
 		cell.setCellValue("Leg Sequence Number");
 		cell = row.createCell(4);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Service Type");
+		cell.setCellValue("Commercial Category");
 		cell = row.createCell(5);
 		cell.setCellStyle(style6);
 		cell.setCellValue("Period of Operation Start");
@@ -376,43 +343,7 @@ public class WriteRadixxToExcelFiles1
 		cell.setCellValue("Arrival Terminal");
 		cell = row.createCell(18);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Train Type"); // Aircraft Type in IATA doc
-		cell = row.createCell(19);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Onward Railroad ID"); // Onward Airline Designator in IATA doc
-		cell = row.createCell(20);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Onward Train Number"); // Onward Flight Number in IATA doc
-		cell = row.createCell(21);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Onward Train Transit Layover"); // Onward Flight Transit Layover IATA doc
-		cell = row.createCell(22);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Train Config"); // Aircraft Configuration in IATA doc
-		cell = row.createCell(23);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Date Variation Departure"); 				
-		cell = row.createCell(24);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Date Variation Arrival"); 				
-		cell = row.createCell(25);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Board Point Indicator");
-		cell = row.createCell(26);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Off Point Indicator");
-		cell = row.createCell(27);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Data Element Identifier");
-		cell = row.createCell(28);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Segment Board Point");
-		cell = row.createCell(29);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Segment Off Point");
-		cell = row.createCell(30);
-		cell.setCellStyle(style6);
-		cell.setCellValue("Data");
+		cell.setCellValue("Service Type"); // Aircraft Type in IATA doc
 		rowCounter++;
 
 		// Format
@@ -474,42 +405,6 @@ public class WriteRadixxToExcelFiles1
 		cell = row.createCell(18);
 		cell.setCellStyle(style6);
 		cell.setCellValue("3 chars");
-		cell = row.createCell(19);
-		cell.setCellStyle(style6);
-		cell.setCellValue("1 - 3 chars or blank*");
-		cell = row.createCell(20);
-		cell.setCellStyle(style6);
-		cell.setCellValue("1 - 4 chars or blank*");
-		cell = row.createCell(21);
-		cell.setCellStyle(style6);
-		cell.setCellValue("1 char or blank*");
-		cell = row.createCell(22);
-		cell.setCellStyle(style6);
-		cell.setCellValue("0 - 20 chars");
-		cell = row.createCell(23);
-		cell.setCellStyle(style6);
-		cell.setCellValue("0 - 1 char (0,1,2,A)");
-		cell = row.createCell(24);
-		cell.setCellStyle(style6);
-		cell.setCellValue("0 - 1 char (0,1,2,A)");
-		cell = row.createCell(25);
-		cell.setCellStyle(style6);
-		cell.setCellValue("1 char or blank**");
-		cell = row.createCell(26);
-		cell.setCellStyle(style6);
-		cell.setCellValue("1 char or blank**");
-		cell = row.createCell(27);
-		cell.setCellStyle(style6);
-		cell.setCellValue("000 - 999 or blank**");
-		cell = row.createCell(28);
-		cell.setCellStyle(style6);
-		cell.setCellValue("3 chars or blank**");
-		cell = row.createCell(29);
-		cell.setCellStyle(style6);
-		cell.setCellValue("3 chars or blank**");
-		cell = row.createCell(30);
-		cell.setCellStyle(style6);
-		cell.setCellValue("1 - 155 chars or blank**");
 		rowCounter++;
 
 		// For each flight leg
@@ -518,10 +413,10 @@ public class WriteRadixxToExcelFiles1
 			row = convertedRadixxDataSheet.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getAirlineDesignator());
+			cell.setCellValue(schedule.getFlightLegs().get(i).getCompanyCode());
 			cell = row.createCell(1);
 			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getFlightNumber());
+			cell.setCellValue(schedule.getFlightLegs().get(i).getTrainNumber());
 			cell = row.createCell(2);
 			cell.setCellStyle(style7);
 			cell.setCellValue(schedule.getFlightLegs().get(i).getItineraryVariationIdentifier());
@@ -530,7 +425,7 @@ public class WriteRadixxToExcelFiles1
 			cell.setCellValue(schedule.getFlightLegs().get(i).getLegSequenceNumber());
 			cell = row.createCell(4);
 			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getServiceType());
+			cell.setCellValue(schedule.getFlightLegs().get(i).getCommercialCategory());
 			cell = row.createCell(5);
 			cell.setCellStyle(style7);
 			String flightRecordStartPeriodOfValidity = schedule.getFlightLegs().get(i).getPeriodOfOperation().substring(0,7);
@@ -550,7 +445,7 @@ public class WriteRadixxToExcelFiles1
 			cell.setCellValue(schedule.getFlightLegs().get(i).getPassengerSTD());
 			cell = row.createCell(10);
 			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getAircraftSTD());
+			cell.setCellValue(schedule.getFlightLegs().get(i).getTrainSTD());
 			cell = row.createCell(11);
 			cell.setCellStyle(style7);
 			cell.setCellValue(schedule.getFlightLegs().get(i).getTimeVariationDeparture());
@@ -562,7 +457,7 @@ public class WriteRadixxToExcelFiles1
 			cell.setCellValue(schedule.getFlightLegs().get(i).getArrivalStation());
 			cell = row.createCell(14);
 			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getAircraftSTA());
+			cell.setCellValue(schedule.getFlightLegs().get(i).getTrainSTA());
 			cell = row.createCell(15);
 			cell.setCellStyle(style7);
 			cell.setCellValue(schedule.getFlightLegs().get(i).getPassengerSTA());
@@ -574,78 +469,19 @@ public class WriteRadixxToExcelFiles1
 			cell.setCellValue(schedule.getFlightLegs().get(i).getArrivalTerminal());
 			cell = row.createCell(18);
 			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getAircraftType());
-			cell = row.createCell(19);
-			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getOnwardAirlineDesignator());
-			cell = row.createCell(20);
-			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getOnwardFlightNumber());
-			cell = row.createCell(21);
-			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getOnwardFlightTransitLayover());
-			cell = row.createCell(22);
-			cell.setCellStyle(style7);
-			cell.setCellValue(schedule.getFlightLegs().get(i).getAircraftConfiguration());
-			cell = row.createCell(23);
-			cell.setCellStyle(style7);
-			String dateVariationDeparture = schedule.getFlightLegs().get(i).getDateVariation().substring(0,1);
-			cell.setCellValue(dateVariationDeparture);
-			cell = row.createCell(24);
-			cell.setCellStyle(style7);
-			String dateVariationArrival = schedule.getFlightLegs().get(i).getDateVariation().substring(1,2);
-			cell.setCellValue(dateVariationArrival);
-
-			// Segment Data Records
-			// Only display this information if the following elements match the elements in the flight data record
-			// airlineDesignator, flightNumber, itineraryVariationNumber, legSequenceNumber, serviceType
-			// Currently only one segment data record can be assigned to a flight leg
-			if (schedule.getFlightLegs().get(i).getSegmentDataRecords().size() > 0)
-			{
-				if ((schedule.getFlightLegs().get(i).getAirlineDesignator().equals(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getAirlineDesignator()))
-						&& (schedule.getFlightLegs().get(i).getFlightNumber().equals(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getFlightNumber()))
-						&& (schedule.getFlightLegs().get(i).getItineraryVariationIdentifier().equals(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getItineraryVariationNumber()))
-						&& (schedule.getFlightLegs().get(i).getLegSequenceNumber().equals(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getLegSequenceNumber()))
-						&& (schedule.getFlightLegs().get(i).getServiceType().equals(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getServiceType())))
-				{
-					cell = row.createCell(25);
-					cell.setCellStyle(style8);
-					cell.setCellValue(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getBoardPointIndicator());
-					cell = row.createCell(26);
-					cell.setCellStyle(style8);
-					cell.setCellValue(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getOffPointIndicator());
-					cell = row.createCell(27);
-					cell.setCellStyle(style8);
-					cell.setCellValue(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getDataElementIdentifier());
-					cell = row.createCell(28);
-					cell.setCellStyle(style8);
-					cell.setCellValue(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getSegmentBoardPoint());
-					cell = row.createCell(29);
-					cell.setCellStyle(style8);
-					cell.setCellValue(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getSegmentOffPoint());
-					cell = row.createCell(30);
-					cell.setCellStyle(style12);
-					cell.setCellValue(schedule.getFlightLegs().get(i).getSegmentDataRecords().get(0).getData());
-				}
-			}
-			else
-			{
-				for (int j = 25; j <= 30; j++)
-				{
-					cell = row.createCell(j);
-					cell.setCellStyle(style8);
-				}
-			}
-
+			cell.setCellValue(schedule.getFlightLegs().get(i).getServiceType());
+			
 			// Add a border to top of row if a new flight
-			CellRangeAddress region = new CellRangeAddress(rowCounter, rowCounter, 0, 30);
-			if (!schedule.getFlightLegs().get(i).getFlightNumber().equals(lastFlightNumber))
+			CellRangeAddress region = new CellRangeAddress(rowCounter, rowCounter, 0, 18);
+			//if (!schedule.getFlightLegs().get(i).getFlightNumber().equals(lastFlightNumber))
+			if (!schedule.getFlightLegs().get(i).getTrainNumber().equals(lastFlightNumber))
 			{
 				// Add top border
 				RegionUtil.setBorderTop(BorderStyle.MEDIUM, region, convertedRadixxDataSheet);
 			}
-			lastFlightNumber = schedule.getFlightLegs().get(i).getFlightNumber();
-
+			//lastFlightNumber = schedule.getFlightLegs().get(i).getFlightNumber();
+			lastFlightNumber = schedule.getFlightLegs().get(i).getTrainNumber();
+			
 			// Ignore "number as text" errors
 			convertedRadixxDataSheet.addIgnoredErrors(region, IgnoredErrorType.NUMBER_STORED_AS_TEXT);
 
@@ -655,11 +491,11 @@ public class WriteRadixxToExcelFiles1
 		CellRangeAddress region;
 
 		// Add bottom border
-		region = new CellRangeAddress(rowCounter - 1, rowCounter - 1, 0, 30);
+		region = new CellRangeAddress(rowCounter - 1, rowCounter - 1, 0, 18);
 		RegionUtil.setBorderBottom(BorderStyle.MEDIUM, region, convertedRadixxDataSheet);
 		
 		// Ignore "number stored as text" errors
-		region = new CellRangeAddress(0, rowCounter, 0, 30);
+		region = new CellRangeAddress(0, rowCounter, 0, 18);
 		convertedRadixxDataSheet.addIgnoredErrors(region, IgnoredErrorType.NUMBER_STORED_AS_TEXT);
 
 		// Trailer record is not decoded as all data in it is based on previous record types for single-carrier SSIM files. 
@@ -673,7 +509,7 @@ public class WriteRadixxToExcelFiles1
 		row = convertedRadixxDataSheet.createRow(rowCounter + 1);
 		cell = row.createCell(0);
 		cell.setCellStyle(style1);
-		cell.setCellValue("1.  Header Records and Carrier Records are shown in gray.  Flight Leg Record data is shown in yellow.  Segment Data Records are shown in green.");
+		cell.setCellValue("1.  Company records are shown in gray.  Timetable record data is shown in yellow.");
 
 		row = convertedRadixxDataSheet.createRow(rowCounter + 2);
 		cell = row.createCell(0);
@@ -683,30 +519,20 @@ public class WriteRadixxToExcelFiles1
 		row = convertedRadixxDataSheet.createRow(rowCounter + 3);
 		cell = row.createCell(0);
 		cell.setCellStyle(style1);
-		cell.setCellValue("3.  Only data in gray, yellow and green fields will be converted to SSIM format.");
+		cell.setCellValue("3.  Only data in gray and yellow will be converted to SSIM format.");
 
 		row = convertedRadixxDataSheet.createRow(rowCounter + 4);
 		cell = row.createCell(0);
 		cell.setCellStyle(style1);
-		cell.setCellValue("4.  Insert new rows in proper Flight Number, Itinerary Variation Identifier and Leg Sequence Number.");
+		cell.setCellValue("4.  Insert new rows in proper Train Number, Itinerary Variation Identifier and Leg Sequence Number order.");
 
 		row = convertedRadixxDataSheet.createRow(rowCounter + 5);
-		cell = row.createCell(0);
-		cell.setCellStyle(style1);
-		cell.setCellValue("*  Onward information is optional.  However, if Onward Railroad ID (column T) is provided then Onward Train Number (column U) must be provided.  Onward Train Transit Layover (column V) can only be provided if Onward Railroad and Onward Train Number are provided.");
-
-		row = convertedRadixxDataSheet.createRow(rowCounter + 6);
-		cell = row.createCell(0);
-		cell.setCellStyle(style1);
-		cell.setCellValue("**  Segment Data Record is optional.  However, if the record exists then all elements (columns Z to AE) must be filled.");
-		
-		row = convertedRadixxDataSheet.createRow(rowCounter + 7);
 		cell = row.createCell(0);
 		cell.setCellStyle(style1);
 		cell.setCellValue("Created on "+ConvertDateTime.getDateStamp()+ " at "+ConvertDateTime.getTimeStamp());
 
 		// Resize all columns to fit the content size
-		for (int i = 0; i <= 30; i++) 
+		for (int i = 0; i <= 18; i++) 
 		{
 			if (i == 0)
 			{
@@ -720,7 +546,7 @@ public class WriteRadixxToExcelFiles1
 			{
 				convertedRadixxDataSheet.setColumnWidth(i, 3200);
 			}
-			else if ((i == 1) || (i == 29))
+			else if (i == 1)
 			{
 				convertedRadixxDataSheet.autoSizeColumn(i);
 			}
