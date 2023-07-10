@@ -25,9 +25,17 @@ public class SSIMComparisonAnalysis
 	private Boolean checkType4;
 	private Boolean checkType5;
 	
+	private Boolean checkType3AllAttributes;
+	private Boolean checkType3LimitedAttributes;
+	
+	private Boolean fileAIATA;
+	private Boolean fileAS3;
+	private Boolean fileBIATA;
+	private Boolean fileBS3;
+		
 	private Integer comparisonCount = 0;
 
-	public SSIMComparisonAnalysis(String fileAName, String fileBName, String fileALocation, String fileBLocation, ReadRadixxResSSIMFileForComparison readDataA, ReadRadixxResSSIMFileForComparison readDataB, Boolean checkType1, Boolean checkType2, Boolean checkType3, Boolean checkType4, Boolean checkType5)
+	public SSIMComparisonAnalysis(String fileAName, String fileBName, String fileALocation, String fileBLocation, ReadRadixxResSSIMFileForComparison readDataA, ReadRadixxResSSIMFileForComparison readDataB, Boolean fileAIATA, Boolean fileAS3, Boolean fileBIATA, Boolean fileBS3, Boolean checkType1, Boolean checkType2, Boolean checkType3, Boolean checkType4, Boolean checkType5, Boolean check3FullAttributes, Boolean check3LimitedAttributes)
 	{
 		this.fileAName = fileAName;
 		this.fileBName = fileBName;
@@ -43,6 +51,14 @@ public class SSIMComparisonAnalysis
 		this.checkType3 = checkType3;
 		this.checkType4 = checkType4;
 		this.checkType5 = checkType5;
+		
+		this.checkType3AllAttributes = checkType3AllAttributes;
+		this.checkType3LimitedAttributes = checkType3LimitedAttributes;
+		
+		this.fileAIATA = fileAIATA;
+		this.fileAS3 = fileAS3;
+		this.fileBIATA = fileBIATA;
+		this.fileBS3 = fileBS3;
 	}
 
 	public Boolean analyze()

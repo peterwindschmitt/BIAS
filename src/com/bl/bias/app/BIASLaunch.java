@@ -27,7 +27,8 @@ public class BIASLaunch extends Application
 	// 3.6 was 2/15/2023 (added check #8 for SSIM conversion)
 	// 3.7 was 3/20/2023 (added check #9 for SSIM conversion)
 	// 3.8 was 5/4/2023 (fixed bug in conversion of local time to UTC when generating SSIM)
-	private final static String version = "3.8 (May 4, 2023)";
+	// 3.9 was x/xx/2023 (added options for calculation of bridge closure periods)
+	private final static String version = "3.9 (July 10, 2023)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 3;
  	//
 	// Session validity
@@ -50,7 +51,7 @@ public class BIASLaunch extends Application
 	private final static String permissions[] = 
 	{
 		// User, machine, logos, month expire, day expire, year expire, write prefs to registry, modules[]
-		"WindschmittPeter, PWINDSCHMITT-P17, ALL, 12, 31, 2023, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, General Config, Parse Config",
+		"WindschmittPeter, PWINDSCHMITT-P17, FL, 12, 31, 2023, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, General Config, Parse Config",
 	};
 	//************************************************************************************************
 

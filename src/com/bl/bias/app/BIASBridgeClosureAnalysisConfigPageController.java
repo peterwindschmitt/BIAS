@@ -40,15 +40,19 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	private static String defaultIncrementHourlyBucket = "None";
 	private static String defaultResultsExclusionPeriod = "1 day";
 
+	private static Boolean includeBridgeLowerTimeInSplits;
+	private static Boolean includeBridgeRaiseTimeInSplits;
 	private static Boolean recurringMarineAccessPeriodActive;
 	private static Boolean computeMarineHighUsagePeriodActive;
 
+	private static Boolean defaultIncludeBridgeLowerTimeInSplits = true;
+	private static Boolean defaultIncludeBridgeRaiseTimeInSplits = true;
 	private static Boolean defaultRecurringMarineAccessPeriodActive = false;
 	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
 
 	private static ObservableList<String> raiseLowerMinuteValues =  FXCollections.observableArrayList("1", "2", "3", "4", "5");
 	private static ObservableList<String> signalPreferredMinutesInAdvanceOfTrainValues =  FXCollections.observableArrayList("0", "5", "6", "7", "8", "9", "10", "11", "12", "13");
-	private static ObservableList<String> minimumUpTimeMinuteValues =  FXCollections.observableArrayList("5", "10", "15", "20");
+	private static ObservableList<String> minimumUpTimeMinuteValues =  FXCollections.observableArrayList("3", "4", "5", "10", "15", "20");
 	private static ObservableList<String> marineAccessPeriodStartMinuteValues =  FXCollections.observableArrayList(":00", ":05", ":10", ":15", ":20", ":25", ":30", ":35", ":40", ":45", ":50", ":55");
 	private static ObservableList<String> marineAccessPeriodEndMinuteValues =  FXCollections.observableArrayList(":00", ":05", ":10", ":15", ":20", ":25", ":30", ":35", ":40", ":45", ":50", ":55");
 	private static ObservableList<String> marineAccessPeriodStartHourValues =  FXCollections.observableArrayList("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
@@ -81,7 +85,9 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	@FXML private Label recurringMarineAccessPeriodDurationLabel;
 
 	@FXML private CheckBox computeMarineHighUsagePeriodCheckBox;
-
+	@FXML private CheckBox bridgeLowerTimeIncludedInSplitCheckBox;
+	@FXML private CheckBox bridgeRaiseTimeIncludedInSplitCheckBox;
+	
 	@FXML private void initialize() 
 	{
 		// Set up prefs
@@ -103,6 +109,22 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		}
 		lowerMinutes = Integer.valueOf(prefs.get("bc_bridgeLowerMinutes", defaultLowerMinutes));
 
+		// See if including bridge lowering time in splits is stored
+		if (prefs.getBoolean("bc_includeBridgeLowerTimeInSplits", defaultIncludeBridgeLowerTimeInSplits))
+		{
+			includeBridgeLowerTimeInSplits = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", true);
+			bridgeLowerTimeIncludedInSplitCheckBox.setSelected(true);
+		}
+		else
+		{
+			includeBridgeLowerTimeInSplits = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", false);
+			bridgeLowerTimeIncludedInSplitCheckBox.setSelected(false);
+		}
+
 		// See if bridge raise time value is stored
 		bridgeRaiseCombobox.setItems(raiseLowerMinuteValues);
 
@@ -118,6 +140,22 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			bridgeRaiseCombobox.getSelectionModel().select(getDefaultRaiseMinutes());
 		}
 		raiseMinutes = Integer.valueOf(prefs.get("bc_bridgeRaiseMinutes", defaultRaiseMinutes));
+
+		// See if including bridge raising time in splits is stored
+		if (prefs.getBoolean("bc_includeBridgeRaiseTimeInSplits", defaultIncludeBridgeRaiseTimeInSplits))
+		{
+			includeBridgeRaiseTimeInSplits = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeRaiseTimeInSplits", true);
+			bridgeRaiseTimeIncludedInSplitCheckBox.setSelected(true);
+		}
+		else
+		{
+			includeBridgeRaiseTimeInSplits = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeRaiseTimeInSplits", false);
+			bridgeRaiseTimeIncludedInSplitCheckBox.setSelected(false);
+		}
 
 		// See if preferred minutes in front of train (for best signal) time value is stored
 		signalPreferredMinutesInAdvanceOfTrainCombobox.setItems(signalPreferredMinutesInAdvanceOfTrainValues);
@@ -162,7 +200,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			recurringMarineAccessPeriodEndMinuteCombobox.setDisable(false);
 			recurringMarineAccessPeriodStartHourCombobox.setDisable(false);
 			recurringMarineAccessPeriodEndHourCombobox.setDisable(false);
-			
+
 			computeMarineHighUsagePeriodCheckBox.setDisable(false);
 		}
 		else
@@ -175,7 +213,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			recurringMarineAccessPeriodEndMinuteCombobox.setDisable(true);
 			recurringMarineAccessPeriodStartHourCombobox.setDisable(true);
 			recurringMarineAccessPeriodEndHourCombobox.setDisable(true);
-			
+
 			computeMarineHighUsagePeriodCheckBox.setDisable(true);
 			computeMarineHighUsagePeriodActive = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
@@ -334,11 +372,43 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			prefs.put("bc_bridgeLowerMinutes", bridgeLowerCombobox.getValue());
 	}
 
+	@FXML private void handleBridgeLowerTimeIncludedInSplitCheckBox(ActionEvent event)
+	{
+		if (includeBridgeLowerTimeInSplits)
+		{
+			includeBridgeLowerTimeInSplits = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", false);
+		}
+		else
+		{
+			includeBridgeLowerTimeInSplits = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", true);
+		}
+	}
+
 	@FXML private void handleBridgeRaiseCombobox(ActionEvent event) 
 	{
 		raiseMinutes = Integer.valueOf(bridgeRaiseCombobox.getValue());
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("bc_bridgeRaiseMinutes", bridgeRaiseCombobox.getValue());
+	}
+
+	@FXML private void handleBridgeRaiseTimeIncludedInSplitCheckBox(ActionEvent event)
+	{
+		if (includeBridgeRaiseTimeInSplits)
+		{
+			includeBridgeRaiseTimeInSplits = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeRaiseTimeInSplits", false);
+		}
+		else
+		{
+			includeBridgeRaiseTimeInSplits = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("bc_includeBridgeRaiseTimeInSplits", true);
+		}
 	}
 
 	@FXML private void handleMinimumUpTimeCombobox(ActionEvent event) 
@@ -359,7 +429,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		recurringMarineAccessPeriodEndMinuteCombobox.setDisable(true);
 		recurringMarineAccessPeriodStartHourCombobox.setDisable(true);
 		recurringMarineAccessPeriodEndHourCombobox.setDisable(true);
-		
+
 		computeMarineHighUsagePeriodCheckBox.setDisable(true);
 		computeMarineHighUsagePeriodActive = false;
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
@@ -378,7 +448,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		recurringMarineAccessPeriodEndMinuteCombobox.setDisable(false);
 		recurringMarineAccessPeriodStartHourCombobox.setDisable(false);
 		recurringMarineAccessPeriodEndHourCombobox.setDisable(false);
-		
+
 		computeMarineHighUsagePeriodCheckBox.setDisable(false);
 	}
 
@@ -532,9 +602,19 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		return lowerMinutes;
 	}
 
+	public static boolean getIncludeBridgeLowerTimeInClosureTime() 
+	{
+		return includeBridgeLowerTimeInSplits;
+	}
+
 	public static Integer getRaiseMinutes()
 	{
 		return raiseMinutes;
+	}
+
+	public static boolean getIncludeBridgeRaiseTimeInClosureTime() 
+	{
+		return includeBridgeRaiseTimeInSplits;
 	}
 
 	public static Integer getMinimumUpTimeMinutes()
@@ -614,5 +694,4 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		String marineAccessPeriodDurationAsString = String.valueOf(marineAccessPeriodDuration);
 		return marineAccessPeriodDurationAsString;
 	}
-
 }

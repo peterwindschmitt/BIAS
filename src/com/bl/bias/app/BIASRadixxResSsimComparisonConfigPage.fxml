@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -25,8 +27,9 @@
           <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
@@ -56,16 +59,29 @@
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="type4CheckBox" mnemonicParsing="false" onAction="#handleType4CheckBox" text="Type 4 (Segment/Comment - IATA only)" GridPane.rowIndex="5">
+            <CheckBox fx:id="type4CheckBox" mnemonicParsing="false" onAction="#handleType4CheckBox" text="Type 4 (Segment/Comment - IATA only)" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
-           <CheckBox fx:id="type5CheckBox" mnemonicParsing="false" onAction="#handleType5CheckBox" text="Type 5 (Trailer/Final)" GridPane.rowIndex="6">
+           <CheckBox fx:id="type5CheckBox" mnemonicParsing="false" onAction="#handleType5CheckBox" text="Type 5 (Trailer/Final)" GridPane.rowIndex="8">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
+            <RadioButton fx:id="type3LimitedAttributesRadioButton" mnemonicParsing="false" onAction="#handleType3LimitedAttributesRadioButton" selected="true" text="Only compare flight (train) numbers, leg sequence numbers, dates, days, times and train/service types" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="50.0" />
+               </GridPane.margin>
+               <toggleGroup>
+                  <ToggleGroup fx:id="type3ToggleGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="type3AllAttributesRadioButton" disable="true" mnemonicParsing="false" onAction="#handleType3AllAttributesRadioButton" text="Compare all attributes" toggleGroup="$type3ToggleGroup" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets left="50.0" />
+               </GridPane.margin>
+            </RadioButton>
          </children>
          <opaqueInsets>
             <Insets />

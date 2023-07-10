@@ -664,8 +664,8 @@ public class BIASRadixxResSsimComparisonPageController
 		message = "\nStarted analyzing files at "+ConvertDateTime.getTimeStamp()+"\n";
 		displayMessage(message);
 
-		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA, readDataB, BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records(),
-				BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records());
+		scheduleComparison = new SSIMComparisonAnalysis(fileAAsString, fileBAsString, dirAAsString, dirBAsString, readDataA, readDataB, fileATypeIATA, fileATypeS3, fileBTypeIATA, fileBTypeS3, BIASRadixxResSsimComparisonConfigPageController.getCheckType1Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType2Records(),
+				BIASRadixxResSsimComparisonConfigPageController.getCheckType3Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType4Records(), BIASRadixxResSsimComparisonConfigPageController.getCheckType5Records(), BIASRadixxResSsimComparisonConfigPageController.getType3AllAttributes(), BIASRadixxResSsimComparisonConfigPageController.getType3LimitedAttributes());
 
 		Boolean errorAnalyzing = scheduleComparison.analyze();
 

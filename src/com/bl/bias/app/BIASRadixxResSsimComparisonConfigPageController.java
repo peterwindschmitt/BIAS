@@ -6,6 +6,7 @@ import java.util.prefs.Preferences;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 
 public class BIASRadixxResSsimComparisonConfigPageController 
 {
@@ -17,17 +18,26 @@ public class BIASRadixxResSsimComparisonConfigPageController
 	@FXML private CheckBox type4CheckBox;
 	@FXML private CheckBox type5CheckBox;
 
+	@FXML private RadioButton type3AllAttributesRadioButton;
+	@FXML private RadioButton type3LimitedAttributesRadioButton;
+
 	private static Boolean checkType1Records;
 	private static Boolean checkType2Records;
 	private static Boolean checkType3Records;
 	private static Boolean checkType4Records;
 	private static Boolean checkType5Records;
 
+	private static Boolean checkType3AllAttributes;
+	private static Boolean checkType3LimitedAttributes;
+
 	private static Boolean defaultCheckType1Records = true;
 	private static Boolean defaultCheckType2Records = true;
 	private static Boolean defaultCheckType3Records = true;
 	private static Boolean defaultCheckType4Records = true;
 	private static Boolean defaultCheckType5Records = true;
+
+	private static Boolean defaultCheckType3AllAttributes = false;
+	private static Boolean defaultCheckType3LimitedAttributes = true;
 
 	@FXML private void initialize() 
 	{
@@ -68,14 +78,14 @@ public class BIASRadixxResSsimComparisonConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType3Records", true);
 			type3CheckBox.setSelected(true);
-			
+
 			type4CheckBox.setDisable(false);
 		}
 		else
 		{
 			checkType3Records = false;
 			type3CheckBox.setSelected(false);
-			
+
 			type4CheckBox.setSelected(false);
 			type4CheckBox.setDisable(true);
 		}
@@ -109,6 +119,22 @@ public class BIASRadixxResSsimComparisonConfigPageController
 		{
 			checkType5Records = false;
 			type5CheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for comparing Type 3 records (full or limited attributes) in SSIM files
+		if (prefs.getBoolean("rc_checkType3RecordsAllAttributes", defaultCheckType3AllAttributes))
+		{
+			checkType3AllAttributes = true;
+			checkType3LimitedAttributes = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rc_checkType3RecordsAllAttributes", true);
+			type3AllAttributesRadioButton.setSelected(true);
+		}
+		else
+		{
+			checkType3AllAttributes = false;
+			checkType3LimitedAttributes = true;
+			type3LimitedAttributesRadioButton.setSelected(true);
 		}
 	}
 
@@ -152,7 +178,7 @@ public class BIASRadixxResSsimComparisonConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType3Records", false);
 			checkType4Records = false;
-			
+
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType4Records", false);
 			type4CheckBox.setSelected(false);
@@ -163,7 +189,7 @@ public class BIASRadixxResSsimComparisonConfigPageController
 			checkType3Records = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("rc_checkType3Records", true);
-			
+
 			type4CheckBox.setDisable(false);
 		}
 	}
@@ -200,6 +226,16 @@ public class BIASRadixxResSsimComparisonConfigPageController
 		}
 	}
 
+	@FXML private void handleType3AllAttributesRadioButton(ActionEvent event) throws IOException
+	{
+		// Currently not enabled
+	}
+
+	@FXML private void handleType3LimitedAttributesRadioButton(ActionEvent event) throws IOException
+	{
+		// Enabled by default in constructor
+	}
+
 	public static Boolean getCheckType1Records()
 	{
 		return checkType1Records;
@@ -223,5 +259,15 @@ public class BIASRadixxResSsimComparisonConfigPageController
 	public static Boolean getCheckType5Records()
 	{
 		return checkType5Records;
+	}
+
+	public static Boolean getType3LimitedAttributes()
+	{
+		return checkType3LimitedAttributes;
+	}
+
+	public static Boolean getType3AllAttributes()
+	{
+		return checkType3AllAttributes;
 	}
 }
