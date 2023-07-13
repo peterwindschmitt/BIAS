@@ -101,32 +101,32 @@
             </Label>
             <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="until the following" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets left="310.0" />
+                  <Insets left="260.0" />
                </GridPane.margin>
             </Label>
             <Label text="with duration of" GridPane.columnIndex="1" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets left="100.0" />
+                  <Insets left="50.0" />
                </GridPane.margin>
             </Label>
             <Label text="minutes," GridPane.columnIndex="1" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets left="208.0" />
+                  <Insets left="158.0" />
                </GridPane.margin>
             </Label>
             <Label fx:id="recurringMarineAccessPeriodDurationLabel" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets left="190.0" />
+                  <Insets left="140.0" />
                </GridPane.margin>
             </Label>
             <Label maxWidth="200.0" minWidth="200.0" prefWidth="200.0" text="and applies all days starting at" GridPane.rowIndex="9">
                <GridPane.margin>
-                  <Insets left="190.0" />
+                  <Insets left="140.0" />
                </GridPane.margin>
             </Label>
             <Label maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="until the following" GridPane.columnIndex="1" GridPane.rowIndex="9">
                <GridPane.margin>
-                  <Insets left="55.0" />
+                  <Insets left="5.0" />
                </GridPane.margin>
             </Label>
             <Label maxWidth="10.0" minWidth="10.0" prefWidth="10.0" text="6." GridPane.rowIndex="10">
@@ -189,12 +189,12 @@
             </ComboBox>
             <ComboBox fx:id="recurringMarineAccessPeriodStartMinuteCombobox" maxWidth="60.0" minWidth="60.0" onAction="#handleRecurringMarineAccessPeriodStartMinuteCombobox" prefWidth="60.0" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets left="234.0" />
+                  <Insets left="184.0" />
                </GridPane.margin>
             </ComboBox>
             <ComboBox fx:id="recurringMarineAccessPeriodEndMinuteCombobox" maxWidth="60.0" minWidth="60.0" onAction="#handleRecurringMarineAccessPeriodEndMinuteCombobox" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets left="20.0" />
+                  <Insets left="-30.0" />
                </GridPane.margin>
             </ComboBox>
             <ComboBox fx:id="incrementCrossingCombobox" maxWidth="100.0" minWidth="100.0" onAction="#handleIncrementCrossingCombobox" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
@@ -227,7 +227,7 @@
             </RadioButton>
             <RadioButton fx:id="recurringMarineAccessPeriodTrueRadioButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#handleRecurringMarineAccessPeriodTrueRadioButton" text="From" toggleGroup="$recurringMarineAccessPeriodToggleGroup" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                <GridPane.margin>
-                  <Insets left="170.0" />
+                  <Insets left="120.0" />
                </GridPane.margin>
             </RadioButton>
             <CheckBox fx:id="computeMarineHighUsagePeriodCheckBox" maxWidth="600.0" minWidth="600.0" mnemonicParsing="false" onAction="#handleComputeMarineHighUsagePeriodCheckBox" prefWidth="600.0" text="Compute marine high-usage periods (hourly periods which contain a recurring marine access period)" GridPane.rowIndex="10">
@@ -235,14 +235,14 @@
                   <Insets left="30.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="recurringMarineAccessPeriodStartHourCombobox" maxWidth="80.0" minWidth="80.0" onAction="#handleRecurringMarineAccessPeriodStartHourCombobox" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+            <ComboBox fx:id="recurringMarineAccessPeriodStartHourCombobox" maxWidth="80.0" minWidth="80.0" onAction="#handleRecurringMarineAccessPeriodStartHourCombobox" prefWidth="80.0" GridPane.rowIndex="9">
                <GridPane.margin>
-                  <Insets left="-40.0" />
+                  <Insets left="310.0" />
                </GridPane.margin>
             </ComboBox>
             <ComboBox fx:id="recurringMarineAccessPeriodEndHourCombobox" maxWidth="80.0" minWidth="80.0" onAction="#handleRecurringMarineAccessPeriodEndHourCombobox" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
                <GridPane.margin>
-                  <Insets left="160.0" />
+                  <Insets left="110.0" />
                </GridPane.margin>
             </ComboBox>
             <CheckBox fx:id="bridgeLowerTimeIncludedInSplitCheckBox" disable="true" mnemonicParsing="false" onAction="#handleBridgeLowerTimeIncludedInSplitCheckBox" selected="true" text="Consider in waterway/railway % split in hourly buckets" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
@@ -261,6 +261,21 @@
                   <Font size="10.0" />
                </font>
             </CheckBox>
+            <Label text="with span of" GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="200.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="recurringMarineAccessPeriodSpanLabel" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="270.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="hours." GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="285.0" />
+               </GridPane.margin>
+            </Label>
          </children>
       </GridPane>
    </children>

@@ -29,7 +29,8 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 			
 		    // Write log to log sheet
 			XSSFSheet logSheet = workbook.createSheet("Log");
-	    	
+			logSheet.setDisplayGridlines(false);
+				    	
 			String[] logResults = logToWrite.split("\n");
 		    for (int i = 0; i < logResults.length; i++)
 		    {

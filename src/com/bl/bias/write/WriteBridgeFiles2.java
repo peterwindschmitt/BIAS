@@ -64,9 +64,12 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		CellStyle style8 = workbook.createCellStyle();
 		CellStyle style9 = workbook.createCellStyle();
 		CellStyle style10 = workbook.createCellStyle();
+		CellStyle style11 = workbook.createCellStyle();
 
 		// Write Bridge Closures
 		XSSFSheet bridgeClosuresSheet = workbook.createSheet("Bridge Closures");
+		bridgeClosuresSheet.setDisplayGridlines(false);
+		
 		if (BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodActive())
 			resultsMessage += "\nWriting bridge closures (with recurring marine access period active)";
 		else
@@ -172,6 +175,12 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		style10.setAlignment(HorizontalAlignment.LEFT);  
 		style10.setWrapText(false);
 		style10.setFont(font6);
+		
+		// Style 11 - Centered, non-wrapped, 11pt, black text, 1/10% precision
+		style11.setAlignment(HorizontalAlignment.CENTER);  
+		style11.setWrapText(false);
+		style11.setDataFormat(workbook.createDataFormat().getFormat("00.0%"));
+		style11.setFont(font1);
 
 		// Header rows
 		// Case name
@@ -183,7 +192,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		row = bridgeClosuresSheet.createRow(0);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue(BIASBridgeClosureAnalysisController.getAnalyzedLine() + " [reported duration increment = "+BIASBridgeClosureAnalysisConfigPageController.getIncrementClosure().toLowerCase()+"]");
+		cell.setCellValue(BIASBridgeClosureAnalysisController.getAnalyzedLine()+" Bridge Closures");
 
 		// Data headers
 		row = bridgeClosuresSheet.createRow(1);
@@ -367,12 +376,12 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 			// Trains crossing in closure
 			cell = row.createCell(10);
 			cell.setCellStyle(style5);
-			cell.setCellValue(closures.get(i).getTrainSymbolsAndDirectionsInClosure().toString());
+			cell.setCellValue(closures.get(i).getTrainSymbolsAndDirectionsInClosure().toString().replace("[", "").replace("]", ""));
 		}
 
 		// Footer rows
 		// Add sum and mean of all cycles
-		row = bridgeClosuresSheet.createRow(closures.size() + 2);
+		row = bridgeClosuresSheet.createRow(closures.size() + 3);
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Sum of closures(dd:hh:mm:ss):");
@@ -385,7 +394,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		cell.setCellStyle(style4);
 		cell.setCellValue(sumOfReportedClosureDurations);
 
-		row = bridgeClosuresSheet.createRow(closures.size() + 3);
+		row = bridgeClosuresSheet.createRow(closures.size() + 4);
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Avg closure duration(hh:mm:ss):");
@@ -398,7 +407,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		cell.setCellStyle(style6);
 		cell.setCellValue(sumOfReportedClosureDurations/closures.size());
 
-		row = bridgeClosuresSheet.createRow(closures.size() + 4);
+		row = bridgeClosuresSheet.createRow(closures.size() + 5);
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Sum of bridge open periods (dd:hh:mm:ss):");
@@ -407,7 +416,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		cell.setCellStyle(style4);
 		cell.setCellValue(sumOfOpenDurations);
 
-		row = bridgeClosuresSheet.createRow(closures.size() + 5);
+		row = bridgeClosuresSheet.createRow(closures.size() + 6);
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Avg duration of bridge open period (hh:mm:ss):");
@@ -416,8 +425,8 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		cell.setCellStyle(style6);
 		cell.setCellValue(sumOfOpenDurations/closures.size());
 
-		row = bridgeClosuresSheet.createRow(closures.size() + 6);
-		cell = row.createCell(5);
+		row = bridgeClosuresSheet.createRow(closures.size() + 7);
+		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Analysis period (sum of closed and open periods) (dd:hh:mm:ss):");
 
@@ -425,47 +434,56 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		cell.setCellStyle(style4);
 		cell.setCellValue(sumOfOpenDurations + sumOfActualClosureDurations);
 
+		row = bridgeClosuresSheet.createRow(closures.size() + 8);
+		cell = row.createCell(6);
+		cell.setCellStyle(style3);
+		cell.setCellValue("Mariner access % (for entire analysis period based on actual durations):");
+		
+		cell = row.createCell(7);
+		cell.setCellStyle(style11);
+		cell.setCellValue(sumOfOpenDurations / (sumOfOpenDurations + sumOfActualClosureDurations));
+
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
 
-		row = bridgeClosuresSheet.createRow(closures.size() + 7);
+		row = bridgeClosuresSheet.createRow(closures.size() + 9);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
-		cell.setCellValue("*** First and last closures may show event times before/after the analysis period.  However, time outside of the analysis period is not included in the durations.  Durations and Bridge Closed/Open Periods are based on Planned Bridge Down Start Time.");
+		cell.setCellValue("First and last closures may show event times before/after the analysis period.  However, time outside of the analysis period is not included in the durations.  Durations and Bridge Closed/Open Periods are based on Planned Bridge Down Start Time.");
 
 		if (BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodActive())
 		{
-			row = bridgeClosuresSheet.createRow(closures.size() + 8);
+			row = bridgeClosuresSheet.createRow(closures.size() + 10);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("For bridge open periods, the time prior to the first closure and following the last closure (if applicable) are computed based on the beginning/end of the analysis period.");
 
-			row = bridgeClosuresSheet.createRow(closures.size() + 9);
+			row = bridgeClosuresSheet.createRow(closures.size() + 11);
 			cell = row.createCell(0);
 			cell.setCellStyle(style10);
 			cell.setCellValue("Closures which potentially contain suboptimal signal aspects during the recurring marine access period (from minute "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute()+" to minute "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute()
-			+ " starting at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour()+" and ending at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour()+") are shown in orange. Planned down time is the end of the hourly recurring marine access period. ***");
+			+ " starting at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour()+" and ending at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour()+") are shown in orange. Planned bridge down start time is the end of the hourly recurring marine access period.");
 
-			row = bridgeClosuresSheet.createRow(closures.size() + 10);
+			row = bridgeClosuresSheet.createRow(closures.size() + 12);
 			cell = row.createCell(0);
 			cell.setCellStyle(style7);
 			cell.setCellValue("Event times which violate the recurring marine access period (from minute "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute()+" to minute "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute()
-			+ " starting at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour()+" and ending at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour()+") are shown in red. Planned down time is the latest possible down time.  ***");
+			+ " starting at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour()+" and ending at "+BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour()+") are shown in red. Planned bridge down start time is the latest possible down time.");
 
-			row = bridgeClosuresSheet.createRow(closures.size() + 11);
+			row = bridgeClosuresSheet.createRow(closures.size() + 13);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 		}
 		else
 		{
-			row = bridgeClosuresSheet.createRow(closures.size() + 8);
+			row = bridgeClosuresSheet.createRow(closures.size() + 10);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("For bridge open periods, the time prior to the first closure and following the last closure (if applicable) are computed based on the beginning/end of the analysis period. ***");
+			cell.setCellValue("For bridge open periods, the time prior to the first closure and following the last closure (if applicable) are computed based on the beginning/end of the analysis period.");
 
-			row = bridgeClosuresSheet.createRow(closures.size() + 9);
+			row = bridgeClosuresSheet.createRow(closures.size() + 11);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("Created on "+creationDate+" at "+creationTime);

@@ -21,29 +21,39 @@ import com.bl.bias.app.BIASBridgeClosureAnalysisConfigPageController;
 import com.bl.bias.app.BIASBridgeClosureAnalysisController;
 import com.bl.bias.objects.BridgeAnalysisClosure;
 import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.tools.DoesEventOccurDuringActiveMarineAccessPeriod;
 
 public class WriteBridgeFiles3 extends WriteBridgeFiles2
 {
 	String dayOfWeek;
-	String hourlyBucket;
+	String oneHourPeriod;
 
-	Integer actualAllPeriodsSumInSeconds = 0;
-	Integer actualWorstPeriodInSeconds = 0;
-	Integer actualMarinePeriodsSumInSeconds = 0;
-	Integer actualMarineWorstPeriodInSeconds = 0;
+	Integer actualAllPeriodsClosureSumInSeconds = 0;
+	Integer actualWorstAllPeriodClosureInSeconds = 0;
+	Integer actualMarinePeriodsClosureSumInSeconds = 0;
+	Integer actualMarineWorstPeriodClosureInSeconds = 0;
 
-	Integer reportedAllPeriodsSumInSeconds = 0;
-	Integer reportedWorstAllPeriodInSeconds = 0;
-	Integer reportedMarinePeriodsSumInSeconds = 0;
-	Integer reportedMarineWorstPeriodInSeconds = 0;
+	Integer reportedAllPeriodsClosureSumInSeconds = 0;
+	Integer reportedWorstAllPeriodClosureInSeconds = 0;
+	Integer reportedMarinePeriodsClosureSumInSeconds = 0;
+	Integer reportedMarineWorstPeriodClosureInSeconds = 0;
+
+	Integer actualAllPeriodMarinerAccessSumInSeconds = 0;
+	Integer actualWorstAllPeriodMarinerAccessInSeconds = 3600;
+	Integer actualMarinePeriodMarinerAccessSumInSeconds = 0;
+	Integer actualMarineWorstPeriodMarinerAccessInSeconds = 3600;
 
 	String resultsMessage = getResultsMessageWrite2();
 
 	ArrayList<BridgeAnalysisClosure> closures = new ArrayList<BridgeAnalysisClosure>();
-	ArrayList<Integer> actualPeriodSumsInSeconds = new ArrayList<Integer>();
-	ArrayList<Integer> reportedPeriodSumsInSeconds = new ArrayList<Integer>();
-	HashMap<Integer, Integer> actualMarinePeriodSumsInSeconds = new HashMap<>();
-	HashMap<Integer, Integer> reportedMarinePeriodSumsInSeconds = new HashMap<>();;
+
+	ArrayList<Integer> actualAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
+	ArrayList<Integer> reportedAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
+	ArrayList<Integer> actualAllPeriodMarinerAccessSumsInSeconds = new ArrayList<Integer>();
+
+	HashMap<Integer, Integer> actualMarinePeriodClosureSumsInSeconds = new HashMap<>();
+	HashMap<Integer, Integer> reportedMarinePeriodClosureSumsInSeconds = new HashMap<>();
+	HashMap<Integer, Integer> actualMarinePeriodMarinerAvailabilitySumsInSeconds = new HashMap<>();
 
 	public WriteBridgeFiles3(String textAreaContents, String locationOfInputFiles)
 	{
@@ -66,13 +76,16 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		CellStyle style10 = workbook.createCellStyle();
 		CellStyle style11 = workbook.createCellStyle();
 		CellStyle style12 = workbook.createCellStyle();
+		CellStyle style13 = workbook.createCellStyle();
 
 		// Write Bridge Closures
-		XSSFSheet hourlyStatisticsSheet = workbook.createSheet("Hourly Periods");
+		XSSFSheet oneHourStatisticsSheet = workbook.createSheet("1-Hour Periods");
+		oneHourStatisticsSheet.setDisplayGridlines(false);
+
 		if (BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive())
-			resultsMessage += "\nWriting hourly periods (with high-usage marine periods active)";
+			resultsMessage += "\nWriting 1-Hour periods (with high-usage marine periods active)";
 		else
-			resultsMessage += "\nWriting hourly periods";
+			resultsMessage += "\nWriting 1-Hour periods";
 
 		// Fonts
 		// Font 0 - 14pt White text
@@ -173,20 +186,26 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		style12.setWrapText(true);
 		style12.setFont(font4);
 
+		// Style 13 - Centered, non-wrapped, 11pt, black text, 1/10% precision
+		style13.setAlignment(HorizontalAlignment.CENTER);  
+		style13.setWrapText(false);
+		style13.setDataFormat(workbook.createDataFormat().getFormat("00.0%"));
+		style13.setFont(font1);
+
 		// Header rows
 		// Case name
-		hourlyStatisticsSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+		oneHourStatisticsSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 11));
 
 		Row row;
 		Cell cell;
 
-		row = hourlyStatisticsSheet.createRow(0);
+		row = oneHourStatisticsSheet.createRow(0);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue(BIASBridgeClosureAnalysisController.getAnalyzedLine() + " [reported duration increment = "+BIASBridgeClosureAnalysisConfigPageController.getIncrementHourlyBucket().toLowerCase()+"]");
+		cell.setCellValue(BIASBridgeClosureAnalysisController.getAnalyzedLine()+" 1-Hour Periods");
 
 		// Data headers
-		row = hourlyStatisticsSheet.createRow(1);
+		row = oneHourStatisticsSheet.createRow(1);
 
 		cell = row.createCell(0);
 		cell.setCellStyle(style1);
@@ -208,6 +227,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		cell.setCellStyle(style1);
 		cell.setCellValue("Reported Closure Time During Period (h:mm:ss)");
 
+		cell = row.createCell(5);
+		cell.setCellStyle(style1);
+		cell.setCellValue("Actual Mariner Access Time During Period (h:mm:ss)");
+
+		cell = row.createCell(6);
+		cell.setCellStyle(style1);
+		cell.setCellValue("Mariner Access % (based on actual duration)");
+
 		// Closures
 		// Determine count of hours that the analysis period entails
 		String ceilingIncrementAsString = BIASBridgeClosureAnalysisConfigPageController.getIncrementHourlyBucket();
@@ -220,7 +247,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 		for (int i = 0; i < oneHourPeriods; i++)
 		{
-			row = hourlyStatisticsSheet.createRow(i + 2);
+			row = oneHourStatisticsSheet.createRow(i + 2);
 
 			// Period
 			cell = row.createCell(0);
@@ -228,24 +255,24 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell.setCellValue(i + 1);
 
 			// Time period start
-			Integer startOfHourlyBucket = (3600 * i) + BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds();
+			Integer startOfOneHourPeriod = (3600 * i) + BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds();
 			cell = row.createCell(1);
-			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (doesEventOccurDuringActiveMarineAccessPeriod(startOfHourlyBucket)))
+			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(startOfOneHourPeriod)))
 				cell.setCellStyle(style9);
 			else
 				cell.setCellStyle(style1);
 
-			cell.setCellValue(ConvertDateTime.convertSecondsToDay_HHMMString(startOfHourlyBucket));
+			cell.setCellValue(ConvertDateTime.convertSecondsToDay_HHMMString(startOfOneHourPeriod));
 
 			// Time period end
-			Integer endOfHourlyBucket = (3600 * (i + 1)) + BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds();
+			Integer endOfOneHourPeriod = (3600 * (i + 1)) + BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds();
 			cell = row.createCell(2);
 			// Below makes style of text for end-of-period the same as the start-of-period 
-			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (doesEventOccurDuringActiveMarineAccessPeriod(startOfHourlyBucket)))
+			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(startOfOneHourPeriod)))
 				cell.setCellStyle(style9);
 			else
 				cell.setCellStyle(style1);
-			cell.setCellValue(ConvertDateTime.convertSecondsToDay_HHMMString(endOfHourlyBucket));
+			cell.setCellValue(ConvertDateTime.convertSecondsToDay_HHMMString(endOfOneHourPeriod));
 
 			if (nextPeriodFull) // Closure spanning through at least the end of this period
 			{
@@ -267,36 +294,36 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 				for (int j = 0; j < closures.size(); j++)
 				{
 
-					if (closures.get(j).getClosureStartTimeInSeconds() > endOfHourlyBucket) // Closure that is entirely contained in a future hourly period
+					if (closures.get(j).getClosureStartTimeInSeconds() > endOfOneHourPeriod) // Closure that is entirely contained in a future period
 					{
 						continue;
 					}
-					else if (closures.get(j).getClosureEndTimeInSeconds() < startOfHourlyBucket) // Closure that is entirely contained in a past hourly period
+					else if (closures.get(j).getClosureEndTimeInSeconds() < startOfOneHourPeriod) // Closure that is entirely contained in a past period
 					{
 						continue;
 					}
-					else if ((closures.get(j).getClosureStartTimeInSeconds() >= startOfHourlyBucket) 
-							&& (closures.get(j).getClosureEndTimeInSeconds() <= endOfHourlyBucket)) // Closure that is entirely contained in this hourly period
+					else if ((closures.get(j).getClosureStartTimeInSeconds() >= startOfOneHourPeriod) 
+							&& (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) // Closure that is entirely contained in this period
 					{
 						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - closures.get(j).getClosureStartTimeInSeconds();
 					}	
-					else if (closures.get(j).getClosureEndTimeInSeconds() > endOfHourlyBucket) // Place part of closure in this period and part of closure in next period(s)
+					else if (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod) // Place part of closure in this period and part of closure in next period(s)
 					{
-						timeOccupiedInThisPeriod += (endOfHourlyBucket - closures.get(j).getClosureStartTimeInSeconds());
-						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfHourlyBucket;
+						timeOccupiedInThisPeriod += (endOfOneHourPeriod - closures.get(j).getClosureStartTimeInSeconds());
+						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod;
 						if (timeOccupiedInNextPeriod >= 3600)
 							nextPeriodFull = true;
 						else
 							nextPeriodFull = false;
 					}
-					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() <= endOfHourlyBucket)) // First closure only and ends in single period
+					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) // First closure only and ends in single period
 					{
-						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - startOfHourlyBucket;
+						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
 					}
-					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() > endOfHourlyBucket)) // First closure only and ends after first period
+					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod)) // First closure only and ends after first period
 					{
-						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - startOfHourlyBucket;
-						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfHourlyBucket;
+						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
+						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod;
 						if (timeOccupiedInNextPeriod >= 3600)
 							nextPeriodFull = true;
 						else
@@ -308,170 +335,206 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 				timeOccupiedInThisPeriod = 3600;
 
 			// Actual duration computations - all periods
-			actualPeriodSumsInSeconds.add(i, timeOccupiedInThisPeriod);
-			actualAllPeriodsSumInSeconds += timeOccupiedInThisPeriod;
+			actualAllPeriodClosureSumsInSeconds.add(i, timeOccupiedInThisPeriod);
+			actualAllPeriodsClosureSumInSeconds += timeOccupiedInThisPeriod;
+			actualAllPeriodMarinerAccessSumsInSeconds.add(i, (3600 - timeOccupiedInThisPeriod));
+			actualAllPeriodMarinerAccessSumInSeconds += (3600 - timeOccupiedInThisPeriod);
 
 			// Actual duration computations - marine high-usage periods
-			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (doesEventOccurDuringActiveMarineAccessPeriod(startOfHourlyBucket)))
+			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(startOfOneHourPeriod)))
 			{
-				actualMarinePeriodSumsInSeconds.put(i, timeOccupiedInThisPeriod);
-				actualMarinePeriodsSumInSeconds += timeOccupiedInThisPeriod;
+				actualMarinePeriodClosureSumsInSeconds.put(i, timeOccupiedInThisPeriod);
+				actualMarinePeriodsClosureSumInSeconds += timeOccupiedInThisPeriod;
+				actualMarinePeriodMarinerAvailabilitySumsInSeconds.put(i, (3600 - timeOccupiedInThisPeriod));
+				actualMarinePeriodMarinerAccessSumInSeconds += (3600 - timeOccupiedInThisPeriod);
 			}
 
 			// Reported duration computations - all periods
 			if (ceilingIncrementAsString.equals("None"))
 			{
-				reportedPeriodSumsInSeconds.add(i, timeOccupiedInThisPeriod);
-				reportedAllPeriodsSumInSeconds += timeOccupiedInThisPeriod;
+				reportedAllPeriodClosureSumsInSeconds.add(i, timeOccupiedInThisPeriod);
+				reportedAllPeriodsClosureSumInSeconds += timeOccupiedInThisPeriod;
 			}
 			else
 			{
 				int ceilingTimeInSeconds = (int) (Math.ceil((double) timeOccupiedInThisPeriod / (Integer.valueOf(ceilingIncrementAsString.replace("min", "").trim()) * 60)) * (Integer.valueOf(ceilingIncrementAsString.replace("min", "").trim()) * 60)); 
-				reportedPeriodSumsInSeconds.add(i, ceilingTimeInSeconds);
-				reportedAllPeriodsSumInSeconds += ceilingTimeInSeconds;
+				reportedAllPeriodClosureSumsInSeconds.add(i, ceilingTimeInSeconds);
+				reportedAllPeriodsClosureSumInSeconds += ceilingTimeInSeconds;
 			}
 
 			// Reported duration computations - marine high-usage periods
-			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (doesEventOccurDuringActiveMarineAccessPeriod(startOfHourlyBucket)))
+			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(startOfOneHourPeriod)))
 			{
 				if (ceilingIncrementAsString.equals("None"))
 				{
-					reportedMarinePeriodSumsInSeconds.put(i, timeOccupiedInThisPeriod);
-					reportedMarinePeriodsSumInSeconds += timeOccupiedInThisPeriod;
+					reportedMarinePeriodClosureSumsInSeconds.put(i, timeOccupiedInThisPeriod);
+					reportedMarinePeriodsClosureSumInSeconds += timeOccupiedInThisPeriod;
 				}
 				else
 				{
 					int ceilingTimeInSeconds = (int) (Math.ceil((double) timeOccupiedInThisPeriod / (Integer.valueOf(ceilingIncrementAsString.replace("min", "").trim()) * 60)) * (Integer.valueOf(ceilingIncrementAsString.replace("min", "").trim()) * 60)); 
-					reportedMarinePeriodSumsInSeconds.put(i, ceilingTimeInSeconds);
-					reportedMarinePeriodsSumInSeconds += ceilingTimeInSeconds;
+					reportedMarinePeriodClosureSumsInSeconds.put(i, ceilingTimeInSeconds);
+					reportedMarinePeriodsClosureSumInSeconds += ceilingTimeInSeconds;
 				}
 			}
 
 			// Write sums - all periods
 			cell = row.createCell(3);
 			cell.setCellStyle(style4);
-			if (actualPeriodSumsInSeconds.get(i) != 0)
+			if (actualAllPeriodClosureSumsInSeconds.get(i) != 0)
 			{
-				cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualPeriodSumsInSeconds.get(i)));
+				cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodClosureSumsInSeconds.get(i)));
 			}
 
 			cell = row.createCell(4);
 			cell.setCellStyle(style4);
-			if (reportedPeriodSumsInSeconds.get(i) != 0)
+			if (reportedAllPeriodClosureSumsInSeconds.get(i) != 0)
 			{
-				cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedPeriodSumsInSeconds.get(i)));
+				cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedAllPeriodClosureSumsInSeconds.get(i)));
+			}
+
+			cell = row.createCell(5);
+			cell.setCellStyle(style4);
+			if (actualAllPeriodMarinerAccessSumsInSeconds.get(i) != 0)
+			{
+				cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodMarinerAccessSumsInSeconds.get(i)));
+			}
+
+			cell = row.createCell(6);
+			cell.setCellStyle(style13);
+			if (actualAllPeriodMarinerAccessSumsInSeconds.get(i) != 0)
+			{
+				cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodMarinerAccessSumsInSeconds.get(i))/ConvertDateTime.convertSecondsToSerial(3600));
 			}
 
 			// Worst period computations -- all periods
 			// Actual
-			if (actualPeriodSumsInSeconds.get(i) > actualWorstPeriodInSeconds)
+			if (actualAllPeriodClosureSumsInSeconds.get(i) > actualWorstAllPeriodClosureInSeconds)
 			{
-				actualWorstPeriodInSeconds = actualPeriodSumsInSeconds.get(i);
+				actualWorstAllPeriodClosureInSeconds = actualAllPeriodClosureSumsInSeconds.get(i);
 			}
-			// Reported
-			if (reportedPeriodSumsInSeconds.get(i) > reportedWorstAllPeriodInSeconds)
+			
+			if (actualAllPeriodMarinerAccessSumsInSeconds.get(i) < actualWorstAllPeriodMarinerAccessInSeconds)
 			{
-				reportedWorstAllPeriodInSeconds = reportedPeriodSumsInSeconds.get(i);
+				actualWorstAllPeriodMarinerAccessInSeconds = actualAllPeriodMarinerAccessSumsInSeconds.get(i);
+			}
+			
+			// Reported
+			if (reportedAllPeriodClosureSumsInSeconds.get(i) > reportedWorstAllPeriodClosureInSeconds)
+			{
+				reportedWorstAllPeriodClosureInSeconds = reportedAllPeriodClosureSumsInSeconds.get(i);
 			}
 
 			// Worst period computations -- marine periods
-			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (doesEventOccurDuringActiveMarineAccessPeriod(startOfHourlyBucket)))
+			if ((BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive()) && (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(startOfOneHourPeriod)))
 			{
 				// Actual
-				if (timeOccupiedInThisPeriod > actualMarineWorstPeriodInSeconds)
+				if (timeOccupiedInThisPeriod > actualMarineWorstPeriodClosureInSeconds)
 				{
-					actualMarineWorstPeriodInSeconds = timeOccupiedInThisPeriod;
+					actualMarineWorstPeriodClosureInSeconds = timeOccupiedInThisPeriod;
 				}
 				// Reported
-				if (timeOccupiedInThisPeriod > reportedMarineWorstPeriodInSeconds)
+				if (timeOccupiedInThisPeriod > reportedMarineWorstPeriodClosureInSeconds)
 				{
-					reportedMarineWorstPeriodInSeconds = timeOccupiedInThisPeriod;
+					reportedMarineWorstPeriodClosureInSeconds = timeOccupiedInThisPeriod;
 				}
 			}
 		}
 
 		// Footer rows
 		// Sum, mean and max (worst) of all cycles
-		row = hourlyStatisticsSheet.createRow(oneHourPeriods + 2);
-		cell = row.createCell(5);
+		row = oneHourStatisticsSheet.createRow(oneHourPeriods + 3);
+		cell = row.createCell(7);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Sum of all periods (bridge not available to marine traffic for (dd:hh:mm:ss))");
+		cell.setCellValue("Sum of all periods (dd:hh:mm:ss)");
 
 		cell = row.createCell(3);
 		cell.setCellStyle(style7);
-		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodsSumInSeconds));
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodsClosureSumInSeconds));
 
 		cell = row.createCell(4);
 		cell.setCellStyle(style7);
-		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedAllPeriodsSumInSeconds));
-
-		row = hourlyStatisticsSheet.createRow(oneHourPeriods + 3);
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedAllPeriodsClosureSumInSeconds));
+		
 		cell = row.createCell(5);
+		cell.setCellStyle(style7);
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodMarinerAccessSumInSeconds));
+
+		row = oneHourStatisticsSheet.createRow(oneHourPeriods + 4);
+		cell = row.createCell(7);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Worst hourly period (bridge not available to marine traffic for (h:mm:ss))");
+		cell.setCellValue("Worst 1-hour period (h:mm:ss)");
 
 		cell = row.createCell(3);
 		cell.setCellStyle(style4);
-		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualWorstPeriodInSeconds));
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualWorstAllPeriodClosureInSeconds));
 
 		cell = row.createCell(4);
 		cell.setCellStyle(style4);
-		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedWorstAllPeriodInSeconds));
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedWorstAllPeriodClosureInSeconds));
 
-		row = hourlyStatisticsSheet.createRow(oneHourPeriods + 4);
 		cell = row.createCell(5);
+		cell.setCellStyle(style4);
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualWorstAllPeriodMarinerAccessInSeconds));
+
+		row = oneHourStatisticsSheet.createRow(oneHourPeriods + 5);
+		cell = row.createCell(7);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Avg hourly period (bridge not available to marine traffic for (h:mm:ss))");
+		cell.setCellValue("Avg 1-hour period (h:mm:ss)");
 
 		cell = row.createCell(3);
 		cell.setCellStyle(style4);
-		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualAllPeriodsSumInSeconds/actualPeriodSumsInSeconds.size())));
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualAllPeriodsClosureSumInSeconds/actualAllPeriodClosureSumsInSeconds.size())));
 
 		cell = row.createCell(4);
 		cell.setCellStyle(style4);
-		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) reportedAllPeriodsSumInSeconds/reportedPeriodSumsInSeconds.size())));
-
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) reportedAllPeriodsClosureSumInSeconds/reportedAllPeriodClosureSumsInSeconds.size())));
+		
+		cell = row.createCell(5);
+		cell.setCellStyle(style4);
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualAllPeriodMarinerAccessSumInSeconds/actualAllPeriodClosureSumsInSeconds.size())));
+		
 		// Sum, mean and max of marine high-usage period cycles
 		if (BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive())
 		{
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 5);
-			cell = row.createCell(5);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 6);
+			cell = row.createCell(7);
 			cell.setCellStyle(style10);
-			cell.setCellValue("Sum of marine high-usage periods (bridge not available to marine traffic for (dd:hh:mm:ss))");
+			cell.setCellValue("Sum of marine high-usage periods (dd:hh:mm:ss)");
 
 			cell = row.createCell(3);
 			cell.setCellStyle(style11);
-			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarinePeriodsSumInSeconds));
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarinePeriodsClosureSumInSeconds));
 
 			cell = row.createCell(4);
 			cell.setCellStyle(style11);
-			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedMarinePeriodsSumInSeconds));
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedMarinePeriodsClosureSumInSeconds));
 
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 6);
-			cell = row.createCell(5);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 7);
+			cell = row.createCell(7);
 			cell.setCellStyle(style10);
-			cell.setCellValue("Worst hourly period (bridge not available to marine traffic for (h:mm:ss))");
+			cell.setCellValue("Worst 1-hour period (h:mm:ss)");
 
 			cell = row.createCell(3);
 			cell.setCellStyle(style12);
-			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarineWorstPeriodInSeconds));
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarineWorstPeriodClosureInSeconds));
 
 			cell = row.createCell(4);
 			cell.setCellStyle(style12);
-			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedMarineWorstPeriodInSeconds));
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedMarineWorstPeriodClosureInSeconds));
 
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 7);
-			cell = row.createCell(5);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 8);
+			cell = row.createCell(7);
 			cell.setCellStyle(style10);
-			cell.setCellValue("Avg hourly period (bridge not available to marine traffic for (h:mm:ss))");
+			cell.setCellValue("Avg 1-hour period (h:mm:ss)");
 
 			cell = row.createCell(3);
 			cell.setCellStyle(style12);
-			cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualMarinePeriodsSumInSeconds/actualMarinePeriodSumsInSeconds.size())));
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualMarinePeriodsClosureSumInSeconds/actualMarinePeriodClosureSumsInSeconds.size())));
 
 			cell = row.createCell(4);
 			cell.setCellStyle(style12);
-			cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) reportedMarinePeriodsSumInSeconds/reportedMarinePeriodSumsInSeconds.size())));
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) reportedMarinePeriodsClosureSumInSeconds/reportedMarinePeriodClosureSumsInSeconds.size())));
 		}
 
 		// Timestamp and footnote
@@ -480,81 +543,50 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 		if (BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive())
 		{
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 8);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 9);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("*** Only complete 60-minute periods are reported.  ");
+			cell.setCellValue("Only complete 60-minute periods are reported.  ");
 
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 9);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 10);
 			cell = row.createCell(0);
 			cell.setCellStyle(style8);
-			cell.setCellValue("Marine high-usage periods (hourly periods which contain a recurring marine aceess period) are shown in blue. ***");
+			cell.setCellValue("Marine high-usage periods (1-hour periods which contain a recurring marine aceess period) are shown in blue.");
 
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 10);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 11);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 		}
 		else
 		{
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 5);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 6);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("*** Only complete 60-minute periods are reported ***");
+			cell.setCellValue("Only complete 60-minute periods are reported");
 
-			row = hourlyStatisticsSheet.createRow(oneHourPeriods + 6);
+			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 7);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 		}
 
 		// Resize all columns to fit the content size
-		for (int i = 0; i <= 5; i++) 
+		for (int i = 0; i <= 6; i++) 
 		{
 			if (i == 0) 
 			{
-				hourlyStatisticsSheet.setColumnWidth(i, 2500);
+				oneHourStatisticsSheet.setColumnWidth(i, 2500);
 			}
 			else if ((i == 1) || (i == 2))
 			{
-				hourlyStatisticsSheet.setColumnWidth(i, 3800);
+				oneHourStatisticsSheet.setColumnWidth(i, 3800);
 			}
 			else  
 			{
-				hourlyStatisticsSheet.setColumnWidth(i, 3500);
+				oneHourStatisticsSheet.setColumnWidth(i, 3500);
 			}
 		}
-	}
-
-	private Boolean doesEventOccurDuringActiveMarineAccessPeriod(int eventTimeInSeconds)
-	{
-		Boolean eventDuringActiveMarineAccessPeriod = false;
-
-		// Marine access period all on same day
-		if (((Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour().replace(":00", "")) > Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour().replace(":00", "")))
-				|| (Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour().replace(":00", "")) == 0))
-				&& ((ConvertDateTime.convertSecondsToHH(eventTimeInSeconds) >= Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour().replace(":00", "")))
-						&& (ConvertDateTime.convertSecondsToHH(eventTimeInSeconds) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour().replace(":00", "")))))
-			// HOUR
-			// if marine access period end hour is later than the marine access period start hour of the same day
-			// and hourly bucket starts at or after the marine access period start hour
-			// and hourly bucket ends before the marine access period end hour
-		{
-			eventDuringActiveMarineAccessPeriod = true;
-		}
-		// Marine access period extends over midnight
-		else if ((Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour().replace(":00", "")) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour().replace(":00", ""))) 
-				&& ((ConvertDateTime.convertSecondsToHH(eventTimeInSeconds) >= Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartHour().replace(":00", "")))
-						|| (ConvertDateTime.convertSecondsToHH(eventTimeInSeconds) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndHour().replace(":00", "")))))
-			// HOUR
-			// if marine access period end hour is the day after the marine access period start hour
-			// and hourly bucket starts at or after the marine access period start hour
-			// or hourly bucket occurs before the marine access period end hour
-		{
-			eventDuringActiveMarineAccessPeriod = true;
-		}
-
-		return eventDuringActiveMarineAccessPeriod;
 	}
 
 	public String getResultsMessageWrite3()

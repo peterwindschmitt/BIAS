@@ -83,11 +83,12 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	@FXML private RadioButton recurringMarineAccessPeriodTrueRadioButton;
 
 	@FXML private Label recurringMarineAccessPeriodDurationLabel;
+	@FXML private Label recurringMarineAccessPeriodSpanLabel;
 
 	@FXML private CheckBox computeMarineHighUsagePeriodCheckBox;
 	@FXML private CheckBox bridgeLowerTimeIncludedInSplitCheckBox;
 	@FXML private CheckBox bridgeRaiseTimeIncludedInSplitCheckBox;
-	
+
 	@FXML private void initialize() 
 	{
 		// Set up prefs
@@ -363,6 +364,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 
 		// Figure and display marine access period duration
 		recurringMarineAccessPeriodDurationLabel.setText(figureMarinePeriodDuration(recurringMarineAccessPeriodStartMinute, recurringMarineAccessPeriodEndMinute));
+		recurringMarineAccessPeriodSpanLabel.setText(figureMarinePeriodSpan(recurringMarineAccessPeriodStartHour, recurringMarineAccessPeriodEndHour));
 	}
 
 	@FXML private void handleBridgeLowerCombobox(ActionEvent event) 
@@ -484,6 +486,9 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		recurringMarineAccessPeriodStartHour = String.valueOf(recurringMarineAccessPeriodStartHourCombobox.getValue());
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("bc_recurringMarineAccessPeriodStartHour", recurringMarineAccessPeriodStartHourCombobox.getValue());
+
+		// Figure and display marine access period span
+		recurringMarineAccessPeriodSpanLabel.setText(figureMarinePeriodSpan(recurringMarineAccessPeriodStartHour, recurringMarineAccessPeriodEndHour));
 	}
 
 	@FXML private void handleRecurringMarineAccessPeriodEndHourCombobox(ActionEvent event) 
@@ -491,6 +496,9 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		recurringMarineAccessPeriodEndHour = String.valueOf(recurringMarineAccessPeriodEndHourCombobox.getValue());
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("bc_recurringMarineAccessPeriodEndHour", recurringMarineAccessPeriodEndHourCombobox.getValue());
+
+		// Figure and display marine access period span
+		recurringMarineAccessPeriodSpanLabel.setText(figureMarinePeriodSpan(recurringMarineAccessPeriodStartHour, recurringMarineAccessPeriodEndHour));
 	}
 
 	@FXML private void handleComputeMarineHighUsagePeriodCheckBox(ActionEvent event)
@@ -693,5 +701,18 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			marineAccessPeriodDuration = marineAccessPeriodDuration + 60;
 		String marineAccessPeriodDurationAsString = String.valueOf(marineAccessPeriodDuration);
 		return marineAccessPeriodDurationAsString;
+	}
+
+	private static String figureMarinePeriodSpan(String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)
+	{
+		marineAccessPeriodStartHour = marineAccessPeriodStartHour.replace(":00", "").strip();
+		marineAccessPeriodEndHour = marineAccessPeriodEndHour.replace(":00", "").strip();
+		int marineAccessPeriodSpan = Integer.valueOf(marineAccessPeriodEndHour) - Integer.valueOf(marineAccessPeriodStartHour);
+		if (marineAccessPeriodSpan == 0)
+			marineAccessPeriodSpan = 24;
+		else if (marineAccessPeriodSpan < 0)
+			marineAccessPeriodSpan = marineAccessPeriodSpan + 24;
+		String marineAccessPeriodSpanAsString = String.valueOf(marineAccessPeriodSpan);
+		return marineAccessPeriodSpanAsString;
 	}
 }

@@ -61,8 +61,9 @@ public class WriteBridgeFiles1
 		CellStyle style4 = workbook.createCellStyle();
 
 		// Write Trains Crossing Bridge
-		XSSFSheet trainsCrossingBridgeSheet = workbook.createSheet("Trains Crossing Bridge");
-		resultsMessage += "\nWriting train traversals";
+		XSSFSheet trainsCrossingBridgeSheet = workbook.createSheet("Train Crossings");
+		trainsCrossingBridgeSheet.setDisplayGridlines(false);
+		resultsMessage += "\nWriting train crossings";
 
 		// Fonts
 		// Font 0 - 14pt White text
@@ -120,7 +121,7 @@ public class WriteBridgeFiles1
 		row = trainsCrossingBridgeSheet.createRow(0);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue(BIASBridgeClosureAnalysisController.getAnalyzedLine() + " [reported duration increment = "+BIASBridgeClosureAnalysisConfigPageController.getIncrementCrossing().toLowerCase()+"]");
+		cell.setCellValue(BIASBridgeClosureAnalysisController.getAnalyzedLine()+" Train Crossings");
 
 		// Data headers
 		row = trainsCrossingBridgeSheet.createRow(1);
@@ -241,7 +242,7 @@ public class WriteBridgeFiles1
 
 		// Footer rows
 		// Add sum and mean of all cycles
-		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 2);
+		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 3);
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Sum of crossing durations(hh:mm:ss):");
@@ -254,7 +255,7 @@ public class WriteBridgeFiles1
 		cell.setCellStyle(style4);
 		cell.setCellValue(sumOfReportedCrossingDurations);
 
-		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 3);
+		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 4);
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Avg crossing duration(hh:mm:ss):");
@@ -271,17 +272,17 @@ public class WriteBridgeFiles1
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
 
-		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 4);
-		cell = row.createCell(0);
-		cell.setCellStyle(style2);
-		cell.setCellValue("*** First and last traversals may show event times before/after the analysis period.  However, time outside of the analysis period is not included in the durations.");
-
 		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 5);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
-		cell.setCellValue("Above data does not include signal setup or the time for bridge to lower and raise.  See next sheet for closures (including signal setup, bridge lower and raise times) created by above trains. ***");
+		cell.setCellValue("First and last crossings may show event times before/after the analysis period.  However, time outside of the analysis period is not included in the durations.");
 
 		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 6);
+		cell = row.createCell(0);
+		cell.setCellStyle(style2);
+		cell.setCellValue("Above data does not include signal setup or the time for bridge to lower and raise.  See next sheet for closures (including signal setup, bridge lower and raise times) created by above crossings.");
+
+		row = trainsCrossingBridgeSheet.createRow(crossings.size() + 7);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
