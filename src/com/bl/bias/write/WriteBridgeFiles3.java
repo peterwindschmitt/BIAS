@@ -77,6 +77,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		CellStyle style11 = workbook.createCellStyle();
 		CellStyle style12 = workbook.createCellStyle();
 		CellStyle style13 = workbook.createCellStyle();
+		CellStyle style14 = workbook.createCellStyle();
 
 		// Write Bridge Closures
 		XSSFSheet oneHourStatisticsSheet = workbook.createSheet("1-Hour Periods");
@@ -191,6 +192,12 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		style13.setWrapText(false);
 		style13.setDataFormat(workbook.createDataFormat().getFormat("00.0%"));
 		style13.setFont(font1);
+
+		// Style 14 - Centered, non-wrapped, 11pt, blue text, 1/10% precision
+		style14.setAlignment(HorizontalAlignment.CENTER);  
+		style14.setWrapText(false);
+		style14.setDataFormat(workbook.createDataFormat().getFormat("00.0%"));
+		style14.setFont(font4);
 
 		// Header rows
 		// Case name
@@ -413,12 +420,12 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			{
 				actualWorstAllPeriodClosureInSeconds = actualAllPeriodClosureSumsInSeconds.get(i);
 			}
-			
+
 			if (actualAllPeriodMarinerAccessSumsInSeconds.get(i) < actualWorstAllPeriodMarinerAccessInSeconds)
 			{
 				actualWorstAllPeriodMarinerAccessInSeconds = actualAllPeriodMarinerAccessSumsInSeconds.get(i);
 			}
-			
+
 			// Reported
 			if (reportedAllPeriodClosureSumsInSeconds.get(i) > reportedWorstAllPeriodClosureInSeconds)
 			{
@@ -433,6 +440,12 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 				{
 					actualMarineWorstPeriodClosureInSeconds = timeOccupiedInThisPeriod;
 				}
+
+				if (actualMarinePeriodMarinerAvailabilitySumsInSeconds.get(i) < actualMarineWorstPeriodMarinerAccessInSeconds)
+				{
+					actualMarineWorstPeriodMarinerAccessInSeconds = actualMarinePeriodMarinerAvailabilitySumsInSeconds.get(i);
+				}				
+
 				// Reported
 				if (timeOccupiedInThisPeriod > reportedMarineWorstPeriodClosureInSeconds)
 				{
@@ -455,10 +468,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		cell = row.createCell(4);
 		cell.setCellStyle(style7);
 		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedAllPeriodsClosureSumInSeconds));
-		
+
 		cell = row.createCell(5);
 		cell.setCellStyle(style7);
 		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualAllPeriodMarinerAccessSumInSeconds));
+
+		cell = row.createCell(6);
+		cell.setCellStyle(style1);
+		cell.setCellValue("N/A");
 
 		row = oneHourStatisticsSheet.createRow(oneHourPeriods + 4);
 		cell = row.createCell(7);
@@ -477,6 +494,10 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		cell.setCellStyle(style4);
 		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualWorstAllPeriodMarinerAccessInSeconds));
 
+		cell = row.createCell(6);
+		cell.setCellStyle(style13);
+		cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualWorstAllPeriodMarinerAccessInSeconds)/ConvertDateTime.convertSecondsToSerial(3600));
+
 		row = oneHourStatisticsSheet.createRow(oneHourPeriods + 5);
 		cell = row.createCell(7);
 		cell.setCellStyle(style6);
@@ -489,11 +510,15 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		cell = row.createCell(4);
 		cell.setCellStyle(style4);
 		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) reportedAllPeriodsClosureSumInSeconds/reportedAllPeriodClosureSumsInSeconds.size())));
-		
+
 		cell = row.createCell(5);
 		cell.setCellStyle(style4);
 		cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualAllPeriodMarinerAccessSumInSeconds/actualAllPeriodClosureSumsInSeconds.size())));
-		
+
+		cell = row.createCell(6);
+		cell.setCellStyle(style13);
+		cell.setCellValue((double) (actualAllPeriodMarinerAccessSumInSeconds/actualAllPeriodClosureSumsInSeconds.size())/3600);
+
 		// Sum, mean and max of marine high-usage period cycles
 		if (BIASBridgeClosureAnalysisConfigPageController.getComputeMarineHighUsagePeriodActive())
 		{
@@ -510,6 +535,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell.setCellStyle(style11);
 			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedMarinePeriodsClosureSumInSeconds));
 
+			cell = row.createCell(5);
+			cell.setCellStyle(style11);
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarinePeriodMarinerAccessSumInSeconds));
+
+			cell = row.createCell(6);
+			cell.setCellStyle(style11);
+			cell.setCellValue("N/A");
+
 			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 7);
 			cell = row.createCell(7);
 			cell.setCellStyle(style10);
@@ -523,6 +556,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell.setCellStyle(style12);
 			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(reportedMarineWorstPeriodClosureInSeconds));
 
+			cell = row.createCell(5);
+			cell.setCellStyle(style12);
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarineWorstPeriodMarinerAccessInSeconds));
+
+			cell = row.createCell(6);
+			cell.setCellStyle(style14);
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarineWorstPeriodMarinerAccessInSeconds)/ConvertDateTime.convertSecondsToSerial(3600));
+
 			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 8);
 			cell = row.createCell(7);
 			cell.setCellStyle(style10);
@@ -535,6 +576,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell = row.createCell(4);
 			cell.setCellStyle(style12);
 			cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) reportedMarinePeriodsClosureSumInSeconds/reportedMarinePeriodClosureSumsInSeconds.size())));
+
+			cell = row.createCell(5);
+			cell.setCellStyle(style12);
+			cell.setCellValue(ConvertDateTime.convertSecondsToSerial((int) ((double) actualMarinePeriodMarinerAccessSumInSeconds/actualMarinePeriodMarinerAvailabilitySumsInSeconds.size())));
+			
+			cell = row.createCell(6);
+			cell.setCellStyle(style14);
+			cell.setCellValue((double) (actualMarinePeriodMarinerAccessSumInSeconds/actualMarinePeriodMarinerAvailabilitySumsInSeconds.size())/3600);
 		}
 
 		// Timestamp and footnote

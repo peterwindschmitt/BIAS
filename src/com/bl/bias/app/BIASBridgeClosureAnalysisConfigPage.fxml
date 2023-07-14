@@ -63,7 +63,7 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label maxWidth="400.0" minWidth="400.0" prefWidth="400.0" text="(Values which don't allow a clear aspect may result in inaccurate results)" GridPane.columnSpan="2" GridPane.rowIndex="4">
+            <Label maxWidth="500.0" minWidth="500.0" prefWidth="500.0" text="(Values not supporting the most favorable signal aspect may result in inaccurate results)" GridPane.columnSpan="2" GridPane.rowIndex="4">
                <padding>
                   <Insets left="25.0" />
                </padding>
@@ -245,7 +245,7 @@
                   <Insets left="110.0" />
                </GridPane.margin>
             </ComboBox>
-            <CheckBox fx:id="bridgeLowerTimeIncludedInSplitCheckBox" disable="true" mnemonicParsing="false" onAction="#handleBridgeLowerTimeIncludedInSplitCheckBox" selected="true" text="Consider in waterway/railway % split in hourly buckets" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
+            <CheckBox fx:id="bridgeLowerTimeIncludedInSplitCheckBox" disable="true" mnemonicParsing="false" onAction="#handleBridgeLowerTimeIncludedInSplitCheckBox" selected="true" text="Consider in railroad/mariner % split of time periods" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="260.0" right="15.0" top="-10.0" />
                </GridPane.margin>
@@ -253,7 +253,7 @@
                   <Font size="10.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="bridgeRaiseTimeIncludedInSplitCheckBox" disable="true" mnemonicParsing="false" onAction="#handleBridgeRaiseTimeIncludedInSplitCheckBox" selected="true" text="Consider in waterway/railway % split in hourly buckets" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
+            <CheckBox fx:id="bridgeRaiseTimeIncludedInSplitCheckBox" disable="true" mnemonicParsing="false" onAction="#handleBridgeRaiseTimeIncludedInSplitCheckBox" selected="true" text="Consider in railroad/mariner % split of time periods" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="250.0" right="15.0" top="-10.0" />
                </GridPane.margin>
