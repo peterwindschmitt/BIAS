@@ -40,12 +40,10 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	private static String defaultIncrementHourlyBucket = "None";
 	private static String defaultResultsExclusionPeriod = "1 day";
 
-	private static Boolean includeBridgeLowerTimeInSplits;
 	private static Boolean includeBridgeRaiseTimeInSplits;
 	private static Boolean recurringMarineAccessPeriodActive;
 	private static Boolean computeMarineHighUsagePeriodActive;
 
-	private static Boolean defaultIncludeBridgeLowerTimeInSplits = true;
 	private static Boolean defaultIncludeBridgeRaiseTimeInSplits = true;
 	private static Boolean defaultRecurringMarineAccessPeriodActive = false;
 	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
@@ -86,7 +84,6 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	@FXML private Label recurringMarineAccessPeriodSpanLabel;
 
 	@FXML private CheckBox computeMarineHighUsagePeriodCheckBox;
-	@FXML private CheckBox bridgeLowerTimeIncludedInSplitCheckBox;
 	@FXML private CheckBox bridgeRaiseTimeIncludedInSplitCheckBox;
 
 	@FXML private void initialize() 
@@ -109,22 +106,6 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			bridgeLowerCombobox.getSelectionModel().select(getDefaultLowerMinutes());
 		}
 		lowerMinutes = Integer.valueOf(prefs.get("bc_bridgeLowerMinutes", defaultLowerMinutes));
-
-		// See if including bridge lowering time in splits is stored
-		if (prefs.getBoolean("bc_includeBridgeLowerTimeInSplits", defaultIncludeBridgeLowerTimeInSplits))
-		{
-			includeBridgeLowerTimeInSplits = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", true);
-			bridgeLowerTimeIncludedInSplitCheckBox.setSelected(true);
-		}
-		else
-		{
-			includeBridgeLowerTimeInSplits = false;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", false);
-			bridgeLowerTimeIncludedInSplitCheckBox.setSelected(false);
-		}
 
 		// See if bridge raise time value is stored
 		bridgeRaiseCombobox.setItems(raiseLowerMinuteValues);
@@ -374,22 +355,6 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			prefs.put("bc_bridgeLowerMinutes", bridgeLowerCombobox.getValue());
 	}
 
-	@FXML private void handleBridgeLowerTimeIncludedInSplitCheckBox(ActionEvent event)
-	{
-		if (includeBridgeLowerTimeInSplits)
-		{
-			includeBridgeLowerTimeInSplits = false;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", false);
-		}
-		else
-		{
-			includeBridgeLowerTimeInSplits = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("bc_includeBridgeLowerTimeInSplits", true);
-		}
-	}
-
 	@FXML private void handleBridgeRaiseCombobox(ActionEvent event) 
 	{
 		raiseMinutes = Integer.valueOf(bridgeRaiseCombobox.getValue());
@@ -608,11 +573,6 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	public static Integer getLowerMinutes()
 	{
 		return lowerMinutes;
-	}
-
-	public static boolean getIncludeBridgeLowerTimeInClosureTime() 
-	{
-		return includeBridgeLowerTimeInSplits;
 	}
 
 	public static Integer getRaiseMinutes()

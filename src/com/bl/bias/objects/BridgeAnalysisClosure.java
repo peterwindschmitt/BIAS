@@ -28,7 +28,7 @@ public class BridgeAnalysisClosure
 	private Integer signalSetUpCompleteTimeInSeconds;
 	private Integer bridgeUpStartTimeInSeconds;
 	private Integer bridgeUpCompleteTimeInSeconds;
-
+	
 	public BridgeAnalysisClosure(ArrayList<String> trainSymbolsAndDirectionsInOccupancy, Integer preferredBridgeDownStartTimeInSeconds, Integer latestBridgeDownStartTimeInSeconds, Integer closureEndTimeInSeconds, Integer bridgeMoveDownDurationInSeconds, Integer signalSetUpDurationInSeconds, Integer bridgeMoveUpDurationInSeconds, Integer upTimeBetweenCurrentAndNextClosureInSeconds) 
 	{
 		this.trainSymbolsAndDirectionsInClosure.addAll(trainSymbolsAndDirectionsInOccupancy);
@@ -168,9 +168,19 @@ public class BridgeAnalysisClosure
 	{
 		return closureEndTimeInSeconds;
 	}
-
+	
 	public Integer getUpTimeBetweenCurrentAndNextClosureInSeconds() 
 	{
 		return upTimeBetweenCurrentAndNextClosureInSeconds;
+	}
+	
+	public Integer getBridgeMoveDownDurationInSeconds()
+	{
+		return bridgeMoveDownDurationInSeconds;
+	}
+	
+	public Integer getBridgeMoveUpDurationInSeconds()
+	{
+		return bridgeMoveUpDurationInSeconds;
 	}
 }
