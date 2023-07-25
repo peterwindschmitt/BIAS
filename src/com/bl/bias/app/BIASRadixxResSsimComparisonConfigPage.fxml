@@ -34,37 +34,37 @@
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="SSIM (IATA/S3) Comparison Parameters" underline="true">
+            <Label text="SSIM (IATA) Comparison Parameters" underline="true">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="1.  Analyze which record types in the SSIM (IATA/S3) file:" GridPane.rowIndex="1">
+            <Label text="1.  Analyze which record types in the SSIM (IATA) file:" GridPane.rowIndex="1">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-             <CheckBox fx:id="type1CheckBox" mnemonicParsing="false" onAction="#handleType1CheckBox" text="Type 1 (Header/Tape - IATA only)" GridPane.rowIndex="2">
+             <CheckBox fx:id="type1CheckBox" mnemonicParsing="false" onAction="#handleType1CheckBox" text="Type 1 (Header)" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="type2CheckBox" mnemonicParsing="false" onAction="#handleType2CheckBox" text="Type 2 (Carrier/Company)" GridPane.rowIndex="3">
+            <CheckBox fx:id="type2CheckBox" mnemonicParsing="false" onAction="#handleType2CheckBox" text="Type 2 (Carrier)" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="type3CheckBox" mnemonicParsing="false" onAction="#handleType3CheckBox" text="Type 3 (Flight (Train)/Timetable)" GridPane.rowIndex="4">
+            <CheckBox fx:id="type3CheckBox" mnemonicParsing="false" onAction="#handleType3CheckBox" text="Type 3 (Flight (Train))" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="type4CheckBox" mnemonicParsing="false" onAction="#handleType4CheckBox" text="Type 4 (Segment/Comment - IATA only)" GridPane.rowIndex="7">
+            <CheckBox fx:id="type4CheckBox" mnemonicParsing="false" onAction="#handleType4CheckBox" text="Type 4 (Segment)" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </CheckBox>
-           <CheckBox fx:id="type5CheckBox" mnemonicParsing="false" onAction="#handleType5CheckBox" text="Type 5 (Trailer/Final)" GridPane.rowIndex="8">
+           <CheckBox fx:id="type5CheckBox" mnemonicParsing="false" onAction="#handleType5CheckBox" text="Type 5 (Trailer)" GridPane.rowIndex="8">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
