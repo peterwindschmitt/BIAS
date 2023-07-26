@@ -304,6 +304,13 @@ public class BIASBridgeClosureAnalysisController
 
 			if (linkFileFound && lineFileFound && nodeFileFound && signalFileFound && routeFileFound)
 			{
+				// Reset
+				simulationBeginDay = null;
+				simulationBeginTime = null;
+				simulationDuration = null;
+				warmUpDuration = null;
+				coolDownDuration = null;
+				
 				// Required files also found
 				selectLineLabel.setDisable(false);
 				selectLineComboBox.setDisable(false);

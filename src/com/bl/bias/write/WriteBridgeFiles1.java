@@ -36,8 +36,6 @@ public class WriteBridgeFiles1
 	String entryNode;
 	String exitNode;
 
-	//Double headEndOS;
-	//Double tailEndOS;
 	Double actualDuration;
 	Double reportedDuration;
 
