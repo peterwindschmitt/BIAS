@@ -205,7 +205,12 @@ public class WriteBridgeFiles1
 			cell.setCellStyle(style4);
 
 			double serialSeconds = 0.0;
-			if ((i == 0) && (crossings.get(i).getEntryNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()))  // First crossing
+			if ((i == 0) && (crossings.get(i).getEntryNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()) 
+					&& (crossings.get(i).getEntryNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()))  // First crossing and Entry OS and Exit OS are before beginning of Analysis Period
+			{
+				serialSeconds = 0;
+			}
+			else if ((i == 0) && (crossings.get(i).getEntryNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()))  // First crossing and Entry OS BUT NOT Exit OS is before beginning of Analysis Period 
 			{
 				serialSeconds = ConvertDateTime.convertSecondsToSerial(crossings.get(i).getExitNodeOSSeconds() - BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds());
 			}

@@ -49,6 +49,8 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 	Boolean excludeBridgeRaiseTime = false;
 
+	Boolean debug = false;
+
 	String resultsMessage = getResultsMessageWrite2();
 
 	ArrayList<BridgeAnalysisClosure> closures = new ArrayList<BridgeAnalysisClosure>();
@@ -380,10 +382,13 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 							//Denominator
 							modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds();
 
-							/*System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
-							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-							System.out.println("type 1");*/
+							if (debug)
+							{
+								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+								System.out.println("type 1");
+							}
 						}
 					}	
 					else if (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod) // Place part of closure in this period and part of closure in next period(s)
@@ -406,10 +411,13 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 								//Denominator
 								modifiedTimeInThisPeriod -= endOfOneHourPeriod - closures.get(j).getBridgeUpStartTimeInSeconds();
 
-								/*System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
-								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-								System.out.println("type 2.1");*/
+								if (debug)
+								{
+									System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+									System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+									System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+									System.out.println("type 2.1");
+								}
 							}
 							else // Modified time occupied extends into next period
 							{
@@ -419,45 +427,61 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 								//Denominator
 								modifiedTimeInThisPeriod -= 0;
 
-								/*System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
-								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-								System.out.println("type 2.2"); */
+								if (debug)
+								{
+									System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+									System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+									System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+									System.out.println("type 2.2"); 
+								}
 							}
 						}
 					}
 					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) // First closure only and ends in single period
 					{
 						// Figure actual times here
-						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
+						timeOccupiedInThisPeriod = closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
 
 						// Figure modified times here
 						// If excluding raise time
 						if (!BIASBridgeClosureAnalysisConfigPageController.getIncludeBridgeRaiseTimeInClosureTime())
 						{	
 							//Numerator
-							modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod); 
-
+							modifiedTimeOccupiedInThisPeriod = (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod); 
+							if (modifiedTimeOccupiedInThisPeriod < 0)
+								modifiedTimeOccupiedInThisPeriod = 0;
+							
 							//Denominator
-							modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds();
+							if (closures.get(j).getBridgeUpStartTimeInSeconds() < startOfOneHourPeriod)
+							{
+								modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - startOfOneHourPeriod;
+							}
+							else
+								modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds();
 
-							/*System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
-							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-							System.out.println("type 3");*/
+							if (debug)
+							{
+								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+								System.out.println("type 3");
+							}
 						}
 					}
 					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod)) // First closure only and ends after first period
 					{
 						// Figure actual times here
-						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
+						timeOccupiedInThisPeriod = closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
 						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod;
 						if (timeOccupiedInNextPeriod >= 3600)
 							nextPeriodFull = true;
 						else
 							nextPeriodFull = false;
-						/*System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-						System.out.println("type 4");*/
+						if (debug)
+						{
+							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("type 4");
+						}
 					}
 					else if (closures.get(j).getBridgeUpStartTimeInSeconds() <= endOfOneHourPeriod) // Must account for part of modified time occupied in this period
 					{
@@ -467,10 +491,13 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 						//Denominator
 						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod);
 
-						/*System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-						System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
-						System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-						System.out.println("type 5");*/
+						if (debug)
+						{
+							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+							System.out.println("type 5");
+						}
 					}		
 				}
 			}
@@ -499,7 +526,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 				actualMarinePeriodsClosureSumInSeconds += timeOccupiedInThisPeriod;
 				actualMarinePeriodMarinerAvailabilitySumsInSeconds.put(i, (3600 - timeOccupiedInThisPeriod));
 				actualMarinePeriodMarinerAccessSumInSeconds += (3600 - timeOccupiedInThisPeriod);
-				
+
 				// MODIFIED
 				modifiedMarinePeriodMarinerAccessPercentages.put(i, (double) modifiedTimeOccupiedInThisPeriod/modifiedTimeInThisPeriod);
 			}
@@ -568,8 +595,11 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 				cell.setCellStyle(style13);
 				if (modifiedAllPeriodMarinerAccessSumsInSeconds.get(i) != 0)
 				{
-					/*System.out.println("period: "+(i+1)+" numerator: "+modifiedAllPeriodMarinerAccessSumsInSeconds.get(i)+" denominator: "+(modifiedAllPeriodMarinerAccessSumsInSeconds.get(i)+modifiedAllPeriodClosureSumsInSeconds.get(i)));
-					System.out.println((double) modifiedAllPeriodMarinerAccessSumsInSeconds.get(i)/((double) modifiedAllPeriodMarinerAccessSumsInSeconds.get(i) + (double) modifiedAllPeriodClosureSumsInSeconds.get(i))*100+"%\n");*/
+					if (debug)
+					{
+						System.out.println("period: "+(i+1)+" numerator: "+modifiedAllPeriodMarinerAccessSumsInSeconds.get(i)+" denominator: "+(modifiedAllPeriodMarinerAccessSumsInSeconds.get(i)+modifiedAllPeriodClosureSumsInSeconds.get(i)));
+						System.out.println((double) modifiedAllPeriodMarinerAccessSumsInSeconds.get(i)/((double) modifiedAllPeriodMarinerAccessSumsInSeconds.get(i) + (double) modifiedAllPeriodClosureSumsInSeconds.get(i))*100+"%\n");
+					}
 					cell.setCellValue(ConvertDateTime.convertSecondsToSerial(modifiedAllPeriodMarinerAccessSumsInSeconds.get(i))/ConvertDateTime.convertSecondsToSerial(modifiedAllPeriodMarinerAccessSumsInSeconds.get(i) + modifiedAllPeriodClosureSumsInSeconds.get(i)));
 				}
 			}
@@ -640,7 +670,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell.setCellStyle(style1);
 			cell.setCellValue("N/A");
 		}
-		
+
 		if (excludeBridgeRaiseTime)
 			cell = row.createCell(8);
 		else
@@ -672,14 +702,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell.setCellStyle(style13);
 			cell.setCellValue(1 - Collections.max(modifiedAllPeriodMarinerAccessPercentages.values()));
 		}
-		
+
 		if (excludeBridgeRaiseTime)
 			cell = row.createCell(8);
 		else
 			cell = row.createCell(7);
 		cell.setCellStyle(style6);
 		cell.setCellValue("Worst 1-hour period (h:mm:ss or %)");
-		
+
 		// Average
 		row = oneHourStatisticsSheet.createRow(oneHourPeriods + 5);
 		cell = row.createCell(3);
@@ -697,14 +727,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 		cell = row.createCell(6);
 		cell.setCellStyle(style13);
 		cell.setCellValue((double) (actualAllPeriodMarinerAccessSumInSeconds/actualAllPeriodClosureSumsInSeconds.size())/3600);
-		
+
 		if (excludeBridgeRaiseTime) 
 		{
 			cell = row.createCell(7);
 			cell.setCellStyle(style13);
 			cell.setCellValue(1 - modifiedAllPeriodMarinerAccessPercentages.values().stream().mapToDouble(Double::doubleValue).average().orElse(0));
 		}
-		
+
 		if (excludeBridgeRaiseTime)
 			cell = row.createCell(8);
 		else
@@ -739,7 +769,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 				cell.setCellStyle(style11);
 				cell.setCellValue("N/A");
 			}
-			
+
 			if (excludeBridgeRaiseTime)
 				cell = row.createCell(8);
 			else
@@ -764,21 +794,21 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell = row.createCell(6);
 			cell.setCellStyle(style14);
 			cell.setCellValue(ConvertDateTime.convertSecondsToSerial(actualMarineWorstPeriodMarinerAccessInSeconds)/ConvertDateTime.convertSecondsToSerial(3600));
-			
+
 			if (excludeBridgeRaiseTime)
 			{
 				cell = row.createCell(7);
 				cell.setCellStyle(style14);
 				cell.setCellValue(1 - Collections.max(modifiedMarinePeriodMarinerAccessPercentages.values()));
 			}
-			
+
 			if (excludeBridgeRaiseTime)
 				cell = row.createCell(8);
 			else
 				cell = row.createCell(7);
 			cell.setCellStyle(style10);
 			cell.setCellValue("Worst 1-hour period (h:mm:ss or %)");
-			
+
 			//Average
 			row = oneHourStatisticsSheet.createRow(oneHourPeriods + 8);
 			cell = row.createCell(3);
@@ -796,14 +826,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			cell = row.createCell(6);
 			cell.setCellStyle(style14);
 			cell.setCellValue((double) (actualMarinePeriodMarinerAccessSumInSeconds/actualMarinePeriodMarinerAvailabilitySumsInSeconds.size())/3600);
-			
+
 			if (excludeBridgeRaiseTime)
 			{
 				cell = row.createCell(7);
 				cell.setCellStyle(style14);
 				cell.setCellValue(1 - modifiedMarinePeriodMarinerAccessPercentages.values().stream().mapToDouble(Double::doubleValue).average().orElse(0));
 			}
-			
+
 			if (excludeBridgeRaiseTime)
 				cell = row.createCell(8);
 			else
