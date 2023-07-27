@@ -15,7 +15,7 @@ import com.bl.bias.objects.BridgeAnalysisSignal;
 import com.bl.bias.read.ReadBridgeClosureAnalysisFiles;
 import com.bl.bias.tools.CheckIfLineIsProperlyFormed;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteBridgeFiles4;
+import com.bl.bias.write.WriteBridgeFiles5;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -566,7 +566,7 @@ public class BIASBridgeClosureAnalysisController
 
 				// Write results to spreadsheet
 				writeFiles();
-				if (!WriteBridgeFiles4.getErrorFound())
+				if (!WriteBridgeFiles5.getErrorFound())
 				{
 					setProgressIndicator(1.0);
 					displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -595,7 +595,7 @@ public class BIASBridgeClosureAnalysisController
 
 	private void writeFiles() 
 	{
-		WriteBridgeFiles4 filesToWrite = new WriteBridgeFiles4(textArea.getText(), saveFileLocationForUserSpecifiedFileName);
+		WriteBridgeFiles5 filesToWrite = new WriteBridgeFiles5(textArea.getText(), saveFileLocationForUserSpecifiedFileName);
 		displayMessage(filesToWrite.getResultsWriteMessage4());
 	}
 
