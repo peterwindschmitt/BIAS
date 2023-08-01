@@ -301,15 +301,14 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 		int oneHourPeriods = ((BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds() - BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()) / 3600);
 
-		Integer timeOccupiedInThisPeriod = 0;
-		Integer timeOccupiedInNextPeriod = 0;
-
 		Boolean nextPeriodFull = false;
 
 		for (int i = 0; i < oneHourPeriods; i++)
 		{
 			row = oneHourStatisticsSheet.createRow(i + 2);
 
+			Integer timeOccupiedInThisPeriod = 0;
+			Integer timeOccupiedInNextPeriod = 0;
 			Integer modifiedTimeOccupiedInThisPeriod = 0;
 			Integer modifiedTimeInThisPeriod = 3600;
 
@@ -357,20 +356,21 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 				for (int j = 0; j < closures.size(); j++)
 				{
-
-					if (closures.get(j).getClosureStartTimeInSeconds() > endOfOneHourPeriod) // Closure that is entirely contained in a future period
+					// 1.  Closure that is entirely contained in a future period
+					if (closures.get(j).getClosureStartTimeInSeconds() > endOfOneHourPeriod) 
 					{
 						continue;
 					}
-					else if (closures.get(j).getClosureEndTimeInSeconds() < startOfOneHourPeriod) // Closure that is entirely contained in a past period
+					// 2.  Closure that is entirely contained in a past period
+					else if (closures.get(j).getClosureEndTimeInSeconds() < startOfOneHourPeriod) 
 					{
 						continue;
 					}
-					else if ((closures.get(j).getClosureStartTimeInSeconds() >= startOfOneHourPeriod) 
-							&& (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) // Closure that is entirely contained in this period
+					// 3.  Closure that is entirely contained in this period
+					else if ((closures.get(j).getClosureStartTimeInSeconds() >= startOfOneHourPeriod) && (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) 
 					{
 						// Figure actual times here
-						timeOccupiedInThisPeriod += closures.get(j).getClosureEndTimeInSeconds() - closures.get(j).getClosureStartTimeInSeconds();
+						timeOccupiedInThisPeriod += (closures.get(j).getClosureEndTimeInSeconds() - closures.get(j).getClosureStartTimeInSeconds());
 
 						// Figure modified times here
 						// If excluding raise time
@@ -380,22 +380,118 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 							modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - closures.get(j).getPlannedBridgeDownStartTimeInSeconds()); 
 
 							//Denominator
-							modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds();
+							modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds());
 
 							if (debug)
 							{
 								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("closure: "+(j+1));
 								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-								System.out.println("type 1");
+								System.out.println("type 3");
 							}
 						}
+					}
+					// 4.  First closure AND first period AND closure ends in first period
+					else if ((j == 0) && (i == 0) && (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) 
+					{
+						// Figure actual times here
+						timeOccupiedInThisPeriod = (closures.get(j).getClosureEndTimeInSeconds() - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds()));
+
+						// Figure modified times here
+						// If excluding raise time
+						if (!BIASBridgeClosureAnalysisConfigPageController.getIncludeBridgeRaiseTimeInClosureTime())
+						{	
+							//Numerator
+							modifiedTimeOccupiedInThisPeriod = (closures.get(j).getBridgeUpStartTimeInSeconds() - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds()));
+							if (modifiedTimeOccupiedInThisPeriod < 0)
+								modifiedTimeOccupiedInThisPeriod = 0;
+
+							//Denominator
+							if (closures.get(j).getBridgeUpStartTimeInSeconds() < startOfOneHourPeriod)
+							{
+								modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - startOfOneHourPeriod);
+							}
+							else
+								modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds());
+
+							if (debug)
+							{
+								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("closure: "+(j+1));
+								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+								System.out.println("type 4");
+							}
+						}
+					}
+					// 5.  First closure AND first period AND closure ends after first period
+					else if ((j == 0) && (i == 0) && (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod)) 
+					{
+						// Figure actual times here
+						timeOccupiedInThisPeriod = (closures.get(j).getClosureEndTimeInSeconds() - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds()));
+						timeOccupiedInNextPeriod = (closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod);
+
+						if (timeOccupiedInNextPeriod >= 3600)
+							nextPeriodFull = true;
+						else
+							nextPeriodFull = false;
+
+						// Figure modified times here
+						// If excluding raise time
+						if (!BIASBridgeClosureAnalysisConfigPageController.getIncludeBridgeRaiseTimeInClosureTime())
+						{	
+							if ((closures.get(j).getBridgeUpStartTimeInSeconds() <= endOfOneHourPeriod)  && (closures.get(j).getBridgeUpCompleteTimeInSeconds() > endOfOneHourPeriod)) // Must account for part of modified time occupied in this period
+							{
+								//Numerator
+								modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds())); 
+
+								// Denominator
+								modifiedTimeInThisPeriod -= (endOfOneHourPeriod - (closures.get(j).getBridgeUpStartTimeInSeconds())); 
+							}
+							else
+							{
+								// Numerator
+								modifiedTimeOccupiedInThisPeriod += (endOfOneHourPeriod - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds())); 
+
+								//Denominator
+								modifiedTimeInThisPeriod -= 0;
+							}
+							if (debug)
+							{
+								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("closure: "+(j+1));
+								System.out.println("type 5");
+							}
+						}
+					}
+					// 6.  Closure ends in next period BUT bridge starts up in this period.  Must account for part of modified time occupied in this period
+					else if ((closures.get(j).getBridgeUpStartTimeInSeconds() <= endOfOneHourPeriod) && (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod))
+					{
+						// Figure actual times here
+						timeOccupiedInThisPeriod += (endOfOneHourPeriod - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds()));
+
+						//Numerator
+						modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds())); 
+
+						//Denominator
+						modifiedTimeInThisPeriod -= (endOfOneHourPeriod - (closures.get(j).getBridgeUpStartTimeInSeconds())); 
+
+						if (debug)
+						{
+							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("closure: "+(j+1));
+							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
+							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
+							System.out.println("type 6");
+						}
 					}	
-					else if (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod) // Place part of closure in this period and part of closure in next period(s)
+					// 7.  Place part of closure in this period and part of closure in next period(s)
+					else if (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod) 
 					{
 						// Figure actual times here
 						timeOccupiedInThisPeriod += (endOfOneHourPeriod - closures.get(j).getClosureStartTimeInSeconds());
-						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod;
+						timeOccupiedInNextPeriod = (closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod);
 						if (timeOccupiedInNextPeriod >= 3600)
 							nextPeriodFull = true;
 						else
@@ -409,14 +505,15 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 								modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - closures.get(j).getPlannedBridgeDownStartTimeInSeconds()); 
 
 								//Denominator
-								modifiedTimeInThisPeriod -= endOfOneHourPeriod - closures.get(j).getBridgeUpStartTimeInSeconds();
+								modifiedTimeInThisPeriod -= (endOfOneHourPeriod - closures.get(j).getBridgeUpStartTimeInSeconds());
 
 								if (debug)
 								{
 									System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+									System.out.println("closure: "+(j+1));
 									System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 									System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-									System.out.println("type 2.1");
+									System.out.println("type 7.1");
 								}
 							}
 							else // Modified time occupied extends into next period
@@ -430,75 +527,35 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 								if (debug)
 								{
 									System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+									System.out.println("closure: "+(j+1));
 									System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 									System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-									System.out.println("type 2.2"); 
+									System.out.println("type 7.2"); 
 								}
 							}
 						}
 					}
-					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() <= endOfOneHourPeriod)) // First closure only and ends in single period
+					// 8.  Started in an earlier period AND ends in this period AND not first closure	
+					else 
 					{
 						// Figure actual times here
-						timeOccupiedInThisPeriod = closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
+						timeOccupiedInThisPeriod += (closures.get(j).getBridgeUpCompleteTimeInSeconds() - startOfOneHourPeriod);
 
-						// Figure modified times here
-						// If excluding raise time
-						if (!BIASBridgeClosureAnalysisConfigPageController.getIncludeBridgeRaiseTimeInClosureTime())
-						{	
-							//Numerator
-							modifiedTimeOccupiedInThisPeriod = (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod); 
-							if (modifiedTimeOccupiedInThisPeriod < 0)
-								modifiedTimeOccupiedInThisPeriod = 0;
-							
-							//Denominator
-							if (closures.get(j).getBridgeUpStartTimeInSeconds() < startOfOneHourPeriod)
-							{
-								modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - startOfOneHourPeriod;
-							}
-							else
-								modifiedTimeInThisPeriod -= closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds();
-
-							if (debug)
-							{
-								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
-								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-								System.out.println("type 3");
-							}
-						}
-					}
-					else if ((j == 0) && (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod)) // First closure only and ends after first period
-					{
-						// Figure actual times here
-						timeOccupiedInThisPeriod = closures.get(j).getClosureEndTimeInSeconds() - startOfOneHourPeriod;
-						timeOccupiedInNextPeriod = closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod;
-						if (timeOccupiedInNextPeriod >= 3600)
-							nextPeriodFull = true;
-						else
-							nextPeriodFull = false;
-						if (debug)
-						{
-							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
-							System.out.println("type 4");
-						}
-					}
-					else if (closures.get(j).getBridgeUpStartTimeInSeconds() <= endOfOneHourPeriod) // Must account for part of modified time occupied in this period
-					{
 						//Numerator
 						modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod); 
 
 						//Denominator
-						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod);
-
+						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds()); 
+						
 						if (debug)
 						{
 							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("closure: "+(j+1));
 							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
-							System.out.println("type 5");
+							System.out.println("type 8");
 						}
-					}		
+					}
 				}
 			}
 
