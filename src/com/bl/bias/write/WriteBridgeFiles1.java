@@ -206,7 +206,7 @@ public class WriteBridgeFiles1
 
 			double serialSeconds = 0.0;
 			if ((i == 0) && (crossings.get(i).getEntryNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()) 
-					&& (crossings.get(i).getEntryNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()))  // First crossing and Entry OS and Exit OS are before beginning of Analysis Period
+					&& (crossings.get(i).getExitNodeOSSeconds() < BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()))  // First crossing and Entry OS and Exit OS are before beginning of Analysis Period
 			{
 				serialSeconds = 0;
 			}
