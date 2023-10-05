@@ -146,15 +146,15 @@ public class ReadRTCResultsAnalysisTypeFiles
 												else
 													otpResult = String.valueOf(Double.parseDouble(formatter2.format(customCategory1OTPEntireNetwork/customCategory1TrainCountEntireNetwork)));										
 												
-												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																											// File name
-													newLineName1.trim(), 																																				// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory1(), 																							// Train type
-													customCategory1TrainCountEntireNetwork,																																// Train count, sum
-													Double.parseDouble(formatter1.format(customCategory1VelocityEntireNetwork/customCategory1TrainCountEntireNetwork)),													// Velocity, avg
-													Double.parseDouble(formatter2.format(customCategory1TrainMilesEntireNetwork)),																						// Train miles, sum
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1ElapsedTimeEntireNetwork)),																	// Elapsed time, sum
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1IdealRunTimeEntireNetwork)),																	// Ideal run time, sum
-													otpResult);																																							// OTP, avg
+												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),								// File name
+													newLineName1.trim(), 																										// Line name
+													BIASCustomAssignmentsWindowController.returnCustomCategory1(), 																// Train type
+													customCategory1TrainCountEntireNetwork,																						// Train count, sum
+													Double.parseDouble(formatter1.format(customCategory1VelocityEntireNetwork/customCategory1TrainCountEntireNetwork)),			// Velocity, avg
+													Double.parseDouble(formatter2.format(customCategory1TrainMilesEntireNetwork)),												// Train miles, sum
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1ElapsedTimeEntireNetwork)),					// Elapsed time, sum
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1IdealRunTimeEntireNetwork)),					// Ideal run time, sum
+													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 												
 												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory1()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
@@ -171,15 +171,15 @@ public class ReadRTCResultsAnalysisTypeFiles
 												else
 													otpResult = String.valueOf(Double.parseDouble(formatter2.format(customCategory2OTPEntireNetwork/customCategory2TrainCountEntireNetwork)));										
 												
-												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																											// File name
-													newLineName1.trim(), 																																				// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory2(), 																							// Train type
-													customCategory2TrainCountEntireNetwork,																																// Train count, sum
-													Double.parseDouble(formatter1.format(customCategory2VelocityEntireNetwork/customCategory2TrainCountEntireNetwork)),													// Velocity, avg
-													Double.parseDouble(formatter2.format(customCategory2TrainMilesEntireNetwork)),																						// Train miles, sum
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2ElapsedTimeEntireNetwork)),																	// Elapsed time, sum	
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2IdealRunTimeEntireNetwork)),																	// Ideal run time, sum
-													otpResult);																																							// OTP, avg
+												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),								// File name
+													newLineName1.trim(), 																										// Line name
+													BIASCustomAssignmentsWindowController.returnCustomCategory2(), 																// Train type
+													customCategory2TrainCountEntireNetwork,																						// Train count, sum
+													Double.parseDouble(formatter1.format(customCategory2VelocityEntireNetwork/customCategory2TrainCountEntireNetwork)),			// Velocity, avg
+													Double.parseDouble(formatter2.format(customCategory2TrainMilesEntireNetwork)),												// Train miles, sum
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2ElapsedTimeEntireNetwork)),					// Elapsed time, sum	
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2IdealRunTimeEntireNetwork)),					// Ideal run time, sum
+													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 
 												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory2()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
@@ -189,11 +189,11 @@ public class ReadRTCResultsAnalysisTypeFiles
 										}
 										else if (openingSequence)
 										{ 
-											RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																																								// File name
-													newLineName1.trim(), 																																																// Line name
+											RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																										// File name
+													newLineName1.trim(), 																																											// Line name
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim(), 							// Train type
 													Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[1])).trim()),		// Train count
-													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[1])).trim()),			// Velocity
+													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[1])).trim()),					// Velocity
 													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[1])).trim()),		// Train miles
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[0]), Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[1])).trim(),				// Elapsed time
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[0]), Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[1])).trim(),					// Ideal run time
@@ -285,17 +285,17 @@ public class ReadRTCResultsAnalysisTypeFiles
 												if (customCategory1OTPInvalid)
 													otpResult = "-----";
 												else
-													otpResult = String.valueOf(Double.parseDouble(formatter2.format(customCategory1OTP/customCategory1TrainCount)));										
+													otpResult = String.valueOf(Double.parseDouble(formatter2.format(customCategory1OTP/customCategory1TrainCount)));			
 												
-												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																											// File name
-													newLineName2[0].trim(), 																																			// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory1(), 																							// Train type
-													customCategory1TrainCount,																																			// Train count, sum
-													Double.parseDouble(formatter1.format(customCategory1Velocity/customCategory1TrainCount)),																			// Velocity, avg
-													Double.parseDouble(formatter2.format(customCategory1TrainMiles)),																									// Train miles, sum
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1ElapsedTime)),																					// Elapsed time, sum
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1IdealRunTime)),																				// Ideal run time, sum
-													otpResult);																																							// OTP, avg
+												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),								// File name
+													newLineName2[0].trim(), 																									// Line name
+													BIASCustomAssignmentsWindowController.returnCustomCategory1(), 																// Train type
+													customCategory1TrainCount,																									// Train count, sum
+													Double.parseDouble(formatter1.format(customCategory1Velocity/customCategory1TrainCount)),									// Velocity, avg
+													Double.parseDouble(formatter2.format(customCategory1TrainMiles)),															// Train miles, sum
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1ElapsedTime)),									// Elapsed time, sum
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory1IdealRunTime)),								// Ideal run time, sum
+													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 												
 												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory1()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
@@ -313,14 +313,14 @@ public class ReadRTCResultsAnalysisTypeFiles
 													otpResult = String.valueOf(Double.parseDouble(formatter2.format(customCategory2OTP/customCategory2TrainCount)));										
 												
 												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																											// File name
-													newLineName2[0].trim(), 																																			// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory2(), 																							// Train type
-													customCategory2TrainCount,																																			// Train count, sum
-													Double.parseDouble(formatter1.format(customCategory2Velocity/customCategory2TrainCount)),																			// Velocity, avg
-													Double.parseDouble(formatter2.format(customCategory2TrainMiles)),																									// Train miles, sum
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2ElapsedTime)),																					// Elapsed time, sum	
-													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2IdealRunTime)),																				// Ideal run time, sum
-													otpResult);																																							// OTP, avg
+													newLineName2[0].trim(), 																									// Line name
+													BIASCustomAssignmentsWindowController.returnCustomCategory2(), 																// Train type
+													customCategory2TrainCount,																									// Train count, sum
+													Double.parseDouble(formatter1.format(customCategory2Velocity/customCategory2TrainCount)),									// Velocity, avg
+													Double.parseDouble(formatter2.format(customCategory2TrainMiles)),															// Train miles, sum
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2ElapsedTime)),									// Elapsed time, sum	
+													String.valueOf(ConvertDateTime.convertSecondsToDDHHMMSSString(customCategory2IdealRunTime)),								// Ideal run time, sum
+													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 												
 												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory2()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
@@ -331,10 +331,10 @@ public class ReadRTCResultsAnalysisTypeFiles
 										else if (openingSequence)
 										{ 
 											RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																																								// File name
-													newLineName2[0].trim(), 																																															// Line name
+													newLineName2[0].trim(), 																																										// Line name
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim(), 							// Train type
 													Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[1])).trim()),		// Train count
-													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[1])).trim()),			// Velocity
+													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[1])).trim()),					// Velocity
 													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[1])).trim()),		// Train miles
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[0]), Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[1])).trim(),				// Elapsed time
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[0]), Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[1])).trim(),					// Ideal run time

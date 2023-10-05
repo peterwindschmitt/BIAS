@@ -27,7 +27,7 @@ public class BIASLaunch extends Application
 	// 3.6 was 2/15/2023 (added check #8 for SSIM conversion)
 	// 3.7 was 3/20/2023 (added check #9 for SSIM conversion)
 	// 3.8 was 5/4/2023 (fixed bug in conversion of local time to UTC when generating SSIM)
-	// 3.9 was x/xx/2023 (added options for calculation of bridge closure periods)
+	// 3.9 was 7/10/2023 (added options for calculation of bridge closure periods)
 	private final static String version = "3.9 (July 10, 2023)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 3;
  	//

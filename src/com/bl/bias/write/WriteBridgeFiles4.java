@@ -385,7 +385,7 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 
 							if (debug)
 							{
-								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+								System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 								System.out.println("closure: "+(j+1));
 								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 								System.out.println("timeInThisPeriod: 7200 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -418,7 +418,7 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 
 							if (debug)
 							{
-								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+								System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 								System.out.println("closure: "+(j+1));
 								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 								System.out.println("timeInThisPeriod: 7200 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -460,7 +460,7 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 							}
 							if (debug)
 							{
-								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+								System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 								System.out.println("closure: "+(j+1));
 								System.out.println("type 5");
 							}
@@ -480,7 +480,7 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 
 						if (debug)
 						{
-							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+							System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 							System.out.println("closure: "+(j+1));
 							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 							System.out.println("timeInThisPeriod: 7200 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -510,7 +510,7 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 
 								if (debug)
 								{
-									System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+									System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 									System.out.println("closure: "+(j+1));
 									System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 									System.out.println("timeInThisPeriod: 7200 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -527,7 +527,7 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 
 								if (debug)
 								{
-									System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+									System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 									System.out.println("closure: "+(j+1));
 									System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 									System.out.println("timeInThisPeriod: 7200 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -543,14 +543,14 @@ public class WriteBridgeFiles4 extends WriteBridgeFiles3
 						timeOccupiedInThisPeriod += (closures.get(j).getBridgeUpCompleteTimeInSeconds() - startOfTwoHourPeriod);
 
 						//Numerator
-						modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfTwoHourPeriod); 
-
+						modifiedTimeOccupiedInThisPeriod += (Math.max(closures.get(j).getBridgeUpStartTimeInSeconds(), startOfTwoHourPeriod) - startOfTwoHourPeriod); 
+						
 						//Denominator
-						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds()); 
+						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - Math.max(closures.get(j).getBridgeUpStartTimeInSeconds(), startOfTwoHourPeriod)); 
 						
 						if (debug)
 						{
-							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
+							System.out.println("period: "+(i+1)+" start of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfTwoHourPeriod)+" end of two hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfTwoHourPeriod));
 							System.out.println("closure: "+(j+1));
 							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 							System.out.println("timeInThisPeriod: 7200 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);

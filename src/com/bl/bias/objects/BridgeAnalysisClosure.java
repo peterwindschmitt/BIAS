@@ -29,6 +29,8 @@ public class BridgeAnalysisClosure
 	private Integer bridgeUpStartTimeInSeconds;
 	private Integer bridgeUpCompleteTimeInSeconds;
 	
+	Boolean debug = false;
+	
 	public BridgeAnalysisClosure(ArrayList<String> trainSymbolsAndDirectionsInOccupancy, Integer preferredBridgeDownStartTimeInSeconds, Integer latestBridgeDownStartTimeInSeconds, Integer closureEndTimeInSeconds, Integer bridgeMoveDownDurationInSeconds, Integer signalSetUpDurationInSeconds, Integer bridgeMoveUpDurationInSeconds, Integer upTimeBetweenCurrentAndNextClosureInSeconds) 
 	{
 		this.trainSymbolsAndDirectionsInClosure.addAll(trainSymbolsAndDirectionsInOccupancy);
@@ -69,10 +71,13 @@ public class BridgeAnalysisClosure
 	{
 		if (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(preferredBridgeDownStartTimeInSeconds)) 
 		{
-			//System.out.print("Preferred bridge down start request at "+preferredClosureStartTimeInSeconds+" which is "+ConvertDateTime.convertSecondsToDDHHMMSSString(preferredClosureStartTimeInSeconds));
-			//System.out.print(" and occcurs during marine access period starting at minute "+Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute().replace(":", ""))+" and ending at minute "+Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", ""))+".");
-			//System.out.println(" Latest start down time at "+latestBridgeDownStartTimeInSeconds+" which is "+ConvertDateTime.convertSecondsToDDHHMMSSString(latestBridgeDownStartTimeInSeconds)+".");
-
+			if (debug)
+			{
+				System.out.print("Preferred bridge down start request at "+preferredBridgeDownStartTimeInSeconds+" which is "+ConvertDateTime.convertSecondsToDDHHMMSSString(preferredBridgeDownStartTimeInSeconds));
+				System.out.print(" and occcurs during marine access period starting at minute "+Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute().replace(":", ""))+" and ending at minute "+Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", ""))+".");
+				System.out.println(" Latest start down time at "+latestBridgeDownStartTimeInSeconds+" which is "+ConvertDateTime.convertSecondsToDDHHMMSSString(latestBridgeDownStartTimeInSeconds)+".");
+			}
+			
 			plannedBridgeDownStartTimeInSeconds = preferredBridgeDownStartTimeInSeconds;
 
 			int incrementAmountInSeconds = 300; // 300 seconds reflects 5 min increments from bridge config selection
@@ -82,7 +87,8 @@ public class BridgeAnalysisClosure
 					&& (ConvertDateTime.convertSecondsToMM(latestBridgeDownStartTimeInSeconds) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", "")))
 					&& (ConvertDateTime.convertSecondsToMM(latestBridgeDownStartTimeInSeconds) > Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute().replace(":", "")))))
 			{
-				//System.out.print("C0: ");
+				if (debug)
+					System.out.print("C0: ");
 				plannedBridgeDownStartTimeInSeconds = latestBridgeDownStartTimeInSeconds;
 			}
 			// Case 1:  If marine period does contain top of hour AND if latest bridge down start time occurs between start and end of marine period (not inclusive)
@@ -90,18 +96,21 @@ public class BridgeAnalysisClosure
 					&& ((ConvertDateTime.convertSecondsToMM(latestBridgeDownStartTimeInSeconds) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", "")))
 					|| (ConvertDateTime.convertSecondsToMM(latestBridgeDownStartTimeInSeconds) > Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute().replace(":", ""))))))
 			{
-				//System.out.print("C1: ");
+				if (debug)
+					System.out.print("C1: ");
 				plannedBridgeDownStartTimeInSeconds = latestBridgeDownStartTimeInSeconds;
 			}
 			// Case 2:  When end of marine period is NOT going to exceed top of the hour AND incrementing to next 5 minutes does NOT exceed latest bridge down start time
 			else if (((Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", "")) > (Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute().replace(":", "")))
 					&& (plannedBridgeDownStartTimeInSeconds + incrementAmountInSeconds <= latestBridgeDownStartTimeInSeconds))))
 			{
-				//System.out.print("C2: ");
+				if (debug)
+					System.out.print("C2: ");
 				do 
 				{
 					plannedBridgeDownStartTimeInSeconds = (int) ConvertDateTime.ceilingToNearestIncrementOfSeconds(plannedBridgeDownStartTimeInSeconds, incrementAmountInSeconds); 
-					//System.out.print("*");
+					if (debug)
+						System.out.print("*");
 				}
 				while
 					(ConvertDateTime.convertSecondsToMM(plannedBridgeDownStartTimeInSeconds) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", ""))
@@ -111,21 +120,23 @@ public class BridgeAnalysisClosure
 			else if (((Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", "")) < (Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodStartMinute().replace(":", "")))
 					&& (plannedBridgeDownStartTimeInSeconds + incrementAmountInSeconds <= latestBridgeDownStartTimeInSeconds))))
 			{
-				//System.out.print("C3: ");
+				if (debug)
+					System.out.print("C3: ");
 				do 
 				{
 					plannedBridgeDownStartTimeInSeconds = (int) ConvertDateTime.ceilingToNearestIncrementOfSeconds(plannedBridgeDownStartTimeInSeconds, incrementAmountInSeconds); 
-					//System.out.print("*");
+					if (debug)
+						System.out.print("*");
 				}
 				while
 					(ConvertDateTime.convertSecondsToMM(plannedBridgeDownStartTimeInSeconds) < Integer.valueOf(BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodEndMinute().replace(":", ""))
 							&& (plannedBridgeDownStartTimeInSeconds <= latestBridgeDownStartTimeInSeconds)); 
 			}
-			//else
-				//System.out.println("Shit");
+			
 
 			// Output
-			// System.out.print("Planned start down time is set to "+plannedBridgeDownStartTimeInSeconds + " which is "+ConvertDateTime.convertSecondsToDDHHMMSSString(plannedBridgeDownStartTimeInSeconds)+".\n\n");
+			if (debug)
+				System.out.print("Planned start down time is set to "+plannedBridgeDownStartTimeInSeconds + " which is "+ConvertDateTime.convertSecondsToDDHHMMSSString(plannedBridgeDownStartTimeInSeconds)+".\n\n");
 		}
 		else
 		{

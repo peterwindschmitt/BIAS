@@ -240,7 +240,7 @@ public class BIASRTCResultsAnalysisPageController
 			{
 				validFilesAvailable.set(files.size());
 				clearMessage();
-				message = "BIASLaunch RTC Results Analysis Module - "+BIASLaunch.getSoftwareVersion();
+				message = "BIAS RTC Results Analysis Module - "+BIASLaunch.getSoftwareVersion();
 				message += "\n\nSet to review "+String.valueOf(files.size())+" .SUMMARY files from "+directory.toString()+"\n";
 				displayMessage(message);
 				lastDirectory = directory;

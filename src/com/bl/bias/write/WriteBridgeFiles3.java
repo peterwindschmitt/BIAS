@@ -49,7 +49,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 	Boolean excludeBridgeRaiseTime = false;
 
-	Boolean debug = false;
+	Boolean debug = true;
 
 	String resultsMessage = getResultsMessageWrite2();
 
@@ -429,7 +429,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 					else if ((j == 0) && (i == 0) && (closures.get(j).getClosureEndTimeInSeconds() > endOfOneHourPeriod)) 
 					{
 						// Figure actual times here
-						timeOccupiedInThisPeriod = (closures.get(j).getClosureEndTimeInSeconds() - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds()));
+						timeOccupiedInThisPeriod = (endOfOneHourPeriod - Math.max(startOfOneHourPeriod, closures.get(j).getPlannedBridgeDownStartTimeInSeconds()));
 						timeOccupiedInNextPeriod = (closures.get(j).getClosureEndTimeInSeconds() - endOfOneHourPeriod);
 
 						if (timeOccupiedInNextPeriod >= 3600)
@@ -542,10 +542,10 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 						timeOccupiedInThisPeriod += (closures.get(j).getBridgeUpCompleteTimeInSeconds() - startOfOneHourPeriod);
 
 						//Numerator
-						modifiedTimeOccupiedInThisPeriod += (closures.get(j).getBridgeUpStartTimeInSeconds() - startOfOneHourPeriod); 
-
+						modifiedTimeOccupiedInThisPeriod += (Math.max(closures.get(j).getBridgeUpStartTimeInSeconds(), startOfOneHourPeriod) - startOfOneHourPeriod); 
+						
 						//Denominator
-						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - closures.get(j).getBridgeUpStartTimeInSeconds()); 
+						modifiedTimeInThisPeriod -= (closures.get(j).getBridgeUpCompleteTimeInSeconds() - Math.max(closures.get(j).getBridgeUpStartTimeInSeconds(), startOfOneHourPeriod)); 
 						
 						if (debug)
 						{

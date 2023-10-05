@@ -96,11 +96,11 @@ public class ReadRTCResultsAnalysisGroupFiles
 										}
 										else if (openingSequence)
 										{ 
-											RTCResultsAnalysisGroupDataRow dataToInsert = new RTCResultsAnalysisGroupDataRow(returnFileName(),																																					// File name
-													newLineName1.trim(),																																													// Line name
+											RTCResultsAnalysisGroupDataRow dataToInsert = new RTCResultsAnalysisGroupDataRow(returnFileName(),																										// File name
+													newLineName1.trim(),																																											// Line name
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[2]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[3])).trim(), 							// Train Group
 													Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[2]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[3])).trim()),		// Train count
-													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[2]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[3])).trim()),			// Velocity
+													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[2]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[3])).trim()),					// Velocity
 													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[2]), Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[3])).trim()),		// Train miles
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[2]), Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[3])).trim(),				// Elapsed time
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[2]), Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[3])).trim(),					// Ideal run time
@@ -139,10 +139,10 @@ public class ReadRTCResultsAnalysisGroupFiles
 										else if (openingSequence)
 										{ 
 											RTCResultsAnalysisGroupDataRow dataToInsert = new RTCResultsAnalysisGroupDataRow(returnFileName(),																																					// File name
-													newLineName2[0].trim(),																																													// Line name
+													newLineName2[0].trim(),																																											// Line name
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[2]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[3])).trim(), 							// Train Group
 													Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[2]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCount()[3])).trim()),		// Train count
-													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[2]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[3])).trim()),			// Velocity
+													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[2]), Integer.valueOf(BIASParseConfigPageController.x_getSpeed()[3])).trim()),					// Velocity
 													Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[2]), Integer.valueOf(BIASParseConfigPageController.x_getTrainMiles()[3])).trim()),		// Train miles
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[2]), Integer.valueOf(BIASParseConfigPageController.x_getElapsedRunTime()[3])).trim(),				// Elapsed time
 													lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[2]), Integer.valueOf(BIASParseConfigPageController.x_getIdealRunTime()[3])).trim(),					// Ideal run time
