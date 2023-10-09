@@ -49,7 +49,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 	Boolean excludeBridgeRaiseTime = false;
 
-	Boolean debug = true;
+	Boolean debug = false;
 
 	String resultsMessage = getResultsMessageWrite2();
 
@@ -301,6 +301,11 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 		int oneHourPeriods = ((BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds() - BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds()) / 3600);
 
+		if (debug)
+		{
+			System.out.println("*** Debug for 1-hour periods follows ***\n");
+		}
+		
 		for (int i = 0; i < oneHourPeriods; i++)
 		{
 			row = oneHourStatisticsSheet.createRow(i + 2);
