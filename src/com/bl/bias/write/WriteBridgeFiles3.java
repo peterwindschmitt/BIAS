@@ -26,47 +26,44 @@ import com.bl.bias.tools.DoesEventOccurDuringActiveMarineAccessPeriod;
 
 public class WriteBridgeFiles3 extends WriteBridgeFiles2
 {
-	String dayOfWeek;
-	String oneHourPeriod;
+	private Integer actualAllPeriodsClosureSumInSeconds = 0;
+	private Integer actualWorstAllPeriodClosureInSeconds = 0;
+	private Integer actualMarinePeriodsClosureSumInSeconds = 0;
+	private Integer actualMarineWorstPeriodClosureInSeconds = 0;
 
-	Integer actualAllPeriodsClosureSumInSeconds = 0;
-	Integer actualWorstAllPeriodClosureInSeconds = 0;
-	Integer actualMarinePeriodsClosureSumInSeconds = 0;
-	Integer actualMarineWorstPeriodClosureInSeconds = 0;
+	private Integer modifiedAllPeriodsClosureSumInSeconds = 0;
+	private Integer modifiedAllPeriodMarinerAccessSumInSeconds = 0;
 
-	Integer modifiedAllPeriodsClosureSumInSeconds = 0;
-	Integer modifiedAllPeriodMarinerAccessSumInSeconds = 0;
+	private Integer reportedAllPeriodsClosureSumInSeconds = 0;
+	private Integer reportedWorstAllPeriodClosureInSeconds = 0;
+	private Integer reportedMarinePeriodsClosureSumInSeconds = 0;
+	private Integer reportedMarineWorstPeriodClosureInSeconds = 0;
 
-	Integer reportedAllPeriodsClosureSumInSeconds = 0;
-	Integer reportedWorstAllPeriodClosureInSeconds = 0;
-	Integer reportedMarinePeriodsClosureSumInSeconds = 0;
-	Integer reportedMarineWorstPeriodClosureInSeconds = 0;
+	private Integer actualAllPeriodMarinerAccessSumInSeconds = 0;
+	private Integer actualWorstAllPeriodMarinerAccessInSeconds = 3600;
+	private Integer actualMarinePeriodMarinerAccessSumInSeconds = 0;
+	private Integer actualMarineWorstPeriodMarinerAccessInSeconds = 3600;
 
-	Integer actualAllPeriodMarinerAccessSumInSeconds = 0;
-	Integer actualWorstAllPeriodMarinerAccessInSeconds = 3600;
-	Integer actualMarinePeriodMarinerAccessSumInSeconds = 0;
-	Integer actualMarineWorstPeriodMarinerAccessInSeconds = 3600;
+	private Boolean excludeBridgeRaiseTime = false;
 
-	Boolean excludeBridgeRaiseTime = false;
+	private Boolean debug = false;
 
-	Boolean debug = false;
+	private String resultsMessage = getResultsMessageWrite2();
 
-	String resultsMessage = getResultsMessageWrite2();
+	private ArrayList<BridgeAnalysisClosure> closures = new ArrayList<BridgeAnalysisClosure>();
 
-	ArrayList<BridgeAnalysisClosure> closures = new ArrayList<BridgeAnalysisClosure>();
+	private ArrayList<Integer> actualAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
+	private ArrayList<Integer> reportedAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
+	private ArrayList<Integer> actualAllPeriodMarinerAccessSumsInSeconds = new ArrayList<Integer>();
 
-	ArrayList<Integer> actualAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
-	ArrayList<Integer> reportedAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
-	ArrayList<Integer> actualAllPeriodMarinerAccessSumsInSeconds = new ArrayList<Integer>();
+	private ArrayList<Integer> modifiedAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
+	private ArrayList<Integer> modifiedAllPeriodMarinerAccessSumsInSeconds = new ArrayList<Integer>();
 
-	ArrayList<Integer> modifiedAllPeriodClosureSumsInSeconds = new ArrayList<Integer>();
-	ArrayList<Integer> modifiedAllPeriodMarinerAccessSumsInSeconds = new ArrayList<Integer>();
-
-	HashMap<Integer, Integer> actualMarinePeriodClosureSumsInSeconds = new HashMap<>();
-	HashMap<Integer, Integer> reportedMarinePeriodClosureSumsInSeconds = new HashMap<>();
-	HashMap<Integer, Double> modifiedAllPeriodMarinerAccessPercentages = new HashMap<>();
-	HashMap<Integer, Double> modifiedMarinePeriodMarinerAccessPercentages = new HashMap<>();
-	HashMap<Integer, Integer> actualMarinePeriodMarinerAvailabilitySumsInSeconds = new HashMap<>();
+	private HashMap<Integer, Integer> actualMarinePeriodClosureSumsInSeconds = new HashMap<>();
+	private HashMap<Integer, Integer> reportedMarinePeriodClosureSumsInSeconds = new HashMap<>();
+	private HashMap<Integer, Double> modifiedAllPeriodMarinerAccessPercentages = new HashMap<>();
+	private HashMap<Integer, Double> modifiedMarinePeriodMarinerAccessPercentages = new HashMap<>();
+	private HashMap<Integer, Integer> actualMarinePeriodMarinerAvailabilitySumsInSeconds = new HashMap<>();
 
 	public WriteBridgeFiles3(String textAreaContents, String locationOfInputFiles)
 	{
@@ -374,7 +371,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 						if (debug)
 						{
-							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 							System.out.println("closure: "+(j+1));
 							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -407,7 +404,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 						if (debug)
 						{
-							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 							System.out.println("closure: "+(j+1));
 							System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 							System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -444,7 +441,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 						}
 						if (debug)
 						{
-							System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+							System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 							System.out.println("closure: "+(j+1));
 							System.out.println("type 5");
 						}
@@ -464,7 +461,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 					if (debug)
 					{
-						System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+						System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 						System.out.println("closure: "+(j+1));
 						System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 						System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -490,7 +487,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 							if (debug)
 							{
-								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 								System.out.println("closure: "+(j+1));
 								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -507,7 +504,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 							if (debug)
 							{
-								System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+								System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 								System.out.println("closure: "+(j+1));
 								System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 								System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -530,7 +527,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 
 					if (debug)
 					{
-						System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+						System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 						System.out.println("closure: "+(j+1));
 						System.out.println("timeOccupiedInThisPeriod: "+timeOccupiedInThisPeriod+" modifiedTimeOccupiedInThisPeriod: "+modifiedTimeOccupiedInThisPeriod);
 						System.out.println("timeInThisPeriod: 3600 modifiedTimeInThisPeriod: "+modifiedTimeInThisPeriod);
@@ -543,7 +540,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 			{
 				if (debug)
 				{
-					System.out.println("period: "+(i+1)+" start of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
+					System.out.println("period: "+(i+1)+" start of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(startOfOneHourPeriod)+" end of 1-hour period: "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfOneHourPeriod));
 					System.out.println("no closures in this period");
 				}		
 			}
