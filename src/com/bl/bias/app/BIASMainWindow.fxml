@@ -40,8 +40,13 @@
                     <items>
       						<MenuItem fx:id="menuItemRadixxResSsimConversionIATAExcel" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversionIATAExcel" text="Radixx Res _SSIM Conversion (IATA to/from Excel)" visible="false" />
                    			<MenuItem fx:id="menuItemRadixxResSsimConversionS3Excel" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversionS3Excel" text="Radixx Res SSIM Conversion (S3 to Excel)" visible="false" />
-                   			<MenuItem fx:id="menuItemRadixxResSsimComparison" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimComparison" text="Radixx Res SSIM Comparison" visible="false" />
+                   			<MenuItem fx:id="menuItemRadixxResSsimComparison" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimComparison" text="Radixx Res SSIM Comparison (IATA to IATA)" visible="false" />
                     </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Compliance">
+                     <items>
+                        	<MenuItem fx:id="menuItemUscgBridgeCompliance" mnemonicParsing="true" onAction="#handleMenuItemUscgBridgeCompliance" text="USCG Bridge Compliance" visible="false" />
+                     </items>
                   </Menu>
 						<SeparatorMenuItem />
 						<MenuItem fx:id="menuItemExit" mnemonicParsing="true" onAction="#handleMenuItemExit" text="E_xit" />

@@ -19,16 +19,17 @@ public class BIASLaunch extends Application
 	// 1.0 was 8/4/2021
 	// 2.0 was 1/18/2022
 	// 3.0 was 9/21/2022
-	// 3.1 was 10/16/2022 (fixed bug in SSIM day of week)
-	// 3.2 was 10/31/2022 (significantly sped up processing of bridge closure periods)
-	// 3.3 was 12/12/2022 (added checks #3 and #4 for SSIM conversion)
-	// 3.4 was 12/14/2022 (added submenus to GUI to group modules by functionality)
-	// 3.5 was 1/26/2023 (added checks #5, #6 and #7 for SSIM conversion, added grade crossing speed analysis)
-	// 3.6 was 2/15/2023 (added check #8 for SSIM conversion)
-	// 3.7 was 3/20/2023 (added check #9 for SSIM conversion)
-	// 3.8 was 5/4/2023 (fixed bug in conversion of local time to UTC when generating SSIM)
-	// 3.9 was 7/10/2023 (added options for calculation of bridge closure periods)
-	private final static String version = "3.9 (July 10, 2023)";
+	// 3.1 was 10/16/2022  (fixed bug in SSIM day of week)
+	// 3.2 was 10/31/2022  (significantly sped up processing of bridge closure periods)
+	// 3.3 was 12/12/2022  (added checks #3 and #4 for SSIM conversion)
+	// 3.4 was 12/14/2022  (added submenus to GUI to group modules by functionality)
+	// 3.5 was 1/26/2023   (added checks #5, #6 and #7 for SSIM conversion, added grade crossing speed analysis)
+	// 3.6 was 2/15/2023   (added check #8 for SSIM conversion)
+	// 3.7 was 3/20/2023   (added check #9 for SSIM conversion)
+	// 3.8 was 5/4/2023    (fixed bug in conversion of local time to UTC when generating SSIM)
+	// 3.9 was 7/10/2023   (added options for calculation of bridge closure periods)
+	// 3.10 was 11/22/2023 (extended validity date until 1/31/2024)
+	private final static String version = "3.10 (November 22, 2023)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 3;
  	//
 	// Session validity
@@ -43,15 +44,15 @@ public class BIASLaunch extends Application
 	private static String headerToUse = "";
 	//
 	// Expiration of this version of software
-	private final static Integer softwareExpirationMonth = 12; // January = 1
+	private final static Integer softwareExpirationMonth = 1; // January = 1
 	private final static Integer softwareExpirationDay = 31;
-	private final static Integer softwareExpirationYear = 2023;
+	private final static Integer softwareExpirationYear = 2024;
 	//
 	// User permissions
 	private final static String permissions[] = 
 	{
 		// User, machine, logos, month expire, day expire, year expire, write prefs to registry, modules[]
-		"WindschmittPeter, PWINDSCHMITT-P17, FL, 12, 31, 2023, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, General Config, Parse Config",
+		"WindschmittPeter, PWINDSCHMITT-P17, FL, 1, 31, 2024, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, USCG Bridge Compliance Analysis, General Config, Parse Config",
 	};
 	//************************************************************************************************
 
