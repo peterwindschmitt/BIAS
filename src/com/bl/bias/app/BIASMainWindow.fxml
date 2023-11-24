@@ -71,6 +71,11 @@
                               <MenuItem fx:id="menuItemRadixxResSsimComparisonConfig" mnemonicParsing="false" onAction="#handleMenuItemRadixxResSsimComparisonConfig" text="Radixx Res SSIM Comparison" visible="false" />
                           </items>
                         </Menu>
+                        <Menu mnemonicParsing="false" text="Compliance">
+                           <items>
+                              <MenuItem fx:id="menuItemUscgBridgeComplianceConfig" mnemonicParsing="false" onAction="#handleMenuItemUscgBridgeComplianceConfig" text="USCG Bridge Compliance" visible="false" />
+                           </items>
+                        </Menu>
                     </items>
                   </Menu>
 						<MenuItem fx:id="menuItemGeneralConfig" mnemonicParsing="false" onAction="#handleMenuItemGeneralConfig" text="General Config" visible="false" />

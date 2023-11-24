@@ -30,7 +30,7 @@ public class BIASLaunch extends Application
 	// 3.9 was 7/10/2023   (added options for calculation of bridge closure periods)
 	// 3.10 was 11/22/2023 (extended validity date until 1/31/2024)
 	private final static String version = "3.10 (November 22, 2023)";
-	private final static Integer lastIndexOfVersionToShowForReduced = 3;
+	private final static Integer lastIndexOfVersionToShowForReduced = 4;
  	//
 	// Session validity
 	private static Boolean validSession = true;
@@ -53,7 +53,7 @@ public class BIASLaunch extends Application
 	{
 		// User, machine, logos, month expire, day expire, year expire, write prefs to registry, modules[]
 		"WindschmittPeter, PWINDSCHMITT-P17, FL, 1, 31, 2024, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, USCG Bridge Compliance Analysis, General Config, Parse Config",
-	};
+		};
 	//************************************************************************************************
 
 	@Override

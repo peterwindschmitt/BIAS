@@ -2465,7 +2465,8 @@ public class BIASParseConfigPageController
 			parseLocationsTable13.setVisible(false);
 
 			parseLocationsTable12.requestFocus();
-		}else
+		}
+		else
 		{
 			curPage--;
 			nextPageButton.setDisable(false);
