@@ -61,19 +61,19 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <TableView fx:id="marineAccessPeriodsTable" maxHeight="205.0" maxWidth="680.0" minHeight="250.0" minWidth="680.0" prefHeight="205.0" prefWidth="680.0" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="4" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+            <TableView fx:id="marineAccessPeriodsTable" maxHeight="205.0" maxWidth="680.0" minHeight="250.0" minWidth="680.0" prefHeight="205.0" prefWidth="680.0" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="4" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
 			     <columns>
-					<TableColumn fx:id="marinePeriodStartDouble" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" sortable="false" text="Marine Period &#10; Start (double)" />
-		            <!--TableColumn fx:id="marinePeriodStartTime" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" sortable="false" text="Marine Period &#10;  Start (time)" /-->
-					<TableColumn fx:id="marinePeriodEndDouble" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" sortable="false" text="Marine Period &#10; End (double)" />
-					<!--TableColumn fx:id="marinePeriodEndTime" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" sortable="false" text="Marine Period &#10;   End (time)" /-->
-					<TableColumn fx:id="mo" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Mon" />
-					<TableColumn fx:id="tu" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Tue" />
-					<TableColumn fx:id="we" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Wed" />
-					<TableColumn fx:id="th" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Thu" />
-				 	<TableColumn fx:id="fr" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Fri" />
-					<TableColumn fx:id="sa" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Sat" />
-				 	<TableColumn fx:id="su" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" sortable="false" text="Sun" />
+					<TableColumn fx:id="marinePeriodStartDouble" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Marine Period &#10; Start (double)" />
+		            <TableColumn fx:id="marinePeriodStartTime" editable="false" maxWidth="98.0" minWidth="98.0" prefWidth="98.0" resizable="false" text="Marine Period &#10;  Start (time)" />
+					<TableColumn fx:id="marinePeriodEndDouble" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="Marine Period &#10; End (double)" />
+					<TableColumn fx:id="marinePeriodEndTime" editable="false" maxWidth="98.0" minWidth="98.0" prefWidth="980.0" resizable="false" text="Marine Period &#10;   End (time)" />
+					<TableColumn fx:id="mo" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Mon" />
+					<TableColumn fx:id="tu" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Tue" />
+					<TableColumn fx:id="we" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Wed" />
+					<TableColumn fx:id="th" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Thu" />
+				 	<TableColumn fx:id="fr" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Fri" />
+					<TableColumn fx:id="sa" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Sat" />
+				 	<TableColumn fx:id="su" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Sun" />
 				 </columns>
 		 		 <GridPane.margin>
 					<Insets left="10.0" />
@@ -93,19 +93,27 @@
                   <Insets left="10.0" />
                </padding>
             </RadioButton>
-            <Button fx:id="clearAllMarineAccessPeriodsButton" alignment="CENTER" maxHeight="25.0" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleClearAllMarineAccessPeriodsButton" prefHeight="25.0" text="Clear All Data" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.valignment="TOP">
+            <Button fx:id="clearRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleClearRegistryButton" prefHeight="25.0" text="Clear Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.valignment="TOP">
                <font>
                   <Font size="11.0" />
                </font>
             </Button>
-            <Button maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" prefWidth="76.0" text="Add Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
+            <Button fx:id="addPeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleAddPeriodButton" prefWidth="76.0" text="Add Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets right="10.0" top="40.0" />
                </GridPane.margin>
             </Button>
-            <Button maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" prefWidth="76.0" text="Del Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
+            <Button fx:id="deletePeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleDeletePeriodButton" prefWidth="76.0" text="Del Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets right="10.0" top="80.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="saveMarineAccessPeriodsToRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleSaveMarineAccessPeriodsToRegistryButton" prefHeight="25.0" text="Save  to Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="5" GridPane.valignment="TOP">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="-40.0" />
                </GridPane.margin>
             </Button>
          </children>

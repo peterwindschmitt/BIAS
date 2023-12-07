@@ -1,15 +1,28 @@
 package com.bl.bias.app;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 
 import java.util.prefs.Preferences;
 
@@ -24,26 +37,26 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean defaultIncludeSummaryResultsOnSpreadsheet = true;
 	private static Boolean defaultIncludeSummaryResultsOnNotepad = true;
 	private static Boolean defaultIncludeConfidentialityDisclaimer = true;
+	private static Boolean validMarinePeriods = false;
 
 	private static Preferences prefs;
-	
+
 	private ObservableList<MarineAccessPeriod> marineAccessPeriodsData = FXCollections.observableArrayList();
-		
-	private static int periodsCounter = 0;
 
 	@FXML private CheckBox includeSummaryResultsOnSpreadsheetCheckBox;
 	@FXML private CheckBox includeSummaryResultsOnNotepadCheckBox;
 	@FXML private CheckBox includeConfidentialityDisclaimerCheckBox;
-	
-	@FXML private Button clearAllMarineAccessPeriodsButton;
+
+	@FXML private Button clearRegistryButton;
 	@FXML private Button addPeriodButton;
 	@FXML private Button deletePeriodButton;
-	
+	@FXML private Button saveMarineAccessPeriodsToRegistryButton;
+
 	@FXML private RadioButton viewEntriesOnlyRadioButton;
 	@FXML private RadioButton viewAndEditEntriesRadioButton;
-	
+
 	@FXML private TableView<MarineAccessPeriod> marineAccessPeriodsTable;
-	
+
 	@FXML private TableColumn<MarineAccessPeriod, Double> marinePeriodStartDouble;
 	@FXML private TableColumn<MarineAccessPeriod, String> marinePeriodStartTime;
 	@FXML private TableColumn<MarineAccessPeriod, Double> marinePeriodEndDouble;
@@ -55,11 +68,40 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	@FXML private TableColumn<MarineAccessPeriod, Boolean> fr;
 	@FXML private TableColumn<MarineAccessPeriod, Boolean> sa;
 	@FXML private TableColumn<MarineAccessPeriod, Boolean> su;
-	
+
 	@FXML private void initialize() 
 	{
+		marinePeriodStartDouble.setStyle( "-fx-alignment: CENTER;");
+		marinePeriodStartTime.setStyle( "-fx-alignment: CENTER;");
+		marinePeriodEndDouble.setStyle( "-fx-alignment: CENTER;");
+		marinePeriodEndTime.setStyle( "-fx-alignment: CENTER;");
+
+		String marineAccessPeriod = null;
+
 		// Set up prefs
 		prefs = Preferences.userRoot().node("BIAS");
+
+		// See if marine access periods are already defined
+		if (prefs.get("cg_marineAccessPeriods", null) != null)
+		{
+			validMarinePeriods = true;
+
+			String[] periods = prefs.get("cg_marineAccessPeriods", marineAccessPeriod).split(":");
+			for (int i = 0; i < periods.length; i++)
+			{
+				String[] values = periods[i].replace("[", "").replace("]", "").split(",");
+				marineAccessPeriodsData.add(new MarineAccessPeriod(Double.valueOf(values[0]), 
+						Double.valueOf(values[1]), 
+						Boolean.valueOf(values[2]), 
+						Boolean.valueOf(values[3]),
+						Boolean.valueOf(values[4]),
+						Boolean.valueOf(values[5]),
+						Boolean.valueOf(values[6]),
+						Boolean.valueOf(values[7]),
+						Boolean.valueOf(values[8])));
+			}
+			marineAccessPeriodsTable.setItems(marineAccessPeriodsData);	
+		}
 
 		// See if including summary results on spreadsheet is stored
 		if (prefs.getBoolean("cg_includeSummaryResultsOnSpreadsheet", defaultIncludeSummaryResultsOnSpreadsheet))
@@ -108,23 +150,104 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 				prefs.putBoolean("cg_includeConfidentialityDisclaimer", false);
 			includeConfidentialityDisclaimerCheckBox.setSelected(false);
 		}
+
+		marinePeriodStartDouble.setCellValueFactory(new PropertyValueFactory<MarineAccessPeriod, Double>("marinePeriodStartDouble"));
+		marinePeriodStartDouble.setCellFactory(TextFieldTableCell.forTableColumn(new CustomDoubleStringConverter()));
+		marinePeriodStartTime.setCellValueFactory(
+			new Callback<CellDataFeatures<MarineAccessPeriod,String>,ObservableValue<String>>(){
+			@Override public
+			ObservableValue<String> call( CellDataFeatures<MarineAccessPeriod,String> p ){
+				return p.getValue().getMarinePeriodStartTime(); }});
 		
-		marinePeriodStartDouble.setSortable(false);
-		//marinePeriodStartTime.setSortable(false);
-		marinePeriodEndDouble.setSortable(false);
-		//marinePeriodEndTime.setSortable(false);
-		mo.setSortable(false);
-		tu.setSortable(false);
-		we.setSortable(false);
-		th.setSortable(false);
-		fr.setSortable(false);
-		sa.setSortable(false);
-		su.setSortable(false);
+		marinePeriodEndDouble.setCellValueFactory(new PropertyValueFactory<MarineAccessPeriod, Double>("marinePeriodEndDouble"));
+		marinePeriodEndDouble.setCellFactory(TextFieldTableCell.forTableColumn(new CustomDoubleStringConverter()));
+		marinePeriodEndTime.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,String>,ObservableValue<String>>(){
+				@Override public
+				ObservableValue<String> call( CellDataFeatures<MarineAccessPeriod,String> p ){
+					return p.getValue().getMarinePeriodEndTime(); }});
+
+		mo.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getMo(); }});
+		mo.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
+
+		tu.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getTu(); }});
+		tu.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
+
+		we.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getWe(); }});
+		we.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
 		
+		th.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getTh(); }});
+		th.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
+
+		fr.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getFr(); }});
+		fr.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
+
+		sa.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getSa(); }});
+		sa.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
+
+		su.setCellValueFactory(
+				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
+					@Override public
+					ObservableValue<Boolean> call( CellDataFeatures<MarineAccessPeriod,Boolean> p ){
+						return p.getValue().getSu(); }});
+		su.setCellFactory(
+				new Callback<TableColumn<MarineAccessPeriod,Boolean>,TableCell<MarineAccessPeriod,Boolean>>(){
+					@Override public
+					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
+						return new CheckBoxTableCell<>(); }});	
+
 		marinePeriodStartDouble.setReorderable(false);
-		//marinePeriodStartTime.setReorderable(false);
+		marinePeriodStartTime.setReorderable(false);
 		marinePeriodEndDouble.setReorderable(false);
-		//marinePeriodEndTime.setReorderable(false);
+		marinePeriodEndTime.setReorderable(false);
 		mo.setReorderable(false);
 		tu.setReorderable(false);
 		we.setReorderable(false);
@@ -132,11 +255,6 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		fr.setReorderable(false);
 		sa.setReorderable(false);
 		su.setReorderable(false);
-		
-		marineAccessPeriodsData.addAll(new MarineAccessPeriod(0.25, 0.50 , true, true, true, true, true, true, true)
-				);
-		
-		marineAccessPeriodsTable.setItems(marineAccessPeriodsData);
 	}
 
 	@FXML private void handleIncludeSummaryResultsOnSpreadsheetCheckBox(ActionEvent event)
@@ -186,32 +304,203 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 				prefs.putBoolean("cg_includeConfidentialityDisclaimer", true);
 		}
 	}
-	
+
 	@FXML private void handleViewEntriesOnlyRadioButton(ActionEvent event) 
 	{
-		
+		clearRegistryButton.setDisable(true);
+		saveMarineAccessPeriodsToRegistryButton.setDisable(true);
+		addPeriodButton.setDisable(true);
+		deletePeriodButton.setDisable(true);
+
+		marineAccessPeriodsTable.setEditable(false);
+		marineAccessPeriodsTable.refresh();
+
+		marinePeriodStartDouble.setEditable(false);
+		marinePeriodEndDouble.setEditable(false);
+
+		mo.setEditable(false);
+		tu.setEditable(false);
+		we.setEditable(false);
+		th.setEditable(false);
+		fr.setEditable(false);
+		sa.setEditable(false);
+		su.setEditable(false);
 	}
-	
+
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
 	{
-		
+		addPeriodButton.setDisable(false);
+
+		if (validMarinePeriods)
+		{
+			deletePeriodButton.setDisable(false);
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("false"))
+			{
+				clearRegistryButton.setDisable(true);
+			}
+			else
+			{
+				clearRegistryButton.setDisable(false);
+			}
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				saveMarineAccessPeriodsToRegistryButton.setDisable(false);
+			}
+		}
+		else
+		{
+			clearRegistryButton.setDisable(true);
+			saveMarineAccessPeriodsToRegistryButton.setDisable(true);
+		}
+
+		marineAccessPeriodsTable.setEditable(true);
+
+		marinePeriodStartDouble.setEditable(true);
+		marinePeriodStartDouble.setOnEditCommit(new EventHandler<CellEditEvent<MarineAccessPeriod, Double>>() {      
+			@Override
+			public void handle(CellEditEvent<MarineAccessPeriod, Double> t) {
+				if (t.getNewValue() != null)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					Double newValue = t.getNewValue();
+
+					if (newValue >= marineAccessPeriodsData.get(row).getMarinePeriodEndDouble())
+					{
+						// Alert
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error");
+						alert.setHeaderText(null);
+						alert.setContentText("The marine period start time is later than the end time.");	
+						Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+						stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+						alert.show();
+					}
+					else
+					{
+						// Update in data
+						marineAccessPeriodsData.get(row).setMarinePeriodStartDouble(newValue);
+					}
+				}
+				
+				marineAccessPeriodsTable.refresh();
+			}
+		});
+
+		marinePeriodEndDouble.setEditable(true);
+		marinePeriodEndDouble.setOnEditCommit(new EventHandler<CellEditEvent<MarineAccessPeriod, Double>>() {      
+			@Override
+			public void handle(CellEditEvent<MarineAccessPeriod, Double> t) {
+				if (t.getNewValue() != null)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					Double newValue = t.getNewValue();
+					
+					if (newValue <= marineAccessPeriodsData.get(row).getMarinePeriodStartDouble())
+					{
+						// Alert
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error");
+						alert.setHeaderText(null);
+						alert.setContentText("The marine period start time is later than the end time.");	
+						Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+						stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+						alert.show();
+					}
+					else
+					{
+						// Update in data
+						marineAccessPeriodsData.get(row).setMarinePeriodEndDouble(newValue);
+					}
+				}
+				
+				marineAccessPeriodsTable.refresh();
+			}
+		});
+
+		mo.setEditable(true);
+		tu.setEditable(true);
+		we.setEditable(true);
+		th.setEditable(true);
+		fr.setEditable(true);
+		sa.setEditable(true);
+		su.setEditable(true);
 	}
-	
-	@FXML private void handleClearAllMarineAccessPeriodsButton(ActionEvent event)
+
+	@FXML private void handleClearRegistryButton(ActionEvent event)
 	{
-		
+		if (prefs.get("cg_marineAccessPeriods", null) != null)
+		{
+			prefs.remove("cg_marineAccessPeriods");
+			clearRegistryButton.setDisable(true);
+			saveMarineAccessPeriodsToRegistryButton.setDisable(true);
+			
+			if (marineAccessPeriodsTable.getItems().size() == 0)
+			{
+				deletePeriodButton.setDisable(true);
+			}
+		}
 	}
-	
+
 	@FXML private void handleAddPeriodButton(ActionEvent event)
 	{
+		marineAccessPeriodsData.add(new MarineAccessPeriod(0.00000,0.99999,false,false,false,false,false,false,false));
+		marineAccessPeriodsTable.setItems(marineAccessPeriodsData);
+		validMarinePeriods = true;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			saveMarineAccessPeriodsToRegistryButton.setDisable(false);
+		}
 		
+		if (marineAccessPeriodsTable.getItems().size() > 0)
+			deletePeriodButton.setDisable(false);
 	}
-	
-	@FXML private void handleDeletePeriodsButton(ActionEvent event)
+
+	@FXML private void handleDeletePeriodButton(ActionEvent event)
+	{	
+		MarineAccessPeriod selectedPeriod = marineAccessPeriodsTable.getSelectionModel().getSelectedItem();
+		marineAccessPeriodsTable.getItems().remove(selectedPeriod);
+		if (marineAccessPeriodsTable.getItems().size() == 0)
+		{
+			validMarinePeriods = false;
+			deletePeriodButton.setDisable(true);
+			saveMarineAccessPeriodsToRegistryButton.setDisable(true);
+		}
+	}
+
+	@FXML private void handleSaveMarineAccessPeriodsToRegistryButton(ActionEvent event)
 	{
-		
+		String registryEntry = "";
+		for (int i = 0; i < marineAccessPeriodsData.size(); i++)
+		{	
+			registryEntry+="[";
+
+			registryEntry+=marineAccessPeriodsData.get(i).getMarinePeriodStartDouble()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getMarinePeriodEndDouble()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getMo().getValue()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getTu().getValue()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getWe().getValue()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getTh().getValue()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getFr().getValue()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getSa().getValue()+",";
+			registryEntry+=marineAccessPeriodsData.get(i).getSu().getValue();
+
+			if (i == (marineAccessPeriodsData.size() - 1))
+				registryEntry+="]";
+			else
+				registryEntry+="]:";
+		}
+
+		validMarinePeriods = true;
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.put("cg_marineAccessPeriods", registryEntry);
+			clearRegistryButton.setDisable(false);
+		}
 	}
-	
+
 	public static Boolean getIncludeSummaryResultsOnSpreadsheet()
 	{
 		return includeSummaryResultsOnSpreadsheet;
@@ -225,5 +514,56 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	public static Boolean getIncludeConfidentialityDisclaimer()
 	{
 		return includeConfidentialityDisclaimer;
+	}
+
+	private static class CustomDoubleStringConverter extends DoubleStringConverter 
+	{
+		private final DoubleStringConverter converter = new DoubleStringConverter();
+
+		@Override
+		public Double fromString(String string) {
+			try 
+			{    
+				Double doubleFromString = converter.fromString(string);
+				if (doubleFromString == null)
+				{
+					// Alert
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText(null);
+					alert.setContentText("Value is null.");	
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+					alert.show();
+
+					return null;
+				}
+				else if ((doubleFromString < 0) || (doubleFromString >= 1))
+				{
+					// Alert
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText(null);
+					alert.setContentText("Value is outside of valid range.");	
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+					alert.show();
+
+					return null;
+				}
+				return doubleFromString;
+			} 
+			catch (NumberFormatException e) 
+			{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText(null);
+				alert.setContentText("Value must be Double.");	
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+				alert.show();
+			}
+			return null;
+		}
 	}
 }

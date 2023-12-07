@@ -1,19 +1,23 @@
 package com.bl.bias.objects;
 
+import com.bl.bias.tools.ConvertDateTime;
+
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ObservableValue;
 
 public class MarineAccessPeriod 
 {
     private SimpleDoubleProperty marinePeriodStartDouble;
     private SimpleDoubleProperty marinePeriodEndDouble;
-    private SimpleBooleanProperty mo;
-    private SimpleBooleanProperty tu;
-    private SimpleBooleanProperty we;
-    private SimpleBooleanProperty th;
-    private SimpleBooleanProperty fr;
-    private SimpleBooleanProperty sa;
-    private SimpleBooleanProperty su;
+    private ObservableValue<Boolean> mo;
+    private ObservableValue<Boolean> tu;
+    private ObservableValue<Boolean> we;
+    private ObservableValue<Boolean> th;
+    private ObservableValue<Boolean> fr;
+    private ObservableValue<Boolean> sa;
+    private ObservableValue<Boolean> su;
 
     public MarineAccessPeriod(Double marinePeriodStartDouble, Double marinePeriodEndDouble, Boolean mo, Boolean tu, Boolean we, Boolean th, Boolean fr, Boolean sa, Boolean su) 
     {
@@ -33,9 +37,11 @@ public class MarineAccessPeriod
         return marinePeriodStartDouble.get();
     }
 
-    public String getMarinePeriodStartTime() 
+    public ObservableValue<String> getMarinePeriodStartTime() 
     {
-        return null;
+        String timeAsString = ConvertDateTime.convertSerialToHHMMString(marinePeriodStartDouble.doubleValue());
+        ObservableValue<String> timeAsObservableString = new ReadOnlyObjectWrapper<String>(timeAsString);
+    	return timeAsObservableString;
     }
     
     public void setMarinePeriodStartDouble(Double marinePeriodStartDouble) 
@@ -43,9 +49,11 @@ public class MarineAccessPeriod
         this.marinePeriodStartDouble = new SimpleDoubleProperty(marinePeriodStartDouble);
     }
     
-    public String getMarinePeriodEndTime() 
+    public ObservableValue<String> getMarinePeriodEndTime() 
     {
-        return null;
+    	String timeAsString = ConvertDateTime.convertSerialToHHMMString(marinePeriodEndDouble.doubleValue());
+        ObservableValue<String> timeAsObservableString = new ReadOnlyObjectWrapper<String>(timeAsString);
+    	return timeAsObservableString;
     }
     
     public Double getMarinePeriodEndDouble() 
@@ -58,9 +66,9 @@ public class MarineAccessPeriod
         this.marinePeriodEndDouble = new SimpleDoubleProperty(marinePeriodEndDouble);
     }
 
-    public boolean getMo() 
+    public ObservableValue<Boolean> getMo() 
     {
-        return mo.get();
+        return mo;
     }
 
     public void setMo(Boolean mo) 
@@ -68,9 +76,9 @@ public class MarineAccessPeriod
         this.mo = new SimpleBooleanProperty(mo);
     }
     
-    public boolean getTu() 
+    public ObservableValue<Boolean> getTu() 
     {
-        return tu.get();
+        return tu;
     }
 
     public void setTu(Boolean tu) 
@@ -78,9 +86,9 @@ public class MarineAccessPeriod
         this.tu = new SimpleBooleanProperty(tu);
     }
     
-    public boolean getWe() 
+    public ObservableValue<Boolean> getWe() 
     {
-        return we.get();
+        return we;
     }
 
     public void setWe(Boolean we) 
@@ -88,9 +96,9 @@ public class MarineAccessPeriod
         this.we = new SimpleBooleanProperty(we);
     }
     
-    public boolean getTh() 
+    public ObservableValue<Boolean> getTh() 
     {
-        return th.get();
+        return th;
     }
 
     public void setTh(Boolean th) 
@@ -98,9 +106,9 @@ public class MarineAccessPeriod
         this.th = new SimpleBooleanProperty(th);
     }
     
-    public boolean getFr() 
+    public ObservableValue<Boolean> getFr() 
     {
-        return fr.get();
+        return fr;
     }
 
     public void setFr(Boolean fr) 
@@ -108,9 +116,9 @@ public class MarineAccessPeriod
         this.fr = new SimpleBooleanProperty(fr);
     }
     
-    public boolean getSa() 
+    public ObservableValue<Boolean> getSa() 
     {
-        return sa.get();
+        return sa;
     }
 
     public void setSa(Boolean sa) 
@@ -118,9 +126,9 @@ public class MarineAccessPeriod
         this.sa = new SimpleBooleanProperty(sa);
     }
     
-    public boolean getSu() 
+    public ObservableValue<Boolean> getSu() 
     {
-        return su.get();
+        return su;
     }
 
     public void setSu(Boolean su) 
