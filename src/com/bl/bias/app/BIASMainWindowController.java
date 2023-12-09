@@ -717,7 +717,7 @@ public class BIASMainWindowController
 
 	@FXML private void handleMenuItemUscgBridgeCompliance(ActionEvent event) throws IOException
 	{
-		if (!mainGridPane.getChildren().contains(nodeRadixxResSsimComparisonConfig))
+		if (!mainGridPane.getChildren().contains(nodeUscgBridgeCompliance))
 		{	
 			mainGridPane.getChildren().remove(nodeRTCResultsAnalysis);
 			mainGridPane.getChildren().remove(nodeTTest);
@@ -745,7 +745,7 @@ public class BIASMainWindowController
 
 	@FXML private void handleMenuItemUscgBridgeComplianceConfig(ActionEvent event) throws IOException
 	{
-		if (!mainGridPane.getChildren().contains(nodeRadixxResSsimComparisonConfig))
+		if (!mainGridPane.getChildren().contains(nodeUscgBridgeComplianceConfig))
 		{	
 			mainGridPane.getChildren().remove(nodeRTCResultsAnalysis);
 			mainGridPane.getChildren().remove(nodeTTest);

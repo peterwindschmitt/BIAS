@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -33,19 +35,34 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean includeSummaryResultsOnSpreadsheet;
 	private static Boolean includeSummaryResultsOnNotepad;
 	private static Boolean includeConfidentialityDisclaimer;
+	private static Boolean computeMarineHighUsagePeriodActive;
+	private static String marineAccessPeriodStartHour;
+	private static String marineAccessPeriodEndHour;
 
 	private static Boolean defaultIncludeSummaryResultsOnSpreadsheet = true;
 	private static Boolean defaultIncludeSummaryResultsOnNotepad = true;
 	private static Boolean defaultIncludeConfidentialityDisclaimer = true;
+	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
+	private static String defaultMarineAcessPeriodStartHour = "00:00";
+	private static String defaultMarineAcessPeriodEndHour = "00:00";
+
 	private static Boolean validMarinePeriods = false;
 
 	private static Preferences prefs;
 
-	private ObservableList<MarineAccessPeriod> marineAccessPeriodsData = FXCollections.observableArrayList();
+	private static ObservableList<MarineAccessPeriod> marineAccessPeriodsData = FXCollections.observableArrayList();
+	private static ObservableList<String> highUsageHourValues =  FXCollections.observableArrayList("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
+			"12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00");
 
 	@FXML private CheckBox includeSummaryResultsOnSpreadsheetCheckBox;
 	@FXML private CheckBox includeSummaryResultsOnNotepadCheckBox;
 	@FXML private CheckBox includeConfidentialityDisclaimerCheckBox;
+	@FXML private CheckBox computeMarineHighUsagePeriodsCheckBox;
+
+	@FXML private ComboBox<String> startHighUsageHourComboBox;
+	@FXML private ComboBox<String> endHighUsageHourComboBox;
+
+	@FXML private Label highUsageMarinePeriodSpanLabel;
 
 	@FXML private Button clearRegistryButton;
 	@FXML private Button addPeriodButton;
@@ -151,21 +168,43 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			includeConfidentialityDisclaimerCheckBox.setSelected(false);
 		}
 
+		// See if preference is stored for computing marine high-usage periods
+		if (prefs.getBoolean("cg_computeMarineHighUsagePeriodActive", defaultComputeMarineHighUsagePeriodActive))
+		{
+			computeMarineHighUsagePeriodActive = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", true);
+			computeMarineHighUsagePeriodsCheckBox.setSelected(true);
+			
+			startHighUsageHourComboBox.setDisable(false);
+			endHighUsageHourComboBox.setDisable(false);
+		}
+		else
+		{
+			computeMarineHighUsagePeriodActive = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", false);
+			computeMarineHighUsagePeriodsCheckBox.setSelected(false);
+			
+			startHighUsageHourComboBox.setDisable(true);
+			endHighUsageHourComboBox.setDisable(true);
+		}
+
 		marinePeriodStartDouble.setCellValueFactory(new PropertyValueFactory<MarineAccessPeriod, Double>("marinePeriodStartDouble"));
 		marinePeriodStartDouble.setCellFactory(TextFieldTableCell.forTableColumn(new CustomDoubleStringConverter()));
 		marinePeriodStartTime.setCellValueFactory(
-			new Callback<CellDataFeatures<MarineAccessPeriod,String>,ObservableValue<String>>(){
-			@Override public
-			ObservableValue<String> call( CellDataFeatures<MarineAccessPeriod,String> p ){
-				return p.getValue().getMarinePeriodStartTime(); }});
-		
+				new Callback<CellDataFeatures<MarineAccessPeriod,String>,ObservableValue<String>>(){
+					@Override public
+					ObservableValue<String> call( CellDataFeatures<MarineAccessPeriod,String> p ){
+						return p.getValue().getMarinePeriodStartTime(); }});
+
 		marinePeriodEndDouble.setCellValueFactory(new PropertyValueFactory<MarineAccessPeriod, Double>("marinePeriodEndDouble"));
 		marinePeriodEndDouble.setCellFactory(TextFieldTableCell.forTableColumn(new CustomDoubleStringConverter()));
 		marinePeriodEndTime.setCellValueFactory(
 				new Callback<CellDataFeatures<MarineAccessPeriod,String>,ObservableValue<String>>(){
-				@Override public
-				ObservableValue<String> call( CellDataFeatures<MarineAccessPeriod,String> p ){
-					return p.getValue().getMarinePeriodEndTime(); }});
+					@Override public
+					ObservableValue<String> call( CellDataFeatures<MarineAccessPeriod,String> p ){
+						return p.getValue().getMarinePeriodEndTime(); }});
 
 		mo.setCellValueFactory(
 				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
@@ -199,7 +238,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 					@Override public
 					TableCell<MarineAccessPeriod,Boolean> call( TableColumn<MarineAccessPeriod,Boolean> p ){
 						return new CheckBoxTableCell<>(); }});	
-		
+
 		th.setCellValueFactory(
 				new Callback<CellDataFeatures<MarineAccessPeriod,Boolean>,ObservableValue<Boolean>>(){
 					@Override public
@@ -255,6 +294,40 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		fr.setReorderable(false);
 		sa.setReorderable(false);
 		su.setReorderable(false);
+
+		// See if recurring marine access period start values are stored
+		startHighUsageHourComboBox.setItems(highUsageHourValues);
+
+		boolean marineAccessPeriodStartHourValueExists = prefs.get("cg_marineAccessPeriodStartHour", null) != null;
+		if (marineAccessPeriodStartHourValueExists)
+		{
+			startHighUsageHourComboBox.getSelectionModel().select(prefs.get("cg_marineAccessPeriodStartHour", defaultMarineAcessPeriodStartHour));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("cg_marineAccessPeriodStartHour", defaultMarineAcessPeriodStartHour);
+			startHighUsageHourComboBox.getSelectionModel().select(defaultMarineAcessPeriodStartHour);
+		}
+		marineAccessPeriodStartHour = prefs.get("cg_marineAccessPeriodStartHour", defaultMarineAcessPeriodStartHour);
+
+		// See if recurring marine access period start values are stored
+		endHighUsageHourComboBox.setItems(highUsageHourValues);
+
+		boolean marineAccessPeriodEndHourValueExists = prefs.get("cg_marineAccessPeriodEndHour", null) != null;
+		if (marineAccessPeriodEndHourValueExists)
+		{
+			endHighUsageHourComboBox.getSelectionModel().select(prefs.get("cg_marineAccessPeriodEndHour", defaultMarineAcessPeriodEndHour));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("cg_marineAccessPeriodEndHour", defaultMarineAcessPeriodEndHour);
+			endHighUsageHourComboBox.getSelectionModel().select(defaultMarineAcessPeriodEndHour);
+		}
+		marineAccessPeriodEndHour = prefs.get("cg_marineAccessPeriodEndHour", defaultMarineAcessPeriodEndHour);
+
+		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
 	}
 
 	@FXML private void handleIncludeSummaryResultsOnSpreadsheetCheckBox(ActionEvent event)
@@ -383,7 +456,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 						marineAccessPeriodsData.get(row).setMarinePeriodStartDouble(newValue);
 					}
 				}
-				
+
 				marineAccessPeriodsTable.refresh();
 			}
 		});
@@ -396,7 +469,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 				{
 					int row = t.getTableView().getEditingCell().getRow();
 					Double newValue = t.getNewValue();
-					
+
 					if (newValue <= marineAccessPeriodsData.get(row).getMarinePeriodStartDouble())
 					{
 						// Alert
@@ -414,7 +487,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 						marineAccessPeriodsData.get(row).setMarinePeriodEndDouble(newValue);
 					}
 				}
-				
+
 				marineAccessPeriodsTable.refresh();
 			}
 		});
@@ -435,7 +508,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			prefs.remove("cg_marineAccessPeriods");
 			clearRegistryButton.setDisable(true);
 			saveMarineAccessPeriodsToRegistryButton.setDisable(true);
-			
+
 			if (marineAccessPeriodsTable.getItems().size() == 0)
 			{
 				deletePeriodButton.setDisable(true);
@@ -452,7 +525,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		{
 			saveMarineAccessPeriodsToRegistryButton.setDisable(false);
 		}
-		
+
 		if (marineAccessPeriodsTable.getItems().size() > 0)
 			deletePeriodButton.setDisable(false);
 	}
@@ -501,6 +574,49 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 	}
 
+
+	@FXML private void handleComputeMarineHighUsagePeriodsCheckBox()
+	{
+		if (computeMarineHighUsagePeriodActive)
+		{
+			computeMarineHighUsagePeriodActive = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", false);
+			
+			startHighUsageHourComboBox.setDisable(true);
+			endHighUsageHourComboBox.setDisable(true);
+		}
+		else
+		{
+			computeMarineHighUsagePeriodActive = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", true);
+			
+			startHighUsageHourComboBox.setDisable(false);
+			endHighUsageHourComboBox.setDisable(false);
+		}
+	}
+
+	@FXML private void handleStartHighUsageHourComboBox(ActionEvent event) 
+	{
+		marineAccessPeriodStartHour = String.valueOf(startHighUsageHourComboBox.getValue());
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("cg_marineAccessPeriodStartHour", startHighUsageHourComboBox.getValue());
+
+		// Figure and display marine access period span
+		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
+	}
+	
+	@FXML private void handleEndHighUsageHourComboBox(ActionEvent event) 
+	{
+		marineAccessPeriodEndHour = String.valueOf(endHighUsageHourComboBox.getValue());
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("cg_marineAccessPeriodEndHour", endHighUsageHourComboBox.getValue());
+
+		// Figure and display marine access period span
+		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
+	}
+
 	public static Boolean getIncludeSummaryResultsOnSpreadsheet()
 	{
 		return includeSummaryResultsOnSpreadsheet;
@@ -515,7 +631,40 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	{
 		return includeConfidentialityDisclaimer;
 	}
+	
+	public static Boolean getIncludeMarineHighUsagePeriods()
+	{
+		return computeMarineHighUsagePeriodActive;
+	}
 
+	public static String getMarineAccessPeriodStartHour()
+	{
+		return marineAccessPeriodStartHour;
+	}
+	
+	public static String getMarineAccessPeriodEndHour()
+	{
+		return marineAccessPeriodEndHour;
+	}
+	
+	public static ObservableList<MarineAccessPeriod> getMarineAccessPeriods()
+	{
+		return marineAccessPeriodsData;
+	}
+	
+	private static String figureMarinePeriodSpan(String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)
+	{
+		marineAccessPeriodStartHour = marineAccessPeriodStartHour.replace(":00", "").strip();
+		marineAccessPeriodEndHour = marineAccessPeriodEndHour.replace(":00", "").strip();
+		int marineAccessPeriodSpan = Integer.valueOf(marineAccessPeriodEndHour) - Integer.valueOf(marineAccessPeriodStartHour);
+		if (marineAccessPeriodSpan == 0)
+			marineAccessPeriodSpan = 24;
+		else if (marineAccessPeriodSpan < 0)
+			marineAccessPeriodSpan = marineAccessPeriodSpan + 24;
+		String marineAccessPeriodSpanAsString = String.valueOf(marineAccessPeriodSpan);
+		return marineAccessPeriodSpanAsString;
+	}
+	
 	private static class CustomDoubleStringConverter extends DoubleStringConverter 
 	{
 		private final DoubleStringConverter converter = new DoubleStringConverter();
