@@ -44,22 +44,28 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="2.  Show summary statistics on:" GridPane.rowIndex="2">
+            <Label text="2.  Show summary statistics on:" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <padding>
-                  <Insets left="10.0" />
+                  <Insets left="32.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="includeSummaryResultsOnSpreadsheetCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnSpreadsheetCheckBox" text="Spreadsheet" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="includeSummaryResultsOnSpreadsheetCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnSpreadsheetCheckBox" text="Spreadsheet" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin></CheckBox>
             <CheckBox fx:id="includeSummaryResultsOnNotepadCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnNotepadCheckBox" text="Generated Notepad document" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-            <Label prefHeight="17.0" prefWidth="545.0" text="1.  Embed 'Confidential and Prepared at the direction of Counsel' on output documents:" GridPane.columnSpan="3" GridPane.rowIndex="1">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
+            <Label prefHeight="17.0" prefWidth="545.0" text="1.  Embed 'Confidential and Prepared at the direction of Counsel' on output documents" GridPane.columnSpan="4" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
             </Label>
-            <CheckBox fx:id="includeConfidentialityDisclaimerCheckBox" mnemonicParsing="false" onAction="#handleIncludeConfidentialityDisclaimerCheckBox" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Label text="4.  Marine access periods (below)" GridPane.rowIndex="4">
-               <padding>
+            <CheckBox fx:id="includeConfidentialityDisclaimerCheckBox" mnemonicParsing="false" onAction="#handleIncludeConfidentialityDisclaimerCheckBox" GridPane.rowIndex="1">
+               <GridPane.margin>
                   <Insets left="10.0" />
+               </GridPane.margin></CheckBox>
+            <Label text="4.  Marine access periods (below)" GridPane.columnSpan="2" GridPane.rowIndex="4">
+               <padding>
+                  <Insets left="32.0" />
                </padding>
             </Label>
             <CheckBox fx:id="computeMarineHighUsagePeriodsCheckBox" mnemonicParsing="false" onAction="#handleComputeMarineHighUsagePeriodsCheckBox" text="3.  Compute marine high-usage periods from" GridPane.columnSpan="2" GridPane.rowIndex="3">
@@ -128,10 +134,10 @@
                   <ToggleGroup fx:id="toggleGroup1" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="viewEntriesOnlyRadioButton" maxHeight="30.0" minHeight="30.0" mnemonicParsing="false" onAction="#handleViewEntriesOnlyRadioButton" prefHeight="30.0" prefWidth="115.0" selected="true" text="View only (safe)" textFill="#1fa33c" toggleGroup="$toggleGroup1" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+            <RadioButton fx:id="viewEntriesOnlyRadioButton" maxHeight="30.0" minHeight="30.0" mnemonicParsing="false" onAction="#handleViewEntriesOnlyRadioButton" prefHeight="30.0" selected="true" text="View only (safe)" textFill="#1fa33c" toggleGroup="$toggleGroup1" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                
                <padding>
-                  <Insets left="10.0" />
+                  <Insets left="20.0" />
                </padding>
             </RadioButton>
             <Button fx:id="clearRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleClearRegistryButton" prefHeight="25.0" text="Clear Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="4" GridPane.valignment="CENTER">
@@ -139,7 +145,7 @@
                   <Font size="11.0" />
                </font>
                <GridPane.margin>
-                  <Insets />
+                  <Insets left="20.0" />
                </GridPane.margin>
             </Button>
             <Button fx:id="addPeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleAddPeriodButton" prefWidth="76.0" text="Add Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP">
@@ -157,7 +163,7 @@
                   <Font size="11.0" />
                </font>
                <GridPane.margin>
-                  <Insets left="100.0" />
+                  <Insets left="115.0" />
                </GridPane.margin>
             </Button>
          </children>

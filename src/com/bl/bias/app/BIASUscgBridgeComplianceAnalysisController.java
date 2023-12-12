@@ -3,21 +3,32 @@ package com.bl.bias.app;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.UnaryOperator;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.analyze.BridgeClosureAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.tools.ConvertDateTime;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 
 public class BIASUscgBridgeComplianceAnalysisController 
 {
@@ -32,26 +43,119 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	private static Boolean continueAnalysis = true;
 
+	private static ObservableList<String> columnValues =  FXCollections.observableArrayList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+			"M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+
+	private static final Integer maxRows = 999;
+	private static Integer firstRowOfClosures;
+	private static Integer lastRowOfClosures;
+	
+	private static SpinnerValueFactory<Integer> firstRowFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxRows, 1);
+	private static SpinnerValueFactory<Integer> lastRowFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxRows, maxRows);
+
+	private static String lowerColumn;
+	private static String raiseColumn;
+	
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
-	@FXML private Label selectLineLabel;
+	@FXML private Label oneLabel;
+	@FXML private Label twoLabel;
+	@FXML private Label firstRowOfBridgeClosuresLabel;
+	@FXML private Label lastRowOfBridgeClosuresLabel;
+	@FXML private Label lowerColumnLabel;
+	@FXML private Label raiseColumnLabel;
+	@FXML private Label selectDataFieldsLabel;
 
 	@FXML private TextArea textArea;
+
+	@FXML private Spinner<Integer> firstRowOfBridgeClosuresSpinner;
+	@FXML private Spinner<Integer> lastRowOfBridgeClosuresSpinner;
+	@FXML private ComboBox<String> lowerColumnComboBox;
+	@FXML private ComboBox<String> raiseColumnComboBox;
 
 	@FXML private ProgressBar progressBar;
 
 	@FXML private void initialize() 
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
+
+		lowerColumnComboBox.getItems().addAll(columnValues);
+		raiseColumnComboBox.getItems().addAll(columnValues);
+		
+		firstRowOfBridgeClosuresSpinner.getEditor().setTextFormatter(new TextFormatter<String>(integerFilter));
+		firstRowOfBridgeClosuresSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable,//
+					Integer oldValue, Integer newValue) {
+				if (newValue == null)
+					firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(oldValue);
+				else
+				{
+					if (newValue > maxRows)
+						firstRowOfClosures = maxRows;
+					else
+						firstRowOfClosures = newValue;
+				}
+			}
+		});
+
+		lastRowOfBridgeClosuresSpinner.getEditor().setTextFormatter(new TextFormatter<String>(integerFilter));
+		lastRowOfBridgeClosuresSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable,//
+					Integer oldValue, Integer newValue) {
+				if (newValue == null) 
+					lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(oldValue);
+				else
+				{
+					if (newValue > maxRows)
+						lastRowOfClosures = maxRows;
+					else
+						lastRowOfClosures = newValue;
+				}
+			}
+		});
+
+		lowerColumnComboBox.setValue("A");
+		raiseColumnComboBox.setValue("Z");
+		firstRowOfBridgeClosuresSpinner.setValueFactory(firstRowFactory);
+		lastRowOfBridgeClosuresSpinner.setValueFactory(lastRowFactory);
+		
+		oneLabel.setDisable(false);
+		selectProjectFileLabel.setDisable(false);
+		fileNameLabel.setDisable(false);
+
+		twoLabel.setDisable(true);
+		selectDataFieldsLabel.setDisable(true);
+		firstRowOfBridgeClosuresLabel.setDisable(true);
+		lastRowOfBridgeClosuresLabel.setDisable(true);
+		lowerColumnLabel.setDisable(true);
+		raiseColumnLabel.setDisable(true);
+		firstRowOfBridgeClosuresSpinner.setDisable(true);
+		lastRowOfBridgeClosuresSpinner.setDisable(true);
+		lowerColumnComboBox.setDisable(true);
+		raiseColumnComboBox.setDisable(true);
 	}
 
 	@FXML private void handleSelectFileButton(ActionEvent event) 
 	{
 		chooseFile();
+	}
+
+	@FXML private void handleLowerColumnComboBox(ActionEvent event)
+	{
+		lowerColumn = lowerColumnComboBox.getValue();
+	}
+
+	@FXML private void handleRaiseColumnComboBox(ActionEvent event)
+	{
+		raiseColumn = raiseColumnComboBox.getValue();
 	}
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
@@ -63,9 +167,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 			fileChooser.setTitle("Select Location to Save Results");
 
 			// Check if previous location is available
-			if ((prefs.get("bc_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			if ((prefs.get("cg_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 			{
-				Path path = Paths.get(prefs.get("bc_lastDirectorySavedTo", null));
+				Path path = Paths.get(prefs.get("cg_lastDirectorySavedTo", null));
 				if ((path.toFile().exists()) && (path !=null))
 				{
 					fileChooser.setInitialDirectory(path.toFile());
@@ -84,7 +188,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 				{
 					saveFileLocationForUserSpecifiedFileName = file.toString();
 					if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-						prefs.put("bc_lastDirectorySavedTo", file.getParent());
+						prefs.put("cg_lastDirectorySavedTo", file.getParent());
 				} 
 				catch (Exception e) 
 				{
@@ -97,7 +201,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
-				
+
 				continueAnalysis = true;
 
 				startTask();
@@ -111,7 +215,6 @@ public class BIASUscgBridgeComplianceAnalysisController
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
-				selectLineLabel.setDisable(true);
 				fileNameLabel.setText("");
 			}	
 		}
@@ -120,9 +223,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 
 			// See if last location is stored
-			if ((prefs.get("bc_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			if ((prefs.get("cg_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 			{
-				Path path = Paths.get(prefs.get("bc_lastDirectorySavedTo", null));
+				Path path = Paths.get(prefs.get("cg_lastDirectorySavedTo", null));
 				if ((path.toFile().exists()) && (path !=null))
 					directoryChooser.setInitialDirectory(path.toFile());
 			}
@@ -138,14 +241,13 @@ public class BIASUscgBridgeComplianceAnalysisController
 				displayMessage(message);
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-					prefs.put("bc_lastDirectorySavedTo", directory.toString());
+					prefs.put("cg_lastDirectorySavedTo", directory.toString());
 
 				saveFileFolderForSerialFileName = directory.toString();
 
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
-				selectLineLabel.setDisable(true);
 
 				continueAnalysis = true;
 
@@ -160,7 +262,6 @@ public class BIASUscgBridgeComplianceAnalysisController
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
-				selectLineLabel.setDisable(true);
 				fileNameLabel.setText("");
 			}	
 		}
@@ -181,7 +282,6 @@ public class BIASUscgBridgeComplianceAnalysisController
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
-		selectLineLabel.setDisable(true);
 		fileNameLabel.setText("");
 	}
 
@@ -191,14 +291,14 @@ public class BIASUscgBridgeComplianceAnalysisController
 		fileChooser.setTitle("Select File");
 		FileChooser.ExtensionFilter fileExtensions = 
 				new FileChooser.ExtensionFilter(
-						"RTC Option Files", "*.OPTION");
+						"Excel Bridge Files", "*.XLSX");
 
 		fileChooser.getExtensionFilters().add(fileExtensions);		
 
 		// See if last directory is stored
-		if ((prefs.get("bc_lastDirectoryForBridgeAnalysis", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+		if ((prefs.get("cg_lastDirectoryForBridgeCompliance", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 		{
-			Path path = Paths.get(prefs.get("bc_lastDirectoryForBridgeAnalysis", null));
+			Path path = Paths.get(prefs.get("cg_lastDirectoryForBridgeCompliance", null));
 
 			if ((path.toFile().exists()) && (path !=null))
 				fileChooser.setInitialDirectory(path.toFile());
@@ -208,11 +308,10 @@ public class BIASUscgBridgeComplianceAnalysisController
 		Stage stageForFileChooser = (Stage) selectFileButton.getScene().getWindow();
 		File file = fileChooser.showOpenDialog(stageForFileChooser);
 
-		// Valid .OPTION file found
+		// Valid .XLSX file found
 		if (file != null)
 		{
 			// Reset checkbox status
-			selectLineLabel.setDisable(true);
 			executeButton.setDisable(true);
 
 			// Write message
@@ -224,9 +323,54 @@ public class BIASUscgBridgeComplianceAnalysisController
 			fullyQualifiedPath = file.toString();
 			fileNameLabel.setText(fullyQualifiedPath);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("bc_lastDirectoryForBridgeAnalysis", file.getParent());
+				prefs.put("cg_lastDirectoryForBridgeCompliance", file.getParent());
 
 			displayMessage(message);
+
+			try 
+			{
+				BIASPreprocessClosuresForUscgBridgeAnalysis preprocessData = new BIASPreprocessClosuresForUscgBridgeAnalysis(fullyQualifiedPath);
+				if (preprocessData.returnBridgeFileDataLocations().get(0) != null)
+				{
+					int firstRowIndex = (Integer) preprocessData.returnBridgeFileDataLocations().get(0) + 1;
+					firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(firstRowIndex);
+				}
+
+				if (preprocessData.returnBridgeFileDataLocations().get(1) != null)
+				{
+					int lastRowIndex = (Integer) preprocessData.returnBridgeFileDataLocations().get(1) + 1;
+					lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(lastRowIndex);
+				}
+
+				if (preprocessData.returnBridgeFileDataLocations().get(2) != null)
+				{
+					String lowerColumn = (String) preprocessData.returnBridgeFileDataLocations().get(2);
+					lowerColumnComboBox.setValue(lowerColumn);
+				}
+
+				if (preprocessData.returnBridgeFileDataLocations().get(3) != null)
+				{
+					String raiseColumn = (String) preprocessData.returnBridgeFileDataLocations().get(3);
+					raiseColumnComboBox.setValue(raiseColumn);
+				}		
+			} 
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+			}
+
+			twoLabel.setDisable(false);
+			selectDataFieldsLabel.setDisable(false);
+			firstRowOfBridgeClosuresSpinner.setDisable(false);
+			firstRowOfBridgeClosuresLabel.setDisable(false);
+			lowerColumnComboBox.setDisable(false);
+			lowerColumnLabel.setDisable(false);
+			raiseColumnComboBox.setDisable(false);
+			raiseColumnLabel.setDisable(false);
+			lastRowOfBridgeClosuresSpinner.setDisable(false);
+			lastRowOfBridgeClosuresLabel.setDisable(false);
+
+			executeButton.setDisable(false);
 		}
 	}                     
 
@@ -258,9 +402,13 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private void runTask() throws InterruptedException
 	{
 		System.out.println("Running USCG Bridge Compliance");
+		System.out.println("firstRow = "+firstRowOfClosures);
+		System.out.println("lastRow = "+lastRowOfClosures);
+		System.out.println("lowerColumn = "+lowerColumn);
+		System.out.println("raiseColumn = "+raiseColumn);
 	}
 
-	
+
 	private void resetMessage()
 	{
 		message="";
@@ -297,4 +445,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 	{
 		return saveFileFolderForSerialFileName;
 	}
+	
+	UnaryOperator<Change> integerFilter = change -> {
+	    String input = change.getText();
+	    if (input.matches("[0-9]*")) { 
+	        return change;
+	    }
+	    return null;
+	};
 }
