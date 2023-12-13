@@ -3,6 +3,7 @@ package com.bl.bias.objects;
 public class BridgeComplianceClosure 
 {
 	// Values passed in via constructor
+	// As of Dec 2023, only closure start day, start time and end time are used
 	private Integer spreadsheetRowNumber;
 	private Integer closureNumber;
 	

@@ -3,8 +3,8 @@ package com.bl.bias.read;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -18,7 +18,7 @@ public class ReadExcelFileForBridgeCompliance
 
 	private Integer objectCount = 0;
 
-	public ReadExcelFileForBridgeCompliance(String file, Integer firstRowOfClosures, String lowerColumn, String raiseColumn, Integer lastRowOfClosures) throws Exception 
+	public ReadExcelFileForBridgeCompliance(String file, Integer firstRowOfClosures, String dayColumn, String lowerColumn, String raiseColumn, Integer lastRowOfClosures) throws Exception 
 	{
 		resultsMessage = "\nStarted parsing Excel file at "+ConvertDateTime.getTimeStamp()+"\n";
 
@@ -34,9 +34,11 @@ public class ReadExcelFileForBridgeCompliance
 		// Load row-by-row checking for errors
 		for (int i = firstRowOfClosures - 1; i <= lastRowOfClosures - 1; i++)
 		{
-			Cell cellData = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(lowerColumn) - 1);
-			objectCount++;
-			System.out.println("Cycle: "+cellData);
+			String day = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(dayColumn)).getStringCellValue();
+			double lowerTime = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(lowerColumn)).getNumericCellValue();
+			double raiseTime = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(raiseColumn)).getNumericCellValue();
+			objectCount = objectCount + 3;
+			System.out.println(day+":"+lowerTime+":"+raiseTime);
 		}
 		
 		resultsMessage += "Read "+objectCount+" objects from spreadsheet \n";

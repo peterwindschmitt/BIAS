@@ -6,9 +6,7 @@ import java.nio.file.Paths;
 import java.util.function.UnaryOperator;
 import java.util.prefs.Preferences;
 
-import com.bl.bias.analyze.BridgeClosureAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.read.ReadBridgeClosureAnalysisFiles;
 import com.bl.bias.read.ReadExcelFileForBridgeCompliance;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -30,7 +28,6 @@ import javafx.scene.control.TextFormatter.Change;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.converter.IntegerStringConverter;
 
 public class BIASUscgBridgeComplianceAnalysisController 
 {
@@ -47,7 +44,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	private static ObservableList<String> columnValues =  FXCollections.observableArrayList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
 			"M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
-
+	
 	private static final Integer maxRows = 999;
 	private static Integer firstRowOfClosures;
 	private static Integer lastRowOfClosures;
@@ -55,6 +52,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private static SpinnerValueFactory<Integer> firstRowFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxRows, 1);
 	private static SpinnerValueFactory<Integer> lastRowFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxRows, maxRows);
 
+	private static String dayColumn;
 	private static String lowerColumn;
 	private static String raiseColumn;
 
@@ -68,6 +66,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 	@FXML private Label twoLabel;
 	@FXML private Label firstRowOfBridgeClosuresLabel;
 	@FXML private Label lastRowOfBridgeClosuresLabel;
+	@FXML private Label dayColumnLabel;
 	@FXML private Label lowerColumnLabel;
 	@FXML private Label raiseColumnLabel;
 	@FXML private Label selectDataFieldsLabel;
@@ -76,6 +75,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	@FXML private Spinner<Integer> firstRowOfBridgeClosuresSpinner;
 	@FXML private Spinner<Integer> lastRowOfBridgeClosuresSpinner;
+	@FXML private ComboBox<String> dayColumnComboBox;
 	@FXML private ComboBox<String> lowerColumnComboBox;
 	@FXML private ComboBox<String> raiseColumnComboBox;
 
@@ -85,9 +85,10 @@ public class BIASUscgBridgeComplianceAnalysisController
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
 
+		dayColumnComboBox.getItems().addAll(columnValues);
 		lowerColumnComboBox.getItems().addAll(columnValues);
 		raiseColumnComboBox.getItems().addAll(columnValues);
-
+		
 		firstRowOfBridgeClosuresSpinner.getEditor().setTextFormatter(new TextFormatter<String>(integerFilter));
 		firstRowOfBridgeClosuresSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 
@@ -124,8 +125,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 			}
 		});
 
-		lowerColumnComboBox.setValue("A");
-		raiseColumnComboBox.setValue("Z");
+		dayColumnComboBox.setValue("A");
+		lowerColumnComboBox.setValue("B");
+		raiseColumnComboBox.setValue("C");
 		firstRowOfBridgeClosuresSpinner.setValueFactory(firstRowFactory);
 		lastRowOfBridgeClosuresSpinner.setValueFactory(lastRowFactory);
 
@@ -137,10 +139,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 		selectDataFieldsLabel.setDisable(true);
 		firstRowOfBridgeClosuresLabel.setDisable(true);
 		lastRowOfBridgeClosuresLabel.setDisable(true);
+		dayColumnLabel.setDisable(true);
 		lowerColumnLabel.setDisable(true);
 		raiseColumnLabel.setDisable(true);
 		firstRowOfBridgeClosuresSpinner.setDisable(true);
 		lastRowOfBridgeClosuresSpinner.setDisable(true);
+		dayColumnComboBox.setDisable(true);
 		lowerColumnComboBox.setDisable(true);
 		raiseColumnComboBox.setDisable(true);
 	}
@@ -150,6 +154,11 @@ public class BIASUscgBridgeComplianceAnalysisController
 		chooseFile();
 	}
 
+	@FXML private void handleDayColumnComboBox(ActionEvent event)
+	{
+		dayColumn = dayColumnComboBox.getValue();
+	}
+	
 	@FXML private void handleLowerColumnComboBox(ActionEvent event)
 	{
 		lowerColumn = lowerColumnComboBox.getValue();
@@ -208,10 +217,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectDataFieldsLabel.setDisable(true);
 				firstRowOfBridgeClosuresLabel.setDisable(true);
 				lastRowOfBridgeClosuresLabel.setDisable(true);
+				dayColumnLabel.setDisable(true);
 				lowerColumnLabel.setDisable(true);
 				raiseColumnLabel.setDisable(true);
 				firstRowOfBridgeClosuresSpinner.setDisable(true);
 				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				dayColumnComboBox.setDisable(true);
 				lowerColumnComboBox.setDisable(true);
 				raiseColumnComboBox.setDisable(true);
 				
@@ -240,15 +251,18 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectDataFieldsLabel.setDisable(true);
 				firstRowOfBridgeClosuresLabel.setDisable(true);
 				lastRowOfBridgeClosuresLabel.setDisable(true);
+				dayColumnLabel.setDisable(true);
 				lowerColumnLabel.setDisable(true);
 				raiseColumnLabel.setDisable(true);
 				firstRowOfBridgeClosuresSpinner.setDisable(true);
 				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				dayColumnComboBox.setDisable(true);
 				lowerColumnComboBox.setDisable(true);
 				raiseColumnComboBox.setDisable(true);
 				
-				lowerColumnComboBox.setValue("A");
-				raiseColumnComboBox.setValue("Z");
+				dayColumnComboBox.setValue("A");
+				lowerColumnComboBox.setValue("B");
+				raiseColumnComboBox.setValue("C");
 				firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
 				lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 			}	
@@ -288,10 +302,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectDataFieldsLabel.setDisable(true);
 				firstRowOfBridgeClosuresLabel.setDisable(true);
 				lastRowOfBridgeClosuresLabel.setDisable(true);
+				dayColumnLabel.setDisable(true);
 				lowerColumnLabel.setDisable(true);
 				raiseColumnLabel.setDisable(true);
 				firstRowOfBridgeClosuresSpinner.setDisable(true);
 				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				dayColumnComboBox.setDisable(true);
 				lowerColumnComboBox.setDisable(true);
 				raiseColumnComboBox.setDisable(true);
 				
@@ -320,15 +336,18 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectDataFieldsLabel.setDisable(true);
 				firstRowOfBridgeClosuresLabel.setDisable(true);
 				lastRowOfBridgeClosuresLabel.setDisable(true);
+				dayColumnLabel.setDisable(true);
 				lowerColumnLabel.setDisable(true);
 				raiseColumnLabel.setDisable(true);
 				firstRowOfBridgeClosuresSpinner.setDisable(true);
 				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				dayColumnComboBox.setDisable(true);
 				lowerColumnComboBox.setDisable(true);
 				raiseColumnComboBox.setDisable(true);
 				
-				lowerColumnComboBox.setValue("A");
-				raiseColumnComboBox.setValue("Z");
+				dayColumnComboBox.setValue("A");
+				lowerColumnComboBox.setValue("B");
+				raiseColumnComboBox.setValue("C");
 				firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
 				lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 			}	
@@ -354,15 +373,18 @@ public class BIASUscgBridgeComplianceAnalysisController
 		selectDataFieldsLabel.setDisable(true);
 		firstRowOfBridgeClosuresLabel.setDisable(true);
 		lastRowOfBridgeClosuresLabel.setDisable(true);
+		dayColumnLabel.setDisable(true);
 		lowerColumnLabel.setDisable(true);
 		raiseColumnLabel.setDisable(true);
 		firstRowOfBridgeClosuresSpinner.setDisable(true);
 		lastRowOfBridgeClosuresSpinner.setDisable(true);
+		dayColumnComboBox.setDisable(true);
 		lowerColumnComboBox.setDisable(true);
 		raiseColumnComboBox.setDisable(true);
 		
-		lowerColumnComboBox.setValue("A");
-		raiseColumnComboBox.setValue("Z");
+		dayColumnComboBox.setValue("A");
+		lowerColumnComboBox.setValue("B");
+		raiseColumnComboBox.setValue("C");
 		firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
 		lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 	}
@@ -426,13 +448,19 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 				if (preprocessData.returnBridgeFileDataLocations().get(2) != null)
 				{
-					String lowerColumn = (String) preprocessData.returnBridgeFileDataLocations().get(2);
+					dayColumn = (String) preprocessData.returnBridgeFileDataLocations().get(2);
+					dayColumnComboBox.setValue(dayColumn);
+				}
+				
+				if (preprocessData.returnBridgeFileDataLocations().get(3) != null)
+				{
+					lowerColumn = (String) preprocessData.returnBridgeFileDataLocations().get(3);
 					lowerColumnComboBox.setValue(lowerColumn);
 				}
 
-				if (preprocessData.returnBridgeFileDataLocations().get(3) != null)
+				if (preprocessData.returnBridgeFileDataLocations().get(4) != null)
 				{
-					String raiseColumn = (String) preprocessData.returnBridgeFileDataLocations().get(3);
+					raiseColumn = (String) preprocessData.returnBridgeFileDataLocations().get(4);
 					raiseColumnComboBox.setValue(raiseColumn);
 				}		
 			} 
@@ -445,7 +473,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 			selectDataFieldsLabel.setDisable(false);
 			firstRowOfBridgeClosuresSpinner.setDisable(false);
 			firstRowOfBridgeClosuresLabel.setDisable(false);
+			dayColumnComboBox.setDisable(false);
 			lowerColumnComboBox.setDisable(false);
+			dayColumnLabel.setDisable(false);
 			lowerColumnLabel.setDisable(false);
 			raiseColumnComboBox.setDisable(false);
 			raiseColumnLabel.setDisable(false);
@@ -488,7 +518,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 		try 
 		{
-			readData = new ReadExcelFileForBridgeCompliance(fullyQualifiedPath, firstRowOfClosures, lowerColumn, raiseColumn, lastRowOfClosures);
+			readData = new ReadExcelFileForBridgeCompliance(fullyQualifiedPath, firstRowOfClosures, dayColumn, lowerColumn, raiseColumn, lastRowOfClosures);
 		} 
 		catch (Exception e) 
 		{

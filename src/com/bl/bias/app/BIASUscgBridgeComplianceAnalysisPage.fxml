@@ -81,13 +81,13 @@
             <Insets left="43.0" />
          </GridPane.margin>
       </Label>
-      <ComboBox fx:id="lowerColumnComboBox" maxWidth="55.0" minWidth="55.0" onAction="#handleLowerColumnComboBox" prefWidth="55.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+      <ComboBox fx:id="lowerColumnComboBox" maxWidth="55.0" minWidth="55.0" onAction="#handleLowerColumnComboBox" prefWidth="55.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
          <GridPane.margin>
-            <Insets left="10.0" />
+            <Insets left="-85.0" />
          </GridPane.margin></ComboBox>
-      <Label fx:id="lowerColumnLabel" text="Lower column" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7">
+      <Label fx:id="lowerColumnLabel" text="Lower column" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7">
          <GridPane.margin>
-            <Insets />
+            <Insets left="-95.0" />
          </GridPane.margin>
       </Label>
       <ComboBox fx:id="raiseColumnComboBox" maxWidth="55.0" minWidth="55.0" onAction="#handleRaiseColumnComboBox" prefWidth="55.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
@@ -125,6 +125,16 @@
             <Insets bottom="15.0" left="80.0" />
          </GridPane.margin>
       </ProgressBar>
+      <Label fx:id="dayColumnLabel" text="Day column" GridPane.columnIndex="1" GridPane.rowIndex="7">
+         <GridPane.margin>
+            <Insets left="5.0" />
+         </GridPane.margin>
+      </Label>
+      <ComboBox fx:id="dayColumnComboBox" maxWidth="55.0" minWidth="55.0" onAction="#handleDayColumnComboBox" prefWidth="55.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </ComboBox>
       
 	</children>
 </GridPane>
