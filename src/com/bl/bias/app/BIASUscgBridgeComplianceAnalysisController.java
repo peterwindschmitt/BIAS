@@ -8,6 +8,8 @@ import java.util.prefs.Preferences;
 
 import com.bl.bias.analyze.BridgeClosureAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.read.ReadBridgeClosureAnalysisFiles;
+import com.bl.bias.read.ReadExcelFileForBridgeCompliance;
 import com.bl.bias.tools.ConvertDateTime;
 
 import javafx.beans.value.ChangeListener;
@@ -49,13 +51,13 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private static final Integer maxRows = 999;
 	private static Integer firstRowOfClosures;
 	private static Integer lastRowOfClosures;
-	
+
 	private static SpinnerValueFactory<Integer> firstRowFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxRows, 1);
 	private static SpinnerValueFactory<Integer> lastRowFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxRows, maxRows);
 
 	private static String lowerColumn;
 	private static String raiseColumn;
-	
+
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
@@ -85,7 +87,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 		lowerColumnComboBox.getItems().addAll(columnValues);
 		raiseColumnComboBox.getItems().addAll(columnValues);
-		
+
 		firstRowOfBridgeClosuresSpinner.getEditor().setTextFormatter(new TextFormatter<String>(integerFilter));
 		firstRowOfBridgeClosuresSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 
@@ -126,7 +128,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 		raiseColumnComboBox.setValue("Z");
 		firstRowOfBridgeClosuresSpinner.setValueFactory(firstRowFactory);
 		lastRowOfBridgeClosuresSpinner.setValueFactory(lastRowFactory);
-		
+
 		oneLabel.setDisable(false);
 		selectProjectFileLabel.setDisable(false);
 		fileNameLabel.setDisable(false);
@@ -201,7 +203,18 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
-
+				
+				twoLabel.setDisable(true);
+				selectDataFieldsLabel.setDisable(true);
+				firstRowOfBridgeClosuresLabel.setDisable(true);
+				lastRowOfBridgeClosuresLabel.setDisable(true);
+				lowerColumnLabel.setDisable(true);
+				raiseColumnLabel.setDisable(true);
+				firstRowOfBridgeClosuresSpinner.setDisable(true);
+				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				lowerColumnComboBox.setDisable(true);
+				raiseColumnComboBox.setDisable(true);
+				
 				continueAnalysis = true;
 
 				startTask();
@@ -211,11 +224,33 @@ public class BIASUscgBridgeComplianceAnalysisController
 				//  Did not commit file to save so reset
 				resetMessage();
 
-				executeButton.setDisable(true);
+				progressBar.setVisible(false);
+				setProgressIndicator(0.00);
+
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
 				fileNameLabel.setText("");
+				oneLabel.setDisable(false);
+				selectProjectFileLabel.setDisable(false);
+				fileNameLabel.setDisable(false);
+
+				executeButton.setDisable(true);
+				twoLabel.setDisable(true);
+				selectDataFieldsLabel.setDisable(true);
+				firstRowOfBridgeClosuresLabel.setDisable(true);
+				lastRowOfBridgeClosuresLabel.setDisable(true);
+				lowerColumnLabel.setDisable(true);
+				raiseColumnLabel.setDisable(true);
+				firstRowOfBridgeClosuresSpinner.setDisable(true);
+				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				lowerColumnComboBox.setDisable(true);
+				raiseColumnComboBox.setDisable(true);
+				
+				lowerColumnComboBox.setValue("A");
+				raiseColumnComboBox.setValue("Z");
+				firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
+				lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 			}	
 		}
 		else
@@ -249,6 +284,17 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
 
+				twoLabel.setDisable(true);
+				selectDataFieldsLabel.setDisable(true);
+				firstRowOfBridgeClosuresLabel.setDisable(true);
+				lastRowOfBridgeClosuresLabel.setDisable(true);
+				lowerColumnLabel.setDisable(true);
+				raiseColumnLabel.setDisable(true);
+				firstRowOfBridgeClosuresSpinner.setDisable(true);
+				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				lowerColumnComboBox.setDisable(true);
+				raiseColumnComboBox.setDisable(true);
+				
 				continueAnalysis = true;
 
 				startTask();
@@ -258,22 +304,39 @@ public class BIASUscgBridgeComplianceAnalysisController
 				//  Did not commit file to save so reset
 				resetMessage();
 
-				executeButton.setDisable(true);
+				progressBar.setVisible(false);
+				setProgressIndicator(0.00);
+
 				executeButton.setVisible(true);
+				executeButton.setDisable(true);
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
 				fileNameLabel.setText("");
+				oneLabel.setDisable(false);
+				selectProjectFileLabel.setDisable(false);
+				fileNameLabel.setDisable(false);
+
+				twoLabel.setDisable(true);
+				selectDataFieldsLabel.setDisable(true);
+				firstRowOfBridgeClosuresLabel.setDisable(true);
+				lastRowOfBridgeClosuresLabel.setDisable(true);
+				lowerColumnLabel.setDisable(true);
+				raiseColumnLabel.setDisable(true);
+				firstRowOfBridgeClosuresSpinner.setDisable(true);
+				lastRowOfBridgeClosuresSpinner.setDisable(true);
+				lowerColumnComboBox.setDisable(true);
+				raiseColumnComboBox.setDisable(true);
+				
+				lowerColumnComboBox.setValue("A");
+				raiseColumnComboBox.setValue("Z");
+				firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
+				lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 			}	
 		}
 	}
 
 	@FXML private void handleResetButton(ActionEvent event) 
 	{
-		BridgeClosureAnalysis.clearCrossings();
-		BridgeClosureAnalysis.clearSortedCrossings();
-		BridgeClosureAnalysis.clearOccupancies();
-		BridgeClosureAnalysis.clearClosures();
-
 		resetMessage();
 
 		progressBar.setVisible(false);
@@ -283,6 +346,25 @@ public class BIASUscgBridgeComplianceAnalysisController
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
 		fileNameLabel.setText("");
+		oneLabel.setDisable(false);
+		selectProjectFileLabel.setDisable(false);
+		fileNameLabel.setDisable(false);
+
+		twoLabel.setDisable(true);
+		selectDataFieldsLabel.setDisable(true);
+		firstRowOfBridgeClosuresLabel.setDisable(true);
+		lastRowOfBridgeClosuresLabel.setDisable(true);
+		lowerColumnLabel.setDisable(true);
+		raiseColumnLabel.setDisable(true);
+		firstRowOfBridgeClosuresSpinner.setDisable(true);
+		lastRowOfBridgeClosuresSpinner.setDisable(true);
+		lowerColumnComboBox.setDisable(true);
+		raiseColumnComboBox.setDisable(true);
+		
+		lowerColumnComboBox.setValue("A");
+		raiseColumnComboBox.setValue("Z");
+		firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
+		lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 	}
 
 	private void chooseFile()
@@ -401,11 +483,29 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	private void runTask() throws InterruptedException
 	{
-		System.out.println("Running USCG Bridge Compliance");
-		System.out.println("firstRow = "+firstRowOfClosures);
-		System.out.println("lastRow = "+lastRowOfClosures);
-		System.out.println("lowerColumn = "+lowerColumn);
-		System.out.println("raiseColumn = "+raiseColumn);
+		// Read all objects that are required for the bridge analysis
+		ReadExcelFileForBridgeCompliance readData = null;
+
+		try 
+		{
+			readData = new ReadExcelFileForBridgeCompliance(fullyQualifiedPath, firstRowOfClosures, lowerColumn, raiseColumn, lastRowOfClosures);
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Error encountered "+e.toString());
+		}
+
+		message = readData.getResultsMessage();
+		displayMessage(message);
+
+		setProgressIndicator(0.25);
+
+		displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+
+		//  Now reset for next case
+		executeButton.setVisible(false);
+		resetButton.setVisible(true);
+		resetButton.setDisable(false);
 	}
 
 
@@ -445,12 +545,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 	{
 		return saveFileFolderForSerialFileName;
 	}
-	
+
 	UnaryOperator<Change> integerFilter = change -> {
-	    String input = change.getText();
-	    if (input.matches("[0-9]*")) { 
-	        return change;
-	    }
-	    return null;
+		String input = change.getText();
+		if (input.matches("[0-9]*")) { 
+			return change;
+		}
+		return null;
 	};
 }
