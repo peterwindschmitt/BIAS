@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.function.UnaryOperator;
 import java.util.prefs.Preferences;
 
+import com.bl.bias.analyze.BridgeComplianceAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadExcelFileForBridgeCompliance;
 import com.bl.bias.tools.ConvertDateTime;
@@ -513,24 +514,36 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	private void runTask() throws InterruptedException
 	{
-		// Read all objects that are required for the bridge analysis
 		ReadExcelFileForBridgeCompliance readData = null;
-
+		BridgeComplianceAnalysis analyzeData = null;
+		
+		// Read all objects that are required for the bridge analysis
 		try 
 		{
 			readData = new ReadExcelFileForBridgeCompliance(fullyQualifiedPath, firstRowOfClosures, dayColumn, lowerColumn, raiseColumn, lastRowOfClosures);
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Error encountered "+e.toString());
+			displayMessage("\nError in reading spreadsheet");
+			continueAnalysis = false;
 		}
 
 		message = readData.getResultsMessage();
 		displayMessage(message);
-
+		continueAnalysis = readData.getValidFile();
 		setProgressIndicator(0.25);
 
-		displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+		// Analyze closures
+		if (continueAnalysis)
+		{
+			analyzeData = new BridgeComplianceAnalysis();
+		}
+		else
+			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+		
+		message = analyzeData.getResultsMessage();
+		displayMessage(message);
+		setProgressIndicator(0.75);
 
 		//  Now reset for next case
 		executeButton.setVisible(false);

@@ -3,7 +3,7 @@ package com.bl.bias.objects;
 public class BridgeComplianceClosure 
 {
 	// Values passed in via constructor
-	// As of Dec 2023, only closure start day, start time and end time are used
+	// As of Dec 2023, only closure row number, closure start day, start time and end time are used
 	private Integer spreadsheetRowNumber;
 	private Integer closureNumber;
 	
@@ -15,9 +15,10 @@ public class BridgeComplianceClosure
 	private String closureStartDay;
 	private String closureTrainType;
 	private String closureNotes;
-
+	
 	// Values computed by other classes
-	private Boolean closureError = false;
+	private Boolean closureViolation = false;
+	private Boolean closureInCircuitException = false;
 			
 	public BridgeComplianceClosure(Integer spreadsheetRowNumber, Integer closureNumber, Double closureDate, Double closureStartTime, Double closureEndTime, String dutyBridgeMonitor, String closureStartDay, String closureTrainType, String closureNotes) 
 	{
@@ -107,13 +108,23 @@ public class BridgeComplianceClosure
 		return endDay;
 	}
 	
-	public Boolean getClosureError()
+	public Boolean getClosureViolation()
 	{
-		return closureError;
+		return closureViolation;
 	}
 	
-	public void setClosureError(Boolean error)
+	public void setClosureViolation(Boolean violation)
 	{
-		closureError = error;
+		closureViolation = violation;
+	}
+	
+	public Boolean getInCircuitException()
+	{
+		return closureInCircuitException;
+	}
+	
+	public void setInCircuitExcpetion(Boolean exception)
+	{
+		closureInCircuitException = exception;
 	}
 }

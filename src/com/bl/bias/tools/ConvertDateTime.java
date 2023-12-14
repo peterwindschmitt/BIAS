@@ -1,5 +1,6 @@
 package com.bl.bias.tools;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -318,11 +319,11 @@ public class ConvertDateTime
 
 	public static String convertSerialToHHMMString(double serialTime)
 	{
-		int secondsLeft = (int) Math.abs(serialTime * 86400);
+		int secondsLeft = (int) (Math.round(Math.abs(serialTime * 86400) / 20) * 20);
 		int hours = Math.abs(secondsLeft / 3600);
 		secondsLeft = secondsLeft - hours * 3600;
 		int minutes = Math.abs(secondsLeft / 60);
-
+		
 		String formattedTime;
 		if (serialTime >= 0)
 			formattedTime = "";
