@@ -2,302 +2,262 @@ package com.bl.bias.analyze;
 
 import java.util.ArrayList;
 
+import com.bl.bias.app.BIASUscgBridgeComplianceAnalysisConfigPageController;
 import com.bl.bias.objects.BridgeComplianceClosure;
 import com.bl.bias.objects.MarineAccessPeriod;
 import com.bl.bias.tools.ConvertDateTime;
 
+import javafx.collections.ObservableList;
+
 public class BridgeComplianceAnalysis 
 {
 	private static String resultsMessage;
-	
-	private static ArrayList<BridgeComplianceClosure> closures = new ArrayList<BridgeComplianceClosure>();
-	private static ArrayList<MarineAccessPeriod> marineAccessPeriods = new ArrayList<MarineAccessPeriod>();
-	
-	public BridgeComplianceAnalysis() 
+
+	private ArrayList<BridgeComplianceClosure> closures;
+	private ObservableList<MarineAccessPeriod> marineAccessPeriods;
+
+	private static Integer marineAccessPeriodViolationCount = 0;  //  Can be assigned multiple times per closure
+	private static Integer closureDurationViolationCount = 0;  // Can only be assigned once per closure
+	private static Integer inCircuitCount = 0;
+
+	private static Boolean debug = true;
+	private static Boolean lastOpeningDelayed;
+		
+	public BridgeComplianceAnalysis(ArrayList<BridgeComplianceClosure> closures, ObservableList<MarineAccessPeriod> marineAccessPeriods) 
 	{
-		resultsMessage = "\nStarted creating bridge compliance results at "+ConvertDateTime.getTimeStamp()+"\n";
-		
-		/*
-		// Compute the end of the exclusion period (sim start day and time + warm-up period + exclusion period)
-		endOfExclusionPeriodInSeconds = ConvertDateTime.convertDaytoSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginDay())
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginTime()+":00")
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getWarmUpDuration()+":00")
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisConfigPageController.getResultsExclusionPeriodInHours()+":00:00");
+		resultsMessage = "\nStarted creating bridge compliance results at "+ConvertDateTime.getTimeStamp();
 
-		// Compute the end of the statistical period (sim start day and time + duration of simulation - cool-down period)
-		endOfAnalysisPeriodInSeconds = ConvertDateTime.convertDaytoSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginDay())
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginTime()+":00")
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationDuration()+":00")
-		     - ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getCoolDownDuration()+":00");
-		
-		
-		// 1.  Create a crossing object for each applicable train in the BridgeAnalysisRouteTraversal objects.  There may be more than one object created for
-		// each train if it crosses a bridge more than once (e.g., changes direction enroute).  Store the first head-end on-station time for the line as well 
-		// as the last tail-end on-station time.  These events should occur at absolute signal nodes.
-		String entryNode = null;
-		String exitNode = null;
-		Integer entryNodeArrivalTimeInSeconds = null;
-		Integer exitNodeDepartureTimeInSeconds = null;
+		Double lastPeriodsMinimumDuration = 0.0;
+		Double lastPeriodsRaiseTime = 0.0;
 
-		Integer lowestPreviousJ = 0;
-		Integer crossingCount = 0;
-
-		// For each entry in route file
-		for (int i = 0; i < occupanciesFromRouteFile.size(); i++)
+		// For each closure
+		for (int i = 0; i < closures.size(); i++)
 		{
-			String currentTrainSymbol = occupanciesFromRouteFile.get(i).getTrainSymbol();
-			String currentTrainDirection = occupanciesFromRouteFile.get(i).getDirection();
-			String currentNode = occupanciesFromRouteFile.get(i).getNode();
-			String currentNodeArrivalTimeAsString = occupanciesFromRouteFile.get(i).getHeadEndArrivalTime();
-			String currentNodeDepartureTimeAsString = occupanciesFromRouteFile.get(i).getTailEndDepartureTime();
-			Integer currentNodeArrivalTimeInSeconds = ConvertDateTime.convertDDHHMMSSStringToSeconds(currentNodeArrivalTimeAsString);
-			Integer currentNodeDepartureTimeInSeconds = ConvertDateTime.convertDDHHMMSSStringToSeconds(currentNodeDepartureTimeAsString);
-			Integer currentNodeRtcIncrement = Integer.valueOf(occupanciesFromRouteFile.get(i).getRtcIncrement());
-
-			entryNode = currentNode;
-			entryNodeArrivalTimeInSeconds = currentNodeArrivalTimeInSeconds;
-			exitNode = currentNode;
-			exitNodeDepartureTimeInSeconds = currentNodeDepartureTimeInSeconds;
-
-			for (int j = lowestPreviousJ; j < occupanciesFromRouteFile.size(); j++)
+			Integer rowNumber = closures.get(i).getSpreadsheetRowNumber();
+			String startDay = closures.get(i).getClosureStartDay();
+			String endDay = closures.get(i).getClosureEndDay();
+			Double bridgeLowerTimeAsSerial = closures.get(i).getClosureStartTime();
+			Double bridgeRaiseTimeAsSerial = closures.get(i).getClosureEndTime();
+			Double closureDurationAsSerial = closures.get(i).getClosureDuration();
+			
+			// Type 0 Violation from VBA  
+			// Bridge remains closed over maximum permitted duration (applies to all hours of the day -- even if during a marine access period.)
+			// This type of violation can also be subject to marine access period violation(s)
+			if ((bridgeRaiseTimeAsSerial - bridgeLowerTimeAsSerial) > (Double.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getMaxClosureMinutes()) / 1440))
 			{
-				String potentialTrainSymbol = occupanciesFromRouteFile.get(j).getTrainSymbol();
-				String potentialTrainDirection = occupanciesFromRouteFile.get(j).getDirection();
-				String potentialNode = occupanciesFromRouteFile.get(j).getNode();
-				String potentialNodeDepartureTimeAsString = occupanciesFromRouteFile.get(j).getTailEndDepartureTime();
-				Integer potentialNodeDepartureTimeInSeconds = ConvertDateTime.convertDDHHMMSSStringToSeconds(potentialNodeDepartureTimeAsString);
-				Integer potentialNodeRtcIncrement = Integer.valueOf(occupanciesFromRouteFile.get(j).getRtcIncrement());
-
-				if ((currentTrainSymbol.equals(potentialTrainSymbol)) && (currentTrainDirection.equals(potentialTrainDirection)) && (potentialNodeRtcIncrement > currentNodeRtcIncrement))
+	            closureDurationViolationCount++;
+	            closures.get(i).setClosureDurationViolation();
+	            
+	            if (debug)
 				{
-					//  Update current crossing object
-					exitNode = potentialNode;
-					exitNodeDepartureTimeInSeconds = potentialNodeDepartureTimeInSeconds;
+					System.out.print("A Type 0 Violation occurs on row "+(rowNumber + 1)+" due to a closure starting on "+startDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeLowerTimeAsSerial)+
+							" and ending on "+endDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeRaiseTimeAsSerial)+ " (duration "+ConvertDateTime.convertSerialToHHMMString(closureDurationAsSerial));
+					System.out.println(").  The maximum permitted closure duration is "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMaxClosureMinutes() +" minutes."); 
+				}
+	        }
+	        
+			// For each marine access period
+			for (int j = 0; j < marineAccessPeriods.size(); j++)
+			{
+				// Check to see if this opening negates the last delayed opening
+				if ((bridgeLowerTimeAsSerial - lastPeriodsRaiseTime) > lastPeriodsMinimumDuration)
+					lastOpeningDelayed = false;
 
-					lowestPreviousJ = j + 1;
-					i = j;
+				// Exclude this marine access period because both the beginning and end of it were before this closure
+				if  ((((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))			// Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))			
+						&& ((bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble()) // and the bridge lowers before this period starts
+						&& (bridgeRaiseTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble())  // and the bridge raises before this period starts
+						&& (!lastOpeningDelayed))))																// and the last opening was NOT delayed
+				{
 					continue;
 				}
-				else if ((currentTrainSymbol.equals(potentialTrainSymbol)) && (currentTrainDirection.equals(potentialTrainDirection)) && (potentialNodeRtcIncrement <= currentNodeRtcIncrement))
+				
+				// Exclude this marine access period because both the beginning and end of it were after this closure
+				else if ((((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))	  // Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))			
+						&& ((bridgeLowerTimeAsSerial > marineAccessPeriods.get(j).getMarinePeriodEndDouble()) // and the bridge lowers after this period starts
+						&& (bridgeRaiseTimeAsSerial > marineAccessPeriods.get(j).getMarinePeriodEndDouble())  // and the bridge raises after this period starts
+						&& (!lastOpeningDelayed)))) 														  // and the last opening was NOT delayed
 				{
-					// Set lower bound in array for all objects after this point
-					lowestPreviousJ = j + 1;
+					continue;
 				}
-			}
 
-			// Create Crossing object
-			if ((exitNodeDepartureTimeInSeconds + (BIASBridgeClosureAnalysisConfigPageController.getRaiseMinutes() * 60) >= endOfExclusionPeriodInSeconds)
-				&& ((entryNodeArrivalTimeInSeconds - BIASBridgeClosureAnalysisConfigPageController.getSignalPreferredMinutesInAdvanceOfTrain() - BIASBridgeClosureAnalysisConfigPageController.getLowerMinutes()) < endOfAnalysisPeriodInSeconds))
-			{
-				BridgeAnalysisCrossing crossing = new BridgeAnalysisCrossing(currentTrainSymbol, currentTrainDirection, entryNode, entryNodeArrivalTimeInSeconds, exitNode, exitNodeDepartureTimeInSeconds);
-				crossings.add(crossing);
-				crossingCount++;
-			}
+				// Type 1 Violation from VBA  
+				// Less than minimum opening duration after last closure delayed
+				else if (((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))	// Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))			
+						&& (lastOpeningDelayed)																// and the last opening was delayed
+						&& (bridgeLowerTimeAsSerial < (lastPeriodsRaiseTime + lastPeriodsMinimumDuration)))	// and the bridge lowers before the minimum required open duration of the previously delayed period  
+				{
+					if (debug)
+					{
+						System.out.print("A Type 1 Violation occurs on row "+(rowNumber + 1)+" due to a closure starting on "+startDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeLowerTimeAsSerial)+
+								" and ending on "+endDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeRaiseTimeAsSerial)+ " (duration "+ConvertDateTime.convertSerialToHHMMString(closureDurationAsSerial));
+						System.out.print(").  This did not permit a minimum opening time of "+ConvertDateTime.convertSerialToHHMMString(lastPeriodsMinimumDuration)); 
+						System.out.println(" after the previous closure ended at "+ConvertDateTime.convertSerialToHHMMString(lastPeriodsRaiseTime)+".");
+					}
+					
+					closures.get(i).setMarineAccessPeriodViolation();
+					marineAccessPeriodViolationCount++;
+					lastPeriodsMinimumDuration = 0.0;
+					lastOpeningDelayed = false;
+				}                 
+
+				// Type 2 Violation from VBA
+				// Bridge remains lowered over entirety of marine access period
+				else if (((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))				// Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
+						&& (bridgeLowerTimeAsSerial < (marineAccessPeriods.get(j).getMarinePeriodStartDouble())			// and the bridge lowers before the start of access period
+								&& (bridgeRaiseTimeAsSerial > marineAccessPeriods.get(j).getMarinePeriodEndDouble()))) 	// and the bridge raises after the end of the access period 
+				{
+					closures.get(i).setMarineAccessPeriodViolation();
+					marineAccessPeriodViolationCount++;
+					lastPeriodsMinimumDuration = 0.0;
+
+					if (debug)
+					{
+						System.out.print("A Type 2 Violation occurs on row "+(rowNumber + 1)+" due to a closure starting on "+startDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeLowerTimeAsSerial)+
+								" and ending on "+endDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeRaiseTimeAsSerial)+ " (duration "+ConvertDateTime.convertSerialToHHMMString(closureDurationAsSerial));
+						System.out.print(") which violates the marine access period from "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodStartDouble())+ 
+								" to "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodEndDouble()));
+						System.out.println(".  Total violations for this closure is "+closures.get(i).getMarineAccessPeriodViolation()+".");
+					}
+				}
+
+				// Type 3 Violation from VBA:
+				// Check that bridge does not lower during the marine access period 
+				else if (((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))				// Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
+						&& (bridgeLowerTimeAsSerial > (marineAccessPeriods.get(j).getMarinePeriodStartDouble())			// and the bridge lowers after start of access period
+								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodEndDouble()))) 	// and the bridge lowers before the end of the access period 
+				{
+					closures.get(i).setMarineAccessPeriodViolation();
+					marineAccessPeriodViolationCount++;
+					lastPeriodsMinimumDuration = 0.0;
+
+					if (debug)
+					{
+						System.out.print("A Type 3 Violation occurs on row "+(rowNumber + 1)+" due to a closure starting on "+startDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeLowerTimeAsSerial)+
+								" and ending on "+endDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeRaiseTimeAsSerial)+ " (duration "+ConvertDateTime.convertSerialToHHMMString(closureDurationAsSerial));
+						System.out.print(") which violates the marine access period from "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodStartDouble())+ 
+								" to "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodEndDouble()));
+						System.out.println(".  Total violations for this closure is "+closures.get(i).getMarineAccessPeriodViolation()+".");
+					}
+				}
+
+				// Type 4 Violation from VBA:
+				// Check for the bridge opening after a permissible in-circuit delay (i.e., after the first x minutes of a marine access period) 
+				else if (((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))				  // Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
+						&& (bridgeRaiseTimeAsSerial > (marineAccessPeriods.get(j).getMarinePeriodStartDouble() + ((double) Integer.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelay()) / 1440))// and the bridge opens 5 (or the permitted in-circuit delay minutes) or more minutes after start of access period
+								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble())))  // and the bridge lowers before the start of the access period 
+				{
+					closures.get(i).setMarineAccessPeriodViolation();
+					marineAccessPeriodViolationCount++;
+					lastPeriodsMinimumDuration = 0.0;
+
+					if (debug)
+					{
+						System.out.print("A Type 4 Violation occurs on row "+(rowNumber + 1)+" due to a closure starting on "+startDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeLowerTimeAsSerial)+
+								" and ending on "+endDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeRaiseTimeAsSerial)+ " (duration "+ConvertDateTime.convertSerialToHHMMString(closureDurationAsSerial));
+						System.out.print(") which violates the marine access period from "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodStartDouble())+ 
+								" to "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodEndDouble()));
+						System.out.println(".  Total violations for this closure is "+closures.get(i).getMarineAccessPeriodViolation()+".");
+					}
+				}
+
+				// Type 1 In-Circuit Delay from VBA:
+				// Bridge opens within the in-circuit delay period
+				else if (((marineAccessPeriods.get(j).getMo().getValue()) && (startDay.equals("Monday"))				  // Check that this marine period is valid on the same day as closure
+						|| (marineAccessPeriods.get(j).getTu().getValue()) && (startDay.equals("Tuesday"))	
+						|| (marineAccessPeriods.get(j).getWe().getValue()) && (startDay.equals("Wednesday"))
+						|| (marineAccessPeriods.get(j).getTh().getValue()) && (startDay.equals("Thursday"))
+						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
+						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
+						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
+						&& (bridgeRaiseTimeAsSerial < (marineAccessPeriods.get(j).getMarinePeriodStartDouble() + ((double) Integer.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelay()) / 1440))// and the bridge opens 5 (or the permitted in-circuit delay minutes) or less minutes after start of access period
+								&& (bridgeRaiseTimeAsSerial > marineAccessPeriods.get(j).getMarinePeriodStartDouble())	  // and the bridge raises after the start of the access period
+								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble())))  // and the bridge lowers before the start of the access period 
+				{
+					closures.get(i).setMarineAccessPeriodViolation();
+					inCircuitCount++;
+					lastOpeningDelayed = true;
+					lastPeriodsRaiseTime = bridgeRaiseTimeAsSerial;
+					lastPeriodsMinimumDuration = marineAccessPeriods.get(j).getMarinePeriodEndDouble() - marineAccessPeriods.get(j).getMarinePeriodStartDouble();
+
+					if (debug)
+					{
+						System.out.print("A Type 1 In-Circuit Delay occurs on row "+(rowNumber + 1)+" due to a closure starting on "+startDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeLowerTimeAsSerial)+
+								" and ending on "+endDay+" at "+ConvertDateTime.convertSerialToHHMMString(bridgeRaiseTimeAsSerial)+ " (duration "+ConvertDateTime.convertSerialToHHMMString(closureDurationAsSerial));
+						System.out.print(") which delays the marine access period from "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodStartDouble())+ 
+								" to "+ConvertDateTime.convertSerialToHHMMString(marineAccessPeriods.get(j).getMarinePeriodEndDouble()));
+						System.out.println(".  The next opening must be at least "+ConvertDateTime.convertSerialToHHMMString(lastPeriodsMinimumDuration) +" long.");
+					}
+					
+					break;
+				}
+			}		
 		}
-
-		// Sort the ArrayList of closures by entry time OS
-		sortedCrossings = new ArrayList <BridgeAnalysisCrossing>();
-		sortedCrossings.addAll(crossings);
-		Collections.sort(sortedCrossings, new TimeSorter());
-
-		resultsMessage += "Found "+crossingCount+" train closures over bridge\n";
-
-		// 2.  Create a BridgeOccupany object that includes the time period that one or more trains continuously occupies the signal block containing the bridge.
-		// This BridgeOccupancy does not consider the bridge-down, signal set-up or bridge-up times.  It's meant to capture when multiple trains may traverse
-		// the bridge on parallel tracks and more than one train's OS times should be considered.
-
-		String currentCrossingTrainSymbol = null;
-		String currentCrossingTrainDirection = null;
-		Integer currentCrossingEntryNodeArrivalTimeInSeconds = null;
-		Integer currentCrossingExitNodeDepartureTimeInSeconds = null;
 		
-		Integer nextCrossingEntryNodeArrivalTimeInSeconds = null;
-		
-		Boolean overlappingCrossing = null;
-		
-		ArrayList<String> symbolsAndDirectionsInOccupancy = new ArrayList<String>();
-		Integer occupancyStartTime = null;
-		Integer occupancyEndTime = null;
-		
-		// For each entry in sortedCrossings	
-		for (int i = 0; i < sortedCrossings.size(); i++)
+		// Results
+		if (debug)
 		{
-			currentCrossingTrainSymbol = sortedCrossings.get(i).getTrainSymbol();
-			currentCrossingTrainDirection = sortedCrossings.get(i).getTrainDirection();
-			currentCrossingEntryNodeArrivalTimeInSeconds = sortedCrossings.get(i).getEntryNodeOSSeconds();
-			currentCrossingExitNodeDepartureTimeInSeconds = sortedCrossings.get(i).getExitNodeOSSeconds();
-			
-			if (i < (sortedCrossings.size() - 1))
-				nextCrossingEntryNodeArrivalTimeInSeconds = sortedCrossings.get(i+1).getEntryNodeOSSeconds();
-			else
-				nextCrossingEntryNodeArrivalTimeInSeconds = Integer.MAX_VALUE;
-			
-			if ((nextCrossingEntryNodeArrivalTimeInSeconds <= currentCrossingExitNodeDepartureTimeInSeconds) && (i < (sortedCrossings.size() - 1)))
-			{
-				if (overlappingCrossing)
-				{
-					// Already at least two trains involved in this occupancy
-					symbolsAndDirectionsInOccupancy.add(currentCrossingTrainSymbol+"-"+currentCrossingTrainDirection);
-					if (occupancyStartTime == null)
-						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-					else if (occupancyStartTime > currentCrossingEntryNodeArrivalTimeInSeconds)
-						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-					
-					if (occupancyEndTime == null)
-						occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-					else if (occupancyEndTime < currentCrossingExitNodeDepartureTimeInSeconds)
-						occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-				}
-				else
-				{
-					// Second train involved in this occupancy
-					overlappingCrossing = true;
-					symbolsAndDirectionsInOccupancy.add(currentCrossingTrainSymbol+"-"+currentCrossingTrainDirection);
-					if (occupancyStartTime == null)
-						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-					else if (occupancyStartTime > currentCrossingEntryNodeArrivalTimeInSeconds)
-						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-					
-					if (occupancyEndTime == null)
-						occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-					else if (occupancyEndTime < currentCrossingExitNodeDepartureTimeInSeconds)
-						occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-				}
-			}
-			else
-			{
-				// No more trains in this occupancy
-				// Add current train to the Occupancy object
-				symbolsAndDirectionsInOccupancy.add(currentCrossingTrainSymbol+"-"+currentCrossingTrainDirection);
-				
-				if (occupancyStartTime == null)
-					occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-				else if (occupancyStartTime > currentCrossingEntryNodeArrivalTimeInSeconds)
-					occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-				
-				if (occupancyEndTime == null)
-					occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-				else if (occupancyEndTime < currentCrossingExitNodeDepartureTimeInSeconds)
-					occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-				
-				// Create new occupancy object
-				BridgeAnalysisOccupancy occupancy = new BridgeAnalysisOccupancy(symbolsAndDirectionsInOccupancy, occupancyStartTime, occupancyEndTime);
-				occupancies.add(occupancy);
-				
-				// Remove all symbols, directions and times for next object
-				overlappingCrossing = false;
-				symbolsAndDirectionsInOccupancy.clear();
-				occupancyStartTime = null;
-				occupancyEndTime = null;
-			}
+			System.out.println("Total closure duration violations: "+closureDurationViolationCount);
+			System.out.println("Total marine access period violations: "+marineAccessPeriodViolationCount);
+			System.out.println("Total in-circuit delays: "+inCircuitCount);
 		}
-		resultsMessage += "Created "+occupancies.size()+" bridge occupancy periods\n";
-
-		//  3.  Create Bridge Closures by adding bridge down time + signal setup time + bridge up time to the Bridge Occupancies.  If there's less time 
-		//  between occupancies than the minimum up-time, the bridge must remain down.  Reported values (incorporating ceiling functions) are used only in writing 
-		//  the results to a spreadsheet (classes in the WRITE package).  They are not considered in achieving minimum up-time. This is a different handling than in MOW analysis where
-		//  a ceiling/floor value must be applied and is used to determine whether a window is valid.
-		
-		Integer currentOccupancyStartTimeInSeconds = null;
-		Integer currentOccupancyFinishTimeInSeconds = null;
-		
-		Integer nextOccupancyStartTimeInSeconds = null;
-		
-		Boolean combineWithNextOccupancy = false;
-		
-		ArrayList<String> symbolsAndDirectionsInClosure = new ArrayList<String>();
-		
-		Integer bridgeMoveDownDurationInSeconds = BIASBridgeClosureAnalysisConfigPageController.getLowerMinutes() * 60;
-		Integer bridgeMoveUpDurationInSeconds = BIASBridgeClosureAnalysisConfigPageController.getRaiseMinutes() * 60;
-		Integer signalSetUpDurationInSeconds = BIASBridgeClosureAnalysisConfigPageController.getSignalPreferredMinutesInAdvanceOfTrain() * 60;
-		Integer minimumUpTimeInSeconds = BIASBridgeClosureAnalysisConfigPageController.getMinimumUpTimeMinutes() * 60;
-		
-		Integer tentativePreferredClosureStartTimeInSeconds = null;
-		Integer latestClosureStartTimeInSeconds = null;
-		Integer tentativeClosureEndTimeInSeconds = null;
-		
-		Integer finaledPreferredClosureStartTimeInSeconds = null;
-		Integer finaledClosureEndTimeInSeconds = null;
-		
-		Integer nextClosureStartTimeInSeconds = null;
-		Integer upTimeBetweenCurrentAndNextClosureInSeconds = null;
-						
-		for (int i = 0; i < occupancies.size(); i++)
-		{
-			// From occupancies
-			currentOccupancyStartTimeInSeconds = occupancies.get(i).getOccupancyStartTimeInSeconds();
-			currentOccupancyFinishTimeInSeconds = occupancies.get(i).getOccupancyEndTimeInSeconds();
-			
-			if (!combineWithNextOccupancy)
-			{
-				tentativePreferredClosureStartTimeInSeconds = currentOccupancyStartTimeInSeconds - signalSetUpDurationInSeconds - bridgeMoveDownDurationInSeconds;
-				latestClosureStartTimeInSeconds = currentOccupancyStartTimeInSeconds - bridgeMoveDownDurationInSeconds;
-			}
-			tentativeClosureEndTimeInSeconds = currentOccupancyFinishTimeInSeconds + bridgeMoveUpDurationInSeconds;
-			
-			if (i < (occupancies.size() - 1))
-			{
-				// All occupancies except the last one
-				nextOccupancyStartTimeInSeconds = occupancies.get(i+1).getOccupancyStartTimeInSeconds();
-				nextClosureStartTimeInSeconds = nextOccupancyStartTimeInSeconds - signalSetUpDurationInSeconds - bridgeMoveDownDurationInSeconds;
-				upTimeBetweenCurrentAndNextClosureInSeconds = nextClosureStartTimeInSeconds - tentativeClosureEndTimeInSeconds;
-				
-				if (upTimeBetweenCurrentAndNextClosureInSeconds < minimumUpTimeInSeconds)
-				{
-					// Continue closure
-					finaledPreferredClosureStartTimeInSeconds = tentativePreferredClosureStartTimeInSeconds;
-					symbolsAndDirectionsInClosure.addAll(occupancies.get(i).getTrainSymbolsAndDirectionsInOccupancy());
-					combineWithNextOccupancy = true;
-				}
-				else 
-				{
-					// End closure
-					combineWithNextOccupancy = false;
-					finaledPreferredClosureStartTimeInSeconds = tentativePreferredClosureStartTimeInSeconds;
-					finaledClosureEndTimeInSeconds = tentativeClosureEndTimeInSeconds;
-					symbolsAndDirectionsInClosure.addAll(occupancies.get(i).getTrainSymbolsAndDirectionsInOccupancy());
-					
-					BridgeAnalysisClosure closure = new BridgeAnalysisClosure(symbolsAndDirectionsInClosure, finaledPreferredClosureStartTimeInSeconds, latestClosureStartTimeInSeconds, finaledClosureEndTimeInSeconds, bridgeMoveDownDurationInSeconds, signalSetUpDurationInSeconds, bridgeMoveUpDurationInSeconds, upTimeBetweenCurrentAndNextClosureInSeconds);
-					closures.add(closure);
-					
-					symbolsAndDirectionsInClosure.clear();
-				}
-			}
-			else
-			{
-				// Final occupancy
-				if (!combineWithNextOccupancy)
-					finaledPreferredClosureStartTimeInSeconds = tentativePreferredClosureStartTimeInSeconds;
-								
-				combineWithNextOccupancy = false;
-				finaledClosureEndTimeInSeconds = tentativeClosureEndTimeInSeconds;
-				symbolsAndDirectionsInClosure.addAll(occupancies.get(i).getTrainSymbolsAndDirectionsInOccupancy());
-				
-				BridgeAnalysisClosure closure = new BridgeAnalysisClosure(symbolsAndDirectionsInClosure, finaledPreferredClosureStartTimeInSeconds, latestClosureStartTimeInSeconds, finaledClosureEndTimeInSeconds, bridgeMoveDownDurationInSeconds, signalSetUpDurationInSeconds, bridgeMoveUpDurationInSeconds, null);
-				closures.add(closure);				
-			}
-		}
-		resultsMessage += "Created "+closures.size()+" bridge closures\n";
-		*/
-		resultsMessage += "Finished creating bridge compliance results at "+ConvertDateTime.getTimeStamp()+"\n";
+		resultsMessage += "\nFound "+closureDurationViolationCount+" closure duration violations";
+		resultsMessage += "\nFound "+marineAccessPeriodViolationCount+" marine access period violations";
+		resultsMessage += "\nFound "+inCircuitCount+" delayed (in-circuit) marine access periods";
+		resultsMessage += "\nFinished analysis at "+ConvertDateTime.getTimeStamp()+"\n";
 	}
 
-
-	public static ArrayList<BridgeComplianceClosure> getClosures()
+	public ArrayList<BridgeComplianceClosure> getClosures()
 	{
 		return closures;
 	}
 
-	public static void clearClosures()
+	public void clearClosures()
 	{
 		closures.clear();
 	}
-	
-	public static void clearMarineAccessPeriods()
+
+	public void clearMarineAccessPeriods()
 	{
 		marineAccessPeriods.clear();
 	}
-	
+
 	public String getResultsMessage()
 	{
 		return resultsMessage;

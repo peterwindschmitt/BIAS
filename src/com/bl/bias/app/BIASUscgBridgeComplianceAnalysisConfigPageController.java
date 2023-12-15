@@ -36,15 +36,19 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean includeSummaryResultsOnNotepad;
 	private static Boolean includeConfidentialityDisclaimer;
 	private static Boolean computeMarineHighUsagePeriodActive;
+	private static String inCircuitPermissibleDelay;
 	private static String marineAccessPeriodStartHour;
 	private static String marineAccessPeriodEndHour;
+	private static String maxClosureMinutes;
 
 	private static Boolean defaultIncludeSummaryResultsOnSpreadsheet = true;
 	private static Boolean defaultIncludeSummaryResultsOnNotepad = true;
 	private static Boolean defaultIncludeConfidentialityDisclaimer = true;
 	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
+	private static String defaultInCircuitPermissibleDelay = "0";
 	private static String defaultMarineAcessPeriodStartHour = "00:00";
 	private static String defaultMarineAcessPeriodEndHour = "00:00";
+	private static String defaultMaxClosureMinutes = "60";
 
 	private static Boolean validMarinePeriods = false;
 
@@ -53,14 +57,18 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static ObservableList<MarineAccessPeriod> marineAccessPeriodsData = FXCollections.observableArrayList();
 	private static ObservableList<String> highUsageHourValues =  FXCollections.observableArrayList("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
 			"12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00");
+	private static ObservableList<String> inCircuitPermissibleDelayValues =  FXCollections.observableArrayList("0", "5", "10");
+	private static ObservableList<String> maxClosureDurationMinutesValues =  FXCollections.observableArrayList("30", "60", "90", "120");
 
 	@FXML private CheckBox includeSummaryResultsOnSpreadsheetCheckBox;
 	@FXML private CheckBox includeSummaryResultsOnNotepadCheckBox;
 	@FXML private CheckBox includeConfidentialityDisclaimerCheckBox;
 	@FXML private CheckBox computeMarineHighUsagePeriodsCheckBox;
 
+	@FXML private ComboBox<String> inCircuitDelayComboBox;
 	@FXML private ComboBox<String> startHighUsageHourComboBox;
 	@FXML private ComboBox<String> endHighUsageHourComboBox;
+	@FXML private ComboBox<String> maxClosureMinutesComboBox;
 
 	@FXML private Label highUsageMarinePeriodSpanLabel;
 
@@ -175,7 +183,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", true);
 			computeMarineHighUsagePeriodsCheckBox.setSelected(true);
-			
+
 			startHighUsageHourComboBox.setDisable(false);
 			endHighUsageHourComboBox.setDisable(false);
 		}
@@ -185,10 +193,26 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", false);
 			computeMarineHighUsagePeriodsCheckBox.setSelected(false);
-			
+
 			startHighUsageHourComboBox.setDisable(true);
 			endHighUsageHourComboBox.setDisable(true);
 		}
+
+		// See if preference is stored for max closure duration
+		maxClosureMinutesComboBox.setItems(maxClosureDurationMinutesValues);
+
+		boolean maxClosureMinutesExists = prefs.get("cg_maxClosureMinutes", null) != null;
+		if (maxClosureMinutesExists)
+		{
+			maxClosureMinutesComboBox.getSelectionModel().select(prefs.get("cg_maxClosureMinutes", defaultMaxClosureMinutes));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("cg_maxClosureMinutes", defaultMaxClosureMinutes);
+			maxClosureMinutesComboBox.getSelectionModel().select(defaultMaxClosureMinutes);
+		}
+		maxClosureMinutes = prefs.get("cg_maxClosureMinutes", defaultMaxClosureMinutes);
 
 		marinePeriodStartDouble.setCellValueFactory(new PropertyValueFactory<MarineAccessPeriod, Double>("marinePeriodStartDouble"));
 		marinePeriodStartDouble.setCellFactory(TextFieldTableCell.forTableColumn(new CustomDoubleStringConverter()));
@@ -294,6 +318,22 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		fr.setReorderable(false);
 		sa.setReorderable(false);
 		su.setReorderable(false);
+
+		// See if "in-circuit" permissible delay values are stored
+		inCircuitDelayComboBox.setItems(inCircuitPermissibleDelayValues);
+
+		boolean inCircuitDelayValueExists = prefs.get("cg_inCircuitPermissibleDelay", null) != null;
+		if (inCircuitDelayValueExists)
+		{
+			inCircuitDelayComboBox.getSelectionModel().select(prefs.get("cg_inCircuitPermissibleDelay", defaultInCircuitPermissibleDelay));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("cg_inCircuitPermissibleDelay", defaultInCircuitPermissibleDelay);
+			inCircuitDelayComboBox.getSelectionModel().select(defaultInCircuitPermissibleDelay);
+		}
+		inCircuitPermissibleDelay = prefs.get("cg_inCircuitPermissibleDelay", defaultInCircuitPermissibleDelay);
 
 		// See if recurring marine access period start values are stored
 		startHighUsageHourComboBox.setItems(highUsageHourValues);
@@ -582,7 +622,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			computeMarineHighUsagePeriodActive = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", false);
-			
+
 			startHighUsageHourComboBox.setDisable(true);
 			endHighUsageHourComboBox.setDisable(true);
 		}
@@ -591,10 +631,17 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			computeMarineHighUsagePeriodActive = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_computeMarineHighUsagePeriodActive", true);
-			
+
 			startHighUsageHourComboBox.setDisable(false);
 			endHighUsageHourComboBox.setDisable(false);
 		}
+	}
+
+	@FXML private void handleInCircuitDelayComboBox(ActionEvent event) 
+	{
+		inCircuitPermissibleDelay = String.valueOf(inCircuitDelayComboBox.getValue());
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("cg_inCircuitPermissibleDelay", inCircuitDelayComboBox.getValue());
 	}
 
 	@FXML private void handleStartHighUsageHourComboBox(ActionEvent event) 
@@ -606,7 +653,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		// Figure and display marine access period span
 		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
 	}
-	
+
 	@FXML private void handleEndHighUsageHourComboBox(ActionEvent event) 
 	{
 		marineAccessPeriodEndHour = String.valueOf(endHighUsageHourComboBox.getValue());
@@ -615,6 +662,13 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 		// Figure and display marine access period span
 		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
+	}
+
+	@FXML private void handleMaxClosureMinutesComboBox(ActionEvent event) 
+	{
+		maxClosureMinutes = String.valueOf(maxClosureMinutesComboBox.getValue());
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("cg_maxClosureMinutes", maxClosureMinutesComboBox.getValue());
 	}
 
 	public static Boolean getIncludeSummaryResultsOnSpreadsheet()
@@ -631,27 +685,37 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	{
 		return includeConfidentialityDisclaimer;
 	}
-	
+
 	public static Boolean getIncludeMarineHighUsagePeriods()
 	{
 		return computeMarineHighUsagePeriodActive;
+	}
+
+	public static String getInCircuitPermissibleDelay()
+	{
+		return inCircuitPermissibleDelay;
 	}
 
 	public static String getMarineAccessPeriodStartHour()
 	{
 		return marineAccessPeriodStartHour;
 	}
-	
+
 	public static String getMarineAccessPeriodEndHour()
 	{
 		return marineAccessPeriodEndHour;
 	}
-	
+
+	public static String getMaxClosureMinutes()
+	{
+		return maxClosureMinutes;
+	}
+
 	public static ObservableList<MarineAccessPeriod> getMarineAccessPeriods()
 	{
 		return marineAccessPeriodsData;
 	}
-	
+
 	private static String figureMarinePeriodSpan(String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)
 	{
 		marineAccessPeriodStartHour = marineAccessPeriodStartHour.replace(":00", "").strip();
@@ -664,7 +728,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		String marineAccessPeriodSpanAsString = String.valueOf(marineAccessPeriodSpan);
 		return marineAccessPeriodSpanAsString;
 	}
-	
+
 	private static class CustomDoubleStringConverter extends DoubleStringConverter 
 	{
 		private final DoubleStringConverter converter = new DoubleStringConverter();

@@ -17,8 +17,10 @@ public class BridgeComplianceClosure
 	private String closureNotes;
 	
 	// Values computed by other classes
-	private Boolean closureViolation = false;
+	private Integer marineAccessPeriodViolation = 0;
 	private Boolean closureInCircuitException = false;
+	private Boolean closureDurationViolation = false;
+	private Double closureDurationOccuringDuringMarineHighUsagePeriod; 
 			
 	public BridgeComplianceClosure(Integer spreadsheetRowNumber, Integer closureNumber, Double closureDate, Double closureStartTime, Double closureEndTime, String dutyBridgeMonitor, String closureStartDay, String closureTrainType, String closureNotes) 
 	{
@@ -104,18 +106,30 @@ public class BridgeComplianceClosure
 			endDay = "Saturday";
 		else if ((closureStartDay.equals("Saturday")) && (closureEndTime <= closureStartTime))
 			endDay = "Sunday";
+		else
+			endDay = closureStartDay;
 		
 		return endDay;
 	}
 	
-	public Boolean getClosureViolation()
+	public Integer getMarineAccessPeriodViolation()
 	{
-		return closureViolation;
+		return marineAccessPeriodViolation;
 	}
 	
-	public void setClosureViolation(Boolean violation)
+	public void setMarineAccessPeriodViolation()
 	{
-		closureViolation = violation;
+		marineAccessPeriodViolation++;
+	}
+	
+	public Boolean getClosureDurationViolation()
+	{
+		return closureDurationViolation;
+	}
+	
+	public void setClosureDurationViolation()
+	{
+		closureDurationViolation = true;
 	}
 	
 	public Boolean getInCircuitException()
@@ -126,5 +140,15 @@ public class BridgeComplianceClosure
 	public void setInCircuitExcpetion(Boolean exception)
 	{
 		closureInCircuitException = exception;
+	}
+	
+	public Double getClosureDurationOccuringDuringMarineHighUsagePeriod()
+	{
+		return closureDurationOccuringDuringMarineHighUsagePeriod;
+	}
+	
+	public void setClosureDurationOccuringDuringMarineHighUsagePeriod(double highUsagePeriodDuration)
+	{
+		closureDurationOccuringDuringMarineHighUsagePeriod = highUsagePeriodDuration;
 	}
 }

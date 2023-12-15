@@ -536,15 +536,15 @@ public class BIASUscgBridgeComplianceAnalysisController
 		// Analyze closures
 		if (continueAnalysis)
 		{
-			analyzeData = new BridgeComplianceAnalysis();
+			analyzeData = new BridgeComplianceAnalysis(readData.getClosures(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriods());
+			
+			message = analyzeData.getResultsMessage();
+			displayMessage(message);
+			setProgressIndicator(0.75);
 		}
 		else
 			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 		
-		message = analyzeData.getResultsMessage();
-		displayMessage(message);
-		setProgressIndicator(0.75);
-
 		//  Now reset for next case
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
