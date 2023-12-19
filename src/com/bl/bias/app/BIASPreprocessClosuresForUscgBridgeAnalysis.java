@@ -81,7 +81,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 		}
 		while
 			(examinationRow <= sheet.getLastRowNum() && (firstDataRowFound == false));
-
+		
 		// Find last row of data
 		if ((examinationRow - 1) != sheet.getLastRowNum() && (firstDataRowFound))
 		{
@@ -111,6 +111,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 							}
 						}
 					}
+					
 
 					if (timeFoundInThisRowCounter <= 3)
 					{
@@ -123,7 +124,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 					((examinationRow <= sheet.getLastRowNum()) && (badRowFound == false));
 			}
 		}
-
+		
 		// Find STRING occurences in first row
 		columnsContainingStringInFirstRow.clear();
 		for (int i = 0; i < sheet.getRow(firstRowOfData).getLastCellNum(); i++)
@@ -136,7 +137,6 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 		if (firstDataRowFound && lastDataRowFound)
 		{
 			// Find column of days
-			Boolean thisColumnValidDay = false;
 			for (int i = 0; i < columnsContainingStringInFirstRow.size(); i++)
 			{
 				Cell cellData = sheet.getRow(firstRowOfData).getCell(columnsContainingStringInFirstRow.get(i));
@@ -144,7 +144,6 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 				{	
 					if (days.contains(cellData.getStringCellValue()))
 					{
-						thisColumnValidDay = true;
 						dayColumnIndex = columnsContainingStringInFirstRow.get(i);
 						dayColumnFound = true;
 						dayColumn = CellReference.convertNumToColString(dayColumnIndex);
@@ -162,7 +161,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 					Cell cellData = sheet.getRow(j).getCell(columnsContainingNumericInFirstRow.get(i));
 					if ((cellData != null) && (cellData.toString() != ""))
 					{	
-						if ((cellData.getNumericCellValue() == 0) || (cellData.getNumericCellValue() >= 1))
+						if (cellData.getNumericCellValue() >= 1)
 						{
 							thisColumnValidTime = false;
 							break;
@@ -194,7 +193,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 					Cell cellData = sheet.getRow(j).getCell(columnsContainingNumericInFirstRow.get(i));
 					if ((cellData != null) && (cellData.toString() != ""))
 					{	
-						if ((cellData.getNumericCellValue() == 0) || (cellData.getNumericCellValue() >= 1))
+						if (cellData.getNumericCellValue() >= 1)
 						{
 							thisColumnValidTime = false;
 							break;

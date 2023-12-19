@@ -10,6 +10,7 @@ import com.bl.bias.analyze.BridgeComplianceAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadExcelFileForBridgeCompliance;
 import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteBridgeComplianceFiles3;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,7 +33,6 @@ import javafx.stage.Stage;
 
 public class BIASUscgBridgeComplianceAnalysisController 
 {
-	private static String fileAsString;
 	private static String fullyQualifiedPath;
 
 	private static String message = "";
@@ -56,6 +56,11 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private static String dayColumn;
 	private static String lowerColumn;
 	private static String raiseColumn;
+	private static String tenderColumn;
+	private static String dateColumn;
+	private static String closingNumberColumn;
+	private static String trainTypeColumn;
+	private static String notesColumn;
 
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
@@ -66,10 +71,15 @@ public class BIASUscgBridgeComplianceAnalysisController
 	@FXML private Label oneLabel;
 	@FXML private Label twoLabel;
 	@FXML private Label firstRowOfBridgeClosuresLabel;
-	@FXML private Label lastRowOfBridgeClosuresLabel;
 	@FXML private Label dayColumnLabel;
 	@FXML private Label lowerColumnLabel;
 	@FXML private Label raiseColumnLabel;
+	@FXML private Label tenderColumnLabel;
+	@FXML private Label dateColumnLabel;
+	@FXML private Label closingNumberColumnLabel;
+	@FXML private Label trainTypeColumnLabel;
+	@FXML private Label notesColumnLabel;
+	@FXML private Label lastRowOfBridgeClosuresLabel;
 	@FXML private Label selectDataFieldsLabel;
 
 	@FXML private TextArea textArea;
@@ -78,7 +88,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 	@FXML private Spinner<Integer> lastRowOfBridgeClosuresSpinner;
 	@FXML private ComboBox<String> dayColumnComboBox;
 	@FXML private ComboBox<String> lowerColumnComboBox;
+	@FXML private ComboBox<String> tenderColumnComboBox;
 	@FXML private ComboBox<String> raiseColumnComboBox;
+	@FXML private ComboBox<String> dateColumnComboBox;
+	@FXML private ComboBox<String> closingNumberColumnComboBox;
+	@FXML private ComboBox<String> trainTypeColumnComboBox;
+	@FXML private ComboBox<String> notesColumnComboBox;
 
 	@FXML private ProgressBar progressBar;
 
@@ -88,7 +103,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 		dayColumnComboBox.getItems().addAll(columnValues);
 		lowerColumnComboBox.getItems().addAll(columnValues);
+		tenderColumnComboBox.getItems().addAll(columnValues);
 		raiseColumnComboBox.getItems().addAll(columnValues);
+		dateColumnComboBox.getItems().addAll(columnValues);
+		closingNumberColumnComboBox.getItems().addAll(columnValues);
+		trainTypeColumnComboBox.getItems().addAll(columnValues);
+		notesColumnComboBox.getItems().addAll(columnValues);
 		
 		firstRowOfBridgeClosuresSpinner.getEditor().setTextFormatter(new TextFormatter<String>(integerFilter));
 		firstRowOfBridgeClosuresSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
@@ -129,25 +149,15 @@ public class BIASUscgBridgeComplianceAnalysisController
 		dayColumnComboBox.setValue("A");
 		lowerColumnComboBox.setValue("B");
 		raiseColumnComboBox.setValue("C");
+		tenderColumnComboBox.setValue("D");
+		dateColumnComboBox.setValue("E");
+		closingNumberColumnComboBox.setValue("F");
+		trainTypeColumnComboBox.setValue("G");
+		notesColumnComboBox.setValue("H");
 		firstRowOfBridgeClosuresSpinner.setValueFactory(firstRowFactory);
 		lastRowOfBridgeClosuresSpinner.setValueFactory(lastRowFactory);
 
-		oneLabel.setDisable(false);
-		selectProjectFileLabel.setDisable(false);
-		fileNameLabel.setDisable(false);
-
-		twoLabel.setDisable(true);
-		selectDataFieldsLabel.setDisable(true);
-		firstRowOfBridgeClosuresLabel.setDisable(true);
-		lastRowOfBridgeClosuresLabel.setDisable(true);
-		dayColumnLabel.setDisable(true);
-		lowerColumnLabel.setDisable(true);
-		raiseColumnLabel.setDisable(true);
-		firstRowOfBridgeClosuresSpinner.setDisable(true);
-		lastRowOfBridgeClosuresSpinner.setDisable(true);
-		dayColumnComboBox.setDisable(true);
-		lowerColumnComboBox.setDisable(true);
-		raiseColumnComboBox.setDisable(true);
+		disableDataField2();
 	}
 
 	@FXML private void handleSelectFileButton(ActionEvent event) 
@@ -168,6 +178,31 @@ public class BIASUscgBridgeComplianceAnalysisController
 	@FXML private void handleRaiseColumnComboBox(ActionEvent event)
 	{
 		raiseColumn = raiseColumnComboBox.getValue();
+	}
+	
+	@FXML private void handleTenderColumnComboBox(ActionEvent event)
+	{
+		tenderColumn = tenderColumnComboBox.getValue();
+	}
+	
+	@FXML private void handleDateColumnComboBox(ActionEvent event)
+	{
+		dateColumn = dateColumnComboBox.getValue();
+	}
+	
+	@FXML private void handleClosingNumberColumnComboBox(ActionEvent event)
+	{
+		closingNumberColumn = closingNumberColumnComboBox.getValue();
+	}
+	
+	@FXML private void handleTrainTypeColumnComboBox(ActionEvent event)
+	{
+		trainTypeColumn = trainTypeColumnComboBox.getValue();
+	}
+	
+	@FXML private void handleNotesColumnComboBox(ActionEvent event)
+	{
+		notesColumn = notesColumnComboBox.getValue();
 	}
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
@@ -214,18 +249,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
 				
-				twoLabel.setDisable(true);
-				selectDataFieldsLabel.setDisable(true);
-				firstRowOfBridgeClosuresLabel.setDisable(true);
-				lastRowOfBridgeClosuresLabel.setDisable(true);
-				dayColumnLabel.setDisable(true);
-				lowerColumnLabel.setDisable(true);
-				raiseColumnLabel.setDisable(true);
-				firstRowOfBridgeClosuresSpinner.setDisable(true);
-				lastRowOfBridgeClosuresSpinner.setDisable(true);
-				dayColumnComboBox.setDisable(true);
-				lowerColumnComboBox.setDisable(true);
-				raiseColumnComboBox.setDisable(true);
+				disableDataField2();
 				
 				continueAnalysis = true;
 
@@ -241,29 +265,19 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
-				selectFileButton.setDisable(false);
-				fileNameLabel.setText("");
-				oneLabel.setDisable(false);
-				selectProjectFileLabel.setDisable(false);
-				fileNameLabel.setDisable(false);
+				enableDataField1();
 
 				executeButton.setDisable(true);
-				twoLabel.setDisable(true);
-				selectDataFieldsLabel.setDisable(true);
-				firstRowOfBridgeClosuresLabel.setDisable(true);
-				lastRowOfBridgeClosuresLabel.setDisable(true);
-				dayColumnLabel.setDisable(true);
-				lowerColumnLabel.setDisable(true);
-				raiseColumnLabel.setDisable(true);
-				firstRowOfBridgeClosuresSpinner.setDisable(true);
-				lastRowOfBridgeClosuresSpinner.setDisable(true);
-				dayColumnComboBox.setDisable(true);
-				lowerColumnComboBox.setDisable(true);
-				raiseColumnComboBox.setDisable(true);
+				disableDataField2();
 				
 				dayColumnComboBox.setValue("A");
 				lowerColumnComboBox.setValue("B");
 				raiseColumnComboBox.setValue("C");
+				tenderColumnComboBox.setValue("D");
+				dateColumnComboBox.setValue("E");
+				closingNumberColumnComboBox.setValue("F");
+				trainTypeColumnComboBox.setValue("G");
+				notesColumnComboBox.setValue("H");
 				firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
 				lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 			}	
@@ -295,23 +309,11 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 				saveFileFolderForSerialFileName = directory.toString();
 
-				selectFileButton.setDisable(true);
-				selectProjectFileLabel.setDisable(true);
+				disableDataField1();
+				disableDataField2();
+				
 				executeButton.setDisable(true);
 
-				twoLabel.setDisable(true);
-				selectDataFieldsLabel.setDisable(true);
-				firstRowOfBridgeClosuresLabel.setDisable(true);
-				lastRowOfBridgeClosuresLabel.setDisable(true);
-				dayColumnLabel.setDisable(true);
-				lowerColumnLabel.setDisable(true);
-				raiseColumnLabel.setDisable(true);
-				firstRowOfBridgeClosuresSpinner.setDisable(true);
-				lastRowOfBridgeClosuresSpinner.setDisable(true);
-				dayColumnComboBox.setDisable(true);
-				lowerColumnComboBox.setDisable(true);
-				raiseColumnComboBox.setDisable(true);
-				
 				continueAnalysis = true;
 
 				startTask();
@@ -329,26 +331,18 @@ public class BIASUscgBridgeComplianceAnalysisController
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
 				fileNameLabel.setText("");
-				oneLabel.setDisable(false);
-				selectProjectFileLabel.setDisable(false);
-				fileNameLabel.setDisable(false);
-
-				twoLabel.setDisable(true);
-				selectDataFieldsLabel.setDisable(true);
-				firstRowOfBridgeClosuresLabel.setDisable(true);
-				lastRowOfBridgeClosuresLabel.setDisable(true);
-				dayColumnLabel.setDisable(true);
-				lowerColumnLabel.setDisable(true);
-				raiseColumnLabel.setDisable(true);
-				firstRowOfBridgeClosuresSpinner.setDisable(true);
-				lastRowOfBridgeClosuresSpinner.setDisable(true);
-				dayColumnComboBox.setDisable(true);
-				lowerColumnComboBox.setDisable(true);
-				raiseColumnComboBox.setDisable(true);
+				
+				enableDataField1();
+				disableDataField2();
 				
 				dayColumnComboBox.setValue("A");
 				lowerColumnComboBox.setValue("B");
 				raiseColumnComboBox.setValue("C");
+				tenderColumnComboBox.setValue("D");
+				dateColumnComboBox.setValue("E");
+				closingNumberColumnComboBox.setValue("F");
+				trainTypeColumnComboBox.setValue("G");
+				notesColumnComboBox.setValue("H");
 				firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
 				lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
 			}	
@@ -366,10 +360,66 @@ public class BIASUscgBridgeComplianceAnalysisController
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
 		fileNameLabel.setText("");
+		
+		enableDataField1();
+		disableDataField2();
+		
+		dayColumnComboBox.setValue("A");
+		lowerColumnComboBox.setValue("B");
+		raiseColumnComboBox.setValue("C");
+		tenderColumnComboBox.setValue("D");
+		dateColumnComboBox.setValue("E");
+		closingNumberColumnComboBox.setValue("F");
+		trainTypeColumnComboBox.setValue("G");
+		notesColumnComboBox.setValue("H");
+		firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
+		lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
+	}
+	
+	private void enableDataField1()
+	{
 		oneLabel.setDisable(false);
 		selectProjectFileLabel.setDisable(false);
 		fileNameLabel.setDisable(false);
+		selectFileButton.setDisable(false);
+	}
 
+	private void disableDataField1()
+	{
+		oneLabel.setDisable(true);
+		selectProjectFileLabel.setDisable(true);
+		fileNameLabel.setDisable(true);
+		selectFileButton.setDisable(true);
+	}
+	
+	private void enableDataField2()
+	{
+		twoLabel.setDisable(false);
+		selectDataFieldsLabel.setDisable(false);
+		firstRowOfBridgeClosuresLabel.setDisable(false);
+		lastRowOfBridgeClosuresLabel.setDisable(false);
+		dayColumnLabel.setDisable(false);
+		lowerColumnLabel.setDisable(false);
+		raiseColumnLabel.setDisable(false);
+		firstRowOfBridgeClosuresSpinner.setDisable(false);
+		dayColumnComboBox.setDisable(false);
+		lowerColumnComboBox.setDisable(false);
+		raiseColumnComboBox.setDisable(false);
+		tenderColumnComboBox.setDisable(false);
+		tenderColumnLabel.setDisable(false);
+		dateColumnComboBox.setDisable(false);
+		dateColumnLabel.setDisable(false);
+		closingNumberColumnComboBox.setDisable(false);
+		closingNumberColumnLabel.setDisable(false);
+		trainTypeColumnComboBox.setDisable(false);
+		trainTypeColumnLabel.setDisable(false);
+		notesColumnComboBox.setDisable(false);
+		notesColumnLabel.setDisable(false);
+		lastRowOfBridgeClosuresSpinner.setDisable(false);
+	}
+	
+	private void disableDataField2()
+	{
 		twoLabel.setDisable(true);
 		selectDataFieldsLabel.setDisable(true);
 		firstRowOfBridgeClosuresLabel.setDisable(true);
@@ -377,19 +427,23 @@ public class BIASUscgBridgeComplianceAnalysisController
 		dayColumnLabel.setDisable(true);
 		lowerColumnLabel.setDisable(true);
 		raiseColumnLabel.setDisable(true);
+		tenderColumnComboBox.setDisable(true);
+		tenderColumnLabel.setDisable(true);
+		dateColumnComboBox.setDisable(true);
+		dateColumnLabel.setDisable(true);
+		closingNumberColumnComboBox.setDisable(true);
+		closingNumberColumnLabel.setDisable(true);
+		trainTypeColumnComboBox.setDisable(true);
+		trainTypeColumnLabel.setDisable(true);
+		notesColumnComboBox.setDisable(true);
+		notesColumnLabel.setDisable(true);
 		firstRowOfBridgeClosuresSpinner.setDisable(true);
-		lastRowOfBridgeClosuresSpinner.setDisable(true);
 		dayColumnComboBox.setDisable(true);
 		lowerColumnComboBox.setDisable(true);
 		raiseColumnComboBox.setDisable(true);
-		
-		dayColumnComboBox.setValue("A");
-		lowerColumnComboBox.setValue("B");
-		raiseColumnComboBox.setValue("C");
-		firstRowOfBridgeClosuresSpinner.getValueFactory().setValue(1);
-		lastRowOfBridgeClosuresSpinner.getValueFactory().setValue(maxRows);
+		lastRowOfBridgeClosuresSpinner.setDisable(true);
 	}
-
+	
 	private void chooseFile()
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -424,7 +478,6 @@ public class BIASUscgBridgeComplianceAnalysisController
 			message = "BIAS USCG Bridge Compliance Analysis Module - "+BIASLaunch.getSoftwareVersion()+"\n";
 
 			// Store path for subsequent runs and set labels
-			fileAsString = file.getName().toString();
 			fullyQualifiedPath = file.toString();
 			fileNameLabel.setText(fullyQualifiedPath);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
@@ -470,18 +523,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 			}
 
-			twoLabel.setDisable(false);
-			selectDataFieldsLabel.setDisable(false);
-			firstRowOfBridgeClosuresSpinner.setDisable(false);
-			firstRowOfBridgeClosuresLabel.setDisable(false);
-			dayColumnComboBox.setDisable(false);
-			lowerColumnComboBox.setDisable(false);
-			dayColumnLabel.setDisable(false);
-			lowerColumnLabel.setDisable(false);
-			raiseColumnComboBox.setDisable(false);
-			raiseColumnLabel.setDisable(false);
-			lastRowOfBridgeClosuresSpinner.setDisable(false);
-			lastRowOfBridgeClosuresLabel.setDisable(false);
+			enableDataField2();
 
 			executeButton.setDisable(false);
 		}
@@ -533,7 +575,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 		continueAnalysis = readData.getValidFile();
 		setProgressIndicator(0.25);
 
-		// Analyze closures
+		// Analyze compliance
 		if (continueAnalysis)
 		{
 			analyzeData = new BridgeComplianceAnalysis(readData.getClosures(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriods());
@@ -541,16 +583,44 @@ public class BIASUscgBridgeComplianceAnalysisController
 			message = analyzeData.getResultsMessage();
 			displayMessage(message);
 			setProgressIndicator(0.75);
+			continueAnalysis = analyzeData.getContinueAnalysis();
+		}
+				
+		// Write results to spreadsheet
+		if (continueAnalysis)
+		{
+			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
+			{
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), textArea.getText(), getSaveFileFolderForSerialFileName());
+				message = filesToWrite.getResultsMessageWrite3();
+			}
+			else
+			{
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName());
+				message = filesToWrite.getResultsMessageWrite3();
+			}
+			
+			displayMessage(message);
+				
+			if (!WriteBridgeComplianceFiles3.getErrorFound())
+			{
+				setProgressIndicator(1.0);
+				displayMessage("\n*** PROCESSING COMPLETE ***");
+			}
+			else
+			{
+				displayMessage("\nError in writing files");
+				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+			}
 		}
 		else
-			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-		
+			displayMessage("\n*** PROCESSING NOT OMPLETE!!! ***");
+				
 		//  Now reset for next case
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);
 	}
-
 
 	private void resetMessage()
 	{
