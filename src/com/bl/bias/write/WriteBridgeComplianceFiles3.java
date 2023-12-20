@@ -11,25 +11,26 @@ import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.BridgeComplianceClosure;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles1
+public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 {
-	String resultsMessage = getResultsMessageWrite1();
+	String resultsMessage = getResultsMessageWrite2();
 	
 	static Boolean error = false;
 	
-	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridge, String textAreaContents, String outputFilePath)
+	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath)
 	{
-		super(closures, bridge, textAreaContents, outputFilePath);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath);
 		
 		try 
 	    {
 			resultsMessage +="\nFinished writing output file at "+ConvertDateTime.getTimeStamp();
 			
-			String logToWrite = textAreaContents + resultsMessage;
+			String logToWrite = textArea + resultsMessage;
 			
 		    // Write log to log sheet
 			XSSFSheet logSheet = workbook.createSheet("Log");
-	    	
+			logSheet.setDisplayGridlines(false);
+			
 			String[] logResults = logToWrite.split("\n");
 		    for (int i = 0; i < logResults.length; i++)
 		    {
@@ -40,14 +41,14 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles1
 			//  Determine whether file name should be system serial time or if it should be user-specified
 	    	if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(outputFilePath+"\\BridgeComplianceAnalysis_"+System.nanoTime()+".xlsx");
+	    		FileOutputStream outputStream = new FileOutputStream(outputSpreadsheetPath+"\\BridgeComplianceAnalysis_"+System.nanoTime()+".xlsx");
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();  
 	    	}
 	    	else
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(outputFilePath);
+	    		FileOutputStream outputStream = new FileOutputStream(outputSpreadsheetPath);
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();

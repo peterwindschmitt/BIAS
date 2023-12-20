@@ -784,6 +784,30 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		
 		return marineAccessPeriodSpanAsString;
 	}
+	
+	public static Integer getMarinePeriodsPerWeekAsInteger()
+	{
+		int marineAccessPeriodsPerWeekAsInteger = 0;
+		for (int i = 0; i < marineAccessPeriodsData.size(); i++)
+		{
+			if (marineAccessPeriodsData.get(i).getMo().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+			if (marineAccessPeriodsData.get(i).getTu().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+			if (marineAccessPeriodsData.get(i).getWe().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+			if (marineAccessPeriodsData.get(i).getTh().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+			if (marineAccessPeriodsData.get(i).getFr().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+			if (marineAccessPeriodsData.get(i).getSa().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+			if (marineAccessPeriodsData.get(i).getSu().getValue())
+				marineAccessPeriodsPerWeekAsInteger++;
+		}
+				
+		return marineAccessPeriodsPerWeekAsInteger;
+	}
 
 	private static class CustomDoubleStringConverter extends DoubleStringConverter 
 	{

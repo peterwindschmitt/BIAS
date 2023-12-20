@@ -55,6 +55,7 @@ public class WriteBridgeComplianceFiles1
 
 		// Write Trains Crossing Bridge
 		XSSFSheet closuresSheet = workbook.createSheet("Closures");
+		closuresSheet.setDisplayGridlines(false);
 		resultsMessage += "\nWriting closures";
 
 		// Fonts
@@ -168,14 +169,28 @@ public class WriteBridgeComplianceFiles1
 		style10.setDataFormat(workbook.createDataFormat().getFormat("0.0"));
 
 		// Header rows
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
 		{
-			closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 12));
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			{
+				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 12));
+			}
+			else
+			{
+				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 10));
+			}	
 		}
 		else
 		{
-			closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 10));
-		}	
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			{
+				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 11));
+			}
+			else
+			{
+				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 9));
+			}
+		}
 
 		Row row;
 		Cell cell;
@@ -189,14 +204,28 @@ public class WriteBridgeComplianceFiles1
 		// Legal disclaimer
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeConfidentialityDisclaimer())
 		{
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
 			{
-				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 12));
+				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				{
+					closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 12));
+				}
+				else
+				{
+					closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 10));
+				}
 			}
 			else
 			{
-				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 10));
-			}	
+				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				{
+					closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 11));
+				}
+				else
+				{
+					closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 9));
+				}
+			}
 
 			row = closuresSheet.createRow(rowCounter);
 			cell = row.createCell(0);
@@ -248,21 +277,36 @@ public class WriteBridgeComplianceFiles1
 		cell.setCellStyle(style1);
 		cell.setCellValue("Duration (hh:mm)");
 
-		cell = row.createCell(10);
-		cell.setCellStyle(style1);
-		cell.setCellValue("Duration during high-use period (hh:mm)");
-
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
 		{
-			cell = row.createCell(11);
+			cell = row.createCell(10);
 			cell.setCellStyle(style1);
-			cell.setCellValue("Period Violation(red) / Delay(yellow)");
+			cell.setCellValue("Duration during high-use period (hh:mm)");
 
-			cell = row.createCell(12);
-			cell.setCellStyle(style1);
-			cell.setCellValue("Duration Violation(red)");
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			{
+				cell = row.createCell(11);
+				cell.setCellStyle(style1);
+				cell.setCellValue("Period Violation(red) / Delay(yellow)");
+
+				cell = row.createCell(12);
+				cell.setCellStyle(style1);
+				cell.setCellValue("Duration Violation(red)");
+			}
 		}
+		else
+		{
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			{
+				cell = row.createCell(10);
+				cell.setCellStyle(style1);
+				cell.setCellValue("Period Violation(red) / Delay(yellow)");
 
+				cell = row.createCell(11);
+				cell.setCellStyle(style1);
+				cell.setCellValue("Duration Violation(red)");
+			}
+		}
 		rowCounter++;
 
 		// Closures
@@ -321,65 +365,105 @@ public class WriteBridgeComplianceFiles1
 			cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(closures.get(i).getClosureDuration()));
 
 			// Duration during marine high-use period
-			if (closures.get(i).getClosureDurationOccuringDuringMarineHighUsagePeriod() != null)
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
 			{
-				cell = row.createCell(10);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(closures.get(i).getClosureDurationOccuringDuringMarineHighUsagePeriod()));
+				if (closures.get(i).getClosureDurationOccuringDuringMarineHighUsagePeriod() != null)
+				{
+					cell = row.createCell(10);
+					cell.setCellStyle(style1);
+					cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(closures.get(i).getClosureDurationOccuringDuringMarineHighUsagePeriod()));
+				}
+				else
+				{
+					cell = row.createCell(10);
+					cell.setCellStyle(style1);
+				}
+
+				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				{			
+					// Period "in-circuit" delay/violation
+					cell = row.createCell(11);
+					if (closures.get(i).getMarineAccessPeriodViolation() > 0)
+					{
+						// Show violation count and make cell background red
+						cell.setCellStyle(style5);
+						cell.setCellValue(closures.get(i).getMarineAccessPeriodViolation());
+					} 
+					else if (closures.get(i).getInCircuitException())
+					{
+						// Make cell background yellow
+						cell.setCellStyle(style4);
+					}
+					else
+					{
+						cell.setCellStyle(style1);
+					}
+
+					// Duration violation
+					cell = row.createCell(12);
+					if (closures.get(i).getClosureDurationViolation())
+					{
+						// Make cell background red
+						cell.setCellStyle(style5);
+					}
+					else
+					{
+						cell.setCellStyle(style1);
+					}
+				}
 			}
 			else
 			{
-				cell = row.createCell(10);
-				cell.setCellStyle(style1);
-			}
+				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				{			
+					// Period "in-circuit" delay/violation
+					cell = row.createCell(10);
+					if (closures.get(i).getMarineAccessPeriodViolation() > 0)
+					{
+						// Show violation count and make cell background red
+						cell.setCellStyle(style5);
+						cell.setCellValue(closures.get(i).getMarineAccessPeriodViolation());
+					} 
+					else if (closures.get(i).getInCircuitException())
+					{
+						// Make cell background yellow
+						cell.setCellStyle(style4);
+					}
+					else
+					{
+						cell.setCellStyle(style1);
+					}
 
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
-			{			
-				// Period "in-circuit" delay/violation
-				cell = row.createCell(11);
-				if (closures.get(i).getMarineAccessPeriodViolation() > 0)
-				{
-					// Show violation count and make cell background red
-					cell.setCellStyle(style5);
-					cell.setCellValue(closures.get(i).getMarineAccessPeriodViolation());
-				} 
-				else if (closures.get(i).getInCircuitException())
-				{
-					// Make cell background yellow
-					cell.setCellStyle(style4);
-				}
-				else
-				{
-					cell.setCellStyle(style1);
-				}
-
-				// Duration violation
-				cell = row.createCell(12);
-				if (closures.get(i).getClosureDurationViolation())
-				{
-					// Make cell background red
-					cell.setCellStyle(style5);
-				}
-				else
-				{
-					cell.setCellStyle(style1);
+					// Duration violation
+					cell = row.createCell(11);
+					if (closures.get(i).getClosureDurationViolation())
+					{
+						// Make cell background red
+						cell.setCellStyle(style5);
+					}
+					else
+					{
+						cell.setCellStyle(style1);
+					}
 				}
 			}
-
 			rowCounter++;
 		}
 
 		// Footer rows
 		// Show sum of closure durations (high use period and overall) 
-		rowCounter++;
-		row = closuresSheet.createRow(rowCounter);
-		cell = row.createCell(7);
-		cell.setCellStyle(style8);
-		cell.setCellValue("Sum of crossing durations from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" (hhh:mm):");
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
+		{
+			rowCounter++;
+			row = closuresSheet.createRow(rowCounter);
+			cell = row.createCell(7);
+			cell.setCellStyle(style8);
+			cell.setCellValue("Sum of crossing durations from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" (hhh:mm):");
 
-		cell = row.createCell(8);
-		cell.setCellStyle(style9);
-		cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial()));
+			cell = row.createCell(8);
+			cell.setCellStyle(style9);
+			cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial()));
+		}
 
 		rowCounter++;
 		row = closuresSheet.createRow(rowCounter);
@@ -393,15 +477,18 @@ public class WriteBridgeComplianceFiles1
 
 		// Show average of closure durations (high use period and overall) 
 		rowCounter++;
-		rowCounter++;
-		row = closuresSheet.createRow(rowCounter);
-		cell = row.createCell(7);
-		cell.setCellStyle(style8);
-		cell.setCellValue("Average crossing duration from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" (hh:mm):");
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
+		{
+			rowCounter++;
+			row = closuresSheet.createRow(rowCounter);
+			cell = row.createCell(7);
+			cell.setCellStyle(style8);
+			cell.setCellValue("Average crossing duration from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" (hh:mm):");
 
-		cell = row.createCell(8);
-		cell.setCellStyle(style9);
-		cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial() / BridgeComplianceAnalysis.getCountOfClosuresDuringHighUsePeriod()));
+			cell = row.createCell(8);
+			cell.setCellStyle(style9);
+			cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial() / BridgeComplianceAnalysis.getCountOfClosuresDuringHighUsePeriod()));
+		}
 
 		rowCounter++;
 		row = closuresSheet.createRow(rowCounter);
@@ -415,19 +502,21 @@ public class WriteBridgeComplianceFiles1
 
 		// Show % mariner availability (high use period and overall) 
 		rowCounter++;
-		rowCounter++;
-		row = closuresSheet.createRow(rowCounter);
-		cell = row.createCell(7);
-		cell.setCellStyle(style8);
-		cell.setCellValue("Mariner availability from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" (%):");
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
+		{
+			rowCounter++;
+			row = closuresSheet.createRow(rowCounter);
+			cell = row.createCell(7);
+			cell.setCellStyle(style8);
+			cell.setCellValue("Mariner availability from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" (%):");
 
-		Double marineAccessPeriodSpanAsSerial = (BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodSpanAsDouble() / 24);
-		Double durationOfClosuresDuringHighUsePeriods = BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial();
-		Double marinerAvailabilityDuringPeak = (((marineAccessPeriodSpanAsSerial * 7) - durationOfClosuresDuringHighUsePeriods) / (marineAccessPeriodSpanAsSerial * 7)) * 100;  
-		cell = row.createCell(8);
-		cell.setCellStyle(style10);
-		cell.setCellValue(marinerAvailabilityDuringPeak);
-		
+			Double marineAccessPeriodSpanAsSerial = (BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodSpanAsDouble() / 24);
+			Double durationOfClosuresDuringHighUsePeriods = BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial();
+			Double marinerAvailabilityDuringPeak = (((marineAccessPeriodSpanAsSerial * 7) - durationOfClosuresDuringHighUsePeriods) / (marineAccessPeriodSpanAsSerial * 7)) * 100;  
+			cell = row.createCell(8);
+			cell.setCellStyle(style10);
+			cell.setCellValue(marinerAvailabilityDuringPeak);
+		}
 		rowCounter++;
 		row = closuresSheet.createRow(rowCounter);
 		cell = row.createCell(7);
@@ -439,7 +528,7 @@ public class WriteBridgeComplianceFiles1
 		cell = row.createCell(8);
 		cell.setCellStyle(style10);
 		cell.setCellValue(marinerAvailabilityDuringAllHours);
-		
+
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
@@ -460,39 +549,80 @@ public class WriteBridgeComplianceFiles1
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 
 		// Resize all columns to fit the content size
-		for (int i = 0; i <= 12 ; i++) 
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
 		{
-			if (i == 0)
+			for (int i = 0; i <= 12 ; i++) 
 			{
-				closuresSheet.setColumnWidth(i, 2500);
+				if (i == 0)
+				{
+					closuresSheet.setColumnWidth(i, 2500);
+				}
+				else if (i == 1)
+				{
+					closuresSheet.setColumnWidth(i, 2900);
+				}
+				else if ((i == 2) || (i ==3))
+				{
+					closuresSheet.setColumnWidth(i, 3000);
+				}
+				else if (i == 6)
+				{
+					closuresSheet.setColumnWidth(i, 12000);
+				}
+				else if (i == 7)
+				{
+					closuresSheet.setColumnWidth(i, 19000);
+				}
+				else if (i == 8)
+				{
+					closuresSheet.setColumnWidth(i, 5000);
+				}
+				else if ((i == 9) || (i == 10))
+				{
+					closuresSheet.setColumnWidth(i, 3800);
+				}
+				else if (((i == 11) || (i == 12)) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet()))
+				{
+					closuresSheet.setColumnWidth(i, 4500);
+				}
 			}
-			else if (i == 1)
+		}
+		else
+		{
+			for (int i = 0; i <= 11 ; i++) 
 			{
-				closuresSheet.setColumnWidth(i, 2900);
-			}
-			else if ((i == 2) || (i ==3))
-			{
-				closuresSheet.setColumnWidth(i, 3000);
-			}
-			else if (i == 6)
-			{
-				closuresSheet.setColumnWidth(i, 12000);
-			}
-			else if (i == 7)
-			{
-				closuresSheet.setColumnWidth(i, 19000);
-			}
-			else if (i == 8)
-			{
-				closuresSheet.setColumnWidth(i, 5000);
-			}
-			else if ((i == 9) || (i == 10))
-			{
-				closuresSheet.setColumnWidth(i, 3800);
-			}
-			else if (((i == 11) || (i == 12)) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet()))
-			{
-				closuresSheet.setColumnWidth(i, 4500);
+				if (i == 0)
+				{
+					closuresSheet.setColumnWidth(i, 2500);
+				}
+				else if (i == 1)
+				{
+					closuresSheet.setColumnWidth(i, 2900);
+				}
+				else if ((i == 2) || (i ==3))
+				{
+					closuresSheet.setColumnWidth(i, 3000);
+				}
+				else if (i == 6)
+				{
+					closuresSheet.setColumnWidth(i, 12000);
+				}
+				else if (i == 7)
+				{
+					closuresSheet.setColumnWidth(i, 19000);
+				}
+				else if (i == 8)
+				{
+					closuresSheet.setColumnWidth(i, 5000);
+				}
+				else if (i == 9)
+				{
+					closuresSheet.setColumnWidth(i, 3800);
+				}
+				else if (((i == 10) || (i == 11)) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet()))
+				{
+					closuresSheet.setColumnWidth(i, 4500);
+				}
 			}
 		}
 	}
