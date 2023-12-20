@@ -15,8 +15,11 @@ public class BridgeComplianceAnalysis
 
 	ArrayList<BridgeComplianceClosure> closures;
 	ObservableList<MarineAccessPeriod> marineAccessPeriods;
-	Double totalDurationOfClosureInSerial = 0.0;
-	Double totalDurationOfClosureDuringHighUsePeriodsInSerial = 0.0;
+
+	private static Double totalDurationOfClosureInSerial = 0.0;
+	private static Double totalDurationOfClosureDuringHighUsePeriodsInSerial = 0.0;
+	
+	private static Integer closureCountDuringHighUsePeriod = 0;
 
 	private final Boolean debug = false;
 
@@ -24,6 +27,9 @@ public class BridgeComplianceAnalysis
 
 	public BridgeComplianceAnalysis(ArrayList<BridgeComplianceClosure> closures, ObservableList<MarineAccessPeriod> marineAccessPeriods) 
 	{
+		this.closures = closures;
+		this.marineAccessPeriods = marineAccessPeriods;
+
 		resultsMessage = "\nStarted creating bridge compliance results at "+ConvertDateTime.getTimeStamp();
 
 		Integer marineAccessPeriodViolationCount = 0;  //  Can be assigned multiple times per closure
@@ -218,7 +224,7 @@ public class BridgeComplianceAnalysis
 								&& (bridgeRaiseTimeAsSerial > marineAccessPeriods.get(j).getMarinePeriodStartDouble())	  // and the bridge raises after the start of the access period
 								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble())))  // and the bridge lowers before the start of the access period 
 				{
-					closures.get(i).setMarineAccessPeriodViolation();
+					closures.get(i).setInCircuitExcpetion();
 					inCircuitCount++;
 					lastOpeningDelayed = true;
 					lastPeriodsRaiseTime = bridgeRaiseTimeAsSerial;
@@ -281,6 +287,7 @@ public class BridgeComplianceAnalysis
 						// Scenario C:  closure occurs entirely during high use period and the opening time is later than the closing time
 						else if ((closures.get(i).getClosureStartTime() >= highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() <= highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration();
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -290,6 +297,7 @@ public class BridgeComplianceAnalysis
 						// Scenario D:  closure starts before high use period but ends during high use period and the opening time is later than the closing time
 						else if ((closures.get(i).getClosureStartTime() < highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() <= highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration() - (highUsePeriodStartAsSerial - closures.get(i).getClosureStartTime());
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -299,6 +307,7 @@ public class BridgeComplianceAnalysis
 						// Scenario E:  closure starts after high use period begins but ends after high use period and the opening time is later than the closing time
 						else if ((closures.get(i).getClosureStartTime() >= highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() > highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration() - (closures.get(i).getClosureEndTime() - highUsePeriodEndAsSerial);
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -308,6 +317,7 @@ public class BridgeComplianceAnalysis
 						// Scenario F:  closure extends through entirety of high use period and the opening time is later than the closing time
 						else if ((closures.get(i).getClosureStartTime() < highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() > highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = highUsePeriodEndAsSerial - highUsePeriodStartAsSerial;
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -322,6 +332,7 @@ public class BridgeComplianceAnalysis
 						// Scenario H:  closure starts during high use period begins and ends during high use period and the closing time is later than the opening time
 						else if ((closures.get(i).getClosureStartTime() <= highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() > highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() < closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = (highUsePeriodEndAsSerial - closures.get(i).getClosureStartTime()) + (closures.get(i).getClosureEndTime() - highUsePeriodStartAsSerial);
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -349,6 +360,7 @@ public class BridgeComplianceAnalysis
 						// Scenario N:  closure occurs entirely during high use period and start of closure is after midnight
 						else if ((closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()) && (closures.get(i).getClosureStartTime() <= highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() <= highUsePeriodEndAsSerial))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration();
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -358,6 +370,7 @@ public class BridgeComplianceAnalysis
 						// Scenario O:  closure occurs entirely during high use period and extends over midnight
 						else if ((closures.get(i).getClosureEndTime() <= closures.get(i).getClosureStartTime()) && (closures.get(i).getClosureStartTime() >= highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() <= highUsePeriodEndAsSerial))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration();
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -367,6 +380,7 @@ public class BridgeComplianceAnalysis
 						// Scenario P  closure starts before high use period and ends during high use period and by midnight
 						else if ((closures.get(i).getClosureStartTime() < highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() > highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration() - (highUsePeriodStartAsSerial - closures.get(i).getClosureStartTime());
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -376,6 +390,7 @@ public class BridgeComplianceAnalysis
 						// Scenario Q  closure starts after high use period begins and ends during high use period and by midnight
 						else if ((closures.get(i).getClosureEndTime() > closures.get(i).getClosureStartTime()) && (closures.get(i).getClosureStartTime() > highUsePeriodStartAsSerial))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = closures.get(i).getClosureDuration();
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -385,6 +400,7 @@ public class BridgeComplianceAnalysis
 						// Scenario R:  closure starts after high use period begins and ends after high use period the next day
 						else if ((closures.get(i).getClosureStartTime() >= highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() > highUsePeriodEndAsSerial))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = highUsePeriodEndAsSerial + (1 - closures.get(i).getClosureStartTime());
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -394,6 +410,7 @@ public class BridgeComplianceAnalysis
 						// Scenario S:  closure extends through entirety of high use period and occurs overnight
 						else if ((closures.get(i).getClosureStartTime() < highUsePeriodStartAsSerial) && (closures.get(i).getClosureEndTime() > highUsePeriodEndAsSerial) && (closures.get(i).getClosureEndTime() < closures.get(i).getClosureStartTime()))
 						{
+							closureCountDuringHighUsePeriod++;
 							Double durationOfThisClosureDuringHighUsePeriodInSerial = (1 - highUsePeriodStartAsSerial) + highUsePeriodEndAsSerial;
 							totalDurationOfClosureDuringHighUsePeriodsInSerial += durationOfThisClosureDuringHighUsePeriodInSerial;
 							closures.get(i).setClosureDurationOccuringDuringMarineHighUsagePeriod(durationOfThisClosureDuringHighUsePeriodInSerial);
@@ -434,14 +451,19 @@ public class BridgeComplianceAnalysis
 		}
 	}
 
-	public Double getTotalDurationClosureAsSerial()
+	public static Double getTotalDurationClosureAsSerial()
 	{
 		return totalDurationOfClosureInSerial;
 	}
 
-	public Double getTotalurationOfClosureDuringHighUsePeriodsAsSerial()
+	public static Double getTotalDurationOfClosureDuringHighUsePeriodsAsSerial()
 	{
 		return totalDurationOfClosureDuringHighUsePeriodsInSerial;
+	}
+
+	public static Integer getCountOfClosuresDuringHighUsePeriod()
+	{
+		return closureCountDuringHighUsePeriod;
 	}
 
 	public ArrayList<BridgeComplianceClosure> getClosures()

@@ -17,9 +17,9 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles1
 	
 	static Boolean error = false;
 	
-	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String textAreaContents, String outputFilePath)
+	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridge, String textAreaContents, String outputFilePath)
 	{
-		super(closures, textAreaContents, outputFilePath);
+		super(closures, bridge, textAreaContents, outputFilePath);
 		
 		try 
 	    {

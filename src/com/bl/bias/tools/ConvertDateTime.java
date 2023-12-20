@@ -1,9 +1,13 @@
 package com.bl.bias.tools;
 
-import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.apache.poi.ss.usermodel.DateUtil;
 
 public class ConvertDateTime 
 {
@@ -374,6 +378,13 @@ public class ConvertDateTime
 		int seconds = Math.abs(secondsLeft);
 
 		return seconds;
+	}
+	
+	public static String convertSerialToDate(double serialTime)
+	{
+		Date date= DateUtil.getJavaDate(serialTime);
+		String dateAsString = new SimpleDateFormat("MM/dd/yyyy").format(date);
+		return dateAsString;
 	}
 
 	public static LocalTime getTimeStamp()

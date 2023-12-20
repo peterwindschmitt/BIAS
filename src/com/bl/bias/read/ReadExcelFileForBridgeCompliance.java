@@ -26,7 +26,8 @@ public class ReadExcelFileForBridgeCompliance
 
 	private ArrayList<BridgeComplianceClosure> closures = new ArrayList<BridgeComplianceClosure>();
 
-	public ReadExcelFileForBridgeCompliance(String file, Integer firstRowOfClosures, String dayColumn, String lowerColumn, String raiseColumn, Integer lastRowOfClosures) throws Exception 
+	public ReadExcelFileForBridgeCompliance(String file, Integer firstRowOfClosures, String dayColumn, String lowerColumn, String raiseColumn, String tenderColumn, String dateColumn, 
+			String closureNumberColumn, String trainTypeColumn, String notesColumn, Integer lastRowOfClosures) throws Exception 
 	{
 		closures.clear();
 
@@ -43,6 +44,10 @@ public class ReadExcelFileForBridgeCompliance
 
 		try
 		{
+			int lastClosureNumber = 0;
+			int lastDate = 0;
+			double lastClosureEndTime = 0.0;
+			
 			// Load row-by-row checking for errors
 			for (int i = firstRowOfClosures - 1; i <= lastRowOfClosures - 1; i++)
 			{
@@ -50,26 +55,83 @@ public class ReadExcelFileForBridgeCompliance
 				String day = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(dayColumn)).getStringCellValue();
 				Double lowerTime = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(lowerColumn)).getNumericCellValue();
 				Double raiseTime = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(raiseColumn)).getNumericCellValue();
-
+				Integer closureNumber = (int) sheet.getRow(i).getCell(CellReference.convertColStringToIndex(closureNumberColumn)).getNumericCellValue();
+				Integer date = (int) sheet.getRow(i).getCell(CellReference.convertColStringToIndex(dateColumn)).getNumericCellValue();
+				String tender = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(tenderColumn)).getStringCellValue();
+				String trainType = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(trainTypeColumn)).getStringCellValue();
+				String closureNotes = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(notesColumn)).getStringCellValue();
+				
 				if ((lowerTime < 0) || (lowerTime > 1))
 				{
 					resultsMessage += "Lower time in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
+					break;
 				}
 				
 				if ((raiseTime < 0) || (raiseTime > 1))
 				{
 					resultsMessage += "Raise time in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
+					break;
 				}
 				
 				if (!days.contains(day))
 				{
 					resultsMessage += "Day of week in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
+					break;
 				}
 				
-				BridgeComplianceClosure closure = new BridgeComplianceClosure(rowNumber, null, null, lowerTime, raiseTime, null, day, null, null);
+				if (((lastClosureNumber + 1) != closureNumber) && (i != (firstRowOfClosures - 1)))
+				{
+					resultsMessage += "Closure in row "+(rowNumber+1)+" is out of sequence\n";
+					validFile = false;
+					break;
+				}
+				else
+					lastClosureNumber = closureNumber;
+				
+				if (((lowerTime < lastClosureEndTime) && (i != (firstRowOfClosures - 1))) && (lastDate == date))
+				{
+					resultsMessage += "Time in row "+(rowNumber+1)+" is out of sequence\n";
+					validFile = false;
+					break;
+				}
+				else
+					lastClosureEndTime = raiseTime;
+				
+				if ((date < lastDate) && (i != (firstRowOfClosures - 1)))
+				{
+					resultsMessage += "Date in row "+(rowNumber+1)+" is out of sequence\n";
+					validFile = false;
+					break;
+				}
+				else
+					lastDate = date;
+				
+				Boolean modifyDurationOfFirstClosure = false;
+				Boolean modifyDurationOfLastClosure = false;
+				
+				// Determine if first closure duration needs to be modified
+				if ((raiseTime < lowerTime) && (i == (firstRowOfClosures - 1)))
+				{
+					modifyDurationOfFirstClosure = true;
+				}
+				
+				// Determine if last closure duration needs to be modified
+				if ((raiseTime < lowerTime) && (i == (lastRowOfClosures - 1)))
+				{
+					modifyDurationOfLastClosure = true;
+				}
+				
+				if (modifyDurationOfFirstClosure && modifyDurationOfLastClosure)
+				{
+					resultsMessage += "Time in row "+(rowNumber+1)+" is invalid\n";
+					validFile = false;
+					break;
+				}
+				
+				BridgeComplianceClosure closure = new BridgeComplianceClosure(modifyDurationOfFirstClosure, modifyDurationOfLastClosure, rowNumber, closureNumber, date, lowerTime, raiseTime, tender, day, trainType, closureNotes);
 				closures.add(closure);
 				closuresReadCount++;
 			}
@@ -89,6 +151,14 @@ public class ReadExcelFileForBridgeCompliance
 		resultsMessage += "Finished parsing Excel file at "+ConvertDateTime.getTimeStamp()+"\n";
 	}
 
+	public String getDateSpan()
+	{
+		String earliestDate = ConvertDateTime.convertSerialToDate(closures.get(0).getClosureDate()).toString();
+		String latestDate = ConvertDateTime.convertSerialToDate(closures.get(closures.size() - 1).getClosureDate()).toString();
+		String dateSpan = (" [" + earliestDate + " to " + latestDate + "]");
+		return dateSpan;
+	}
+	
 	public String getResultsMessage()
 	{
 		return resultsMessage;

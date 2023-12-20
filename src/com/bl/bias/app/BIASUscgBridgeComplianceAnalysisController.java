@@ -38,6 +38,8 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private static String message = "";
 	private static String saveFileLocationForUserSpecifiedFileName;
 	private static String saveFileFolderForSerialFileName;
+	
+	private static String bridge;
 
 	private static Preferences prefs;
 
@@ -45,6 +47,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	private static ObservableList<String> columnValues =  FXCollections.observableArrayList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
 			"M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	private static ObservableList<String> bridgeValues =  FXCollections.observableArrayList("Jupiter Bridge", "New River Bridge", "St Lucie River Bridge");
 	
 	private static final Integer maxRows = 999;
 	private static Integer firstRowOfClosures;
@@ -70,6 +73,8 @@ public class BIASUscgBridgeComplianceAnalysisController
 	@FXML private Label fileNameLabel;
 	@FXML private Label oneLabel;
 	@FXML private Label twoLabel;
+	@FXML private Label selectBridgeLabel;
+	@FXML private Label threeLabel;
 	@FXML private Label firstRowOfBridgeClosuresLabel;
 	@FXML private Label dayColumnLabel;
 	@FXML private Label lowerColumnLabel;
@@ -86,6 +91,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	@FXML private Spinner<Integer> firstRowOfBridgeClosuresSpinner;
 	@FXML private Spinner<Integer> lastRowOfBridgeClosuresSpinner;
+	@FXML private ComboBox<String> bridgeComboBox;
 	@FXML private ComboBox<String> dayColumnComboBox;
 	@FXML private ComboBox<String> lowerColumnComboBox;
 	@FXML private ComboBox<String> tenderColumnComboBox;
@@ -101,6 +107,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
 
+		bridgeComboBox.getItems().addAll(bridgeValues);
 		dayColumnComboBox.getItems().addAll(columnValues);
 		lowerColumnComboBox.getItems().addAll(columnValues);
 		tenderColumnComboBox.getItems().addAll(columnValues);
@@ -146,6 +153,8 @@ public class BIASUscgBridgeComplianceAnalysisController
 			}
 		});
 
+		bridge = bridgeValues.get(0);
+		bridgeComboBox.setValue(bridge);
 		dayColumnComboBox.setValue("A");
 		lowerColumnComboBox.setValue("B");
 		raiseColumnComboBox.setValue("C");
@@ -156,8 +165,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 		notesColumnComboBox.setValue("H");
 		firstRowOfBridgeClosuresSpinner.setValueFactory(firstRowFactory);
 		lastRowOfBridgeClosuresSpinner.setValueFactory(lastRowFactory);
-
+		
 		disableDataField2();
+		disableDataField3();
 	}
 
 	@FXML private void handleSelectFileButton(ActionEvent event) 
@@ -165,6 +175,11 @@ public class BIASUscgBridgeComplianceAnalysisController
 		chooseFile();
 	}
 
+	@FXML private void handleBridgeComboBox(ActionEvent event)
+	{
+		bridge = bridgeComboBox.getValue();
+	}
+	
 	@FXML private void handleDayColumnComboBox(ActionEvent event)
 	{
 		dayColumn = dayColumnComboBox.getValue();
@@ -250,6 +265,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 				executeButton.setDisable(true);
 				
 				disableDataField2();
+				disableDataField3();
 				
 				continueAnalysis = true;
 
@@ -269,6 +285,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 				executeButton.setDisable(true);
 				disableDataField2();
+				disableDataField3();
 				
 				dayColumnComboBox.setValue("A");
 				lowerColumnComboBox.setValue("B");
@@ -311,6 +328,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 				disableDataField1();
 				disableDataField2();
+				disableDataField3();
 				
 				executeButton.setDisable(true);
 
@@ -334,6 +352,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 				
 				enableDataField1();
 				disableDataField2();
+				disableDataField3();
 				
 				dayColumnComboBox.setValue("A");
 				lowerColumnComboBox.setValue("B");
@@ -363,6 +382,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 		
 		enableDataField1();
 		disableDataField2();
+		disableDataField3();
 		
 		dayColumnComboBox.setValue("A");
 		lowerColumnComboBox.setValue("B");
@@ -395,6 +415,20 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private void enableDataField2()
 	{
 		twoLabel.setDisable(false);
+		selectBridgeLabel.setDisable(false);
+		bridgeComboBox.setDisable(false);
+	}
+
+	private void disableDataField2()
+	{
+		twoLabel.setDisable(true);
+		selectBridgeLabel.setDisable(true);
+		bridgeComboBox.setDisable(true);
+	}
+	
+	private void enableDataField3()
+	{
+		threeLabel.setDisable(false);
 		selectDataFieldsLabel.setDisable(false);
 		firstRowOfBridgeClosuresLabel.setDisable(false);
 		lastRowOfBridgeClosuresLabel.setDisable(false);
@@ -418,9 +452,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 		lastRowOfBridgeClosuresSpinner.setDisable(false);
 	}
 	
-	private void disableDataField2()
+	private void disableDataField3()
 	{
-		twoLabel.setDisable(true);
+		threeLabel.setDisable(true);
 		selectDataFieldsLabel.setDisable(true);
 		firstRowOfBridgeClosuresLabel.setDisable(true);
 		lastRowOfBridgeClosuresLabel.setDisable(true);
@@ -516,7 +550,37 @@ public class BIASUscgBridgeComplianceAnalysisController
 				{
 					raiseColumn = (String) preprocessData.returnBridgeFileDataLocations().get(4);
 					raiseColumnComboBox.setValue(raiseColumn);
-				}		
+				}
+				
+				if (preprocessData.returnBridgeFileDataLocations().get(5) != null)
+				{
+					tenderColumn = (String) preprocessData.returnBridgeFileDataLocations().get(5);
+					tenderColumnComboBox.setValue(tenderColumn);
+				}
+
+				if (preprocessData.returnBridgeFileDataLocations().get(6) != null)
+				{
+					dateColumn = (String) preprocessData.returnBridgeFileDataLocations().get(6);
+					dateColumnComboBox.setValue(dateColumn);
+				}
+				
+				if (preprocessData.returnBridgeFileDataLocations().get(7) != null)
+				{
+					closingNumberColumn = (String) preprocessData.returnBridgeFileDataLocations().get(7);
+					closingNumberColumnComboBox.setValue(closingNumberColumn);
+				}
+				
+				if (preprocessData.returnBridgeFileDataLocations().get(8) != null)
+				{
+					trainTypeColumn = (String) preprocessData.returnBridgeFileDataLocations().get(8);
+					trainTypeColumnComboBox.setValue(trainTypeColumn);
+				}
+				
+				if (preprocessData.returnBridgeFileDataLocations().get(9) != null)
+				{
+					notesColumn = (String) preprocessData.returnBridgeFileDataLocations().get(9);
+					notesColumnComboBox.setValue(notesColumn);
+				}
 			} 
 			catch (Exception e) 
 			{
@@ -524,6 +588,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 			}
 
 			enableDataField2();
+			enableDataField3();
 
 			executeButton.setDisable(false);
 		}
@@ -562,7 +627,8 @@ public class BIASUscgBridgeComplianceAnalysisController
 		// Read all objects that are required for the bridge analysis
 		try 
 		{
-			readData = new ReadExcelFileForBridgeCompliance(fullyQualifiedPath, firstRowOfClosures, dayColumn, lowerColumn, raiseColumn, lastRowOfClosures);
+			readData = new ReadExcelFileForBridgeCompliance(fullyQualifiedPath, firstRowOfClosures, dayColumn, lowerColumn, raiseColumn, tenderColumn, dateColumn, closingNumberColumn,
+					trainTypeColumn, notesColumn, lastRowOfClosures);
 		} 
 		catch (Exception e) 
 		{
@@ -591,12 +657,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 		{
 			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), textArea.getText(), getSaveFileFolderForSerialFileName());
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName());
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 			else
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName());
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName());
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 			
@@ -614,7 +680,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 			}
 		}
 		else
-			displayMessage("\n*** PROCESSING NOT OMPLETE!!! ***");
+			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				
 		//  Now reset for next case
 		executeButton.setVisible(false);

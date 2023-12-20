@@ -21,14 +21,31 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 	int dayColumnIndex;
 	int lowerColumnIndex;
 	int raiseColumnIndex;
+	int tenderColumnIndex;
+	int dateColumnIndex;
+	int closingNumberColumnIndex;
+	int trainTypeColumnIndex;
+	int notesColumnIndex;
+
 	String dayColumn;
 	String lowerColumn;
 	String raiseColumn;
+	String tenderColumn;
+	String dateColumn;
+	String closingNumberColumn;
+	String trainTypeColumn;
+	String notesColumn;
+
 	Boolean firstDataRowFound = false;
 	Boolean lastDataRowFound = false;
 	Boolean dayColumnFound = false;
 	Boolean lowerColumnFound = false;
 	Boolean raiseColumnFound = false;
+	Boolean tenderColumnFound = false;
+	Boolean dateColumnFound = false;
+	Boolean closingNumberColumnFound = false;
+	Boolean trainTypeColumnFound = false;
+	Boolean notesColumnFound = false;
 	Boolean badRowFound = false;
 
 	List<Object> bridgeFileDataLocations = new ArrayList<Object>();
@@ -38,6 +55,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 
 		int timeFoundInThisRowCounter;
 		int examinationRow = 0;
+		int headerRow = 0;
 
 		ArrayList<Integer> columnsContainingNumericInFirstRow = new ArrayList<>();
 		ArrayList<Integer> columnsContainingNumericInLastRow = new ArrayList<>();
@@ -81,7 +99,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 		}
 		while
 			(examinationRow <= sheet.getLastRowNum() && (firstDataRowFound == false));
-		
+
 		// Find last row of data
 		if ((examinationRow - 1) != sheet.getLastRowNum() && (firstDataRowFound))
 		{
@@ -111,7 +129,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 							}
 						}
 					}
-					
+
 
 					if (timeFoundInThisRowCounter <= 3)
 					{
@@ -122,6 +140,27 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 				}
 				while
 					((examinationRow <= sheet.getLastRowNum()) && (badRowFound == false));
+			}
+		}
+
+
+		// Find header row of data
+		for (int i = firstRowOfData; i >= 0; i--)
+		{
+			for (int j = 0; j < sheet.getRow(i).getLastCellNum(); j++)
+			{
+				Cell cellData = sheet.getRow(i).getCell(j);
+				if ((cellData != null) && (cellData.toString() != ""))
+				{	
+					if (cellData.getCellType() == CellType.STRING)
+					{
+						if (cellData.getStringCellValue().trim().toLowerCase().contains("day of week"))
+						{
+							headerRow = i;
+							break;
+						}
+					}
+				}
 			}
 		}
 		
@@ -139,27 +178,42 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 			// Find column of days
 			for (int i = 0; i < columnsContainingStringInFirstRow.size(); i++)
 			{
+				Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingStringInFirstRow.get(i));
 				Cell cellData = sheet.getRow(firstRowOfData).getCell(columnsContainingStringInFirstRow.get(i));
 				if ((cellData != null) && (cellData.toString() != ""))
 				{	
-					if (days.contains(cellData.getStringCellValue()))
+					if (cellDataHeader.getStringCellValue().toLowerCase().contains("day")) 
 					{
 						dayColumnIndex = columnsContainingStringInFirstRow.get(i);
 						dayColumnFound = true;
 						dayColumn = CellReference.convertNumToColString(dayColumnIndex);
+						columnsContainingStringInFirstRow.remove(i);
+						break;
+					}
+					else if (days.contains(cellData.getStringCellValue())) 
+					{
+						dayColumnIndex = columnsContainingStringInFirstRow.get(i);
+						dayColumnFound = true;
+						dayColumn = CellReference.convertNumToColString(dayColumnIndex);
+						columnsContainingStringInFirstRow.remove(i);
 						break;
 					}					
 				}
 			}
-			
+
 			// Find column of lower times
 			for (int i = 0; i < columnsContainingNumericInFirstRow.size(); i++)
 			{
 				Boolean thisColumnValidTime = true;
+				Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingNumericInFirstRow.get(i));
 				for (int j = firstRowOfData; j <= lastRowOfData; j++)
 				{
 					Cell cellData = sheet.getRow(j).getCell(columnsContainingNumericInFirstRow.get(i));
-					if ((cellData != null) && (cellData.toString() != ""))
+					if ((cellDataHeader.getStringCellValue().toLowerCase().contains("closing")) && (cellData.getNumericCellValue() < 1))
+					{
+						break;
+					}
+					else if ((cellData != null) && (cellData.toString() != ""))
 					{	
 						if (cellData.getNumericCellValue() >= 1)
 						{
@@ -174,6 +228,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 					lowerColumnIndex = columnsContainingNumericInFirstRow.get(i);
 					lowerColumn = CellReference.convertNumToColString(columnsContainingNumericInFirstRow.get(i));
 					lowerColumnFound = true;
+					columnsContainingNumericInFirstRow.remove(i);
 					break;
 				}		
 			}
@@ -181,17 +236,16 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 			// Find column of raise times
 			for (int i = 0; i < columnsContainingNumericInFirstRow.size(); i++)
 			{
-				if (columnsContainingNumericInFirstRow.get(i) == lowerColumnIndex)
-				{
-					continue;
-				}
-
 				Boolean thisColumnValidTime = true;
-
+				Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingNumericInFirstRow.get(i));
 				for (int j = firstRowOfData; j <= lastRowOfData; j++)
 				{
 					Cell cellData = sheet.getRow(j).getCell(columnsContainingNumericInFirstRow.get(i));
-					if ((cellData != null) && (cellData.toString() != ""))
+					if (cellDataHeader.getStringCellValue().toLowerCase().contains("opening")) 
+					{
+						break;
+					}
+					else if ((cellData != null) && (cellData.toString() != ""))
 					{	
 						if (cellData.getNumericCellValue() >= 1)
 						{
@@ -208,9 +262,96 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 					raiseColumnIndex = columnsContainingNumericInFirstRow.get(i);
 					raiseColumn = CellReference.convertNumToColString(columnsContainingNumericInFirstRow.get(i));
 					raiseColumnFound = true;
+					columnsContainingNumericInFirstRow.remove(i);
 					break;
 				}		
 			}
+
+			// Find column of tenders
+			for (int i = 0; i < columnsContainingStringInFirstRow.size(); i++)
+			{
+				Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingStringInFirstRow.get(i));
+				if (cellDataHeader.getStringCellValue().toLowerCase().contains("tender")) 
+				{
+					tenderColumnIndex = columnsContainingStringInFirstRow.get(i);
+					tenderColumnFound = true;
+					tenderColumn = CellReference.convertNumToColString(tenderColumnIndex);
+					columnsContainingStringInFirstRow.remove(i);	
+					break;
+				}	
+			}
+
+			// Find column of dates
+			for (int i = 0; i < columnsContainingNumericInFirstRow.size(); i++)
+			{
+				Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingNumericInFirstRow.get(i));
+				if (cellDataHeader.getStringCellValue().toLowerCase().contains("date")) 
+				{
+					dateColumnIndex = columnsContainingNumericInFirstRow.get(i);
+					dateColumnFound = true;
+					dateColumn = CellReference.convertNumToColString(dateColumnIndex);
+					columnsContainingNumericInFirstRow.remove(i);
+					break;
+				}	
+			}
+		}
+
+		// Find column of closing numbers
+		for (int i = 0; i < columnsContainingNumericInFirstRow.size(); i++)
+		{
+			Boolean thisColumnValidClosing = true;
+			Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingNumericInFirstRow.get(i));
+			for (int j = firstRowOfData; j <= lastRowOfData; j++)
+			{
+				Cell cellData = sheet.getRow(j).getCell(columnsContainingNumericInFirstRow.get(i));
+				if ((cellDataHeader.getStringCellValue().toLowerCase().contains("closing")) && (cellData.getNumericCellValue() >= 1))
+				{
+					break;
+				}
+				else if ((cellData != null) && (cellData.toString() != ""))
+				{	
+					if (cellData.getNumericCellValue() >= 1)
+					{
+						thisColumnValidClosing = false;
+						break;
+					}					
+				}
+			}
+
+			if (thisColumnValidClosing)
+			{
+				closingNumberColumnIndex = columnsContainingNumericInFirstRow.get(i);
+				closingNumberColumn = CellReference.convertNumToColString(columnsContainingNumericInFirstRow.get(i));
+				closingNumberColumnFound = true;
+				columnsContainingNumericInFirstRow.remove(i);
+				break;
+			}		
+		}
+
+		// Find column of train types
+		for (int i = 0; i < sheet.getRow(headerRow).getLastCellNum(); i++)
+		{
+			Cell cellDataHeader = sheet.getRow(headerRow).getCell(i);
+			if ((cellDataHeader.getStringCellValue().toLowerCase().contains("train")) && (cellDataHeader.getStringCellValue().toLowerCase().contains("type")))
+			{
+				trainTypeColumnIndex = i;
+				trainTypeColumnFound = true;
+				trainTypeColumn = CellReference.convertNumToColString(trainTypeColumnIndex);
+				break;
+			}	
+		}
+
+		// Find column of notes
+		for (int i = 0; i < sheet.getRow(headerRow).getLastCellNum(); i++)
+		{
+			Cell cellDataHeader = sheet.getRow(headerRow).getCell(i);
+			if (cellDataHeader.getStringCellValue().toLowerCase().contains("comments"))
+			{
+				notesColumnIndex = i;
+				notesColumnFound = true;
+				notesColumn = CellReference.convertNumToColString(notesColumnIndex);
+				break;
+			}	
 		}
 
 		wb.close();
@@ -240,6 +381,31 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 
 		if (raiseColumnFound)
 			bridgeFileDataLocations.add(raiseColumn);
+		else 
+			bridgeFileDataLocations.add(null);
+
+		if (tenderColumnFound)
+			bridgeFileDataLocations.add(tenderColumn);
+		else 
+			bridgeFileDataLocations.add(null);
+
+		if (dateColumnFound)
+			bridgeFileDataLocations.add(dateColumn);
+		else 
+			bridgeFileDataLocations.add(null);
+
+		if (closingNumberColumnFound)
+			bridgeFileDataLocations.add(closingNumberColumn);
+		else 
+			bridgeFileDataLocations.add(null);
+
+		if (trainTypeColumnFound)
+			bridgeFileDataLocations.add(trainTypeColumn);
+		else 
+			bridgeFileDataLocations.add(null);
+
+		if (notesColumnFound)
+			bridgeFileDataLocations.add(notesColumn);
 		else 
 			bridgeFileDataLocations.add(null);
 

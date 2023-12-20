@@ -49,7 +49,12 @@
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin></CheckBox>
-            <Label text="4.  &quot;In-Circuit&quot; permissible delay of marine period start" GridPane.columnSpan="2" GridPane.rowIndex="4">
+            <CheckBox fx:id="includeViolationsOnClosureSheetCheckBox" mnemonicParsing="false" onAction="#handleIncludeViolationsOnClosureSheetCheckBox" text="2.  Show individual violations on Closures sheet" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Label text="5.  &quot;In-Circuit&quot; permissible delay of marine period start" GridPane.columnSpan="2" GridPane.rowIndex="4">
                <padding>
                   <Insets left="15.0" />
                </padding>
@@ -62,27 +67,30 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <Label text="minutes         5.  Maximum closure duration" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+            <Label text="minutes         6.  Maximum closure duration" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="80.0" />
                </GridPane.margin>
             </Label>
-            <Label text="2.  Show summary statistics on:" GridPane.columnSpan="2" GridPane.rowIndex="2">
+            <Label text="3.  Show compliance statistics on:" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <padding>
                   <Insets left="32.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="includeSummaryResultsOnSpreadsheetCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnSpreadsheetCheckBox" text="Spreadsheet" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <CheckBox fx:id="includeSummaryResultsOnSpreadsheetCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnSpreadsheetCheckBox" text="Compliance sheet in workbook" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="20.0" />
                </GridPane.margin></CheckBox>
-            <CheckBox fx:id="includeSummaryResultsOnNotepadCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnNotepadCheckBox" text="Generated Notepad document" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-            <Label text="6.  Marine access periods (below)" GridPane.columnSpan="2" GridPane.rowIndex="5">
+            <CheckBox fx:id="includeSummaryResultsOnNotepadCheckBox" mnemonicParsing="false" onAction="#handleIncludeSummaryResultsOnNotepadCheckBox" text="Generated Notepad document" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="-70.0" />
+               </GridPane.margin></CheckBox>
+            <Label text="7.  Marine access periods (below)" GridPane.columnSpan="2" GridPane.rowIndex="5">
                <padding>
                   <Insets left="32.0" />
                </padding>
             </Label>
-            <CheckBox fx:id="computeMarineHighUsagePeriodsCheckBox" mnemonicParsing="false" onAction="#handleComputeMarineHighUsagePeriodsCheckBox" text="3.  Compute marine high-usage periods from" GridPane.columnSpan="2" GridPane.rowIndex="3">
+            <CheckBox fx:id="computeMarineHighUsagePeriodsCheckBox" mnemonicParsing="false" onAction="#handleComputeMarineHighUsagePeriodsCheckBox" text="4.  Compute marine high-usage periods from" GridPane.columnSpan="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin></CheckBox>

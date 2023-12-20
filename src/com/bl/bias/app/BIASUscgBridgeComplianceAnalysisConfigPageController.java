@@ -33,6 +33,7 @@ import com.bl.bias.objects.MarineAccessPeriod;
 public class BIASUscgBridgeComplianceAnalysisConfigPageController 
 {
 	private static Boolean includeSummaryResultsOnSpreadsheet;
+	private static Boolean includeViolationsOnClosureSheet;
 	private static Boolean includeSummaryResultsOnNotepad;
 	private static Boolean includeConfidentialityDisclaimer;
 	private static Boolean computeMarineHighUsagePeriodActive;
@@ -42,6 +43,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static String maxClosureMinutes;
 
 	private static Boolean defaultIncludeSummaryResultsOnSpreadsheet = true;
+	private static Boolean defaultIncludeViolationsOnClosureSheet = true;
 	private static Boolean defaultIncludeSummaryResultsOnNotepad = true;
 	private static Boolean defaultIncludeConfidentialityDisclaimer = true;
 	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
@@ -49,6 +51,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static String defaultMarineAcessPeriodStartHour = "00:00";
 	private static String defaultMarineAcessPeriodEndHour = "00:00";
 	private static String defaultMaxClosureMinutes = "60";
+	
+	private static Double marineAccessPeriodSpan = 0.0;
 
 	private static Boolean validMarinePeriods = false;
 
@@ -61,6 +65,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static ObservableList<String> maxClosureDurationMinutesValues =  FXCollections.observableArrayList("30", "60", "90", "120");
 
 	@FXML private CheckBox includeSummaryResultsOnSpreadsheetCheckBox;
+	@FXML private CheckBox includeViolationsOnClosureSheetCheckBox;
 	@FXML private CheckBox includeSummaryResultsOnNotepadCheckBox;
 	@FXML private CheckBox includeConfidentialityDisclaimerCheckBox;
 	@FXML private CheckBox computeMarineHighUsagePeriodsCheckBox;
@@ -142,6 +147,22 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_includeSummaryResultsOnSpreadsheet", false);
 			includeSummaryResultsOnSpreadsheetCheckBox.setSelected(false);
+		}
+
+		// See if including violations on closure sheet is stored
+		if (prefs.getBoolean("cg_includeViolationsOnClosureSheet", defaultIncludeViolationsOnClosureSheet))
+		{
+			includeViolationsOnClosureSheet = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_includeViolationsOnClosureSheet", true);
+			includeViolationsOnClosureSheetCheckBox.setSelected(true);
+		}
+		else
+		{
+			includeViolationsOnClosureSheet = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_includeViolationsOnClosureSheet", false);
+			includeViolationsOnClosureSheetCheckBox.setSelected(false);
 		}
 
 		// See if including summary results on generated Notepad doc is stored
@@ -367,7 +388,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 		marineAccessPeriodEndHour = prefs.get("cg_marineAccessPeriodEndHour", defaultMarineAcessPeriodEndHour);
 
-		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
+		figureMarinePeriodSpanAsDouble(marineAccessPeriodStartHour, marineAccessPeriodEndHour);
+		highUsageMarinePeriodSpanLabel.setText(getMarinePeriodSpanAsString());
 	}
 
 	@FXML private void handleIncludeSummaryResultsOnSpreadsheetCheckBox(ActionEvent event)
@@ -383,6 +405,22 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			includeSummaryResultsOnSpreadsheet = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_includeSummaryResultsOnSpreadsheet", true);
+		}
+	}
+
+	@FXML private void handleIncludeViolationsOnClosureSheetCheckBox(ActionEvent event)
+	{
+		if (includeViolationsOnClosureSheet)
+		{
+			includeViolationsOnClosureSheet = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_includeViolationsOnClosureSheet", false);
+		}
+		else
+		{
+			includeViolationsOnClosureSheet = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_includeViolationsOnClosureSheet", true);
 		}
 	}
 
@@ -651,7 +689,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			prefs.put("cg_marineAccessPeriodStartHour", startHighUsageHourComboBox.getValue());
 
 		// Figure and display marine access period span
-		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
+		figureMarinePeriodSpanAsDouble(marineAccessPeriodStartHour, marineAccessPeriodEndHour);
+		highUsageMarinePeriodSpanLabel.setText(getMarinePeriodSpanAsString());
 	}
 
 	@FXML private void handleEndHighUsageHourComboBox(ActionEvent event) 
@@ -661,7 +700,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			prefs.put("cg_marineAccessPeriodEndHour", endHighUsageHourComboBox.getValue());
 
 		// Figure and display marine access period span
-		highUsageMarinePeriodSpanLabel.setText(figureMarinePeriodSpan(marineAccessPeriodStartHour,marineAccessPeriodEndHour));
+		figureMarinePeriodSpanAsDouble(marineAccessPeriodStartHour, marineAccessPeriodEndHour);
+		highUsageMarinePeriodSpanLabel.setText(getMarinePeriodSpanAsString());
 	}
 
 	@FXML private void handleMaxClosureMinutesComboBox(ActionEvent event) 
@@ -679,6 +719,11 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	public static Boolean getIncludeSummaryResultsOnNotepad()
 	{
 		return includeSummaryResultsOnNotepad;
+	}
+	
+	public static Boolean getIncludeViolationsOnClosuresSheet()
+	{
+		return includeViolationsOnClosureSheet;
 	}
 
 	public static Boolean getIncludeConfidentialityDisclaimer()
@@ -716,16 +761,27 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		return marineAccessPeriodsData;
 	}
 
-	private static String figureMarinePeriodSpan(String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)
+	private static Double figureMarinePeriodSpanAsDouble(String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)
 	{
 		marineAccessPeriodStartHour = marineAccessPeriodStartHour.replace(":00", "").strip();
 		marineAccessPeriodEndHour = marineAccessPeriodEndHour.replace(":00", "").strip();
-		int marineAccessPeriodSpan = Integer.valueOf(marineAccessPeriodEndHour) - Integer.valueOf(marineAccessPeriodStartHour);
-		if (marineAccessPeriodSpan == 0)
-			marineAccessPeriodSpan = 24;
+		marineAccessPeriodSpan = Double.valueOf(marineAccessPeriodEndHour) - Double.valueOf(marineAccessPeriodStartHour);
+		if (marineAccessPeriodSpan == 0.0)
+			marineAccessPeriodSpan = 24.0;
 		else if (marineAccessPeriodSpan < 0)
-			marineAccessPeriodSpan = marineAccessPeriodSpan + 24;
-		String marineAccessPeriodSpanAsString = String.valueOf(marineAccessPeriodSpan);
+			marineAccessPeriodSpan = marineAccessPeriodSpan + 24.0;
+		return marineAccessPeriodSpan;
+	}
+	
+	public static Double getMarineAccessPeriodSpanAsDouble()
+	{
+		return marineAccessPeriodSpan;
+	}
+	
+	private static String getMarinePeriodSpanAsString()
+	{
+		String marineAccessPeriodSpanAsString = String.valueOf(marineAccessPeriodSpan).replace(".0","");
+		
 		return marineAccessPeriodSpanAsString;
 	}
 
