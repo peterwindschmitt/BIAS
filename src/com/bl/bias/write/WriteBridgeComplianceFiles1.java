@@ -24,9 +24,10 @@ import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteBridgeComplianceFiles1
 {
-	private LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
+	private static LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
-	protected String resultsMessage = "\nStarted writing output file at "+startWriteFileTime;
+	protected static String resultsMessage = "\nStarted writing output file(s) at "+startWriteFileTime;
+	protected static String notepadComplianceStatistics = "";
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -35,7 +36,7 @@ public class WriteBridgeComplianceFiles1
 	public WriteBridgeComplianceFiles1(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath) 
 	{
 		int rowCounter = 0;
-
+		
 		// Colors used to indicate in-circuit delay periods or violations
 		colors[0] = IndexedColors.YELLOW;  
 		colors[1] = IndexedColors.RED;
@@ -232,8 +233,18 @@ public class WriteBridgeComplianceFiles1
 			cell.setCellStyle(style6);
 			cell.setCellValue(legalDisclaimer);
 			rowCounter++;
+			
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+			{
+				notepadComplianceStatistics += legalDisclaimer+"\n\n";
+			}
 		}
-
+		
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		{
+			notepadComplianceStatistics += "For the "+bridgeAndSpan+", the WATERWAY AND CLOSURE OPERATIONAL RESULTS were:\n";
+		}
+		
 		// Data headers
 		row = closuresSheet.createRow(rowCounter);
 
@@ -463,6 +474,12 @@ public class WriteBridgeComplianceFiles1
 			cell = row.createCell(8);
 			cell.setCellStyle(style9);
 			cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial()));
+			
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+			{
+				notepadComplianceStatistics += "Sum of bridge closures from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "
+						+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial())+" (hhh:mm)\n";
+			}
 		}
 
 		rowCounter++;
@@ -474,6 +491,11 @@ public class WriteBridgeComplianceFiles1
 		cell = row.createCell(8);
 		cell.setCellStyle(style9);
 		cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial()));
+		
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		{
+			notepadComplianceStatistics += "Sum of bridge closures during all hours was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial())+" (hhh:mm)\n";
+		}
 
 		// Show average of closure durations (high use period and overall) 
 		rowCounter++;
@@ -488,6 +510,12 @@ public class WriteBridgeComplianceFiles1
 			cell = row.createCell(8);
 			cell.setCellStyle(style9);
 			cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial() / BridgeComplianceAnalysis.getCountOfClosuresDuringHighUsePeriod()));
+			
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+			{
+				notepadComplianceStatistics += "Average duration of closures from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "
+						+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial() / BridgeComplianceAnalysis.getCountOfClosuresDuringHighUsePeriod())+" (hh:mm)\n";
+			}
 		}
 
 		rowCounter++;
@@ -500,6 +528,11 @@ public class WriteBridgeComplianceFiles1
 		cell.setCellStyle(style9);
 		cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial() / closures.size()));
 
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		{
+			notepadComplianceStatistics += "Average duration of closures during all hours was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial() / closures.size())+" (hh:mm)\n";
+		}
+		
 		// Show % mariner availability (high use period and overall) 
 		rowCounter++;
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriods())
@@ -512,10 +545,15 @@ public class WriteBridgeComplianceFiles1
 
 			Double marineAccessPeriodSpanAsSerial = (BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodSpanAsDouble() / 24);
 			Double durationOfClosuresDuringHighUsePeriods = BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial();
-			Double marinerAvailabilityDuringPeak = (((marineAccessPeriodSpanAsSerial * 7) - durationOfClosuresDuringHighUsePeriods) / (marineAccessPeriodSpanAsSerial * 7)) * 100;  
+			Double marinerAvailabilityDuringPeak = Math.round((((marineAccessPeriodSpanAsSerial * 7) - durationOfClosuresDuringHighUsePeriods) / (marineAccessPeriodSpanAsSerial * 7)) * 1000)/10.0;  
 			cell = row.createCell(8);
 			cell.setCellStyle(style10);
-			cell.setCellValue(marinerAvailabilityDuringPeak);
+			cell.setCellValue(marinerAvailabilityDuringPeak+"%");
+			
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+			{
+				notepadComplianceStatistics += "Mariner waterway availability from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ marinerAvailabilityDuringPeak +"%\n";
+			}
 		}
 		rowCounter++;
 		row = closuresSheet.createRow(rowCounter);
@@ -524,10 +562,15 @@ public class WriteBridgeComplianceFiles1
 		cell.setCellValue("Mariner availability during all hours (%):");
 
 		Double durationOfClosuresAllHours = BridgeComplianceAnalysis.getTotalDurationClosureAsSerial();
-		Double marinerAvailabilityDuringAllHours = ((7 - durationOfClosuresAllHours) / 7) * 100;  
+		Double marinerAvailabilityDuringAllHours = Math.round(((7 - durationOfClosuresAllHours) / 7) * 1000)/10.0;  
 		cell = row.createCell(8);
 		cell.setCellStyle(style10);
-		cell.setCellValue(marinerAvailabilityDuringAllHours);
+		cell.setCellValue(marinerAvailabilityDuringAllHours+"%");
+		
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		{
+			notepadComplianceStatistics += "Mariner waterway availability during all hours was "+ marinerAvailabilityDuringAllHours +"%\n";
+		}
 
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
@@ -627,7 +670,7 @@ public class WriteBridgeComplianceFiles1
 		}
 	}
 
-	public String getResultsMessageWrite1()
+	public static String getResultsMessageWrite1()
 	{
 		return resultsMessage;
 	}
