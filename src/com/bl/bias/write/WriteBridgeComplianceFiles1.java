@@ -26,8 +26,8 @@ public class WriteBridgeComplianceFiles1
 {
 	private static LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
-	protected static String resultsMessage = "\nStarted writing output file(s) at "+startWriteFileTime;
-	protected static String notepadComplianceStatistics = "";
+	private static String resultsMessage1;
+	private static String notepadComplianceStatistics1;
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -35,8 +35,11 @@ public class WriteBridgeComplianceFiles1
 
 	public WriteBridgeComplianceFiles1(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath) 
 	{
-		int rowCounter = 0;
+		resultsMessage1 = "\nStarted writing output file(s) at "+startWriteFileTime;
+		notepadComplianceStatistics1 = "";
 		
+		int rowCounter = 0;
+
 		// Colors used to indicate in-circuit delay periods or violations
 		colors[0] = IndexedColors.YELLOW;  
 		colors[1] = IndexedColors.RED;
@@ -57,7 +60,7 @@ public class WriteBridgeComplianceFiles1
 		// Write Trains Crossing Bridge
 		XSSFSheet closuresSheet = workbook.createSheet("Closures");
 		closuresSheet.setDisplayGridlines(false);
-		resultsMessage += "\nWriting closures";
+		resultsMessage1 += "\nWriting closures spreadsheet";
 
 		// Fonts
 		// Font 0 - 16pt White text
@@ -236,13 +239,13 @@ public class WriteBridgeComplianceFiles1
 			
 			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 			{
-				notepadComplianceStatistics += legalDisclaimer+"\n\n";
+				notepadComplianceStatistics1 += legalDisclaimer+"\n\n";
 			}
 		}
 		
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "For the "+bridgeAndSpan+", the WATERWAY AND CLOSURE OPERATIONAL RESULTS were:\n";
+			notepadComplianceStatistics1 += "For the "+bridgeAndSpan+", the WATERWAY AND CLOSURE OPERATIONAL RESULTS were:\n";
 		}
 		
 		// Data headers
@@ -477,7 +480,7 @@ public class WriteBridgeComplianceFiles1
 			
 			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 			{
-				notepadComplianceStatistics += "Sum of bridge closures from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "
+				notepadComplianceStatistics1 += "Sum of bridge closures from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "
 						+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial())+" (hhh:mm)\n";
 			}
 		}
@@ -494,7 +497,7 @@ public class WriteBridgeComplianceFiles1
 		
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "Sum of bridge closures during all hours was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial())+" (hhh:mm)\n";
+			notepadComplianceStatistics1 += "Sum of bridge closures during all hours was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial())+" (hhh:mm)\n";
 		}
 
 		// Show average of closure durations (high use period and overall) 
@@ -513,7 +516,7 @@ public class WriteBridgeComplianceFiles1
 			
 			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 			{
-				notepadComplianceStatistics += "Average duration of closures from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "
+				notepadComplianceStatistics1 += "Average duration of closures from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "
 						+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial() / BridgeComplianceAnalysis.getCountOfClosuresDuringHighUsePeriod())+" (hh:mm)\n";
 			}
 		}
@@ -530,7 +533,7 @@ public class WriteBridgeComplianceFiles1
 
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "Average duration of closures during all hours was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial() / closures.size())+" (hh:mm)\n";
+			notepadComplianceStatistics1 += "Average duration of closures during all hours was "+ ConvertDateTime.convertSerialToHHMMString(BridgeComplianceAnalysis.getTotalDurationClosureAsSerial() / closures.size())+" (hh:mm)\n";
 		}
 		
 		// Show % mariner availability (high use period and overall) 
@@ -552,7 +555,7 @@ public class WriteBridgeComplianceFiles1
 			
 			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 			{
-				notepadComplianceStatistics += "Mariner waterway availability from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ marinerAvailabilityDuringPeak +"%\n";
+				notepadComplianceStatistics1 += "Mariner waterway availability from "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHour()+" to "+BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHour()+" was "+ marinerAvailabilityDuringPeak +"%\n";
 			}
 		}
 		rowCounter++;
@@ -569,9 +572,9 @@ public class WriteBridgeComplianceFiles1
 		
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "Mariner waterway availability during all hours was "+ marinerAvailabilityDuringAllHours +"%\n";
+			notepadComplianceStatistics1 += "Mariner waterway availability during all hours was "+ marinerAvailabilityDuringAllHours +"%\n";
 		}
-
+		
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
@@ -672,6 +675,11 @@ public class WriteBridgeComplianceFiles1
 
 	public static String getResultsMessageWrite1()
 	{
-		return resultsMessage;
+		return resultsMessage1;
+	}
+	
+	public static String getNotepadComplianceStatistics1()
+	{
+		return notepadComplianceStatistics1;
 	}
 }

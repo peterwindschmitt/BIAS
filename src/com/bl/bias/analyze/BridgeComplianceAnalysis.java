@@ -13,9 +13,8 @@ public class BridgeComplianceAnalysis
 {
 	private static String resultsMessage;
 
-	ArrayList<BridgeComplianceClosure> closures;
-	ObservableList<MarineAccessPeriod> marineAccessPeriods;
-
+	private static ArrayList<BridgeComplianceClosure> closures;
+	
 	private static Double totalDurationOfClosureInSerial = 0.0;
 	private static Double totalDurationOfClosureDuringHighUsePeriodsInSerial = 0.0;
 	
@@ -27,10 +26,9 @@ public class BridgeComplianceAnalysis
 
 	public BridgeComplianceAnalysis(ArrayList<BridgeComplianceClosure> closures, ObservableList<MarineAccessPeriod> marineAccessPeriods) 
 	{
-		this.closures = closures;
-		this.marineAccessPeriods = marineAccessPeriods;
-
-		resultsMessage = "\nStarted creating bridge compliance results at "+ConvertDateTime.getTimeStamp();
+		BridgeComplianceAnalysis.closures = closures;
+		
+		resultsMessage = "\nStarted compiling bridge results at "+ConvertDateTime.getTimeStamp();
 
 		Integer marineAccessPeriodViolationCount = 0;  //  Can be assigned multiple times per closure
 		Integer closureDurationViolationCount = 0;  // Can only be assigned once per closure
@@ -38,9 +36,13 @@ public class BridgeComplianceAnalysis
 
 		Double lastPeriodsMinimumDuration = 0.0;
 		Double lastPeriodsRaiseTime = 0.0;
-
+		
+		totalDurationOfClosureInSerial = 0.0;
+		totalDurationOfClosureDuringHighUsePeriodsInSerial = 0.0;
+		closureCountDuringHighUsePeriod = 0;
+		
 		Boolean lastOpeningDelayed = false;
-
+		
 		if (debug)
 			System.out.println("Violation and in-circuit analysis: ");
 
@@ -444,10 +446,9 @@ public class BridgeComplianceAnalysis
 
 		if (continueAnalysis)
 		{
-			resultsMessage += "\nFound "+closureDurationViolationCount+" closure duration violations";
-			resultsMessage += "\nFound "+marineAccessPeriodViolationCount+" marine access period violations";
-			resultsMessage += "\nFound "+inCircuitCount+" delayed (in-circuit) marine access periods";
-			resultsMessage += "\nFinished analysis at "+ConvertDateTime.getTimeStamp()+"\n";
+			resultsMessage += "\nAnalyzed "+closures.size()+" closures and ";
+			resultsMessage += BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekAsInteger()+" marine access periods";
+			resultsMessage += "\nFinished compiling bridge results at "+ConvertDateTime.getTimeStamp()+"\n";
 		}
 	}
 

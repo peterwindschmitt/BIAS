@@ -22,7 +22,8 @@ import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 {
-	private static String resultsMessage = getResultsMessageWrite1();
+	private static String resultsMessage2;
+	private static String notepadComplianceStatistics2;
 
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
 	private final Integer marineAccessPeriodsPerWeek = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekAsInteger();
@@ -30,10 +31,13 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath) 
 	{
 		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath);
-
+		
+		resultsMessage2 = "";
+		notepadComplianceStatistics2 = "";
+		
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "\nFor the "+bridgeAndSpan+", the COMPLIANCE RESULTS were:\n";
+			notepadComplianceStatistics2 += "\nFor the "+bridgeAndSpan+", the COMPLIANCE RESULTS were:\n";
 		}
 
 		int rowCounter = 0;
@@ -52,8 +56,12 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		// Write violations
 		XSSFSheet complianceSheet = workbook.createSheet("Compliance Summary");
 		complianceSheet.setDisplayGridlines(false);
-		resultsMessage += "\nWriting compliance summary spreadsheet";
-
+		
+		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnSpreadsheet())
+		{
+			resultsMessage2 += "\nWriting compliance summary spreadsheet";
+		}
+		
 		// Fonts
 		// Font 0 - 16pt White text
 		XSSFFont font0 = workbook.createFont();
@@ -211,7 +219,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "In-circuit delayed bridge opening count was "+ inCircuitDelayCount +"\n";
+			notepadComplianceStatistics2 += "In-circuit delayed bridge opening count was "+ inCircuitDelayCount +"\n";
 		}
 
 		// Period violation
@@ -255,7 +263,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "Mandatory opening violation count was "+ closureViolationCount +"\n";
+			notepadComplianceStatistics2 += "Mandatory opening violation count was "+ closureViolationCount +"\n";
 		}
 
 		// Duration violation
@@ -297,7 +305,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "Duration violation count was "+ durationViolationCount +"\n";
+			notepadComplianceStatistics2 += "Duration violation count was "+ durationViolationCount +"\n";
 		}
 
 		// Compliance Rate
@@ -318,8 +326,8 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 
 		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
-			notepadComplianceStatistics += "The compliance rate was "+complianceRate+"%";
-			notepadComplianceStatistics += "\n\n[Compliance rate is computed as:  1 - (Weekly Marine Access Period Violation Count + Duration Violation Count) / (Weekly Marine Access Periods + Weekly Hours with no Marine Access Period (potential duration violation opportunities))]";
+			notepadComplianceStatistics2 += "The compliance rate was "+complianceRate+"%";
+			notepadComplianceStatistics2 += "\n\n[Compliance rate is computed as:  1 - (Weekly Marine Access Period Violation Count + Duration Violation Count) / (Weekly Marine Access Periods + Weekly Hours with no Marine Access Period (potential duration violation opportunities))]";
 		}
 
 		// Timestamp and footnote
@@ -349,9 +357,13 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		}
 	}
 
-
 	public static String getResultsMessageWrite2()
 	{
-		return resultsMessage;
+		return resultsMessage2;
+	}
+	
+	public static String getNotepadComplianceStatistics2()
+	{
+		return notepadComplianceStatistics2;
 	}
 }

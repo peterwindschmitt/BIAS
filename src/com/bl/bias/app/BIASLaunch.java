@@ -29,7 +29,8 @@ public class BIASLaunch extends Application
 	// 3.8 was 5/4/2023    (fixed bug in conversion of local time to UTC when generating SSIM)
 	// 3.9 was 7/10/2023   (added options for calculation of bridge closure periods)
 	// 3.10 was 11/22/2023 (extended validity date until 1/31/2024)
-	private final static String version = "3.10 (November 22, 2023)";
+	// 4.00 was 12/26/2023 (added USCG bridge compliance.  extended validity date until 3/1/2024)
+	private final static String version = "4.00 (December 26, 2023)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 4;
  	//
 	// Session validity
@@ -44,8 +45,8 @@ public class BIASLaunch extends Application
 	private static String headerToUse = "";
 	//
 	// Expiration of this version of software
-	private final static Integer softwareExpirationMonth = 1; // January = 1
-	private final static Integer softwareExpirationDay = 31;
+	private final static Integer softwareExpirationMonth = 3; // January = 1
+	private final static Integer softwareExpirationDay = 1;
 	private final static Integer softwareExpirationYear = 2024;
 	//
 	// User permissions

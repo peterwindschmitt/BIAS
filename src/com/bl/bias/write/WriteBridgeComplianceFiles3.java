@@ -16,7 +16,8 @@ import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 {
-	static String resultsMessage = getResultsMessageWrite2();
+	private static String resultsMessage3 = "";
+	private static String notepadComplianceStatistics3 = "";
 	
 	static Boolean error = false;
 	
@@ -24,12 +25,15 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 	{
 		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath);
 		
+		resultsMessage3 = WriteBridgeComplianceFiles1.getResultsMessageWrite1() + WriteBridgeComplianceFiles2.getResultsMessageWrite2();
+		notepadComplianceStatistics3 = WriteBridgeComplianceFiles1.getNotepadComplianceStatistics1() + WriteBridgeComplianceFiles2.getNotepadComplianceStatistics2();
+		
 		// Write notepad 
     	if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
 		{
 	    	try 
 			{
-				//  Determine whether file name should be system serial time or if it should be user-specified
+	    		//  Determine whether file name should be system serial time or if it should be user-specified
 				FileWriter fileWriter;
 								
 				if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
@@ -41,15 +45,15 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 					fileWriter = new FileWriter(outputSpreadsheetPath);
 				}
 				
-				fileWriter.write(notepadComplianceStatistics);
+				fileWriter.write(notepadComplianceStatistics3);
 				fileWriter.close();
 				
-				resultsMessage +="\nFinished writing output text file at "+ConvertDateTime.getTimeStamp();
+				resultsMessage3 +="\nFinished writing output text file at "+ConvertDateTime.getTimeStamp();
 			} 
 			catch (IOException e) 
 			{
 				error = true;
-				resultsMessage = "";
+				resultsMessage3 = "";
 				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 			}
 		}
@@ -57,9 +61,9 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
     	//  Write spreadsheet
 		try 
 	    {
-			resultsMessage +="\nFinished writing output spreadsheet file at "+ConvertDateTime.getTimeStamp();
+			resultsMessage3 +="\nFinished writing output spreadsheet file at "+ConvertDateTime.getTimeStamp();
 			
-			String logToWrite = textArea + resultsMessage;
+			String logToWrite = textArea + resultsMessage3;
 			
 		    // Write log to log sheet
 			XSSFSheet logSheet = workbook.createSheet("Log");
@@ -86,19 +90,19 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();
-	    	}
+	    	}	
 	    } 
 	    catch (Exception e) 
 	    {
 	        error = true;
-	        resultsMessage = "";
+	        resultsMessage3 = "";
 	    	ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 	    }		
 	}
 	
 	public static String getResultsMessageWrite3()
 	{
-		return resultsMessage;
+		return resultsMessage3;
 	}
 	
 	public static Boolean getErrorFound()
