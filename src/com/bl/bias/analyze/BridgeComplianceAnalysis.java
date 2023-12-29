@@ -52,10 +52,10 @@ public class BridgeComplianceAnalysis
 			Integer rowNumber = closures.get(i).getSpreadsheetRowNumber();
 			String startDay = closures.get(i).getClosureStartDay();
 			String endDay = closures.get(i).getClosureEndDay();
-			Double bridgeLowerTimeAsSerial = closures.get(i).getClosureStartTime();
-			Double bridgeRaiseTimeAsSerial = closures.get(i).getClosureEndTime();
+			Double bridgeLowerTimeAsSerial = Math.round(closures.get(i).getClosureStartTime() * 10000.0) / 10000.0;
+			Double bridgeRaiseTimeAsSerial = Math.round(closures.get(i).getClosureEndTime() * 10000.0) / 10000.0;
 			Double closureDurationAsSerial = closures.get(i).getClosureDuration();
-
+			
 			// Type 0 Violation from VBA  
 			// Bridge remains closed over maximum permitted duration (applies to all hours of the day -- even if during a marine access period.)
 			// This type of violation can also be subject to marine access period violation(s)
@@ -170,8 +170,8 @@ public class BridgeComplianceAnalysis
 						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
 						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
 						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
-						&& (bridgeLowerTimeAsSerial > (marineAccessPeriods.get(j).getMarinePeriodStartDouble())			// and the bridge lowers after start of access period
-								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodEndDouble()))) 	// and the bridge lowers before the end of the access period 
+						&& (bridgeLowerTimeAsSerial >= (marineAccessPeriods.get(j).getMarinePeriodStartDouble())			// and the bridge lowers after start of access period
+								&& (bridgeLowerTimeAsSerial <= marineAccessPeriods.get(j).getMarinePeriodEndDouble()))) 	// and the bridge lowers before the end of the access period 
 				{
 					closures.get(i).setMarineAccessPeriodViolation();
 					marineAccessPeriodViolationCount++;
@@ -196,7 +196,7 @@ public class BridgeComplianceAnalysis
 						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
 						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
 						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
-						&& (bridgeRaiseTimeAsSerial > (marineAccessPeriods.get(j).getMarinePeriodStartDouble() + ((double) Integer.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelay()) / 1440))// and the bridge opens 5 (or the permitted in-circuit delay minutes) or more minutes after start of access period
+						&& (bridgeRaiseTimeAsSerial >= (marineAccessPeriods.get(j).getMarinePeriodStartDouble() + ((double) Integer.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelay()) / 1440))// and the bridge opens 5 (or the permitted in-circuit delay minutes) or more minutes after start of access period
 								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble())))  // and the bridge lowers before the start of the access period 
 				{
 					closures.get(i).setMarineAccessPeriodViolation();
@@ -222,8 +222,8 @@ public class BridgeComplianceAnalysis
 						|| (marineAccessPeriods.get(j).getFr().getValue()) && (startDay.equals("Friday"))
 						|| (marineAccessPeriods.get(j).getSa().getValue()) && (startDay.equals("Saturday"))
 						|| (marineAccessPeriods.get(j).getSu().getValue()) && (startDay.equals("Sunday")))																							
-						&& (bridgeRaiseTimeAsSerial < (marineAccessPeriods.get(j).getMarinePeriodStartDouble() + ((double) Integer.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelay()) / 1440))// and the bridge opens 5 (or the permitted in-circuit delay minutes) or less minutes after start of access period
-								&& (bridgeRaiseTimeAsSerial > marineAccessPeriods.get(j).getMarinePeriodStartDouble())	  // and the bridge raises after the start of the access period
+						&& (bridgeRaiseTimeAsSerial <= (marineAccessPeriods.get(j).getMarinePeriodStartDouble() + ((double) Integer.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelay()) / 1440))// and the bridge opens 5 (or the permitted in-circuit delay minutes) or less minutes after start of access period
+								&& (bridgeRaiseTimeAsSerial >= marineAccessPeriods.get(j).getMarinePeriodStartDouble())	  // and the bridge raises after the start of the access period
 								&& (bridgeLowerTimeAsSerial < marineAccessPeriods.get(j).getMarinePeriodStartDouble())))  // and the bridge lowers before the start of the access period 
 				{
 					closures.get(i).setInCircuitExcpetion();
@@ -421,12 +421,12 @@ public class BridgeComplianceAnalysis
 						}
 						else
 						{
-							resultsMessage += ("\nError in analyzing spreadsheet row #" + (closures.get(i).getSpreadsheetRowNumber() + 1) + "!!!");
+							resultsMessage += ("\nError in analyzing spreadsheet row " + (closures.get(i).getSpreadsheetRowNumber() + 1) + "!!!");
 							continueAnalysis = false;
 						}
 					}
 					if (debug)
-						System.out.println(" closure on row #" + (closures.get(i).getSpreadsheetRowNumber() + 1) + " the total high use marine period total is " + (Math.round(totalDurationOfClosureDuringHighUsePeriodsInSerial * 1440))+ " minutes.");
+						System.out.println(" closure on row " + (closures.get(i).getSpreadsheetRowNumber() + 1) + " the total high use marine period total is " + (Math.round(totalDurationOfClosureDuringHighUsePeriodsInSerial * 1440))+ " minutes.");
 				}
 			}
 		}

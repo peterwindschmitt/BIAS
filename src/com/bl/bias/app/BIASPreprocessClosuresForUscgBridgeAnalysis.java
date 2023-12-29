@@ -268,15 +268,14 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 			}
 
 			// Find column of tenders
-			for (int i = 0; i < columnsContainingStringInFirstRow.size(); i++)
+			for (int i = 0; i < sheet.getRow(headerRow).getLastCellNum(); i++)
 			{
-				Cell cellDataHeader = sheet.getRow(headerRow).getCell(columnsContainingStringInFirstRow.get(i));
+				Cell cellDataHeader = sheet.getRow(headerRow).getCell(i);
 				if (cellDataHeader.getStringCellValue().toLowerCase().contains("tender")) 
 				{
-					tenderColumnIndex = columnsContainingStringInFirstRow.get(i);
+					tenderColumnIndex = i;
 					tenderColumnFound = true;
-					tenderColumn = CellReference.convertNumToColString(tenderColumnIndex);
-					columnsContainingStringInFirstRow.remove(i);	
+					tenderColumn = CellReference.convertNumToColString(tenderColumnIndex);				
 					break;
 				}	
 			}

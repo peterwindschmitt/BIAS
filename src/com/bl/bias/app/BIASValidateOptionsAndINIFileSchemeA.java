@@ -63,7 +63,7 @@ public class BIASValidateOptionsAndINIFileSchemeA
 					}
 					else if (lineFromFile.contains("Train route report in CSV format:"))  
 					{
-						// From .OPTION file:   "Train route report in CSV format: NO"  Line 2191
+						// From .OPTION file:   "Train route report in CSV format: NO"  Line 2275
 						String[] newLineName = lineFromFile.split(" format: ");
 						if (!newLineName[1].trim().equals("NO"))
 						{
@@ -73,7 +73,7 @@ public class BIASValidateOptionsAndINIFileSchemeA
 					}
 					else if (lineFromFile.contains("All nodes (vs event only) in route report:"))
 					{
-						// From .OPTION file:   "All nodes (vs event only) in route report: YES"  Line 2190
+						// From .OPTION file:   "All nodes (vs event only) in route report: YES"  Line 2274
 						String[] newLineName = lineFromFile.split(" report: ");
 						if (!newLineName[1].trim().equals("YES"))
 						{
@@ -83,7 +83,7 @@ public class BIASValidateOptionsAndINIFileSchemeA
 					}
 					else if (lineFromFile.contains("Show seed trains in route report:")) 
 					{
-						// From .OPTION file:   "Show seed trains in route report: NO"  Line 2188
+						// From .OPTION file:   "Show seed trains in route report: NO"  Line 2272
 						String[] newLineName = lineFromFile.split(" report: ");
 						if (!newLineName[1].trim().equals("NO"))
 						{

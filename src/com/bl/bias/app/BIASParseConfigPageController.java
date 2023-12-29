@@ -2778,7 +2778,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("x_otp", null) == null)
 		{
 			// Write value for subsequent runs
-			x_otp = "170,175,170,175";
+			x_otp = "169,175,169,175";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("x_otp", x_otp);
 		}
