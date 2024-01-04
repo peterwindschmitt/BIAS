@@ -3,6 +3,7 @@ package com.bl.bias.app;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,7 +52,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 
 	List<Object> bridgeFileDataLocations = new ArrayList<Object>();
 
-	public BIASPreprocessClosuresForUscgBridgeAnalysis(String bridgeFile) throws Exception
+	public BIASPreprocessClosuresForUscgBridgeAnalysis(String bridgeFile) throws IOException
 	{
 
 		int timeFoundInThisRowCounter;
@@ -78,6 +80,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 		{
 			timeFoundInThisRowCounter = 0;
 			columnsContainingNumericInFirstRow.clear();
+
 			for (int i = 0; i < sheet.getRow(examinationRow).getLastCellNum(); i++)
 			{
 				Cell cellData = sheet.getRow(examinationRow).getCell(i);
@@ -95,6 +98,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 					}
 				}
 			}
+
 			examinationRow++;
 		}
 		while
@@ -110,26 +114,33 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 				{
 					timeFoundInThisRowCounter = 0;
 					columnsContainingNumericInLastRow.clear();
-
-					for (int i = 0; i < sheet.getRow(examinationRow).getLastCellNum(); i++)
+					if (!isRowEmpty(sheet.getRow(examinationRow)))
 					{
-						Cell cellData = sheet.getRow(examinationRow).getCell(i);
-						if ((cellData != null) && (cellData.toString() != "") && (columnsContainingNumericInFirstRow.contains(i)))
-						{	
-							if (cellData.getCellType() == CellType.NUMERIC)
-							{
-								timeFoundInThisRowCounter++;
-								columnsContainingNumericInLastRow.add(i);
-								if (timeFoundInThisRowCounter == columnsContainingNumericInFirstRow.size())
+						for (int i = 0; i < sheet.getRow(examinationRow).getLastCellNum(); i++)
+						{
+							Cell cellData = sheet.getRow(examinationRow).getCell(i);
+							if ((cellData != null)  && (cellData.toString() != "") && (columnsContainingNumericInFirstRow.contains(i)))
+							{	
+								if (cellData.getCellType() == CellType.NUMERIC)
 								{
-									lastRowOfData = examinationRow;
-									lastDataRowFound = true;
-									break;
+									timeFoundInThisRowCounter++;
+									columnsContainingNumericInLastRow.add(i);
+									if (timeFoundInThisRowCounter == columnsContainingNumericInFirstRow.size())
+									{
+										lastRowOfData = examinationRow;
+										lastDataRowFound = true;
+										break;
+									}
 								}
 							}
 						}
 					}
-
+					else
+					{
+						badRowFound = true;
+						break;
+					}
+					
 
 					if (timeFoundInThisRowCounter <= 3)
 					{
@@ -141,7 +152,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 				while
 					((examinationRow <= sheet.getLastRowNum()) && (badRowFound == false));
 			}
-		}
+		} 
 
 
 		// Find header row of data
@@ -163,7 +174,7 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 				}
 			}
 		}
-		
+
 		// Find STRING occurences in first row
 		columnsContainingStringInFirstRow.clear();
 		for (int i = 0; i < sheet.getRow(firstRowOfData).getLastCellNum(); i++)
@@ -409,5 +420,16 @@ public class BIASPreprocessClosuresForUscgBridgeAnalysis
 			bridgeFileDataLocations.add(null);
 
 		return bridgeFileDataLocations;
+	}
+	
+	public static boolean isRowEmpty(Row row) {
+		if (row == null) {
+	        return true;
+	    }
+	    if (row.getLastCellNum() <= 0) {
+	        return true;
+	    }
+	    
+	    return false;
 	}
 }
