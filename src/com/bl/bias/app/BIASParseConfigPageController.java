@@ -88,12 +88,15 @@ public class BIASParseConfigPageController
 	// Data from .OPTION file
 	private static String o_rtcVersion;
 	private static String o_units;
+	private static String o_summaryReportTimeFormat;
 	private static String o_simulationBeginDay;
 	private static String o_simulationBeginTime;
 	private static String o_simulationDuration; 
 	private static String o_warmUpExclusion;
 	private static String o_coolDownExclusion;
 	private static String o_commaDelimitedRouteFile;
+	private static String o_allNodesInRouteReport;
+	private static String o_showSeedTrainsInRouteReport;
 	private static String o_trainGroupName;
 	private static String o_trainGroupAbbreviation;
 	private static String o_trainTypeName;
@@ -595,13 +598,15 @@ public class BIASParseConfigPageController
 
 		parseData8.addAll(new ParseLocationFormatB("RTC Version", "o_rtcVersion", Integer.valueOf(BIASParseConfigPageController.o_getRtcVersion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getRtcVersion()[1])),
 				new ParseLocationFormatB("Units", "o_units", Integer.valueOf(BIASParseConfigPageController.o_getUnits()[0]), Integer.valueOf(BIASParseConfigPageController.o_getUnits()[1])),
+				new ParseLocationFormatB("Summary Report Time Format", "o_summaryReportTimeFormat", Integer.valueOf(BIASParseConfigPageController.o_getSummaryReportTimeFormat()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSummaryReportTimeFormat()[1])),
 				new ParseLocationFormatB("Simulation Begin Day", "o_simulationBeginDay", Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginDay()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginDay()[1])),
 				new ParseLocationFormatB("Simulation Begin Time", "o_simulationBeginTime", Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[1])),
 				new ParseLocationFormatB("Simulation Duration", "o_simulationDuration", Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[1])),
 				new ParseLocationFormatB("Warm-up Exclusion", "o_warmUpExclusion", Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[1])),
 				new ParseLocationFormatB("Cool-down Exclusion", "o_coolDownExclusion", Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[1])),
 				new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1])),
-				new ParseLocationFormatB("Train Group Name", "o_trainGroupName", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])),
+				new ParseLocationFormatB("All Nodes in Route Report", "o_allNodesInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getAllNodesInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getAllNodesInRouteReport()[1])),
+				new ParseLocationFormatB("Show Seed Trains in Route Report", "o_showSeedTrainsInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[1])),
 				new ParseLocationFormatB("Train Group Abbreviation", "o_trainGroupAbbreviation", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])),
 				new ParseLocationFormatB("Train Type Name", "o_trainTypeName", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])),
 				new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1]))
@@ -913,12 +918,15 @@ public class BIASParseConfigPageController
 			// Table 8
 			prefs.remove("o_rtcVersion");
 			prefs.remove("o_units");
+			prefs.remove("o_summaryReportTimeFormat");
 			prefs.remove("o_simulationBeginDay");
 			prefs.remove("o_simulationBeginTime");
 			prefs.remove("o_simulationDuration");
 			prefs.remove("o_warmUpExclusion");
 			prefs.remove("o_coolDownExclusion");
 			prefs.remove("o_commaDelimitedRouteFile");
+			prefs.remove("o_allNodesInRouteReport");
+			prefs.remove("o_showSeedTrainsInRouteReport");
 			prefs.remove("o_trainGroupName");
 			prefs.remove("o_trainGroupAbbreviation");
 			prefs.remove("o_trainTypeName");
@@ -1147,12 +1155,15 @@ public class BIASParseConfigPageController
 			parseData8.clear();
 			parseData8.addAll(new ParseLocationFormatB("RTC Version", "o_rtcVersion", Integer.valueOf(BIASParseConfigPageController.o_getRtcVersion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getRtcVersion()[1])),
 					new ParseLocationFormatB("Units", "o_units", Integer.valueOf(BIASParseConfigPageController.o_getUnits()[0]), Integer.valueOf(BIASParseConfigPageController.o_getUnits()[1])),
+					new ParseLocationFormatB("Summary Report Time Format", "o_summaryReportTimeFormat", Integer.valueOf(BIASParseConfigPageController.o_getSummaryReportTimeFormat()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSummaryReportTimeFormat()[1])),
 					new ParseLocationFormatB("Simulation Begin Day", "o_simulationBeginDay", Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginDay()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginDay()[1])),
 					new ParseLocationFormatB("Simulation Begin Time", "o_simulationBeginTime", Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[1])),
 					new ParseLocationFormatB("Simulation Duration", "o_simulationDuration", Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[1])),
 					new ParseLocationFormatB("Warm-up Exclusion", "o_warmUpExclusion", Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[1])),
 					new ParseLocationFormatB("Cool-down Exclusion", "o_coolDownExclusion", Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[1])),
 					new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1])),
+					new ParseLocationFormatB("All Nodes in Route Report", "o_allNodesInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getAllNodesInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getAllNodesInRouteReport()[1])),
+					new ParseLocationFormatB("Show Seed Trains in Route Report", "o_showSeedTrainsInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[1])),
 					new ParseLocationFormatB("Train Group Name", "o_trainGroupName", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])),
 					new ParseLocationFormatB("Train Group Abbreviation", "o_trainGroupAbbreviation", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])),
 					new ParseLocationFormatB("Train Type Name", "o_trainTypeName", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])),
@@ -3141,6 +3152,15 @@ public class BIASParseConfigPageController
 				prefs.put("o_units", o_units);
 		}
 
+		// Summary report time format
+		if (prefs.get("o_summaryReportTimeFormat", null) == null)
+		{
+			// Write value for subsequent runs
+			o_summaryReportTimeFormat = "46,56";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_summaryReportTimeFormat", o_summaryReportTimeFormat);
+		}
+
 		// Simulation begin day
 		if (prefs.get("o_simulationBeginDay", null) == null)
 		{
@@ -3193,6 +3213,24 @@ public class BIASParseConfigPageController
 			o_commaDelimitedRouteFile = "46,49";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("o_commaDelimitedRouteFile", o_commaDelimitedRouteFile);
+		}
+
+		// Show all nodes in route report
+		if (prefs.get("o_showAllNodesInRouteReport", null) == null)
+		{
+			// Write value for subsequent runs
+			o_allNodesInRouteReport = "46,49";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_allNodesInRouteReport", o_allNodesInRouteReport);
+		}
+
+		// Show seed trains in route report
+		if (prefs.get("o_showSeedTrainsInRouteReport", null) == null)
+		{
+			// Write value for subsequent runs
+			o_showSeedTrainsInRouteReport = "46,49";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_showSeedTrainsInRouteReport", o_showSeedTrainsInRouteReport);
 		}
 
 		// Train group name
@@ -4374,6 +4412,12 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] o_getSummaryReportTimeFormat()
+	{
+		String[] values = prefs.get("o_summaryReportTimeFormat", o_summaryReportTimeFormat).split(",");
+		return values;
+	}
+
 	public static String[] o_getSimulationBeginDay()
 	{
 		String[] values = prefs.get("o_simulationBeginDay", o_simulationBeginDay).split(",");
@@ -4409,7 +4453,19 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("o_commaDelimitedRouteFile", o_commaDelimitedRouteFile).split(",");
 		return values;
 	}
-
+	
+	public static String[] o_getAllNodesInRouteReport()
+	{
+		String[] values = prefs.get("o_allNodesInRouteReport", o_allNodesInRouteReport).split(",");
+		return values;
+	}
+	
+	public static String[] o_getShowSeedTrainsInRouteReport()
+	{
+		String[] values = prefs.get("o_showSeedTrainsInRouteReport", o_showSeedTrainsInRouteReport).split(",");
+		return values;
+	}
+	
 	public static String[] o_getTrainGroupName()
 	{
 		String[] values = prefs.get("o_trainGroupName", o_trainGroupName).split(",");
@@ -4968,7 +5024,7 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("y_ttb_serviceType", y_ttb_serviceType).split(",");
 		return values;
 	}
-	
+
 	public static String[] y_getTrl_companyCode()
 	{
 		String[] values = prefs.get("y_trl_companyCode", y_trl_companyCode).split(",");
