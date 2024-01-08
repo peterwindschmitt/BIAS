@@ -438,6 +438,6 @@ public class BIASRecoveryRateAnalysisConfigController
 
 	@FXML private void handleUpdateNodesButton()
 	{
-
+		updateNodesButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 }
