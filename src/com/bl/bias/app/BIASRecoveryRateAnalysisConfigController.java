@@ -11,6 +11,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static Preferences prefs;
 
 	private static String trainGroups;
+	private static String nodePairs;
 
 	@FXML TextField group1TextField;
 	@FXML TextField group2TextField;
@@ -44,7 +45,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		prefs = Preferences.userRoot().node("BIAS");
 
 		// See if preferences are stored for groups
-		if (prefs.get("rr_trainGroups", "") != null)
+		if ((prefs.get("rr_trainGroups", "") != null) && (prefs.get("rr_trainGroups", "") != ""))
 		{
 			trainGroups = prefs.get("rr_trainGroups", "");
 			String trainGroup[] = trainGroups.split(",");
@@ -61,6 +62,65 @@ public class BIASRecoveryRateAnalysisConfigController
 					group4TextField.setText(trainGroup[3]);
 				else if (i == 4)
 					group5TextField.setText(trainGroup[4]);
+			}
+		}
+
+		// See if preferences are stored for node pairs
+		if ((prefs.get("rr_nodePairs", "") != null) && (prefs.get("rr_nodePairs", "") != ""))
+		{
+			nodePairs = prefs.get("rr_nodePairs", "");
+			String nodePair[] = nodePairs.split(",");
+
+			for (int i = 0; i < nodePair.length; i++)
+			{
+				if (i == 0)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair1FromTextField.setText(fromTo[0]);
+					nodePair1ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 1)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair2FromTextField.setText(fromTo[0]);
+					nodePair2ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 2)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair3FromTextField.setText(fromTo[0]);
+					nodePair3ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 3)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair4FromTextField.setText(fromTo[0]);
+					nodePair4ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 4)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair5FromTextField.setText(fromTo[0]);
+					nodePair5ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 5)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair6FromTextField.setText(fromTo[0]);
+					nodePair6ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 6)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair7FromTextField.setText(fromTo[0]);
+					nodePair7ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 7)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair8FromTextField.setText(fromTo[0]);
+					nodePair8ToTextField.setText(fromTo[1]);
+				}
 			}
 		}
 	}
@@ -419,6 +479,7 @@ public class BIASRecoveryRateAnalysisConfigController
 
 		updateGroupsButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
+		// Write to registry
 		String groupsToWriteToRegistry = "";
 		if ((group1TextField != null) && (group1TextField.getText().trim() != ""))
 			groupsToWriteToRegistry += group1TextField.getText() + ",";
@@ -431,7 +492,6 @@ public class BIASRecoveryRateAnalysisConfigController
 		if ((group5TextField != null) && (group5TextField.getText().trim() != ""))
 			groupsToWriteToRegistry += group5TextField.getText() + ",";
 
-		// Write to registry
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_trainGroups", groupsToWriteToRegistry);
 	}
@@ -439,5 +499,181 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleUpdateNodesButton()
 	{
 		updateNodesButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		// Eliminate pairs that are missing one node
+		if ((nodePair1FromTextField.getText().trim() != null) && (nodePair1FromTextField.getText().trim() != "") && (nodePair1ToTextField.getText().trim() != null) && (nodePair1ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair1FromTextField.getText().trim();
+			String origTextTo = nodePair1ToTextField.getText().trim();
+			nodePair1FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair1ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair1FromTextField.clear();
+			nodePair1ToTextField.clear();
+		}
+
+		if ((nodePair2FromTextField.getText().trim() != null) && (nodePair2FromTextField.getText().trim() != "") && (nodePair2ToTextField.getText().trim() != null) && (nodePair2ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair2FromTextField.getText().trim();
+			String origTextTo = nodePair2ToTextField.getText().trim();
+			nodePair2FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair2ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair2FromTextField.clear();
+			nodePair2ToTextField.clear();
+		}
+
+		if ((nodePair3FromTextField.getText().trim() != null) && (nodePair3FromTextField.getText().trim() != "") && (nodePair3ToTextField.getText().trim() != null) && (nodePair3ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair3FromTextField.getText().trim();
+			String origTextTo = nodePair3ToTextField.getText().trim();
+			nodePair3FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair3ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair3FromTextField.clear();
+			nodePair3ToTextField.clear();
+		}
+
+		if ((nodePair4FromTextField.getText().trim() != null) && (nodePair4FromTextField.getText().trim() != "") && (nodePair4ToTextField.getText().trim() != null) && (nodePair4ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair4FromTextField.getText().trim();
+			String origTextTo = nodePair4ToTextField.getText().trim();
+			nodePair4FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair4ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair4FromTextField.clear();
+			nodePair4ToTextField.clear();
+		}
+
+		if ((nodePair5FromTextField.getText().trim() != null) && (nodePair5FromTextField.getText().trim() != "") && (nodePair5ToTextField.getText().trim() != null) && (nodePair5ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair5FromTextField.getText().trim();
+			String origTextTo = nodePair5ToTextField.getText().trim();
+			nodePair5FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair5ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair5FromTextField.clear();
+			nodePair5ToTextField.clear();
+		}
+
+		if ((nodePair6FromTextField.getText().trim() != null) && (nodePair6FromTextField.getText().trim() != "") && (nodePair6ToTextField.getText().trim() != null) && (nodePair6ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair6FromTextField.getText().trim();
+			String origTextTo = nodePair6ToTextField.getText().trim();
+			nodePair6FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair6ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair6FromTextField.clear();
+			nodePair6ToTextField.clear();
+		}
+
+		if ((nodePair7FromTextField.getText().trim() != null) && (nodePair7FromTextField.getText().trim() != "") && (nodePair7ToTextField.getText().trim() != null) && (nodePair7ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair7FromTextField.getText().trim();
+			String origTextTo = nodePair7ToTextField.getText().trim();
+			nodePair7FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair7ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair7FromTextField.clear();
+			nodePair7ToTextField.clear();
+		}
+
+		if ((nodePair8FromTextField.getText().trim() != null) && (nodePair8FromTextField.getText().trim() != "") && (nodePair8ToTextField.getText().trim() != null) && (nodePair8ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair8FromTextField.getText().trim();
+			String origTextTo = nodePair8ToTextField.getText().trim();
+			nodePair8FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair8ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair8FromTextField.clear();
+			nodePair8ToTextField.clear();
+		}
+
+		// Write to registry
+		String nodePairsToWriteToRegistry = "";
+		if ((nodePair1FromTextField != null) && (nodePair1FromTextField.getText().trim() != "") && (nodePair1ToTextField != null) && (nodePair1ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair1FromTextField.getText() + ":" + nodePair1ToTextField.getText()+"," ;	
+			nodePair1FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair1ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair2FromTextField != null) && (nodePair2FromTextField.getText().trim() != "") && (nodePair2ToTextField != null) && (nodePair2ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair2FromTextField.getText() + ":" + nodePair2ToTextField.getText()+"," ;	
+			nodePair2FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair2ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair3FromTextField != null) && (nodePair3FromTextField.getText().trim() != "") && (nodePair3ToTextField != null) && (nodePair3ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair3FromTextField.getText() + ":" + nodePair3ToTextField.getText()+"," ;	
+			nodePair3FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair3ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair4FromTextField != null) && (nodePair4FromTextField.getText().trim() != "") && (nodePair4ToTextField != null) && (nodePair4ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair4FromTextField.getText() + ":" + nodePair4ToTextField.getText()+"," ;	
+			nodePair4FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair4ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair5FromTextField != null) && (nodePair5FromTextField.getText().trim() != "") && (nodePair5ToTextField != null) && (nodePair5ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair5FromTextField.getText() + ":" + nodePair5ToTextField.getText()+"," ;	
+			nodePair5FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair5ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair6FromTextField != null) && (nodePair6FromTextField.getText().trim() != "") && (nodePair6ToTextField != null) && (nodePair6ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair6FromTextField.getText() + ":" + nodePair6ToTextField.getText()+"," ;	
+			nodePair6FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair6ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair7FromTextField != null) && (nodePair7FromTextField.getText().trim() != "") && (nodePair7ToTextField != null) && (nodePair7ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair7FromTextField.getText() + ":" + nodePair7ToTextField.getText()+"," ;	
+			nodePair7FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair7ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair8FromTextField != null) && (nodePair8FromTextField.getText().trim() != "") && (nodePair8ToTextField != null) && (nodePair8ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair8FromTextField.getText() + ":" + nodePair8ToTextField.getText()+"," ;	
+			nodePair8FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair8ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_nodePairs", nodePairsToWriteToRegistry);
+	}
+	
+	public String getRecoveryRateAnalysisTrainGroups()
+	{
+		return trainGroups;
+	}
+	
+	public String getRecoveryRateAnalysisNodePairs()
+	{
+		return nodePairs;
 	}
 }
