@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="TOP_CENTER" centerShape="true" maxHeight="407.0" maxWidth="800.0" minHeight="407.0" minWidth="800.0" prefHeight="407.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRecoveryRateAnalysisController">
+       <columnConstraints>
+             <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="481.0" />
+       </columnConstraints>
+       <rowConstraints>
+      <RowConstraints fillHeight="false" maxHeight="357.0" minHeight="357.0" percentHeight="0.0" prefHeight="357.0" valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints fillHeight="false" maxHeight="50.0" minHeight="50.0" percentHeight="0.0" prefHeight="50.0" valignment="TOP" vgrow="ALWAYS" />
+       </rowConstraints>
+   <children>
+      <ImageView fitHeight="200.0" fitWidth="200.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <image>
+            <Image url="@pic_trafficCone.png" />
+         </image>
+      </ImageView>
+   </children>
+</GridPane>

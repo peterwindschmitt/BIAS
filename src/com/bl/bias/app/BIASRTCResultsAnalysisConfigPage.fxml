@@ -125,7 +125,7 @@
                   <Insets left="510.0" />
                </GridPane.margin>
             </CheckBox>
-            <Label text="5.  Update RTC .OPTION file parameters to those required  by BIAS:" GridPane.columnSpan="2" GridPane.rowIndex="10">
+            <Label text="5.  Update RTC .OPTION file parameters to those required by BIAS:" GridPane.columnSpan="2" GridPane.rowIndex="10">
                <padding>
                   <Insets left="10.0" />
                </padding>

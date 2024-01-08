@@ -34,6 +34,7 @@
       						<MenuItem fx:id="menuItemBridgeClosureAnalysis" mnemonicParsing="true" onAction="#handleMenuItemBridgeClosureAnalysis" text="_Bridge Closure Analysis" visible="false" />
       						<MenuItem fx:id="menuItemMaintenanceWindowAnalysis" mnemonicParsing="true" onAction="#handleMenuItemMaintenanceWindowAnalysis" text="_Maintenance Window Analysis" visible="false" />
                         	<MenuItem fx:id="menuItemGradeXingSpeeds" mnemonicParsing="true" onAction="#handleMenuItemGradeXingSpeeds" text="Grade _Crossing Speed Analysis" visible="false" />
+                        <MenuItem fx:id="menuItemRecoveryRate" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRate" text="Recovery Rate Analysis" visible="false" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Scheduling">
@@ -63,6 +64,7 @@
                               <MenuItem fx:id="menuItemBridgeClosureAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemBridgeClosureAnalysisConfig" text="Bridge Closure Analysis" visible="false" />
                               <MenuItem fx:id="menuItemMaintenanceWindowAnalysisConfig" mnemonicParsing="false" onAction="#handleMenuItemMaintenanceWindowAnalysisConfig" text="Maintenance Window Analysis" visible="false" />
                           	  <MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
+                              <MenuItem fx:id="menuItemRecoveryRateConfig" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRateConfig" text="Recovery Rate Analysis" visible="false" />
                           </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Scheduling">
