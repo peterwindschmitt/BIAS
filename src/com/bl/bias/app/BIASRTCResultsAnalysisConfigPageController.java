@@ -512,14 +512,14 @@ public class BIASRTCResultsAnalysisConfigPageController
 							continue;
 						}
 					}
-					else if (lineFromFile.contains("Show seed trains in route report: "))  // Check 5
+					else if (lineFromFile.contains("Show seed trains in route report: "))  // Check 5 -- Needed for recovery time analysis
 					{
 						check5Complete = true;
-						// "Show seed trains in route report: NO"  Line 2272
+						// "Show seed trains in route report: YES"  Line 2272
 						String[] newLineName = lineFromFile.split(":");
-						if (!newLineName[1].trim().equals("NO"))
+						if (!newLineName[1].trim().equals("YES"))
 						{
-							newOptionFile += lineFromFile.substring(0, Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[0]))+"NO \n";
+							newOptionFile += lineFromFile.substring(0, Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[0]))+"YES\n";
 							continue;
 						}
 					}

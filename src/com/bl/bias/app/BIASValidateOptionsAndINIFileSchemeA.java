@@ -81,11 +81,11 @@ public class BIASValidateOptionsAndINIFileSchemeA
 							break;
 						}
 					}
-					else if (lineFromFile.contains("Show seed trains in route report:")) 
+					else if (lineFromFile.contains("Show seed trains in route report:")) // Needed for recovery time analysis
 					{
-						// From .OPTION file:   "Show seed trains in route report: NO"  Line 2272
+						// From .OPTION file:   "Show seed trains in route report: YES"  Line 2272
 						String[] newLineName = lineFromFile.split(" report: ");
-						if (!newLineName[1].trim().equals("NO"))
+						if (!newLineName[1].trim().equals("YES"))
 						{
 							optionFilesFormattedCorrectly = false;
 							break;

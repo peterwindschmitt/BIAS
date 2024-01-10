@@ -10,7 +10,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
+import com.bl.bias.analyze.GradeXingAnalysis;
 import com.bl.bias.app.BIASGradeXingSpeedsConfigController;
 import com.bl.bias.objects.GradeXingAggregatedLink;
 import com.bl.bias.tools.ConvertDateTime;
@@ -30,8 +30,8 @@ public class WriteGradeXingFiles2 extends WriteGradeXingFiles1
 		{	
 			XSSFSheet inconsistentNodeNamesSheet = workbook.createSheet("Inconsistent Node Names");
 
-			nodeNames = GradeXingSpeedsAnalysis.getNodeNames();
-			gradeXingLinks = GradeXingSpeedsAnalysis.getGradeXingLinks();
+			nodeNames = GradeXingAnalysis.getNodeNames();
+			gradeXingLinks = GradeXingAnalysis.getGradeXingLinks();
 
 			// Set styles
 			CellStyle style1 = workbook.createCellStyle();

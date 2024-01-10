@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.prefs.Preferences;
 
-import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
+import com.bl.bias.analyze.GradeXingAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadGradeXingAnalysisFiles;
 import com.bl.bias.tools.AssignTrainTypeNameToTrainGroupName;
@@ -456,7 +456,7 @@ public class BIASGradeXingSpeedsController
 		if (ReadGradeXingAnalysisFiles.getValidTrainCount() > 0)
 		{
 			//  Perform Analysis
-			GradeXingSpeedsAnalysis analyzeData = new GradeXingSpeedsAnalysis();
+			GradeXingAnalysis analyzeData = new GradeXingAnalysis();
 			message = analyzeData.getResultsMessage();
 			displayMessage(analyzeData.getResultsMessage());
 

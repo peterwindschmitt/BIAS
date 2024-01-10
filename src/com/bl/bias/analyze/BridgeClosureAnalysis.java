@@ -296,7 +296,6 @@ public class BridgeClosureAnalysis
 		resultsMessage += "Finished creating bridge closure results at "+ConvertDateTime.getTimeStamp()+"\n";
 	}
 
-
 	public static ArrayList<BridgeAnalysisCrossing> getSortedCrossings()
 	{
 		return sortedCrossings;

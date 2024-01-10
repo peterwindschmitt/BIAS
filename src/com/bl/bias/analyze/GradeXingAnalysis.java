@@ -1,4 +1,4 @@
-	package com.bl.bias.analyze;
+package com.bl.bias.analyze;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import com.bl.bias.objects.GradeXingTraversal;
 import com.bl.bias.read.ReadGradeXingAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class GradeXingSpeedsAnalysis 
+public class GradeXingAnalysis 
 {
 	private static String resultsMessage;
 	private static String line;
@@ -28,7 +28,7 @@ public class GradeXingSpeedsAnalysis
 	private static ArrayList<GradeXingTraversal> traversals;
 	private static ArrayList<GradeXingTraversal> sortedTraversals;
 
-	public GradeXingSpeedsAnalysis() 
+	public GradeXingAnalysis() 
 	{
 		resultsMessage = "Started analyzing Grade Crossing Speeds at "+ConvertDateTime.getTimeStamp()+"\n";
 

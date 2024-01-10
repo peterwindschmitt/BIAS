@@ -165,7 +165,7 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="Seed Trains to NOT be in Route Report" GridPane.rowIndex="15">
+            <Label text="Seed Trains Included in Route Report" GridPane.rowIndex="15">
                <padding>
                   <Insets left="10.0" />
                </padding>

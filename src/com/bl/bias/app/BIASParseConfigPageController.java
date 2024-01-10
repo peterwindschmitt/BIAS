@@ -78,11 +78,16 @@ public class BIASParseConfigPageController
 	private static String r_trainSymbol;
 	private static String r_rtcIncrement;
 	private static String r_node;
+	private static String r_distance;
 	private static String r_headEndSpeed;
+	private static String r_headEndArrivalTime;
 	private static String r_headEndDepartureTime;
 	private static String r_tailEndDepartureTime;
+	private static String r_minimumDwell;
 	private static String r_cumulativeElapsedTime;
 	private static String r_aspect;
+	private static String r_scheduledArrivalTime;
+	private static String r_scheduledDepartureTime;
 	private static String r_direction;
 
 	// Data from .OPTION file
@@ -565,11 +570,16 @@ public class BIASParseConfigPageController
 		parseData7.addAll(new ParseLocationFormatB("Train Symbol", "r_trainSymbol", Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[1])),
 				new ParseLocationFormatB("RTC Increment", "r_rtcIncrement", Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[1])),
 				new ParseLocationFormatB("Node", "r_node", Integer.valueOf(BIASParseConfigPageController.r_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.r_getNode()[1])),
+				new ParseLocationFormatB("Distance", "r_distance", Integer.valueOf(BIASParseConfigPageController.r_getDistance()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDistance()[1])),
 				new ParseLocationFormatB("Head End Speed", "r_headEndSpeed", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[1])),
-				new ParseLocationFormatB("Head End Arrival Time", "r_headEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])),
+				new ParseLocationFormatB("Head End Arrival Time", "r_headEndArrivalTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])),
+				new ParseLocationFormatB("Head End Departure Time", "r_headEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])),
 				new ParseLocationFormatB("Tail End Departure Time", "r_tailEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[1])),
-				new ParseLocationFormatB("Cumulative Elapsed", "r_cumulativeElapsedTime", Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])),
+				new ParseLocationFormatB("Minimum Dwell", "r_minDwell", Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[0]), Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[1])),
+				new ParseLocationFormatB("Cumulative Elapsed Time", "r_cumulativeElapsedTime", Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])),
 				new ParseLocationFormatB("Aspect", "r_aspect", Integer.valueOf(BIASParseConfigPageController.r_getAspect()[0]), Integer.valueOf(BIASParseConfigPageController.r_getAspect()[1])),
+				new ParseLocationFormatB("Scheduled Arrival Time", "r_scheduledArrivalTime", Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])),
+				new ParseLocationFormatB("Scheduled Departure Time", "r_scheduledDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[1])),
 				new ParseLocationFormatB("Direction", "r_direction", Integer.valueOf(BIASParseConfigPageController.r_getDirection()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDirection()[1]))
 				);
 
@@ -908,11 +918,16 @@ public class BIASParseConfigPageController
 			prefs.remove("r_trainSymbol");
 			prefs.remove("r_rtcIncrement");
 			prefs.remove("r_node");
+			prefs.remove("r_distance");
 			prefs.remove("r_headEndSpeed");
+			prefs.remove("r_headEndArrivalTime");
 			prefs.remove("r_headEndDepartureTime");
+			prefs.remove("r_minDwell");
 			prefs.remove("r_tailEndDepartureTime");
 			prefs.remove("r_cumulativeElapsedTime");
 			prefs.remove("r_aspect");
+			prefs.remove("r_scheduledArrivalTime");
+			prefs.remove("r_scheduledDepartureTime");
 			prefs.remove("r_direction");
 
 			// Table 8
@@ -1140,11 +1155,16 @@ public class BIASParseConfigPageController
 			parseData7.addAll(new ParseLocationFormatB("Train Symbol", "r_trainSymbol", Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[1])),
 					new ParseLocationFormatB("RTC Increment", "r_rtcIncrement", Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[1])),
 					new ParseLocationFormatB("Node", "r_node", Integer.valueOf(BIASParseConfigPageController.r_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.r_getNode()[1])),
+					new ParseLocationFormatB("Distance", "r_distance", Integer.valueOf(BIASParseConfigPageController.r_getDistance()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDistance()[1])),
 					new ParseLocationFormatB("Head End Speed", "r_headEndSpeed", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[1])),
-					new ParseLocationFormatB("Head End Arrival Time", "r_headEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])),
+					new ParseLocationFormatB("Head End Arrival Time", "r_headEndArrivalTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])),
+					new ParseLocationFormatB("Head End Departure Time", "r_headEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])),
 					new ParseLocationFormatB("Tail End Departure Time", "r_tailEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[1])),
-					new ParseLocationFormatB("Cumulative Elapsed", "r_cumulativeElapsedTime", Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])),
+					new ParseLocationFormatB("Minimum Dwell", "r_minDwell", Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[0]), Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[1])),
+					new ParseLocationFormatB("Cumulative Elapsed Time", "r_cumulativeElapsedTime", Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])),
 					new ParseLocationFormatB("Aspect", "r_aspect", Integer.valueOf(BIASParseConfigPageController.r_getAspect()[0]), Integer.valueOf(BIASParseConfigPageController.r_getAspect()[1])),
+					new ParseLocationFormatB("Scheduled Arrival Time", "r_scheduledArrivalTime", Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])),
+					new ParseLocationFormatB("Scheduled Departure Time", "r_scheduledDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[1])),
 					new ParseLocationFormatB("Direction", "r_direction", Integer.valueOf(BIASParseConfigPageController.r_getDirection()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDirection()[1]))
 					);
 
@@ -3079,6 +3099,15 @@ public class BIASParseConfigPageController
 				prefs.put("r_node", r_node);
 		}
 
+		// Distance
+		if (prefs.get("r_distance", null) == null)
+		{
+			// Write value for subsequent runs
+			r_distance = "35,42";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("r_distance", r_distance);
+		}
+
 		// Head End Speed
 		if (prefs.get("r_headEndSpeed", null) == null)
 		{
@@ -3089,6 +3118,15 @@ public class BIASParseConfigPageController
 		}
 
 		// Head End Arrival Time
+		if (prefs.get("r_headEndArrivalTime", null) == null)
+		{
+			// Write value for subsequent runs
+			r_headEndArrivalTime = "58,69";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("r_headEndArrivalTime", r_headEndArrivalTime);
+		}
+
+		// Head End Departure Time
 		if (prefs.get("r_headEndDepartureTime", null) == null)
 		{
 			// Write value for subsequent runs
@@ -3106,7 +3144,16 @@ public class BIASParseConfigPageController
 				prefs.put("r_tailEndDepartureTime", r_tailEndDepartureTime);
 		}
 
-		// Cumulative Elapsed
+		// Minimum Dwell Time
+		if (prefs.get("r_minDwell", null) == null)
+		{
+			// Write value for subsequent runs
+			r_minimumDwell = "101,109";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("r_minDwell", r_minimumDwell);
+		}
+
+		// Cumulative Elapsed Time
 		if (prefs.get("r_cumulativeElapsedTime", null) == null)
 		{
 			// Write value for subsequent runs
@@ -3122,6 +3169,24 @@ public class BIASParseConfigPageController
 			r_aspect = "340,360";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("r_aspect", r_aspect);
+		}
+
+		// Scheduled Arrival Time
+		if (prefs.get("r_scheduledArrivalTime", null) == null)
+		{
+			// Write value for subsequent runs
+			r_scheduledArrivalTime = "406,414";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("r_scheduledArrivalTime", r_scheduledArrivalTime);
+		}
+
+		// Scheduled Departure Time
+		if (prefs.get("r_scheduledDepartureTime", null) == null)
+		{
+			// Write value for subsequent runs
+			r_scheduledDepartureTime = "420,428";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("r_scheduledDepartureTime", r_scheduledDepartureTime);
 		}
 
 		// Direction
@@ -4364,6 +4429,12 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] r_getDistance()
+	{
+		String[] values = prefs.get("r_distance", r_distance).split(",");
+		return values;
+	}
+
 	public static String[] r_getHeadEndSpeed()
 	{
 		String[] values = prefs.get("r_headEndSpeed", r_headEndSpeed).split(",");
@@ -4372,6 +4443,12 @@ public class BIASParseConfigPageController
 
 	public static String[] r_getHeadEndArrivalTime()
 	{
+		String[] values = prefs.get("r_headEndArrivalTime", r_headEndArrivalTime).split(",");
+		return values;
+	}
+
+	public static String[] r_getHeadEndDepartureTime()
+	{
 		String[] values = prefs.get("r_headEndDepartureTime", r_headEndDepartureTime).split(",");
 		return values;
 	}
@@ -4379,6 +4456,12 @@ public class BIASParseConfigPageController
 	public static String[] r_getTailEndDepartureTime()
 	{
 		String[] values = prefs.get("r_tailEndDepartureTime", r_tailEndDepartureTime).split(",");
+		return values;
+	}
+
+	public static String[] r_getMinimumDwell()
+	{
+		String[] values = prefs.get("r_minDwell", r_minimumDwell).split(",");
 		return values;
 	}
 
@@ -4391,6 +4474,18 @@ public class BIASParseConfigPageController
 	public static String[] r_getAspect()
 	{
 		String[] values = prefs.get("r_aspect", r_aspect).split(",");
+		return values;
+	}
+
+	public static String[] r_getScheduledArrivalTime()
+	{
+		String[] values = prefs.get("r_scheduledArrivalTime", r_scheduledArrivalTime).split(",");
+		return values;
+	}
+
+	public static String[] r_getScheduledDepartureTime()
+	{
+		String[] values = prefs.get("r_scheduledDepartureTime", r_scheduledDepartureTime).split(",");
 		return values;
 	}
 
@@ -4453,19 +4548,19 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("o_commaDelimitedRouteFile", o_commaDelimitedRouteFile).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getAllNodesInRouteReport()
 	{
 		String[] values = prefs.get("o_allNodesInRouteReport", o_allNodesInRouteReport).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getShowSeedTrainsInRouteReport()
 	{
 		String[] values = prefs.get("o_showSeedTrainsInRouteReport", o_showSeedTrainsInRouteReport).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getTrainGroupName()
 	{
 		String[] values = prefs.get("o_trainGroupName", o_trainGroupName).split(",");
@@ -4957,7 +5052,6 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("y_ttb_dayOfOperation", y_ttb_dayOfOperation).split(",");
 		return values;
 	}
-
 
 	public static String[] y_getTtb_departureStation() 
 	{

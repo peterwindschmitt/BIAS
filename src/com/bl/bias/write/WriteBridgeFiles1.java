@@ -270,7 +270,7 @@ public class WriteBridgeFiles1
 		cell = row.createCell(8);
 		cell.setCellStyle(style4);
 		cell.setCellValue(sumOfReportedCrossingDurations/crossings.size());
-
+		
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();

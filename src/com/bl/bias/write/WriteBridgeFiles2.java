@@ -262,7 +262,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 			cell.setCellStyle(style1);
 
 			cell.setCellValue(ConvertDateTime.convertSecondsToDayHHMMSSString(closures.get(i).getLatestBridgeDownStartTimeInSeconds()));
-
+			
 			// Planned bridge down start time
 			cell = row.createCell(3);
 			if ((BIASBridgeClosureAnalysisConfigPageController.getRecurringMarineAccessPeriodActive()) && (DoesEventOccurDuringActiveMarineAccessPeriod.doesEventOccurDuringActiveMarineAccessPeriod(closures.get(i).getPlannedBridgeDownStartTimeInSeconds())))
@@ -300,7 +300,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 				cell.setCellStyle(style1);
 
 			cell.setCellValue(ConvertDateTime.convertSecondsToDayHHMMSSString(closures.get(i).getBridgeUpCompleteTimeInSeconds()));
-
+			
 			// Actual duration
 			cell = row.createCell(7);
 			cell.setCellStyle(style6);
@@ -337,10 +337,20 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 			cell.setCellValue(ceilingTimeAsSerial);
 
 			sumOfReportedClosureDurations += ceilingTimeAsSerial;
-
+			
 			// Time until next closure
 			double nextClosureStartTime;
-			if (i == 0) // First closure
+			if (i == closures.size() - 1) // Last closure.  Must evaluate this first in case there's only a single train.
+			{
+				if (closures.get(i).getBridgeUpCompleteTimeInSeconds() < BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds())
+				{
+					sumOfOpenDurations += ConvertDateTime.convertSecondsToSerial(BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds() - closures.get(i).getBridgeUpCompleteTimeInSeconds());
+					bridgeOpenPeriod = ConvertDateTime.convertSecondsToSerial(BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds() - closures.get(i).getBridgeUpCompleteTimeInSeconds());
+				}
+				else
+					bridgeOpenPeriod = 0.0;
+			}
+			else if (i == 0) // First closure
 			{
 				// Determine if need to account for open period prior to first closure
 				if (closures.get(i).getPlannedBridgeDownStartTimeInSeconds() > BridgeClosureAnalysis.getBeginningOfAnalysisPeriodInSeconds())
@@ -353,16 +363,6 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 				bridgeOpenPeriod = nextClosureStartTime - ConvertDateTime.convertSecondsToSerial(closures.get(i).getBridgeUpCompleteTimeInSeconds());
 				sumOfOpenDurations += bridgeOpenPeriod;
 			}
-			else if (i == closures.size() - 1) // Last closure
-			{
-				if (closures.get(i).getBridgeUpCompleteTimeInSeconds() < BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds())
-				{
-					sumOfOpenDurations += ConvertDateTime.convertSecondsToSerial(BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds() - closures.get(i).getBridgeUpCompleteTimeInSeconds());
-					bridgeOpenPeriod = ConvertDateTime.convertSecondsToSerial(BridgeClosureAnalysis.getEndOfAnalysisPeriodInSeconds() - closures.get(i).getBridgeUpCompleteTimeInSeconds());
-				}
-				else
-					bridgeOpenPeriod = 0.0;
-			}
 			else // All other closures
 			{
 				nextClosureStartTime = ConvertDateTime.convertSecondsToSerial(closures.get(i + 1).getPlannedBridgeDownStartTimeInSeconds());
@@ -372,7 +372,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 			cell = row.createCell(9);
 			cell.setCellStyle(style6);
 			cell.setCellValue(bridgeOpenPeriod);  
-
+			
 			// Trains crossing in closure
 			cell = row.createCell(10);
 			cell.setCellStyle(style5);
@@ -385,7 +385,7 @@ public class WriteBridgeFiles2 extends WriteBridgeFiles1
 		cell = row.createCell(6);
 		cell.setCellStyle(style3);
 		cell.setCellValue("Sum of closures(dd:hh:mm:ss):");
-
+		
 		cell = row.createCell(7);
 		cell.setCellStyle(style4);
 		cell.setCellValue(sumOfActualClosureDurations);

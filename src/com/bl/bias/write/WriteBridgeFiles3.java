@@ -68,7 +68,7 @@ public class WriteBridgeFiles3 extends WriteBridgeFiles2
 	public WriteBridgeFiles3(String textAreaContents, String locationOfInputFiles)
 	{
 		super(textAreaContents, locationOfInputFiles);
-
+		
 		// Bridge raise excluded?
 		if (!BIASBridgeClosureAnalysisConfigPageController.getIncludeBridgeRaiseTimeInClosureTime())
 			excludeBridgeRaiseTime = true;

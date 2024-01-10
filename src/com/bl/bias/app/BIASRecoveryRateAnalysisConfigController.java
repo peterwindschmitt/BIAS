@@ -667,12 +667,12 @@ public class BIASRecoveryRateAnalysisConfigController
 			prefs.put("rr_nodePairs", nodePairsToWriteToRegistry);
 	}
 	
-	public String getRecoveryRateAnalysisTrainGroups()
+	public static String getRecoveryRateAnalysisTrainGroups()
 	{
 		return trainGroups;
 	}
 	
-	public String getRecoveryRateAnalysisNodePairs()
+	public static String getRecoveryRateAnalysisNodePairs()
 	{
 		return nodePairs;
 	}

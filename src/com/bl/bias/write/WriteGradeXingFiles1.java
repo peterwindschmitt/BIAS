@@ -11,7 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.bl.bias.analyze.GradeXingSpeedsAnalysis;
+import com.bl.bias.analyze.GradeXingAnalysis;
 import com.bl.bias.app.BIASGradeXingSpeedsConfigController;
 import com.bl.bias.objects.GradeXingTraversal;
 import com.bl.bias.tools.ConvertDateTime;
@@ -30,7 +30,7 @@ public class WriteGradeXingFiles1
 	{
 		XSSFSheet gradeXingTraversalsSheet = workbook.createSheet("Grade Crossing Speeds");
 
-		traversals = GradeXingSpeedsAnalysis.getSortedTraversals();
+		traversals = GradeXingAnalysis.getSortedTraversals();
 
 		// Set styles
 		CellStyle style1 = workbook.createCellStyle();
