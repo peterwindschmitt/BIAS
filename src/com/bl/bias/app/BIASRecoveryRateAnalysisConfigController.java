@@ -2,8 +2,11 @@ package com.bl.bias.app;
 
 import java.util.prefs.Preferences;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 public class BIASRecoveryRateAnalysisConfigController 
@@ -12,6 +15,10 @@ public class BIASRecoveryRateAnalysisConfigController
 
 	private static String trainGroups;
 	private static String nodePairs;
+	private static String lowRecoveryRate;
+
+	private static ObservableList<String> lowRecoveryRates =  FXCollections.observableArrayList("0%", "5%", "10%", "15%");
+	private static String defaultLowRecoveryRate = "15%";
 
 	@FXML TextField group1TextField;
 	@FXML TextField group2TextField;
@@ -35,9 +42,15 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML TextField nodePair7ToTextField;
 	@FXML TextField nodePair8FromTextField;
 	@FXML TextField nodePair8ToTextField;
+	@FXML TextField nodePair9FromTextField;
+	@FXML TextField nodePair9ToTextField;
+	@FXML TextField nodePair10FromTextField;
+	@FXML TextField nodePair10ToTextField;
 
 	@FXML Button updateGroupsButton;
 	@FXML Button updateNodesButton;
+
+	@FXML ComboBox lowRecoveryRateComboBox;
 
 	@FXML private void initialize()
 	{
@@ -121,8 +134,38 @@ public class BIASRecoveryRateAnalysisConfigController
 					nodePair8FromTextField.setText(fromTo[0]);
 					nodePair8ToTextField.setText(fromTo[1]);
 				}
+				else if (i == 8)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair9FromTextField.setText(fromTo[0]);
+					nodePair9ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 9)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair10FromTextField.setText(fromTo[0]);
+					nodePair10ToTextField.setText(fromTo[1]);
+				}
 			}
 		}
+
+		// See if preference is stored for low recovery rate
+		lowRecoveryRateComboBox.setItems(lowRecoveryRates);
+		boolean lowRecoveryRateExists = prefs.get("rr_lowRecoveryRate", null) != null;
+		if (lowRecoveryRateExists)
+		{
+			lowRecoveryRate = prefs.get("rr_lowRecoveryRate", defaultLowRecoveryRate);
+			lowRecoveryRateComboBox.getSelectionModel().select(lowRecoveryRate);
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("rr_lowRecoveryRate", defaultLowRecoveryRate);
+			}
+			lowRecoveryRate = prefs.get("rr_lowRecoveryRate", defaultLowRecoveryRate);
+			lowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
+		}		
 	}
 
 	@FXML private void handleGroup1TextField()
@@ -220,7 +263,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 1 of 8
+	// Node pair # 1 of 10
 	@FXML private void handleNodePairFrom1TextField()
 	{
 		String origText = nodePair1FromTextField.getText().trim();
@@ -245,7 +288,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 2 of 8
+	// Node pair # 2 of 10
 	@FXML private void handleNodePairFrom2TextField()
 	{
 		String origText = nodePair2FromTextField.getText().trim();
@@ -270,7 +313,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 3 of 8
+	// Node pair # 3 of 10
 	@FXML private void handleNodePairFrom3TextField()
 	{
 		String origText = nodePair3FromTextField.getText().trim();
@@ -295,7 +338,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 4 of 8
+	// Node pair # 4 of 10
 	@FXML private void handleNodePairFrom4TextField()
 	{
 		String origText = nodePair4FromTextField.getText().trim();
@@ -320,7 +363,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 5 of 8
+	// Node pair # 5 of 10
 	@FXML private void handleNodePairFrom5TextField()
 	{
 		String origText = nodePair5FromTextField.getText().trim();
@@ -345,7 +388,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 6 of 8
+	// Node pair # 6 of 10
 	@FXML private void handleNodePairFrom6TextField()
 	{
 		String origText = nodePair6FromTextField.getText().trim();
@@ -370,7 +413,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 7 of 8
+	// Node pair # 7 of 10
 	@FXML private void handleNodePairFrom7TextField()
 	{
 		String origText = nodePair7FromTextField.getText().trim();
@@ -395,7 +438,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 8 of 8
+	// Node pair # 8 of 10
 	@FXML private void handleNodePairFrom8TextField()
 	{
 		String origText = nodePair8FromTextField.getText().trim();
@@ -418,6 +461,63 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		nodePair8ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node pair # 9 of 10
+	@FXML private void handleNodePairFrom9TextField()
+	{
+		String origText = nodePair9FromTextField.getText().trim();
+		nodePair9FromTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairFrom9TextField()
+	{
+		nodePair9FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleNodePairTo9TextField()
+	{
+		String origText = nodePair9ToTextField.getText().trim();
+		nodePair9ToTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairTo9TextField()
+	{
+		nodePair9ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node pair # 10 of 10
+	@FXML private void handleNodePairFrom10TextField()
+	{
+		String origText = nodePair10FromTextField.getText().trim();
+		nodePair10FromTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairFrom10TextField()
+	{
+		nodePair10FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleNodePairTo10TextField()
+	{
+		String origText = nodePair10ToTextField.getText().trim();
+		nodePair10ToTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairTo10TextField()
+	{
+		nodePair10ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleLowRecoveryRateComboBox()
+	{
+		lowRecoveryRate = lowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_lowRecoveryRate", lowRecoveryRate);				
 	}
 
 	@FXML private void handleUpdateGroupsButton()
@@ -604,6 +704,32 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair8FromTextField.clear();
 			nodePair8ToTextField.clear();
 		}
+		
+		if ((nodePair9FromTextField.getText().trim() != null) && (nodePair9FromTextField.getText().trim() != "") && (nodePair9ToTextField.getText().trim() != null) && (nodePair9ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair9FromTextField.getText().trim();
+			String origTextTo = nodePair9ToTextField.getText().trim();
+			nodePair9FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair9ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair9FromTextField.clear();
+			nodePair9ToTextField.clear();
+		}
+		
+		if ((nodePair10FromTextField.getText().trim() != null) && (nodePair10FromTextField.getText().trim() != "") && (nodePair10ToTextField.getText().trim() != null) && (nodePair10ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair10FromTextField.getText().trim();
+			String origTextTo = nodePair10ToTextField.getText().trim();
+			nodePair10FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair10ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair10FromTextField.clear();
+			nodePair10ToTextField.clear();
+		}
 
 		// Write to registry
 		String nodePairsToWriteToRegistry = "";
@@ -662,16 +788,35 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair8FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			nodePair8ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
+		
+		if ((nodePair9FromTextField != null) && (nodePair9FromTextField.getText().trim() != "") && (nodePair9ToTextField != null) && (nodePair9ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair9FromTextField.getText() + ":" + nodePair9ToTextField.getText()+"," ;	
+			nodePair9FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair9ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		
+		if ((nodePair10FromTextField != null) && (nodePair10FromTextField.getText().trim() != "") && (nodePair10ToTextField != null) && (nodePair10ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair10FromTextField.getText() + ":" + nodePair10ToTextField.getText()+"," ;	
+			nodePair10FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair10ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_nodePairs", nodePairsToWriteToRegistry);
 	}
-	
+
+	public static String getLowRecoveryRate()
+	{
+		return lowRecoveryRate;
+	}
+
 	public static String getRecoveryRateAnalysisTrainGroups()
 	{
 		return trainGroups;
 	}
-	
+
 	public static String getRecoveryRateAnalysisNodePairs()
 	{
 		return nodePairs;

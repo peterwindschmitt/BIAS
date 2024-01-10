@@ -5,11 +5,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
-import com.bl.bias.analyze.GradeXingAnalysis;
 import com.bl.bias.analyze.RecoveryRateAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadRecoveryRateAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteRecoveryRateFiles2;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -133,7 +133,7 @@ public class BIASRecoveryRateAnalysisController
 			File directory = directoryChooser.showDialog(stageForFolderChooser);
 			if (directory != null)
 			{
-				message = "\nStarting Recovery Rate Aalysis at "+ConvertDateTime.getTimeStamp();
+				message = "\nStarting Recovery Rate Analysis at "+ConvertDateTime.getTimeStamp();
 				displayMessage(message);
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
@@ -229,7 +229,7 @@ public class BIASRecoveryRateAnalysisController
 				executeButton.setDisable(false);
 			}
 			else
-				message += "\n\nUnable to perform analysis due to file(s)";
+				message += "\n\nUnable to perform analysis due to missing file(s)";
 
 			displayMessage(message);
 		}
@@ -274,7 +274,7 @@ public class BIASRecoveryRateAnalysisController
 		}
 		else
 		{
-			message += "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
+			message = "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
 			displayMessage(message);
 			continueAnalysis = false;
 		}
@@ -293,12 +293,16 @@ public class BIASRecoveryRateAnalysisController
 				// Analyze trains' recovery rates
 				RecoveryRateAnalysis analyze = new RecoveryRateAnalysis();
 				message = analyze.getResultsMessage();
-
 				displayMessage(message);
+				
+				setProgressIndicator(0.80);
 
 				// Write results to spreadsheet
-				// writeFiles();
-				/*if (!WriteRecoveryRateFiles2.getErrorFound())
+				WriteRecoveryRateFiles2 writeFiles = new WriteRecoveryRateFiles2(textArea.getText().toString());
+				message = writeFiles.getResultsWriteMessage2();
+				displayMessage(message);
+				
+				if (!WriteRecoveryRateFiles2.getErrorFound())
 				{
 					setProgressIndicator(1.0);
 					displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -307,7 +311,7 @@ public class BIASRecoveryRateAnalysisController
 				{
 					displayMessage("\nError in writing files");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-				}*/
+				}
 			}
 			else
 			{

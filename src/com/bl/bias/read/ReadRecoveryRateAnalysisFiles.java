@@ -8,13 +8,13 @@ import java.util.regex.Pattern;
 
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.objects.TrainAssesment;
+import com.bl.bias.objects.TrainAssessment;
 import com.bl.bias.objects.RouteEntry;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadRecoveryRateAnalysisFiles
 {
-	private static ArrayList<TrainAssesment> trainsReadIn = new ArrayList<TrainAssesment>();
+	private static ArrayList<TrainAssessment> trainsReadIn = new ArrayList<TrainAssessment>();
 	private static ArrayList<String> nodePairsToAnalyze = new ArrayList<String>();
 
 	private static String resultsMessage;
@@ -83,7 +83,7 @@ public class ReadRecoveryRateAnalysisFiles
 						openingSequence0 = false;
 						openingSequence1 = false;
 						
-						TrainAssesment trainToAsess = new TrainAssesment(trainSymbol, trainGroup, routeEntries);
+						TrainAssessment trainToAsess = new TrainAssessment(trainSymbol, trainGroup, routeEntries);
 						trainsReadIn.add(trainToAsess);
 					}
 					else if ((openingSequence0) && (openingSequence1))
@@ -126,7 +126,7 @@ public class ReadRecoveryRateAnalysisFiles
 		resultsMessage += "Finished parsing Recovery Rate Analysis files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 	}			
 
-	public static ArrayList<TrainAssesment> getTrainsReadIn()
+	public static ArrayList<TrainAssessment> getTrainsReadIn()
 	{
 		return trainsReadIn;
 	}
