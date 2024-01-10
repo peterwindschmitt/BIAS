@@ -46,6 +46,14 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML TextField nodePair9ToTextField;
 	@FXML TextField nodePair10FromTextField;
 	@FXML TextField nodePair10ToTextField;
+	@FXML TextField nodePair11FromTextField;
+	@FXML TextField nodePair11ToTextField;
+	@FXML TextField nodePair12FromTextField;
+	@FXML TextField nodePair12ToTextField;
+	@FXML TextField nodePair13FromTextField;
+	@FXML TextField nodePair13ToTextField;
+	@FXML TextField nodePair14FromTextField;
+	@FXML TextField nodePair14ToTextField;
 
 	@FXML Button updateGroupsButton;
 	@FXML Button updateNodesButton;
@@ -145,6 +153,30 @@ public class BIASRecoveryRateAnalysisConfigController
 					String[] fromTo = nodePair[i].split(":"); 
 					nodePair10FromTextField.setText(fromTo[0]);
 					nodePair10ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 10)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair11FromTextField.setText(fromTo[0]);
+					nodePair11ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 11)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair12FromTextField.setText(fromTo[0]);
+					nodePair12ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 12)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair13FromTextField.setText(fromTo[0]);
+					nodePair13ToTextField.setText(fromTo[1]);
+				}
+				else if (i == 13)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair14FromTextField.setText(fromTo[0]);
+					nodePair14ToTextField.setText(fromTo[1]);
 				}
 			}
 		}
@@ -263,7 +295,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 1 of 10
+	// Node pair # 1 of 14
 	@FXML private void handleNodePairFrom1TextField()
 	{
 		String origText = nodePair1FromTextField.getText().trim();
@@ -288,7 +320,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 2 of 10
+	// Node pair # 2 of 14
 	@FXML private void handleNodePairFrom2TextField()
 	{
 		String origText = nodePair2FromTextField.getText().trim();
@@ -313,7 +345,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 3 of 10
+	// Node pair # 3 of 14
 	@FXML private void handleNodePairFrom3TextField()
 	{
 		String origText = nodePair3FromTextField.getText().trim();
@@ -338,7 +370,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 4 of 10
+	// Node pair # 4 of 14
 	@FXML private void handleNodePairFrom4TextField()
 	{
 		String origText = nodePair4FromTextField.getText().trim();
@@ -363,7 +395,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 5 of 10
+	// Node pair # 5 of 14
 	@FXML private void handleNodePairFrom5TextField()
 	{
 		String origText = nodePair5FromTextField.getText().trim();
@@ -388,7 +420,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 6 of 10
+	// Node pair # 6 of 14
 	@FXML private void handleNodePairFrom6TextField()
 	{
 		String origText = nodePair6FromTextField.getText().trim();
@@ -413,7 +445,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 7 of 10
+	// Node pair # 7 of 14
 	@FXML private void handleNodePairFrom7TextField()
 	{
 		String origText = nodePair7FromTextField.getText().trim();
@@ -438,7 +470,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 8 of 10
+	// Node pair # 8 of 14
 	@FXML private void handleNodePairFrom8TextField()
 	{
 		String origText = nodePair8FromTextField.getText().trim();
@@ -463,7 +495,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 9 of 10
+	// Node pair # 9 of 14
 	@FXML private void handleNodePairFrom9TextField()
 	{
 		String origText = nodePair9FromTextField.getText().trim();
@@ -488,7 +520,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 10 of 10
+	// Node pair # 10 of 14
 	@FXML private void handleNodePairFrom10TextField()
 	{
 		String origText = nodePair10FromTextField.getText().trim();
@@ -510,6 +542,106 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo10TextField()
 	{
 		nodePair10ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node pair # 11 of 14
+	@FXML private void handleNodePairFrom11TextField()
+	{
+		String origText = nodePair11FromTextField.getText().trim();
+		nodePair11FromTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairFrom11TextField()
+	{
+		nodePair11FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleNodePairTo11TextField()
+	{
+		String origText = nodePair11ToTextField.getText().trim();
+		nodePair11ToTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairTo11TextField()
+	{
+		nodePair11ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node pair # 12 of 14
+	@FXML private void handleNodePairFrom12TextField()
+	{
+		String origText = nodePair12FromTextField.getText().trim();
+		nodePair12FromTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairFrom12TextField()
+	{
+		nodePair12FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleNodePairTo12TextField()
+	{
+		String origText = nodePair11ToTextField.getText().trim();
+		nodePair12ToTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairTo12TextField()
+	{
+		nodePair12ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node pair # 13 of 14
+	@FXML private void handleNodePairFrom13TextField()
+	{
+		String origText = nodePair13FromTextField.getText().trim();
+		nodePair13FromTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairFrom13TextField()
+	{
+		nodePair13FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleNodePairTo13TextField()
+	{
+		String origText = nodePair13ToTextField.getText().trim();
+		nodePair13ToTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairTo13TextField()
+	{
+		nodePair13ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node pair # 14 of 14
+	@FXML private void handleNodePairFrom14TextField()
+	{
+		String origText = nodePair14FromTextField.getText().trim();
+		nodePair14FromTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairFrom14TextField()
+	{
+		nodePair14FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleNodePairTo14TextField()
+	{
+		String origText = nodePair14ToTextField.getText().trim();
+		nodePair14ToTextField.setText(origText.toUpperCase());	
+	}
+
+	@FXML private void handleTextChangedNodePairTo14TextField()
+	{
+		nodePair14ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
@@ -704,7 +836,7 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair8FromTextField.clear();
 			nodePair8ToTextField.clear();
 		}
-		
+
 		if ((nodePair9FromTextField.getText().trim() != null) && (nodePair9FromTextField.getText().trim() != "") && (nodePair9ToTextField.getText().trim() != null) && (nodePair9ToTextField.getText().trim() != ""))
 		{
 			String origTextFrom = nodePair9FromTextField.getText().trim();
@@ -717,7 +849,7 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair9FromTextField.clear();
 			nodePair9ToTextField.clear();
 		}
-		
+
 		if ((nodePair10FromTextField.getText().trim() != null) && (nodePair10FromTextField.getText().trim() != "") && (nodePair10ToTextField.getText().trim() != null) && (nodePair10ToTextField.getText().trim() != ""))
 		{
 			String origTextFrom = nodePair10FromTextField.getText().trim();
@@ -729,6 +861,58 @@ public class BIASRecoveryRateAnalysisConfigController
 		{
 			nodePair10FromTextField.clear();
 			nodePair10ToTextField.clear();
+		}
+
+		if ((nodePair11FromTextField.getText().trim() != null) && (nodePair11FromTextField.getText().trim() != "") && (nodePair11ToTextField.getText().trim() != null) && (nodePair11ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair11FromTextField.getText().trim();
+			String origTextTo = nodePair11ToTextField.getText().trim();
+			nodePair11FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair11ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair11FromTextField.clear();
+			nodePair11ToTextField.clear();
+		}
+
+		if ((nodePair12FromTextField.getText().trim() != null) && (nodePair12FromTextField.getText().trim() != "") && (nodePair12ToTextField.getText().trim() != null) && (nodePair12ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair12FromTextField.getText().trim();
+			String origTextTo = nodePair12ToTextField.getText().trim();
+			nodePair12FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair12ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair12FromTextField.clear();
+			nodePair12ToTextField.clear();
+		}
+
+		if ((nodePair13FromTextField.getText().trim() != null) && (nodePair13FromTextField.getText().trim() != "") && (nodePair13ToTextField.getText().trim() != null) && (nodePair13ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair13FromTextField.getText().trim();
+			String origTextTo = nodePair13ToTextField.getText().trim();
+			nodePair13FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair13ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair13FromTextField.clear();
+			nodePair13ToTextField.clear();
+		}
+
+		if ((nodePair14FromTextField.getText().trim() != null) && (nodePair14FromTextField.getText().trim() != "") && (nodePair14ToTextField.getText().trim() != null) && (nodePair14ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair14FromTextField.getText().trim();
+			String origTextTo = nodePair14ToTextField.getText().trim();
+			nodePair14FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair14ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair14FromTextField.clear();
+			nodePair14ToTextField.clear();
 		}
 
 		// Write to registry
@@ -788,19 +972,47 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair8FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			nodePair8ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
-		
+
 		if ((nodePair9FromTextField != null) && (nodePair9FromTextField.getText().trim() != "") && (nodePair9ToTextField != null) && (nodePair9ToTextField.getText().trim() != ""))
 		{
 			nodePairsToWriteToRegistry += nodePair9FromTextField.getText() + ":" + nodePair9ToTextField.getText()+"," ;	
 			nodePair9FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			nodePair9ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
-		
+
 		if ((nodePair10FromTextField != null) && (nodePair10FromTextField.getText().trim() != "") && (nodePair10ToTextField != null) && (nodePair10ToTextField.getText().trim() != ""))
 		{
 			nodePairsToWriteToRegistry += nodePair10FromTextField.getText() + ":" + nodePair10ToTextField.getText()+"," ;	
 			nodePair10FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			nodePair10ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair11FromTextField != null) && (nodePair11FromTextField.getText().trim() != "") && (nodePair11ToTextField != null) && (nodePair11ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair11FromTextField.getText() + ":" + nodePair11ToTextField.getText()+"," ;	
+			nodePair11FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair11ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair12FromTextField != null) && (nodePair12FromTextField.getText().trim() != "") && (nodePair12ToTextField != null) && (nodePair12ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair12FromTextField.getText() + ":" + nodePair12ToTextField.getText()+"," ;	
+			nodePair12FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair12ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair13FromTextField != null) && (nodePair13FromTextField.getText().trim() != "") && (nodePair13ToTextField != null) && (nodePair13ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair13FromTextField.getText() + ":" + nodePair13ToTextField.getText()+"," ;	
+			nodePair13FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair13ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+
+		if ((nodePair14FromTextField != null) && (nodePair14FromTextField.getText().trim() != "") && (nodePair14ToTextField != null) && (nodePair14ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair14FromTextField.getText() + ":" + nodePair14ToTextField.getText()+"," ;	
+			nodePair14FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair14ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
