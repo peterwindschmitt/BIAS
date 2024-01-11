@@ -161,7 +161,7 @@ public class WriteRecoveryRateFiles1
 
 		cell = row.createCell(3);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Distance Covered");
+		cell.setCellValue("Distance Covered (miles)");
 
 		cell = row.createCell(4);
 		cell.setCellStyle(style7);
@@ -259,8 +259,10 @@ public class WriteRecoveryRateFiles1
 		if (!validTrainFound) 
 		{
 			// Train Symbol
-			cell = row.createCell(rowCounter);
-			cell.setCellStyle(style1);
+			rowCounter++;
+			row = recoveryRatesSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style5);
 			cell.setCellValue("No trains with recovery rate assessments found!");
 		}
 
@@ -273,7 +275,7 @@ public class WriteRecoveryRateFiles1
 		row = recoveryRatesSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
-		cell.setCellValue("* Denotes a work/dwell event occuring within the node pair.  Recovery rates do include work/dwell events.");
+		cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates INCLUDE work/dwell events.");
 
 		rowCounter++;
 		row = recoveryRatesSheet.createRow(rowCounter);

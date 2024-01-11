@@ -32,7 +32,7 @@ public class BIASRecoveryRateAnalysisController
 	private static Preferences prefs;
 
 	private static Boolean continueAnalysis = true;
-	
+
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
@@ -43,12 +43,12 @@ public class BIASRecoveryRateAnalysisController
 	@FXML private TextArea textArea;
 
 	@FXML private ProgressBar progressBar;
-	
+
 	@FXML private void initialize()
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
 	}
-	
+
 	@FXML private void handleSelectFileButton(ActionEvent event) 
 	{
 		chooseFile();
@@ -175,7 +175,7 @@ public class BIASRecoveryRateAnalysisController
 		selectFileButton.setDisable(false);
 		fileNameLabel.setText("");
 	}
-	
+
 	private void chooseFile()
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -262,59 +262,67 @@ public class BIASRecoveryRateAnalysisController
 
 	private void runTask() throws InterruptedException
 	{
-		// Check that .OPTION file has time formatted as DD:HH:MM:SS, no CSV delimiters in .ROUTE file, all nodes in .ROUTE file (rather than just event and delay)
 		// and ENGLISH input units
 		File optionFile = new File(fullyQualifiedPath);
 		File optionFileFolder = new File(optionFile.getParent());
 		BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
 		if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
 		{
-			message = "\nValidated date/time format, verbose .ROUTE file, output format and speed/distance units from .OPTION file\n";
-			displayMessage(message);
+			message = "\nValidated date/time format, verbose .ROUTE file, output format and speed/distance \nunits from .OPTION file\n";
 		}
 		else
 		{
-			message = "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
-			displayMessage(message);
+			message = "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance \nunits, invalid .OPTION file and/or invalid count of .OPTION files\n";
 			continueAnalysis = false;
 		}
-
+		displayMessage(message);
+				
 		if (continueAnalysis)
 		{
-			// Read all objects that are required for the recovery rate analysis
-			ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
-			message = readData.getResultsMessage();
-			displayMessage(message);
-
-			setProgressIndicator(0.40);
-						
-			if (continueAnalysis)
+			// Ensure that there are valid groups and node pairs
+			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null )
+				&& (BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisNodePairs() != null ))
 			{
-				// Analyze trains' recovery rates
-				RecoveryRateAnalysis analyze = new RecoveryRateAnalysis();
-				message = analyze.getResultsMessage();
+				// Read all objects that are required for the recovery rate analysis
+				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
+				message = readData.getResultsMessage();
 				displayMessage(message);
 				
-				setProgressIndicator(0.80);
+				setProgressIndicator(0.40);
 
-				// Write results to spreadsheet
-				WriteRecoveryRateFiles2 writeFiles = new WriteRecoveryRateFiles2(textArea.getText().toString());
-				message = writeFiles.getResultsWriteMessage2();
-				displayMessage(message);
-				
-				if (!WriteRecoveryRateFiles2.getErrorFound())
+				if (continueAnalysis)
 				{
-					setProgressIndicator(1.0);
-					displayMessage("\n*** PROCESSING COMPLETE ***");
+					// Analyze trains' recovery rates
+					RecoveryRateAnalysis analyze = new RecoveryRateAnalysis();
+					message = analyze.getResultsMessage();
+					displayMessage(message);
+
+					setProgressIndicator(0.80);
+
+					// Write results to spreadsheet
+					WriteRecoveryRateFiles2 writeFiles = new WriteRecoveryRateFiles2(textArea.getText().toString());
+					message = writeFiles.getResultsWriteMessage2();
+					displayMessage(message);
+
+					if (!WriteRecoveryRateFiles2.getErrorFound())
+					{
+						setProgressIndicator(1.0);
+						displayMessage("\n*** PROCESSING COMPLETE ***");
+					}
+					else
+					{
+						displayMessage("\nError in writing files");
+						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+					}
 				}
 				else
 				{
-					displayMessage("\nError in writing files");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
 			else
 			{
+				displayMessage("\nMust have at least one group and node pair to run analysis");
 				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 			}
 		}
@@ -328,7 +336,7 @@ public class BIASRecoveryRateAnalysisController
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);
 	}
-	
+
 	private void resetMessage()
 	{
 		message="";

@@ -19,12 +19,19 @@
 	<classpathentry kind="lib" path="C:/Program Files/Java/poi-ooxml-4.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/poi-ooxml-schemas-4.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/poi-scratchpad-4.0.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX11"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/controlsfx-11.1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/guava-31.0.1-jre.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="https://guava.dev/releases/31.0.1-jre/api/docs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.base.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.controls.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.fxml.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.graphics.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.media.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.swing.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx.web.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-21.0.1/lib/javafx-swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
