@@ -84,6 +84,7 @@ public class BIASParseConfigPageController
 	private static String r_headEndDepartureTime;
 	private static String r_tailEndDepartureTime;
 	private static String r_minimumDwell;
+	private static String r_waitOnSchedule;
 	private static String r_cumulativeElapsedTime;
 	private static String r_aspect;
 	private static String r_scheduledArrivalTime;
@@ -576,6 +577,7 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Head End Departure Time", "r_headEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])),
 				new ParseLocationFormatB("Tail End Departure Time", "r_tailEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[1])),
 				new ParseLocationFormatB("Minimum Dwell", "r_minDwell", Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[0]), Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[1])),
+				new ParseLocationFormatB("Wait on Schedule", "r_waitOnSchedule", Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[0]), Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[1])),
 				new ParseLocationFormatB("Cumulative Elapsed Time", "r_cumulativeElapsedTime", Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])),
 				new ParseLocationFormatB("Aspect", "r_aspect", Integer.valueOf(BIASParseConfigPageController.r_getAspect()[0]), Integer.valueOf(BIASParseConfigPageController.r_getAspect()[1])),
 				new ParseLocationFormatB("Scheduled Arrival Time", "r_scheduledArrivalTime", Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])),
@@ -923,6 +925,7 @@ public class BIASParseConfigPageController
 			prefs.remove("r_headEndArrivalTime");
 			prefs.remove("r_headEndDepartureTime");
 			prefs.remove("r_minDwell");
+			prefs.remove("r_waitOnSchedule");
 			prefs.remove("r_tailEndDepartureTime");
 			prefs.remove("r_cumulativeElapsedTime");
 			prefs.remove("r_aspect");
@@ -1161,6 +1164,7 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Head End Departure Time", "r_headEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])),
 					new ParseLocationFormatB("Tail End Departure Time", "r_tailEndDepartureTime", Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[1])),
 					new ParseLocationFormatB("Minimum Dwell", "r_minDwell", Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[0]), Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[1])),
+					new ParseLocationFormatB("Wait on Schedule", "r_waitOnSchedule", Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[0]), Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[1])),
 					new ParseLocationFormatB("Cumulative Elapsed Time", "r_cumulativeElapsedTime", Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])),
 					new ParseLocationFormatB("Aspect", "r_aspect", Integer.valueOf(BIASParseConfigPageController.r_getAspect()[0]), Integer.valueOf(BIASParseConfigPageController.r_getAspect()[1])),
 					new ParseLocationFormatB("Scheduled Arrival Time", "r_scheduledArrivalTime", Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])),
@@ -3153,6 +3157,15 @@ public class BIASParseConfigPageController
 				prefs.put("r_minDwell", r_minimumDwell);
 		}
 
+		// Wait on Schedule
+		if (prefs.get("r_waitOnSchedule", null) == null)
+		{
+			// Write value for subsequent runs
+			r_waitOnSchedule = "115,123";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("r_waitOnSchedule", r_waitOnSchedule);
+		}
+
 		// Cumulative Elapsed Time
 		if (prefs.get("r_cumulativeElapsedTime", null) == null)
 		{
@@ -4462,6 +4475,12 @@ public class BIASParseConfigPageController
 	public static String[] r_getMinimumDwell()
 	{
 		String[] values = prefs.get("r_minDwell", r_minimumDwell).split(",");
+		return values;
+	}
+	
+	public static String[] r_getWaitOnSchedule()
+	{
+		String[] values = prefs.get("r_waitOnSchedule", r_waitOnSchedule).split(",");
 		return values;
 	}
 

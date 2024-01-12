@@ -18,6 +18,8 @@ public class RecoveryRateAnalysis
 	private static ArrayList<TrainAssessment> trainsReadIn = new ArrayList<TrainAssessment>();
 	
 	private Integer recoveryRatesCalculated = 0;
+	
+	private static Boolean debug = false;
 
 	public RecoveryRateAnalysis() 
 	{
@@ -75,7 +77,11 @@ public class RecoveryRateAnalysis
 						Double bNodeCumulativeDistance = 0.0;
 						Integer aNodeRtcIncrement = 0;
 						Integer bNodeRtcIncrement = 0;
-						Boolean dwellEventBetweenAAndBNodes = false;
+						Integer dwellEventCumulativeTimeInSeconds = 0;
+						Integer dwellEventOffsetCumulativeTimeInSeconds = 0;
+						Integer waitOnScheduleCumulativeTimeInSeconds = 0;
+						Boolean dwellEventBetweenAAndBNodesBoolean = false;
+						Boolean waitOnScheduleBetweenAAndBNodesBoolean = false;
 						
 						for (int k = 0; k < trainsReadIn.get(i).getRouteEntries().size(); k++)
 						{
@@ -98,11 +104,24 @@ public class RecoveryRateAnalysis
 								bNodeRtcIncrement =  trainsReadIn.get(i).getRouteEntries().get(k).getRtcIncrement();
 								break;
 							}
-							else if ((!trainsReadIn.get(i).getRouteEntries().get(k).getMinimumDwellTimeAsString().equals("0")) 
+							else
+							{	
+								if ((!trainsReadIn.get(i).getRouteEntries().get(k).getMinimumDwellTimeAsString().equals("0")) 
 									&& (trainsReadIn.get(i).getRouteEntries().get(k).getRtcIncrement() > aNodeRtcIncrement)
 									&& (aNodeRtcIncrement != 0))
-							{
-								dwellEventBetweenAAndBNodes = true;
+									{
+										dwellEventOffsetCumulativeTimeInSeconds += BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds();
+										dwellEventCumulativeTimeInSeconds += ConvertDateTime.convertDDHHMMSSStringToSeconds(trainsReadIn.get(i).getRouteEntries().get(k).getMinimumDwellTimeAsString()); 
+										dwellEventBetweenAAndBNodesBoolean = true;
+									}
+								
+								if ((!trainsReadIn.get(i).getRouteEntries().get(k).getWaitOnScheduleAsString().equals("0")) 
+										&& (trainsReadIn.get(i).getRouteEntries().get(k).getRtcIncrement() > aNodeRtcIncrement)
+										&& (aNodeRtcIncrement != 0))
+									{
+										waitOnScheduleCumulativeTimeInSeconds += ConvertDateTime.convertDDHHMMSSStringToSeconds(trainsReadIn.get(i).getRouteEntries().get(k).getWaitOnScheduleAsString()); 
+										waitOnScheduleBetweenAAndBNodesBoolean = true;
+									}
 							}
 						}
 						
@@ -130,7 +149,9 @@ public class RecoveryRateAnalysis
 								runTimeByScheduleAsSeconds += 86400;
 						
 						// Create Recovery Rate Assessment object
-						RecoveryRateAssessment assessment = new RecoveryRateAssessment(aNode, bNode, runTimeByScheduleAsSeconds, runTimeBySimulationAsSeconds, dwellEventBetweenAAndBNodes, distanceCovered);
+						if (debug)
+							System.out.println("Train "+trainsReadIn.get(i).getTrainSymbol()+" of group "+trainsReadIn.get(i).getTrainGroupAbbreviation()+" with A node of "+aNode+" and B node of "+bNode+" has created a recovery assessment object.");
+						RecoveryRateAssessment assessment = new RecoveryRateAssessment(aNode, bNode, runTimeByScheduleAsSeconds, runTimeBySimulationAsSeconds, dwellEventBetweenAAndBNodesBoolean, dwellEventCumulativeTimeInSeconds, dwellEventOffsetCumulativeTimeInSeconds, waitOnScheduleBetweenAAndBNodesBoolean, waitOnScheduleCumulativeTimeInSeconds, distanceCovered);
 						trainsReadIn.get(i).setRecoveryRateAssesment(assessment);
 						trainsReadIn.get(i).setTrainHasRecoveryRatesCalculated();
 						recoveryRatesCalculated++;

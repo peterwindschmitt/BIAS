@@ -11,11 +11,12 @@ public class RouteEntry
 	private String simulatedArrivalTimeAsString;
 	private String cumulativeElapsedTimeAsString;
 	private String minimumDwellTimeAsString;
+	private String waitOnScheduleAsString;
 	
 	private Double cumulativeDistance;
 				
 	public RouteEntry(Integer rtcIncrement, String node, String scheduledDepartureTimeAsString, String scheduledArrivalTimeAsString, String simulatedDepartureTimeAsString, 
-			String simulatedArrivalTimeAsString, String cumulativeElapsedTimeAsString, String minimumDwellTimeAsString, Double cumulativeDistance)
+			String simulatedArrivalTimeAsString, String cumulativeElapsedTimeAsString, String minimumDwellTimeAsString, String waitOnScheduleAsString, Double cumulativeDistance)
 	{
 		this.rtcIncrement = rtcIncrement;
 		this.node = node;
@@ -25,6 +26,7 @@ public class RouteEntry
 		this.simulatedArrivalTimeAsString = simulatedArrivalTimeAsString;
 		this.cumulativeElapsedTimeAsString = cumulativeElapsedTimeAsString;
 		this.minimumDwellTimeAsString = minimumDwellTimeAsString;
+		this.waitOnScheduleAsString = waitOnScheduleAsString;
 		this.cumulativeDistance = cumulativeDistance;
 	}
 	
@@ -66,6 +68,11 @@ public class RouteEntry
 	public String getMinimumDwellTimeAsString() 
 	{
 		return minimumDwellTimeAsString;
+	}
+	
+	public String getWaitOnScheduleAsString() 
+	{
+		return waitOnScheduleAsString;
 	}
 	
 	public Double getCumulativeDistance() 

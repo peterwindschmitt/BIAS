@@ -280,8 +280,8 @@ public class BIASRecoveryRateAnalysisController
 		if (continueAnalysis)
 		{
 			// Ensure that there are valid groups and node pairs
-			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null )
-				&& (BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisNodePairs() != null ))
+			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null)
+				&& (BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisNodePairs() != null))
 			{
 				// Read all objects that are required for the recovery rate analysis
 				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);

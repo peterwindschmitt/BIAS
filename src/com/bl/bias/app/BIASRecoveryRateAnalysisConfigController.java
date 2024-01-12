@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 
 public class BIASRecoveryRateAnalysisConfigController 
@@ -16,6 +17,9 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static String trainGroups;
 	private static String nodePairs;
 	private static String lowRecoveryRate;
+
+	private static Integer schedulingImprecisionOffset;
+	private static Integer defaultSchedulingImprecisionOffset = 0;
 
 	private static ObservableList<String> lowRecoveryRates =  FXCollections.observableArrayList("0%", "5%", "10%", "15%");
 	private static String defaultLowRecoveryRate = "15%";
@@ -58,7 +62,11 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML Button updateGroupsButton;
 	@FXML Button updateNodesButton;
 
-	@FXML ComboBox lowRecoveryRateComboBox;
+	@FXML ComboBox<String> lowRecoveryRateComboBox;
+
+	@FXML RadioButton noSchedulingImprecisionRadioButton;
+	@FXML RadioButton thirtySecondImprecisionRadioButton;
+	@FXML RadioButton oneMinuteImprecisionRadioButton;
 
 	@FXML private void initialize()
 	{
@@ -181,6 +189,29 @@ public class BIASRecoveryRateAnalysisConfigController
 			}
 		}
 
+		// See if preference is stored for scheduling imprecision offset
+		if (prefs.getInt("rr_schedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 0)
+		{
+			schedulingImprecisionOffset = 0;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putInt("rr_schedulingImprecisionOffset", 0);
+			noSchedulingImprecisionRadioButton.setSelected(true);
+		}
+		else if (prefs.getInt("rr_schedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 30)
+		{
+			schedulingImprecisionOffset = 30;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putInt("rr_schedulingImprecisionOffset", 30);
+			thirtySecondImprecisionRadioButton.setSelected(true);
+		}
+		else if (prefs.getInt("rr_schedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 60)
+		{
+			schedulingImprecisionOffset = 60;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putInt("rr_schedulingImprecisionOffset", 60);
+			oneMinuteImprecisionRadioButton.setSelected(true);
+		}
+		
 		// See if preference is stored for low recovery rate
 		lowRecoveryRateComboBox.setItems(lowRecoveryRates);
 		boolean lowRecoveryRateExists = prefs.get("rr_lowRecoveryRate", null) != null;
@@ -652,6 +683,27 @@ public class BIASRecoveryRateAnalysisConfigController
 			prefs.put("rr_lowRecoveryRate", lowRecoveryRate);				
 	}
 
+	@FXML private void handleNoSchedulingImprecisionRadioButton()
+	{
+		schedulingImprecisionOffset = 0;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putInt("rr_schedulingImprecisionOffset", schedulingImprecisionOffset);
+	}
+	
+	@FXML private void handleThirtySecondImprecisionRadioButton()
+	{
+		schedulingImprecisionOffset = 30;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putInt("rr_schedulingImprecisionOffset", schedulingImprecisionOffset);
+	}
+	
+	@FXML private void handleOneMinuteImprecisionRadioButton()
+	{
+		schedulingImprecisionOffset = 60;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putInt("rr_schedulingImprecisionOffset", schedulingImprecisionOffset);
+	}
+
 	@FXML private void handleUpdateGroupsButton()
 	{
 		if (group1TextField.getText().trim().length() == 3)
@@ -1022,6 +1074,11 @@ public class BIASRecoveryRateAnalysisConfigController
 	public static String getLowRecoveryRate()
 	{
 		return lowRecoveryRate;
+	}
+	
+	public static Integer getScheduleImprecisionOffsetInSeconds()
+	{
+		return schedulingImprecisionOffset;
 	}
 
 	public static String getRecoveryRateAnalysisTrainGroups()

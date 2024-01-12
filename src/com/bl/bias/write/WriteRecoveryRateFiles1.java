@@ -165,15 +165,24 @@ public class WriteRecoveryRateFiles1
 
 		cell = row.createCell(4);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Time Alloted By Schedule (HH:MM:SS)");
+		cell.setCellValue("Time Alloted By Schedule Excluding Dwell/Work (HH:MM:SS)");
 
 		cell = row.createCell(5);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Minimum Run Time (HH:MM:SS)");
+		cell.setCellValue("Minimum Run Time Excluding Dwell/Work (HH:MM:SS)");
 
-		cell = row.createCell(6);
-		cell.setCellStyle(style7);
-		cell.setCellValue("Recovery Time Available (HH:MM:SS)");
+		if (BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds() > 0)
+		{
+			cell = row.createCell(6);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Recovery Time Available (HH:MM:SS) +");
+		}
+		else
+		{
+			cell = row.createCell(6);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Recovery Time Available (HH:MM:SS)");
+		}
 
 		cell = row.createCell(7);
 		cell.setCellStyle(style7);
@@ -216,23 +225,26 @@ public class WriteRecoveryRateFiles1
 					cell.setCellValue(assessments.get(i).getRecoveryRateAssessments().get(j).getDistanceCovered());
 
 					// Scheduled Time
+					Integer adjustedScheduledTimeInSeconds = assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds();
 					cell = row.createCell(4);
 					cell.setCellStyle(style1);
-					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds()));
+					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedScheduledTimeInSeconds));
 
 					// Minimum Time
+					Integer adjustedMinimumRunTimeInSeconds = assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getWaitOnScheduleCumulativeTimeInSeconds();
 					cell = row.createCell(5);
 					cell.setCellStyle(style1);
-					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds()));
+					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedMinimumRunTimeInSeconds));
 
 					// Recovery Time Available
-					Integer recoveryTimeAvailableInSeconds = assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds();
+					Integer adjustedRecoveryTimeAvailableInSeconds = adjustedScheduledTimeInSeconds - adjustedMinimumRunTimeInSeconds - assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventOffsetCumulativeTimeInSeconds();
 					cell = row.createCell(6);
 					cell.setCellStyle(style1);
-					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(recoveryTimeAvailableInSeconds));
+					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedRecoveryTimeAvailableInSeconds));
 
 					// Recovery Rate
-					Double recoveryRate1 = (double) recoveryTimeAvailableInSeconds / (double) assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds();
+					Double recoveryRate1 = 0.0;
+					recoveryRate1 = (double) adjustedRecoveryTimeAvailableInSeconds / (double) adjustedScheduledTimeInSeconds;
 					Double recoveryRate2 = Math.round(recoveryRate1 * 1000) / 10.0;
 					String recoveryRate3 = ""; 
 					if (assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventBetweenNodes())
@@ -245,12 +257,12 @@ public class WriteRecoveryRateFiles1
 					}
 
 					cell = row.createCell(7);
-					
+
 					if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getLowRecoveryRate().replace("%", "")))
 						cell.setCellStyle(style8);
 					else
 						cell.setCellStyle(style1);
-					
+
 					cell.setCellValue(recoveryRate3);
 				}
 			}
@@ -275,7 +287,16 @@ public class WriteRecoveryRateFiles1
 		row = recoveryRatesSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
-		cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates INCLUDE work/dwell events.");
+		cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates DO NOT INCLUDE work/dwell events.");
+
+		if (BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds() > 0)
+		{
+			rowCounter++;
+			row = recoveryRatesSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
+		}
 
 		rowCounter++;
 		row = recoveryRatesSheet.createRow(rowCounter);
