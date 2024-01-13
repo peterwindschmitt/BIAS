@@ -171,11 +171,11 @@ public class WriteRecoveryRateFiles1
 		cell.setCellStyle(style7);
 		cell.setCellValue("Minimum Run Time Excluding Dwell/Work (HH:MM:SS)");
 
-		if (BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds() > 0)
+		if (BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds() > 0)
 		{
 			cell = row.createCell(6);
 			cell.setCellStyle(style7);
-			cell.setCellValue("Recovery Time Available (HH:MM:SS) +");
+			cell.setCellValue("Recovery Time Available (HH:MM:SS)+");
 		}
 		else
 		{
@@ -258,7 +258,7 @@ public class WriteRecoveryRateFiles1
 
 					cell = row.createCell(7);
 
-					if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getLowRecoveryRate().replace("%", "")))
+					if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetALowRecoveryRate().replace("%", "")))
 						cell.setCellStyle(style8);
 					else
 						cell.setCellStyle(style1);
@@ -289,13 +289,13 @@ public class WriteRecoveryRateFiles1
 		cell.setCellStyle(style2);
 		cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates DO NOT INCLUDE work/dwell events.");
 
-		if (BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds() > 0)
+		if (BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds() > 0)
 		{
 			rowCounter++;
 			row = recoveryRatesSheet.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
+			cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
 		}
 
 		rowCounter++;
@@ -317,7 +317,7 @@ public class WriteRecoveryRateFiles1
 			}
 			else if ((i == 2) || (i == 3) || (i == 4) || (i == 5) || (i == 6))
 			{
-				recoveryRatesSheet.setColumnWidth(i, 5000);
+				recoveryRatesSheet.setColumnWidth(i, 5100);
 			}
 			else if (i == 7)
 			{

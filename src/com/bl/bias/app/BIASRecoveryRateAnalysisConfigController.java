@@ -15,10 +15,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static Preferences prefs;
 
 	private static String trainGroups;
-	private static String nodePairs;
-	private static String lowRecoveryRate;
+	private static String setANodePairs;
+	private static String setALowRecoveryRate;
 
-	private static Integer schedulingImprecisionOffset;
+	private static Integer setASchedulingImprecisionOffset;
 	private static Integer defaultSchedulingImprecisionOffset = 0;
 
 	private static ObservableList<String> lowRecoveryRates =  FXCollections.observableArrayList("0%", "5%", "10%", "15%");
@@ -58,15 +58,17 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML TextField nodePair13ToTextField;
 	@FXML TextField nodePair14FromTextField;
 	@FXML TextField nodePair14ToTextField;
+	@FXML TextField nodePair15FromTextField;
+	@FXML TextField nodePair15ToTextField;
 
 	@FXML Button updateGroupsButton;
-	@FXML Button updateNodesButton;
+	@FXML Button updateSetANodesButton;
 
-	@FXML ComboBox<String> lowRecoveryRateComboBox;
+	@FXML ComboBox<String> setALowRecoveryRateComboBox;
 
-	@FXML RadioButton noSchedulingImprecisionRadioButton;
-	@FXML RadioButton thirtySecondImprecisionRadioButton;
-	@FXML RadioButton oneMinuteImprecisionRadioButton;
+	@FXML RadioButton setANoSchedulingImprecisionRadioButton;
+	@FXML RadioButton setAThirtySecondImprecisionRadioButton;
+	@FXML RadioButton setAOneMinuteImprecisionRadioButton;
 
 	@FXML private void initialize()
 	{
@@ -95,10 +97,10 @@ public class BIASRecoveryRateAnalysisConfigController
 		}
 
 		// See if preferences are stored for node pairs
-		if ((prefs.get("rr_nodePairs", "") != null) && (prefs.get("rr_nodePairs", "") != ""))
+		if ((prefs.get("rr_setANodePairs", "") != null) && (prefs.get("rr_setANodePairs", "") != ""))
 		{
-			nodePairs = prefs.get("rr_nodePairs", "");
-			String nodePair[] = nodePairs.split(",");
+			setANodePairs = prefs.get("rr_setANodePairs", "");
+			String nodePair[] = setANodePairs.split(",");
 
 			for (int i = 0; i < nodePair.length; i++)
 			{
@@ -186,48 +188,54 @@ public class BIASRecoveryRateAnalysisConfigController
 					nodePair14FromTextField.setText(fromTo[0]);
 					nodePair14ToTextField.setText(fromTo[1]);
 				}
+				else if (i == 14)
+				{
+					String[] fromTo = nodePair[i].split(":"); 
+					nodePair15FromTextField.setText(fromTo[0]);
+					nodePair15ToTextField.setText(fromTo[1]);
+				}
 			}
 		}
 
 		// See if preference is stored for scheduling imprecision offset
-		if (prefs.getInt("rr_schedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 0)
+		if (prefs.getInt("rr_setASchedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 0)
 		{
-			schedulingImprecisionOffset = 0;
+			setASchedulingImprecisionOffset = 0;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putInt("rr_schedulingImprecisionOffset", 0);
-			noSchedulingImprecisionRadioButton.setSelected(true);
+				prefs.putInt("rr_setASchedulingImprecisionOffset", 0);
+			setANoSchedulingImprecisionRadioButton.setSelected(true);
 		}
-		else if (prefs.getInt("rr_schedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 30)
+		else if (prefs.getInt("rr_setASchedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 30)
 		{
-			schedulingImprecisionOffset = 30;
+			setASchedulingImprecisionOffset = 30;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putInt("rr_schedulingImprecisionOffset", 30);
-			thirtySecondImprecisionRadioButton.setSelected(true);
+				prefs.putInt("rr_setASchedulingImprecisionOffset", 30);
+			setAThirtySecondImprecisionRadioButton.setSelected(true);
 		}
-		else if (prefs.getInt("rr_schedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 60)
+		else if (prefs.getInt("rr_setASchedulingImprecisionOffset", defaultSchedulingImprecisionOffset) == 60)
 		{
-			schedulingImprecisionOffset = 60;
+			setASchedulingImprecisionOffset = 60;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putInt("rr_schedulingImprecisionOffset", 60);
-			oneMinuteImprecisionRadioButton.setSelected(true);
+				prefs.putInt("rr_setASchedulingImprecisionOffset", 60);
+			setAOneMinuteImprecisionRadioButton.setSelected(true);
 		}
-		
+
 		// See if preference is stored for low recovery rate
-		lowRecoveryRateComboBox.setItems(lowRecoveryRates);
-		boolean lowRecoveryRateExists = prefs.get("rr_lowRecoveryRate", null) != null;
+		setALowRecoveryRateComboBox.setItems(lowRecoveryRates);
+		boolean lowRecoveryRateExists = prefs.get("rr_setALowRecoveryRate", null) != null;
 		if (lowRecoveryRateExists)
 		{
-			lowRecoveryRate = prefs.get("rr_lowRecoveryRate", defaultLowRecoveryRate);
-			lowRecoveryRateComboBox.getSelectionModel().select(lowRecoveryRate);
+			setALowRecoveryRate = prefs.get("rr_setALowRecoveryRate", defaultLowRecoveryRate);
+			setALowRecoveryRateComboBox.getSelectionModel().select(setALowRecoveryRate);
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.put("rr_lowRecoveryRate", defaultLowRecoveryRate);
+				prefs.put("rr_setALowRecoveryRate", defaultLowRecoveryRate);
 			}
-			lowRecoveryRate = prefs.get("rr_lowRecoveryRate", defaultLowRecoveryRate);
-			lowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
+			setALowRecoveryRate = prefs.get("rr_setALowRecoveryRate", defaultLowRecoveryRate);
+			setALowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
 		}		
 	}
 
@@ -326,7 +334,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 1 of 14
+	// Node pair # 1 of 15
 	@FXML private void handleNodePairFrom1TextField()
 	{
 		String origText = nodePair1FromTextField.getText().trim();
@@ -336,7 +344,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom1TextField()
 	{
 		nodePair1FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo1TextField()
@@ -348,10 +356,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo1TextField()
 	{
 		nodePair1ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 2 of 14
+	// Node pair # 2 of 15
 	@FXML private void handleNodePairFrom2TextField()
 	{
 		String origText = nodePair2FromTextField.getText().trim();
@@ -361,7 +369,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom2TextField()
 	{
 		nodePair2FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo2TextField()
@@ -373,10 +381,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo2TextField()
 	{
 		nodePair2ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 3 of 14
+	// Node pair # 3 of 15
 	@FXML private void handleNodePairFrom3TextField()
 	{
 		String origText = nodePair3FromTextField.getText().trim();
@@ -386,7 +394,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom3TextField()
 	{
 		nodePair3FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo3TextField()
@@ -398,10 +406,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo3TextField()
 	{
 		nodePair3ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 4 of 14
+	// Node pair # 4 of 15
 	@FXML private void handleNodePairFrom4TextField()
 	{
 		String origText = nodePair4FromTextField.getText().trim();
@@ -411,7 +419,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom4TextField()
 	{
 		nodePair4FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo4TextField()
@@ -423,10 +431,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo4TextField()
 	{
 		nodePair4ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 5 of 14
+	// Node pair # 5 of 15
 	@FXML private void handleNodePairFrom5TextField()
 	{
 		String origText = nodePair5FromTextField.getText().trim();
@@ -436,7 +444,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom5TextField()
 	{
 		nodePair5FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo5TextField()
@@ -448,10 +456,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo5TextField()
 	{
 		nodePair5ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 6 of 14
+	// Node pair # 6 of 15
 	@FXML private void handleNodePairFrom6TextField()
 	{
 		String origText = nodePair6FromTextField.getText().trim();
@@ -461,7 +469,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom6TextField()
 	{
 		nodePair6FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo6TextField()
@@ -473,10 +481,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo6TextField()
 	{
 		nodePair6ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 7 of 14
+	// Node pair # 7 of 15
 	@FXML private void handleNodePairFrom7TextField()
 	{
 		String origText = nodePair7FromTextField.getText().trim();
@@ -486,7 +494,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom7TextField()
 	{
 		nodePair7FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo7TextField()
@@ -498,10 +506,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo7TextField()
 	{
 		nodePair7ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 8 of 14
+	// Node pair # 8 of 15
 	@FXML private void handleNodePairFrom8TextField()
 	{
 		String origText = nodePair8FromTextField.getText().trim();
@@ -511,7 +519,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom8TextField()
 	{
 		nodePair8FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo8TextField()
@@ -523,10 +531,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo8TextField()
 	{
 		nodePair8ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 9 of 14
+	// Node pair # 9 of 15
 	@FXML private void handleNodePairFrom9TextField()
 	{
 		String origText = nodePair9FromTextField.getText().trim();
@@ -536,7 +544,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom9TextField()
 	{
 		nodePair9FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo9TextField()
@@ -548,10 +556,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo9TextField()
 	{
 		nodePair9ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 10 of 14
+	// Node pair # 10 of 15
 	@FXML private void handleNodePairFrom10TextField()
 	{
 		String origText = nodePair10FromTextField.getText().trim();
@@ -561,7 +569,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom10TextField()
 	{
 		nodePair10FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo10TextField()
@@ -573,10 +581,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo10TextField()
 	{
 		nodePair10ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 11 of 14
+	// Node pair # 11 of 15
 	@FXML private void handleNodePairFrom11TextField()
 	{
 		String origText = nodePair11FromTextField.getText().trim();
@@ -586,7 +594,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom11TextField()
 	{
 		nodePair11FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo11TextField()
@@ -598,10 +606,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo11TextField()
 	{
 		nodePair11ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 12 of 14
+	// Node pair # 12 of 15
 	@FXML private void handleNodePairFrom12TextField()
 	{
 		String origText = nodePair12FromTextField.getText().trim();
@@ -611,7 +619,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom12TextField()
 	{
 		nodePair12FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo12TextField()
@@ -623,10 +631,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo12TextField()
 	{
 		nodePair12ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 13 of 14
+	// Node pair # 13 of 15
 	@FXML private void handleNodePairFrom13TextField()
 	{
 		String origText = nodePair13FromTextField.getText().trim();
@@ -636,7 +644,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom13TextField()
 	{
 		nodePair13FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo13TextField()
@@ -648,10 +656,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo13TextField()
 	{
 		nodePair13ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Node pair # 14 of 14
+	// Node pair # 14 of 15
 	@FXML private void handleNodePairFrom14TextField()
 	{
 		String origText = nodePair14FromTextField.getText().trim();
@@ -661,7 +669,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairFrom14TextField()
 	{
 		nodePair14FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNodePairTo14TextField()
@@ -673,35 +681,60 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML private void handleTextChangedNodePairTo14TextField()
 	{
 		nodePair14ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleLowRecoveryRateComboBox()
+	// Node pair # 15 of 15
+	@FXML private void handleNodePairFrom15TextField()
 	{
-		lowRecoveryRate = lowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_lowRecoveryRate", lowRecoveryRate);				
+		String origText = nodePair15FromTextField.getText().trim();
+		nodePair15FromTextField.setText(origText.toUpperCase());	
 	}
 
-	@FXML private void handleNoSchedulingImprecisionRadioButton()
+	@FXML private void handleTextChangedNodePairFrom15TextField()
 	{
-		schedulingImprecisionOffset = 0;
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.putInt("rr_schedulingImprecisionOffset", schedulingImprecisionOffset);
+		nodePair15FromTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
-	@FXML private void handleThirtySecondImprecisionRadioButton()
+
+	@FXML private void handleNodePairTo15TextField()
 	{
-		schedulingImprecisionOffset = 30;
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.putInt("rr_schedulingImprecisionOffset", schedulingImprecisionOffset);
+		String origText = nodePair15ToTextField.getText().trim();
+		nodePair15ToTextField.setText(origText.toUpperCase());	
 	}
-	
-	@FXML private void handleOneMinuteImprecisionRadioButton()
+
+	@FXML private void handleTextChangedNodePairTo15TextField()
 	{
-		schedulingImprecisionOffset = 60;
+		nodePair15ToTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleSetALowRecoveryRateComboBox()
+	{
+		setALowRecoveryRate = setALowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.putInt("rr_schedulingImprecisionOffset", schedulingImprecisionOffset);
+			prefs.put("rr_setALowRecoveryRate", setALowRecoveryRate);				
+	}
+
+	@FXML private void handleSetANoSchedulingImprecisionRadioButton()
+	{
+		setASchedulingImprecisionOffset = 0;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putInt("rr_setASchedulingImprecisionOffset", setASchedulingImprecisionOffset);
+	}
+
+	@FXML private void handleSetAThirtySecondImprecisionRadioButton()
+	{
+		setASchedulingImprecisionOffset = 30;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putInt("rr_setASchedulingImprecisionOffset", setASchedulingImprecisionOffset);
+	}
+
+	@FXML private void handleSetAOneMinuteImprecisionRadioButton()
+	{
+		setASchedulingImprecisionOffset = 60;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putInt("rr_setASchedulingImprecisionOffset", setASchedulingImprecisionOffset);
 	}
 
 	@FXML private void handleUpdateGroupsButton()
@@ -778,11 +811,13 @@ public class BIASRecoveryRateAnalysisConfigController
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_trainGroups", groupsToWriteToRegistry);
+
+		trainGroups = groupsToWriteToRegistry;
 	}
 
-	@FXML private void handleUpdateNodesButton()
+	@FXML private void handleUpdateSetANodesButton()
 	{
-		updateNodesButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		updateSetANodesButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 		// Eliminate pairs that are missing one node
 		if ((nodePair1FromTextField.getText().trim() != null) && (nodePair1FromTextField.getText().trim() != "") && (nodePair1ToTextField.getText().trim() != null) && (nodePair1ToTextField.getText().trim() != ""))
@@ -966,6 +1001,19 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair14FromTextField.clear();
 			nodePair14ToTextField.clear();
 		}
+		
+		if ((nodePair15FromTextField.getText().trim() != null) && (nodePair15FromTextField.getText().trim() != "") && (nodePair15ToTextField.getText().trim() != null) && (nodePair15ToTextField.getText().trim() != ""))
+		{
+			String origTextFrom = nodePair15FromTextField.getText().trim();
+			String origTextTo = nodePair15ToTextField.getText().trim();
+			nodePair15FromTextField.setText(origTextFrom.toUpperCase());
+			nodePair15ToTextField.setText(origTextTo.toUpperCase());
+		}
+		else
+		{
+			nodePair15FromTextField.clear();
+			nodePair15ToTextField.clear();
+		}
 
 		// Write to registry
 		String nodePairsToWriteToRegistry = "";
@@ -1066,19 +1114,28 @@ public class BIASRecoveryRateAnalysisConfigController
 			nodePair14FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			nodePair14ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
+		
+		if ((nodePair15FromTextField != null) && (nodePair15FromTextField.getText().trim() != "") && (nodePair15ToTextField != null) && (nodePair15ToTextField.getText().trim() != ""))
+		{
+			nodePairsToWriteToRegistry += nodePair15FromTextField.getText() + ":" + nodePair15ToTextField.getText()+"," ;	
+			nodePair15FromTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			nodePair15ToTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_nodePairs", nodePairsToWriteToRegistry);
+			prefs.put("rr_setANodePairs", nodePairsToWriteToRegistry);
+
+		setANodePairs = nodePairsToWriteToRegistry;
 	}
 
-	public static String getLowRecoveryRate()
+	public static String getSetALowRecoveryRate()
 	{
-		return lowRecoveryRate;
+		return setALowRecoveryRate;
 	}
-	
-	public static Integer getScheduleImprecisionOffsetInSeconds()
+
+	public static Integer getSetAScheduleImprecisionOffsetInSeconds()
 	{
-		return schedulingImprecisionOffset;
+		return setASchedulingImprecisionOffset;
 	}
 
 	public static String getRecoveryRateAnalysisTrainGroups()
@@ -1086,8 +1143,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		return trainGroups;
 	}
 
-	public static String getRecoveryRateAnalysisNodePairs()
+	public static String getSetARecoveryRateAnalysisNodePairs()
 	{
-		return nodePairs;
+		return setANodePairs;
 	}
 }

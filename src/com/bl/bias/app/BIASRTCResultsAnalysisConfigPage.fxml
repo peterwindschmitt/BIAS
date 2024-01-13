@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -125,64 +124,6 @@
                   <Insets left="510.0" />
                </GridPane.margin>
             </CheckBox>
-            <Label text="5.  Update RTC .OPTION file parameters to those required by BIAS:" GridPane.columnSpan="2" GridPane.rowIndex="10">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-            <Label text="Includes" underline="true" GridPane.halignment="LEFT" GridPane.rowIndex="11">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-            <Label text="Excludes" underline="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="11">
-               <GridPane.margin>
-                  <Insets left="-20.0" />
-               </GridPane.margin>
-            </Label>
-            <Label text="Date/Time Format in .SUMMARY files  to DD:HH:MM:SS" GridPane.rowIndex="12">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-            <Label text="Count of .OPTION Files" GridPane.columnIndex="1" GridPane.rowIndex="12">
-               <GridPane.margin>
-                  <Insets left="-20.0" />
-               </GridPane.margin>
-            </Label>
-            <Label text="Output Format to English Units for Speed and Distance" GridPane.rowIndex="13">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-            <Label text="Any .INI File Settings" GridPane.columnIndex="1" GridPane.rowIndex="13">
-               <GridPane.margin>
-                  <Insets left="-20.0" />
-               </GridPane.margin>
-            </Label>
-            <Label text="All Nodes (rather than just event only) to be Included in Route Report" GridPane.rowIndex="14">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-            <Label text="Seed Trains Included in Route Report" GridPane.rowIndex="15">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-            </Label>
-            <Button fx:id="updateInputFilesButton" mnemonicParsing="false" onAction="#handleUpdateInputFilesButton" text="Update .OPTION file" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="16" GridPane.valignment="CENTER">
-               <GridPane.margin>
-                  <Insets left="-20.0" />
-               </GridPane.margin>
-            </Button>
-            <Label text="Train Route Report to NOT be CSV" GridPane.rowIndex="16">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
          </children>
          <opaqueInsets>
             <Insets />

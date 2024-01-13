@@ -27,9 +27,9 @@ public class RecoveryRateAnalysis
 
 		// Add node pairs from Recovery Rate Anaysis config
 		nodePairsToAnalyze.clear();
-		for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisNodePairs().split(",").length; i++)
+		for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs().split(",").length; i++)
 		{
-			nodePairsToAnalyze.add(BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisNodePairs().split(",")[i]);
+			nodePairsToAnalyze.add(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs().split(",")[i]);
 		}
 		
 		// Add groups from Recovery Rate Analysis config
@@ -110,7 +110,7 @@ public class RecoveryRateAnalysis
 									&& (trainsReadIn.get(i).getRouteEntries().get(k).getRtcIncrement() > aNodeRtcIncrement)
 									&& (aNodeRtcIncrement != 0))
 									{
-										dwellEventOffsetCumulativeTimeInSeconds += BIASRecoveryRateAnalysisConfigController.getScheduleImprecisionOffsetInSeconds();
+										dwellEventOffsetCumulativeTimeInSeconds += BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds();
 										dwellEventCumulativeTimeInSeconds += ConvertDateTime.convertDDHHMMSSStringToSeconds(trainsReadIn.get(i).getRouteEntries().get(k).getMinimumDwellTimeAsString()); 
 										dwellEventBetweenAAndBNodesBoolean = true;
 									}
