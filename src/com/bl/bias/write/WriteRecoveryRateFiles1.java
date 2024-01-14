@@ -22,12 +22,12 @@ import com.bl.bias.app.BIASRecoveryRateAnalysisConfigController;
 import com.bl.bias.objects.TrainAssessment;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteRecoveryRateFiles1
+public class WriteRecoveryRateFiles1 // Set A
 {
 	private LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	protected String resultsMessage = "\nStarted writing output file at "+startWriteFileTime;
 
-	ArrayList<TrainAssessment> assessments = new ArrayList<TrainAssessment>();
+	ArrayList<TrainAssessment> assessmentsSetA = new ArrayList<TrainAssessment>();
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -38,7 +38,7 @@ public class WriteRecoveryRateFiles1
 	public WriteRecoveryRateFiles1(String textArea)
 	{
 		// Get train assessments
-		assessments.addAll(RecoveryRateAnalysis.getAnalyzedTrains());
+		assessmentsSetA.addAll(RecoveryRateAnalysis.getAnalyzedTrainsSetA());
 
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -52,9 +52,9 @@ public class WriteRecoveryRateFiles1
 		CellStyle style8 = workbook.createCellStyle();
 
 		// Write Trains Crossing Bridge
-		XSSFSheet recoveryRatesSheet = workbook.createSheet("Recovery Rates");
-		recoveryRatesSheet.setDisplayGridlines(false);
-		resultsMessage += "\nWriting recovery rate results for trains";
+		XSSFSheet recoveryRatesSheetA = workbook.createSheet("Recovery Rates Set A");
+		recoveryRatesSheetA.setDisplayGridlines(false);
+		resultsMessage += "\nWriting recovery rate results for trains in Set A";
 
 		// Fonts
 		// Font 0 - 14pt White text
@@ -132,20 +132,20 @@ public class WriteRecoveryRateFiles1
 
 		// Header rows
 		// Case name
-		recoveryRatesSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+		recoveryRatesSheetA.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
 
 		Row row;
 		Cell cell;
 
-		row = recoveryRatesSheet.createRow(rowCounter);
+		row = recoveryRatesSheetA.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue("Recovery Rate Assessment by Train");
+		cell.setCellValue("Recovery Rate Assessments by Train for Node Set A");
 
 		// Data headers
 		rowCounter++;
 		rowCounter++;
-		row = recoveryRatesSheet.createRow(rowCounter);
+		row = recoveryRatesSheetA.createRow(rowCounter);
 
 		cell = row.createCell(0);
 		cell.setCellStyle(style6);
@@ -189,55 +189,55 @@ public class WriteRecoveryRateFiles1
 		cell.setCellValue("Recovery Rate (%)");
 
 		// Trains
-		for (int i = 0; i < assessments.size(); i++)
+		for (int i = 0; i < assessmentsSetA.size(); i++)
 		{
-			if (assessments.get(i).getTrainHasRecoveryRatesCalculated())
+			if (assessmentsSetA.get(i).getTrainHasRecoveryRatesCalculated())
 			{
 				// Valid train found
 				validTrainFound = true;
 
-				for (int j = 0; j < assessments.get(i).getRecoveryRateAssessments().size(); j++)
+				for (int j = 0; j < assessmentsSetA.get(i).getRecoveryRateAssessments().size(); j++)
 				{
 					rowCounter++;
-					row = recoveryRatesSheet.createRow(rowCounter);
+					row = recoveryRatesSheetA.createRow(rowCounter);
 
 					// Train Symbol
 					if (j < 1)
 					{
 						cell = row.createCell(0);
 						cell.setCellStyle(style5);
-						cell.setCellValue(assessments.get(i).getTrainSymbol()+" ("+assessments.get(i).getTrainGroupAbbreviation()+")");
+						cell.setCellValue(assessmentsSetA.get(i).getTrainSymbol()+" ("+assessmentsSetA.get(i).getTrainGroupAbbreviation()+")");
 					}
 
 					// Node A
 					cell = row.createCell(1);
 					cell.setCellStyle(style1);
-					cell.setCellValue(assessments.get(i).getRecoveryRateAssessments().get(j).getANode());
+					cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getANode());
 
 					// Node B
 					cell = row.createCell(2);
 					cell.setCellStyle(style1);
-					cell.setCellValue(assessments.get(i).getRecoveryRateAssessments().get(j).getBNode());
+					cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getBNode());
 
 					// Distance
 					cell = row.createCell(3);
 					cell.setCellStyle(style1);
-					cell.setCellValue(assessments.get(i).getRecoveryRateAssessments().get(j).getDistanceCovered());
+					cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDistanceCovered());
 
 					// Scheduled Time
-					Integer adjustedScheduledTimeInSeconds = assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds();
+					Integer adjustedScheduledTimeInSeconds = assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds();
 					cell = row.createCell(4);
 					cell.setCellStyle(style1);
 					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedScheduledTimeInSeconds));
 
 					// Minimum Time
-					Integer adjustedMinimumRunTimeInSeconds = assessments.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds() - assessments.get(i).getRecoveryRateAssessments().get(j).getWaitOnScheduleCumulativeTimeInSeconds();
+					Integer adjustedMinimumRunTimeInSeconds = assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getWaitOnScheduleCumulativeTimeInSeconds();
 					cell = row.createCell(5);
 					cell.setCellStyle(style1);
 					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedMinimumRunTimeInSeconds));
 
 					// Recovery Time Available
-					Integer adjustedRecoveryTimeAvailableInSeconds = adjustedScheduledTimeInSeconds - adjustedMinimumRunTimeInSeconds - assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventOffsetCumulativeTimeInSeconds();
+					Integer adjustedRecoveryTimeAvailableInSeconds = adjustedScheduledTimeInSeconds - adjustedMinimumRunTimeInSeconds - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventOffsetCumulativeTimeInSeconds();
 					cell = row.createCell(6);
 					cell.setCellStyle(style1);
 					cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedRecoveryTimeAvailableInSeconds));
@@ -247,7 +247,7 @@ public class WriteRecoveryRateFiles1
 					recoveryRate1 = (double) adjustedRecoveryTimeAvailableInSeconds / (double) adjustedScheduledTimeInSeconds;
 					Double recoveryRate2 = Math.round(recoveryRate1 * 1000) / 10.0;
 					String recoveryRate3 = ""; 
-					if (assessments.get(i).getRecoveryRateAssessments().get(j).getDwellEventBetweenNodes())
+					if (assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventBetweenNodes())
 					{
 						recoveryRate3 = String.valueOf(recoveryRate2).concat("% *");
 					}
@@ -272,7 +272,7 @@ public class WriteRecoveryRateFiles1
 		{
 			// Train Symbol
 			rowCounter++;
-			row = recoveryRatesSheet.createRow(rowCounter);
+			row = recoveryRatesSheetA.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style5);
 			cell.setCellValue("No trains with recovery rate assessments found!");
@@ -284,7 +284,7 @@ public class WriteRecoveryRateFiles1
 
 		rowCounter++;
 		rowCounter++;
-		row = recoveryRatesSheet.createRow(rowCounter);
+		row = recoveryRatesSheetA.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
 		cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates DO NOT INCLUDE work/dwell events.");
@@ -292,14 +292,14 @@ public class WriteRecoveryRateFiles1
 		if (BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds() > 0)
 		{
 			rowCounter++;
-			row = recoveryRatesSheet.createRow(rowCounter);
+			row = recoveryRatesSheetA.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
 		}
 
 		rowCounter++;
-		row = recoveryRatesSheet.createRow(rowCounter);
+		row = recoveryRatesSheetA.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
@@ -309,19 +309,19 @@ public class WriteRecoveryRateFiles1
 		{
 			if (i == 0) 
 			{
-				recoveryRatesSheet.setColumnWidth(i, 7000);
+				recoveryRatesSheetA.setColumnWidth(i, 7000);
 			}
 			else if (i == 1)
 			{
-				recoveryRatesSheet.setColumnWidth(i, 5000);
+				recoveryRatesSheetA.setColumnWidth(i, 5000);
 			}
 			else if ((i == 2) || (i == 3) || (i == 4) || (i == 5) || (i == 6))
 			{
-				recoveryRatesSheet.setColumnWidth(i, 5100);
+				recoveryRatesSheetA.setColumnWidth(i, 5100);
 			}
 			else if (i == 7)
 			{
-				recoveryRatesSheet.setColumnWidth(i, 3000);
+				recoveryRatesSheetA.setColumnWidth(i, 3000);
 			}
 		}
 	}

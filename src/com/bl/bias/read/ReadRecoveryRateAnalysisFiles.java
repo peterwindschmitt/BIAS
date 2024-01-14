@@ -34,7 +34,7 @@ public class ReadRecoveryRateAnalysisFiles
 			String trainSymbol = null;
 			String trainGroup = null;
 			ArrayList<RouteEntry> routeEntries = null;
-			
+
 			File routeFile = new File(file.replace("OPTION","ROUTE"));
 			scanner = new Scanner(routeFile);
 
@@ -43,6 +43,7 @@ public class ReadRecoveryRateAnalysisFiles
 
 			String targetSequence0 = "Seed train:";
 			String targetSequence1 = "------------";
+			String targetSequence2 = "Run-time train:";
 
 			while (scanner.hasNextLine()) 
 			{
@@ -68,7 +69,7 @@ public class ReadRecoveryRateAnalysisFiles
 						{
 							trainGroup = matcher.group(1).trim(); 
 						}
-						
+
 						routeEntries = new ArrayList<RouteEntry>();
 
 						openingSequence0 = true;
@@ -82,7 +83,7 @@ public class ReadRecoveryRateAnalysisFiles
 					{
 						openingSequence0 = false;
 						openingSequence1 = false;
-						
+
 						TrainAssessment trainToAsess = new TrainAssessment(trainSymbol, trainGroup, routeEntries);
 						trainsReadIn.add(trainToAsess);
 					}
@@ -99,13 +100,13 @@ public class ReadRecoveryRateAnalysisFiles
 						String minimumDwellTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[0]), Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[1])).trim();
 						String waitOnSchedule = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[0]), Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[1])).trim();
 						Double cumulativeDistance = Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getDistance()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDistance()[1])).trim());
-						
+
 						// Capture rows that have a scheduled departure time, scheduled arrival time and/or minimum dwell time
 						if ((!scheduledDepartureTime.equals("")) || (!scheduledArrivalTime.equals("")) || (!minimumDwellTime.equals("0")))
 						{
 							RouteEntry routeEntry = new RouteEntry(rtcIncrement, node, scheduledDepartureTime, scheduledArrivalTime, simulatedDepartureTime, 
 									simulatedArrivalTime, cumulativeElapsedTime, minimumDwellTime, waitOnSchedule, cumulativeDistance);
-									
+
 							routeEntries.add(routeEntry);
 						}
 					}
@@ -131,7 +132,7 @@ public class ReadRecoveryRateAnalysisFiles
 	{
 		return trainsReadIn;
 	}
-	
+
 	public String getResultsMessage()
 	{
 		return resultsMessage;

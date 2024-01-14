@@ -9,8 +9,6 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -109,7 +107,7 @@
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <TextField fx:id="nodePair1FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom1TextField" onKeyPressed="#handleTextChangedNodePairFrom1TextField" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair1FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom1TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom1TextFieldA" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="25.0" />
                            </GridPane.margin>
@@ -119,12 +117,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair1ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo1TextField" onKeyPressed="#handleTextChangedNodePairTo1TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair1ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo1TextFieldA" onKeyPressed="#handleTextChangedNodePairTo1TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair6FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom6TextField" onKeyPressed="#handleTextChangedNodePairFrom6TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair6FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom6TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom6TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -134,12 +132,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair6ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo6TextField" onKeyPressed="#handleTextChangedNodePairTo6TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair6ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo6TextFieldA" onKeyPressed="#handleTextChangedNodePairTo6TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair11FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom11TextField" onKeyPressed="#handleTextChangedNodePairFrom11TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair11FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom11TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom11TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -149,12 +147,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair11ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo11TextField" onKeyPressed="#handleTextChangedNodePairTo11TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair11ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo11TextFieldA" onKeyPressed="#handleTextChangedNodePairTo11TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair2FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom2TextField" onKeyPressed="#handleTextChangedNodePairFrom2TextField" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair2FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom2TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom2TextFieldA" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -164,8 +162,8 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair2ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo2TextField" onKeyPressed="#handleTextChangedNodePairTo2TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                        <TextField fx:id="nodePair7FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom7TextField" onKeyPressed="#handleTextChangedNodePairFrom7TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair2ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo2TextFieldA" onKeyPressed="#handleTextChangedNodePairTo2TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair7FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom7TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom7TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -175,12 +173,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair7ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo7TextField" onKeyPressed="#handleTextChangedNodePairTo7TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair7ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo7TextFieldA" onKeyPressed="#handleTextChangedNodePairTo7TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair12FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom12TextField" onKeyPressed="#handleTextChangedNodePairFrom12TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair12FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom12TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom12TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -190,8 +188,8 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair12ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo12TextField" onKeyPressed="#handleTextChangedNodePairTo12TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                        <TextField fx:id="nodePair3FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom3TextField" onKeyPressed="#handleTextChangedNodePairFrom3TextField" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair12ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo12TextFieldA" onKeyPressed="#handleTextChangedNodePairTo12TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair3FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom3TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom3TextFieldA" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -201,8 +199,8 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair3ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo3TextField" onKeyPressed="#handleTextChangedNodePairTo3TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                        <TextField fx:id="nodePair8FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom8TextField" onKeyPressed="#handleTextChangedNodePairFrom8TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair3ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo3TextFieldA" onKeyPressed="#handleTextChangedNodePairTo3TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair8FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom8TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom8TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -212,12 +210,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair8ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo8TextField" onKeyPressed="#handleTextChangedNodePairTo8TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair8ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo8TextFieldA" onKeyPressed="#handleTextChangedNodePairTo8TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair13FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom13TextField" onKeyPressed="#handleTextChangedNodePairFrom13TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair13FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom13TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom13TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -227,12 +225,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair13ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo13TextField" onKeyPressed="#handleTextChangedNodePairTo13TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair13ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo13TextFieldA" onKeyPressed="#handleTextChangedNodePairTo13TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair4FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom4TextField" onKeyPressed="#handleTextChangedNodePairFrom4TextField" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair4FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom4TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom4TextFieldA" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -242,8 +240,8 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair4ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo4TextField" onKeyPressed="#handleTextChangedNodePairTo4TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                        <TextField fx:id="nodePair9FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom9TextField" onKeyPressed="#handleTextChangedNodePairFrom9TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair4ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo4TextFieldA" onKeyPressed="#handleTextChangedNodePairTo4TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair9FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom9TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom9TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -253,23 +251,23 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair9ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo9TextField" onKeyPressed="#handleTextChangedNodePairTo9TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair9ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo9TextFieldA" onKeyPressed="#handleTextChangedNodePairTo9TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair14FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom14TextField" onKeyPressed="#handleTextChangedNodePairFrom14TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair14FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom14TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom14TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
                         <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                        <TextField fx:id="nodePair14ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo14TextField" onKeyPressed="#handleTextChangedNodePairTo14TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair14ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo14TextFieldA" onKeyPressed="#handleTextChangedNodePairTo14TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair5FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom5TextField" onKeyPressed="#handleTextChangedNodePairFrom5TextField" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair5FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom5TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom5TextFieldA" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -279,12 +277,12 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair5ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo5TextField" onKeyPressed="#handleTextChangedNodePairTo5TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair5ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo5TextFieldA" onKeyPressed="#handleTextChangedNodePairTo5TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair10FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom10TextField" onKeyPressed="#handleTextChangedNodePairFrom10TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair10FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom10TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom10TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
@@ -294,14 +292,14 @@
                               <Insets />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="nodePair10ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo10TextField" onKeyPressed="#handleTextChangedNodePairTo10TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <TextField fx:id="nodePair10ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo10TextFieldA" onKeyPressed="#handleTextChangedNodePairTo10TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="nodePair15FromTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom15TextField" onKeyPressed="#handleTextChangedNodePairFrom15TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair15FromTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom15TextFieldA" onKeyPressed="#handleTextChangedNodePairFrom15TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
                         <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                        <TextField fx:id="nodePair15ToTextField" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo15TextField" onKeyPressed="#handleTextChangedNodePairTo15TextField" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair15ToTextFieldA" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo15TextFieldA" onKeyPressed="#handleTextChangedNodePairTo15TextFieldA" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
                         <Button fx:id="updateSetANodesButton" maxWidth="130.0" minWidth="130.0" mnemonicParsing="false" onAction="#handleUpdateSetANodesButton" prefWidth="130.0" text="Update Set A Nodes" GridPane.columnIndex="8" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                            <GridPane.margin>
                               <Insets right="20.0" />
@@ -351,21 +349,267 @@
                <content>
                   <GridPane>
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                     </rowConstraints>
-                     <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" preserveRatio="true" smooth="false" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                           <image>
-                              <Image url="@pic_trafficCone.png" />
-                           </image>
-                        </ImageView>
-                     </children>
+                    <children>
+                        <Label text="2.  Set B:  Only consider the following node pairs:  (Nodes which do not exist in a given project will be ignored)" GridPane.columnSpan="8" GridPane.valignment="BOTTOM">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                         <TextField fx:id="nodePair1FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom1TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom1TextFieldB" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets left="25.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair1ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo1TextFieldB" onKeyPressed="#handleTextChangedNodePairTo1TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair6FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom6TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom6TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair6ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo6TextFieldB" onKeyPressed="#handleTextChangedNodePairTo6TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair11FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom11TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom11TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair11ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo11TextFieldB" onKeyPressed="#handleTextChangedNodePairTo11TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair2FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom2TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom2TextFieldB" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair2ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo2TextFieldB" onKeyPressed="#handleTextChangedNodePairTo2TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair7FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom7TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom7TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair7ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo7TextFieldB" onKeyPressed="#handleTextChangedNodePairTo7TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair12FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom12TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom12TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair12ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo12TextFieldB" onKeyPressed="#handleTextChangedNodePairTo12TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair3FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom3TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom3TextFieldB" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair3ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo3TextFieldB" onKeyPressed="#handleTextChangedNodePairTo3TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair8FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom8TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom8TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair8ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo8TextFieldB" onKeyPressed="#handleTextChangedNodePairTo8TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair13FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom13TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom13TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair13ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo13TextFieldB" onKeyPressed="#handleTextChangedNodePairTo13TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair4FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom4TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom4TextFieldB" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label prefHeight="2.0" prefWidth="12.0" text="to" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair4ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo4TextFieldB" onKeyPressed="#handleTextChangedNodePairTo4TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair9FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom9TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom9TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair9ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo9TextFieldB" onKeyPressed="#handleTextChangedNodePairTo9TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair14FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom14TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom14TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair14ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo14TextFieldB" onKeyPressed="#handleTextChangedNodePairTo14TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair5FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom5TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom5TextFieldB" prefWidth="100.0" promptText="---" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair5ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo5TextFieldB" onKeyPressed="#handleTextChangedNodePairTo5TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair10FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom10TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom10TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="to" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="nodePair10ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo10TextFieldB" onKeyPressed="#handleTextChangedNodePairTo10TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="nodePair15FromTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairFrom15TextFieldB" onKeyPressed="#handleTextChangedNodePairFrom15TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                        <Label text="to" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                        <TextField fx:id="nodePair15ToTextFieldB" alignment="CENTER" maxWidth="100.0" minWidth="100.0" onAction="#handleNodePairTo15TextFieldB" onKeyPressed="#handleTextChangedNodePairTo15TextFieldB" prefWidth="100.0" promptText="---" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                        <Button fx:id="updateSetBNodesButton" maxWidth="130.0" minWidth="130.0" mnemonicParsing="false" onAction="#handleUpdateSetBNodesButton" prefWidth="130.0" text="Update Set B Nodes" GridPane.columnIndex="8" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+                           <GridPane.margin>
+                              <Insets right="20.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <ComboBox fx:id="setBLowRecoveryRateComboBox" maxWidth="70.0" minWidth="70.0" onAction="#handleSetBLowRecoveryRateComboBox" prefWidth="70.0" GridPane.columnIndex="3" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+                           <GridPane.margin>
+                              <Insets left="30.0" />
+                           </GridPane.margin>
+                        </ComboBox>
+                        <Label text="3.  Set B:  Threshold % to identify low recovery rate:" GridPane.columnSpan="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                           <GridPane.margin>
+                              <Insets bottom="4.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="4.  Set B:  Amount added to work events/station stops  due to scheduling imprecision:" GridPane.columnSpan="6" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                        <RadioButton fx:id="setBNoSchedulingImprecisionRadioButton" mnemonicParsing="false" onAction="#handleSetBNoSchedulingImprecisionRadioButton" text="None" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="schedulingImprecisionOffsetToggleGroup" />
+                           </toggleGroup>
+                           <GridPane.margin>
+                              <Insets left="70.0" />
+                           </GridPane.margin>
+                        </RadioButton>
+                        <RadioButton fx:id="setBOneMinuteImprecisionRadioButton" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#handleSetBOneMinuteImprecisionRadioButton" text="1 minute" toggleGroup="$schedulingImprecisionOffsetToggleGroup" GridPane.columnIndex="7" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </RadioButton>
+                        <RadioButton fx:id="setBThirtySecondImprecisionRadioButton" mnemonicParsing="false" onAction="#handleSetBThirtySecondImprecisionRadioButton" text="30 seconds" toggleGroup="$schedulingImprecisionOffsetToggleGroup" GridPane.columnIndex="6" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets left="20.0" />
+                           </GridPane.margin>
+                        </RadioButton>
+                    </children>
                   </GridPane>
                </content></Tab>
         </tabs>

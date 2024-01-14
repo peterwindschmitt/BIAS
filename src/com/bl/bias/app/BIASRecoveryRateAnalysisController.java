@@ -9,7 +9,7 @@ import com.bl.bias.analyze.RecoveryRateAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadRecoveryRateAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteRecoveryRateFiles2;
+import com.bl.bias.write.WriteRecoveryRateFiles3;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -281,7 +281,8 @@ public class BIASRecoveryRateAnalysisController
 		{
 			// Ensure that there are valid groups and node pairs
 			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null)
-				&& (BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null))
+				&& (BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)
+				&& (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null))
 			{
 				// Read all objects that are required for the recovery rate analysis
 				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
@@ -300,11 +301,11 @@ public class BIASRecoveryRateAnalysisController
 					setProgressIndicator(0.80);
 
 					// Write results to spreadsheet
-					WriteRecoveryRateFiles2 writeFiles = new WriteRecoveryRateFiles2(textArea.getText().toString());
-					message = writeFiles.getResultsWriteMessage2();
+					WriteRecoveryRateFiles3 writeFiles = new WriteRecoveryRateFiles3(textArea.getText().toString());
+					message = writeFiles.getResultsWriteMessage3();
 					displayMessage(message);
 
-					if (!WriteRecoveryRateFiles2.getErrorFound())
+					if (!WriteRecoveryRateFiles3.getErrorFound())
 					{
 						setProgressIndicator(1.0);
 						displayMessage("\n*** PROCESSING COMPLETE ***");
