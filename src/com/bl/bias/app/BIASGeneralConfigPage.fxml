@@ -59,7 +59,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <Label text="4.  Update RTC .OPTION file parameters to those required by various BIAS modules:" GridPane.rowIndex="7">
+            <Label text="4. Update RTC .OPTION file parameters to those required by various BIAS modules:" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
