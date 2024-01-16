@@ -1,6 +1,9 @@
 package com.bl.bias.read;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -19,24 +22,41 @@ public class ReadRecoveryRateAnalysisFiles
 
 	private static String resultsMessage;
 
-	public ReadRecoveryRateAnalysisFiles(String file)
+	public ReadRecoveryRateAnalysisFiles(String file) throws IOException
 	{
 		trainsReadIn.clear();
 		nodePairsToAnalyze.clear();
-
 		resultsMessage = "\nStarted parsing Recovery Rate Analysis files at "+ConvertDateTime.getTimeStamp()+"\n";
 
-		Scanner scanner = null;
+		// Read in .ROUTE file with BufferedReader then pass to Scanner
+		File routeFile = new File(file.replace("OPTION","ROUTE"));
+		BufferedReader bufferedReaderRouteFile = new BufferedReader(new FileReader(routeFile));
+		String line = null;
+		StringBuilder contentForScanner = new StringBuilder();
 
+		// Get just seed trains
+		while ((line = bufferedReaderRouteFile.readLine()) != null) 
+		{
+			if (line.contains("Run-time"))
+			{
+				bufferedReaderRouteFile.close();
+				break;
+			}
+			else
+			{
+				contentForScanner.append(line.subSequence(0, Math.min(line.length(), 430)));  // No pertinent information to the right of column 430
+				contentForScanner.append(System.lineSeparator());
+			}
+		}
+		
 		// Parse entries in .ROUTE file	
+		Scanner scanner = null;
 		try 
 		{
 			String trainSymbol = null;
 			String trainGroup = null;
 			ArrayList<RouteEntry> routeEntries = null;
-			
-			File routeFile = new File(file.replace("OPTION","ROUTE"));
-			scanner = new Scanner(routeFile);
+			scanner = new Scanner(contentForScanner.toString());
 
 			boolean openingSequence0 = false;
 			boolean openingSequence1 = false;
@@ -68,7 +88,7 @@ public class ReadRecoveryRateAnalysisFiles
 						{
 							trainGroup = matcher.group(1).trim(); 
 						}
-						
+
 						routeEntries = new ArrayList<RouteEntry>();
 
 						openingSequence0 = true;
@@ -82,30 +102,29 @@ public class ReadRecoveryRateAnalysisFiles
 					{
 						openingSequence0 = false;
 						openingSequence1 = false;
-						
+
 						TrainAssessment trainToAsess = new TrainAssessment(trainSymbol, trainGroup, routeEntries);
 						trainsReadIn.add(trainToAsess);
 					}
 					else if ((openingSequence0) && (openingSequence1))
 					{
-						// Get relevant info in this row
-						Integer rtcIncrement = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[1])).trim());
-						String node = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.r_getNode()[1])).trim();
-						String simulatedArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])).trim();
-						String simulatedDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])).trim();
-						String cumulativeElapsedTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])).trim();
+						// Only capture lines that contain scheduled arrival/departure or dwell times
 						String scheduledDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[1])).trim();
 						String scheduledArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])).trim();
 						String minimumDwellTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[0]), Integer.valueOf(BIASParseConfigPageController.r_getMinimumDwell()[1])).trim();
-						String waitOnSchedule = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[0]), Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[1])).trim();
-						Double cumulativeDistance = Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getDistance()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDistance()[1])).trim());
-						
-						// Capture rows that have a scheduled departure time, scheduled arrival time and/or minimum dwell time
+
 						if ((!scheduledDepartureTime.equals("")) || (!scheduledArrivalTime.equals("")) || (!minimumDwellTime.equals("0")))
 						{
+							// Get remaining relevant info in this row
+							Integer rtcIncrement = Integer.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[1])).trim());
+							String node = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.r_getNode()[1])).trim();
+							String simulatedArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])).trim();
+							String simulatedDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])).trim();
+							String cumulativeElapsedTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])).trim();
+							String waitOnSchedule = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[0]), Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[1])).trim();
+							Double cumulativeDistance = Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getDistance()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDistance()[1])).trim());
 							RouteEntry routeEntry = new RouteEntry(rtcIncrement, node, scheduledDepartureTime, scheduledArrivalTime, simulatedDepartureTime, 
 									simulatedArrivalTime, cumulativeElapsedTime, minimumDwellTime, waitOnSchedule, cumulativeDistance);
-									
 							routeEntries.add(routeEntry);
 						}
 					}
@@ -131,7 +150,7 @@ public class ReadRecoveryRateAnalysisFiles
 	{
 		return trainsReadIn;
 	}
-	
+
 	public String getResultsMessage()
 	{
 		return resultsMessage;

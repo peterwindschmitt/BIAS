@@ -1,6 +1,8 @@
 package com.bl.bias.read;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -203,8 +205,31 @@ public class ReadMaintenanceWindowAnalysisFiles
 			// Parse entries in .ROUTE file	
 			try 
 			{
+				// Read in .ROUTE file with BufferedReader then pass to Scanner
 				File routeFile = new File(file.replace("OPTION","ROUTE"));
-				scanner = new Scanner(routeFile);
+				BufferedReader bufferedReaderRouteFile = new BufferedReader(new FileReader(routeFile));
+				String lineFromRouteFile = null;
+				StringBuilder contentForScanner = new StringBuilder();
+				Boolean firstRunTimeTrainFound = false;
+
+				// Get just run-time trains
+				while ((lineFromRouteFile = bufferedReaderRouteFile.readLine()) != null) 
+				{
+					if (lineFromRouteFile.contains("Run-time"))
+					{
+						firstRunTimeTrainFound = true;
+						contentForScanner.append(lineFromRouteFile);
+						contentForScanner.append(System.lineSeparator());
+					}
+					else if (firstRunTimeTrainFound)
+					{
+						contentForScanner.append(lineFromRouteFile);
+						contentForScanner.append(System.lineSeparator());
+					}
+				}
+				bufferedReaderRouteFile.close();
+				
+				scanner = new Scanner(contentForScanner.toString());
 
 				boolean openingSequence0 = false;
 				boolean openingSequence1 = false;
@@ -236,37 +261,38 @@ public class ReadMaintenanceWindowAnalysisFiles
 						else if ((openingSequence0) && (openingSequence1))
 						{
 							routeTraversalsIteratedThrough++;
-							// Get train
-							String trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[1])).trim();
-
-							// Get RTC route index
-							String routeIncrement = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[1])).trim();
-
+							
 							// Get node
 							String node = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.r_getNode()[1])).trim();
-
-							// Get head-end speed
-							String headEndSpeed = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[1])).trim();
-
-							// Get head-end arrival time
-							String headEndArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])).trim();
-
-							// Get tail-end departure time
-							String tailEndDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[1])).trim();
-
-							// Get cumulative elapsed time
-							String cumulativeElapsedTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])).trim();
-
-							// Get direction
-							String direction = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getDirection()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDirection()[1])).trim();
-
+							
 							for (int j = 0; j < nodesFromLineFile.size(); j++)
 							{
 								if (node.equals(nodesFromLineFile.get(j)))
 								{
+									// Get train
+									String trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTrainSymbol()[1])).trim();
+
+									// Get RTC route index
+									String routeIncrement = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[0]), Integer.valueOf(BIASParseConfigPageController.r_getRtcIncrement()[1])).trim();
+									
+									// Get head-end speed
+									String headEndSpeed = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndSpeed()[1])).trim();
+
+									// Get head-end arrival time
+									String headEndArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])).trim();
+
+									// Get tail-end departure time
+									String tailEndDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getTailEndDepartureTime()[1])).trim();
+
+									// Get cumulative elapsed time
+									String cumulativeElapsedTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])).trim();
+
+									// Get direction
+									String direction = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getDirection()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDirection()[1])).trim();
+
 									traversalsFromRouteFile.add(new MaintenanceWindowAnalysisRouteTraversal(trainSymbol, routeIncrement, node, headEndSpeed, headEndArrivalTime, tailEndDepartureTime, cumulativeElapsedTime, direction));
 								}
-							}	
+							}								
 						}
 					}
 				}

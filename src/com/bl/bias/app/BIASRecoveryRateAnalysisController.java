@@ -1,6 +1,7 @@
 package com.bl.bias.app;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
@@ -260,7 +261,7 @@ public class BIASRecoveryRateAnalysisController
 		backgroundThread.start();
 	}
 
-	private void runTask() throws InterruptedException
+	private void runTask() throws InterruptedException, IOException
 	{
 		// and ENGLISH input units
 		File optionFile = new File(fullyQualifiedPath);

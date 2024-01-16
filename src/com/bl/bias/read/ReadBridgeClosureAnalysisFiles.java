@@ -1,6 +1,8 @@
 package com.bl.bias.read;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -281,8 +283,31 @@ public class ReadBridgeClosureAnalysisFiles
 		// Parse entries in .ROUTE file	
 		try 
 		{
+			// Read in .ROUTE file with BufferedReader then pass to Scanner
 			File routeFile = new File(file.replace("OPTION","ROUTE"));
-			scanner = new Scanner(routeFile);
+			BufferedReader bufferedReaderRouteFile = new BufferedReader(new FileReader(routeFile));
+			String lineFromRouteFile = null;
+			StringBuilder contentForScanner = new StringBuilder();
+			Boolean firstRunTimeTrainFound = false;
+
+			// Get just run-time trains
+			while ((lineFromRouteFile = bufferedReaderRouteFile.readLine()) != null) 
+			{
+				if (lineFromRouteFile.contains("Run-time"))
+				{
+					firstRunTimeTrainFound = true;
+					contentForScanner.append(lineFromRouteFile);
+					contentForScanner.append(System.lineSeparator());
+				}
+				else if (firstRunTimeTrainFound)
+				{
+					contentForScanner.append(lineFromRouteFile);
+					contentForScanner.append(System.lineSeparator());
+				}
+			}
+			bufferedReaderRouteFile.close();
+			
+			scanner = new Scanner(contentForScanner.toString());
 
 			boolean openingSequence0 = false;
 			boolean openingSequence1 = false;
