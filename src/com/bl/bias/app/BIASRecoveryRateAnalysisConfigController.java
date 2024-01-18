@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -17,8 +18,15 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static String trainGroups;
 	private static String setANodePairs;
 	private static String setALowRecoveryRate;
+	private static String setALabel;
 	private static String setBNodePairs;
 	private static String setBLowRecoveryRate;
+	private static String setBLabel;
+
+	private static Boolean analyzeSetA;
+	private static Boolean analyzeSetB;
+	private static Boolean defaultAnalyzeSetA = true;
+	private static Boolean defaultAnalyzeSetB = true;
 
 	private static Integer setASchedulingImprecisionOffset;
 	private static Integer setBSchedulingImprecisionOffset;
@@ -95,9 +103,14 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML TextField nodePair15FromTextFieldB;
 	@FXML TextField nodePair15ToTextFieldB;
 
+	@FXML TextField setALabelTextField;
+	@FXML TextField setBLabelTextField;
+
 	@FXML Button updateGroupsButton;
 	@FXML Button updateSetANodesButton;
 	@FXML Button updateSetBNodesButton;
+	@FXML Button updateSetALabelButton;
+	@FXML Button updateSetBLabelButton;
 
 	@FXML ComboBox<String> setALowRecoveryRateComboBox;
 	@FXML ComboBox<String> setBLowRecoveryRateComboBox;
@@ -109,6 +122,9 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML RadioButton setBNoSchedulingImprecisionRadioButton;
 	@FXML RadioButton setBThirtySecondImprecisionRadioButton;
 	@FXML RadioButton setBOneMinuteImprecisionRadioButton;
+
+	@FXML CheckBox analyzeSetACheckBox;
+	@FXML CheckBox analyzeSetBCheckBox;
 
 	@FXML private void initialize()
 	{
@@ -419,6 +435,66 @@ public class BIASRecoveryRateAnalysisConfigController
 			setBLowRecoveryRate = prefs.get("rr_setBLowRecoveryRate", defaultLowRecoveryRate);
 			setBLowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
 		}	
+
+		// See if preference is stored for Set A label
+		boolean setALabelExists = prefs.get("rr_setALabel", null) != null;
+		if (setALabelExists)
+		{
+			setALabel = prefs.get("rr_setALabel", "");
+			setALabelTextField.setText(setALabel);
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("rr_setALabel", "");
+			}
+			setALabel = prefs.get("rr_setALabel", "");
+		}
+
+		// See if preference is stored for Set B label
+		boolean setBLabelExists = prefs.get("rr_setBLabel", null) != null;
+		if (setBLabelExists)
+		{
+			setBLabel = prefs.get("rr_setBLabel", "");
+			setBLabelTextField.setText(setBLabel);
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("rr_setBLabel", "");
+			}
+			setBLabel = prefs.get("rr_setBLabel", "");
+		}
+
+		// See if preference is stored for analyzing Set A
+		if (prefs.getBoolean("rr_analyzeSetA", defaultAnalyzeSetA))
+		{
+			analyzeSetA = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetA", true);
+			analyzeSetACheckBox.setSelected(true);
+		}
+		else
+		{
+			analyzeSetA = false;
+			analyzeSetACheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for analyzing Set B
+		if (prefs.getBoolean("rr_analyzeSetB", defaultAnalyzeSetB))
+		{
+			analyzeSetB = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetB", true);
+			analyzeSetBCheckBox.setSelected(true);
+		}
+		else
+		{
+			analyzeSetB = false;
+			analyzeSetBCheckBox.setSelected(false);
+		}
 	}
 
 	@FXML private void handleGroup1TextField()
@@ -1272,7 +1348,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_setALowRecoveryRate", setALowRecoveryRate);				
 	}
-	
+
 	@FXML private void handleSetBLowRecoveryRateComboBox()
 	{
 		setBLowRecoveryRate = setBLowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
@@ -1300,7 +1376,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.putInt("rr_setASchedulingImprecisionOffset", setASchedulingImprecisionOffset);
 	}
-	
+
 	@FXML private void handleSetBNoSchedulingImprecisionRadioButton()
 	{
 		setBSchedulingImprecisionOffset = 0;
@@ -2026,11 +2102,61 @@ public class BIASRecoveryRateAnalysisConfigController
 		setBNodePairs = nodePairsToWriteToRegistryB;
 	}
 
+	@FXML private void handleUpdateSetALabelButton()
+	{
+		setALabel = setALabelTextField.getText(0, Math.min(setALabelTextField.getText().length(), 10)).trim();
+		setALabelTextField.setText(setALabel);
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_setALabel", setALabel);	
+	}
+
+	@FXML private void handleUpdateSetBLabelButton()
+	{
+		setBLabel = setBLabelTextField.getText(0, Math.min(setBLabelTextField.getText().length(), 10)).trim();
+		setBLabelTextField.setText(setBLabel);
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_setBLabel", setBLabel);	
+	}
+
+	@FXML private void handleAnalyzeSetACheckBox()
+	{
+		if (analyzeSetA)
+		{
+			analyzeSetA = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetA", false);
+		}
+		else
+		{
+			analyzeSetA = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetA", true);
+		}
+	}
+
+	@FXML private void handleAnalyzeSetBCheckBox()
+	{
+		if (analyzeSetB)
+		{
+			analyzeSetB = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetB", false);
+		}
+		else
+		{
+			analyzeSetB = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetB", true);
+		}
+	}
+
 	public static String getSetALowRecoveryRate()
 	{
 		return setALowRecoveryRate;
 	}
-	
+
 	public static String getSetBLowRecoveryRate()
 	{
 		return setBLowRecoveryRate;
@@ -2040,7 +2166,7 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		return setASchedulingImprecisionOffset;
 	}
-	
+
 	public static Integer getSetBScheduleImprecisionOffsetInSeconds()
 	{
 		return setBSchedulingImprecisionOffset;
@@ -2055,9 +2181,29 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		return setANodePairs;
 	}
-	
+
 	public static String getSetBRecoveryRateAnalysisNodePairs()
 	{
 		return setBNodePairs;
+	}
+
+	public static String getSetALabel()
+	{
+		return setALabel;
+	}
+
+	public static String getSetBLabel()
+	{
+		return setBLabel;
+	}
+	
+	public static Boolean getAnalyzeSetA()
+	{
+		return analyzeSetA;
+	}
+
+	public static Boolean getAnalyzeSetB()
+	{
+		return analyzeSetB;
 	}
 }

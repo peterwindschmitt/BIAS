@@ -293,7 +293,7 @@ public class ReadBridgeClosureAnalysisFiles
 			// Get just run-time trains
 			while ((lineFromRouteFile = bufferedReaderRouteFile.readLine()) != null) 
 			{
-				if (lineFromRouteFile.contains("Run-time"))
+				if (lineFromRouteFile.contains("Run-time train:"))
 				{
 					firstRunTimeTrainFound = true;
 					contentForScanner.append(lineFromRouteFile);

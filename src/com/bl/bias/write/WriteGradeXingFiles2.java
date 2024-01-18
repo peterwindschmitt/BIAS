@@ -36,6 +36,7 @@ public class WriteGradeXingFiles2 extends WriteGradeXingFiles1
 			// Set styles
 			CellStyle style1 = workbook.createCellStyle();
 			CellStyle style2 = workbook.createCellStyle();
+			CellStyle style3 = workbook.createCellStyle();
 
 			// Fonts
 			// Font 1 - 11pt text
@@ -58,6 +59,11 @@ public class WriteGradeXingFiles2 extends WriteGradeXingFiles1
 			style2.setAlignment(HorizontalAlignment.LEFT);  
 			style2.setWrapText(false);
 			style2.setFont(font2);
+
+			// Style 3 - Left, non-wrapped, 11pt, black text
+			style1.setAlignment(HorizontalAlignment.LEFT);  
+			style1.setWrapText(false);
+			style1.setFont(font1);
 
 			Row row;
 			Cell cell;
@@ -105,7 +111,7 @@ public class WriteGradeXingFiles2 extends WriteGradeXingFiles1
 			{
 				row = inconsistentNodeNamesSheet.createRow(rowCounter);
 				cell = row.createCell(0);
-				cell.setCellStyle(style1);
+				cell.setCellStyle(style3);
 				cell.setCellValue("No inconsistent node pairs found!");
 			}
 

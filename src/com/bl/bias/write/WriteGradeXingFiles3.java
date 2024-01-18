@@ -33,6 +33,7 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 			// Set styles
 			CellStyle style1 = workbook.createCellStyle();
 			CellStyle style2 = workbook.createCellStyle();
+			CellStyle style3 = workbook.createCellStyle();
 
 			// Fonts
 			// Font 1 - 11pt text
@@ -55,6 +56,11 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 			style2.setAlignment(HorizontalAlignment.LEFT);  
 			style2.setWrapText(false);
 			style2.setFont(font2);
+
+			// Style 3 - Left, non-wrapped, 11pt, black text
+			style1.setAlignment(HorizontalAlignment.LEFT);  
+			style1.setWrapText(false);
+			style1.setFont(font1);
 
 			Row row;
 			Cell cell;
@@ -129,7 +135,7 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 							cell.setCellValue(gradeXingRawLinks.get(j).getLocalSpeed());
 
 							rowCounter++;
-							
+
 							break;
 						}
 					}
@@ -140,7 +146,7 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 			{
 				row = inconsistentMaxSpeedSheet.createRow(rowCounter);
 				cell = row.createCell(0);
-				cell.setCellStyle(style1);
+				cell.setCellStyle(style3);
 				cell.setCellValue("No inconsistent max design speeds found by link direction!");
 			}
 
@@ -159,7 +165,7 @@ public class WriteGradeXingFiles3 extends WriteGradeXingFiles2
 					inconsistentMaxSpeedSheet.setColumnWidth(i, 6000);
 				}
 				else
-					inconsistentMaxSpeedSheet.setColumnWidth(i, 3000);
+					inconsistentMaxSpeedSheet.setColumnWidth(i, 4000);
 			}
 		}
 	}

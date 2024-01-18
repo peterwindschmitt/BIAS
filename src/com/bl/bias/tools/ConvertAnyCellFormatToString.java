@@ -9,8 +9,7 @@ public class ConvertAnyCellFormatToString
 {	
 	public static String getCellValueAsString(Cell cell) 
 	{
-        System.out.println("Trying to convert in ConvertAnyCellFormatToStrint line 12");
-		String strCellValue = null;
+        String strCellValue = null;
         if (cell != null) 
         {
             switch (cell.getCellType()) 

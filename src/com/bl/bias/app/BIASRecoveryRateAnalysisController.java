@@ -282,8 +282,10 @@ public class BIASRecoveryRateAnalysisController
 		{
 			// Ensure that there are valid groups and node pairs
 			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null)
-				&& (BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)
-				&& (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null))
+				&& ((BIASRecoveryRateAnalysisConfigController.getAnalyzeSetA() == true) 
+					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true))
+				&& ((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)
+					|| (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)))
 			{
 				// Read all objects that are required for the recovery rate analysis
 				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
@@ -324,7 +326,7 @@ public class BIASRecoveryRateAnalysisController
 			}
 			else
 			{
-				displayMessage("\nMust have at least one group and node pair to run analysis");
+				displayMessage("\nMust have select analyzing at least one set, at least one defined group\n and at least one defined node pair to run analysis");
 				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 			}
 		}

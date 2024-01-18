@@ -36,16 +36,22 @@ public class RecoveryRateAnalysis
 
 		// Add node pairs from Set A Recovery Rate Analysis config
 		nodePairsToAnalyzeSetA.clear();
-		for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs().split(",").length; i++)
+		if (BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)
 		{
-			nodePairsToAnalyzeSetA.add(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs().split(",")[i]);
+			for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs().split(",").length; i++)
+			{
+				nodePairsToAnalyzeSetA.add(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs().split(",")[i]);
+			}
 		}
 
 		// Add node pairs from Set B Recovery Rate Analysis config
 		nodePairsToAnalyzeSetB.clear();
-		for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs().split(",").length; i++)
+		if (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)
 		{
-			nodePairsToAnalyzeSetB.add(BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs().split(",")[i]);
+			for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs().split(",").length; i++)
+			{
+				nodePairsToAnalyzeSetB.add(BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs().split(",")[i]);
+			}
 		}
 
 		// Assign all trains from Read class to setA or setB or both or neither
