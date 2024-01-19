@@ -323,6 +323,7 @@ public class BIASGeneralConfigController
 		if (result.get() == ButtonType.OK)
 		{
 			prefs.removeNode();
+			System.exit(0);
 		}	
 	}
 

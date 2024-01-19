@@ -556,7 +556,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		if ((prefs.get("rr_setDNodePairs", "") != null) && (prefs.get("rr_setDNodePairs", "") != ""))
 		{
 			setDNodePairs = prefs.get("rr_setDNodePairs", "");
-			String nodePairD[] = setCNodePairs.split(",");
+			String nodePairD[] = setDNodePairs.split(",");
 
 			for (int i = 0; i < nodePairD.length; i++)
 			{
