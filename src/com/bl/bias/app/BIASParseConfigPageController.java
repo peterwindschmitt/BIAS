@@ -339,6 +339,8 @@ public class BIASParseConfigPageController
 	{
 		curPage = 1;
 		previousPageButton.setDisable(true);
+		
+		restoreDefaultsButton.setDisable(true);
 
 		// Set up prefs
 		prefs = Preferences.userRoot().node("BIAS");
@@ -1329,6 +1331,8 @@ public class BIASParseConfigPageController
 
 	@FXML private void handleViewEntriesOnlyRadioButton(ActionEvent event) 
 	{
+		restoreDefaultsButton.setDisable(true);
+		
 		parseLocationsTable1.setEditable(false);
 		parseLocationsTable2.setEditable(false);
 		parseLocationsTable3.setEditable(false);
@@ -1387,6 +1391,8 @@ public class BIASParseConfigPageController
 
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
 	{
+		restoreDefaultsButton.setDisable(false);
+		
 		parseLocationsTable1.setEditable(true);
 		parseLocationsTable2.setEditable(true);
 		parseLocationsTable3.setEditable(true);
