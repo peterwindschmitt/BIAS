@@ -3,8 +3,10 @@ package com.bl.bias.app;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
@@ -13,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
@@ -37,7 +40,8 @@ public class BIASGeneralConfigController
 	@FXML private CheckBox useRtcFolderForIniFileCheckbox;
 
 	@FXML private Button updateInputFilesButton;
-	
+	@FXML private Button clearRegistryButton;
+
 	@FXML private GridPane generalConfigGridPanePage1;
 	@FXML private GridPane generalConfigGridPanePage2;
 
@@ -153,7 +157,7 @@ public class BIASGeneralConfigController
 				prefs.putBoolean("gc_useRtcFolderForIniFile", true);
 		}
 	}
-	
+
 	@FXML private void handleUpdateInputFilesButton(ActionEvent event)
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -172,7 +176,7 @@ public class BIASGeneralConfigController
 		if (file != null)
 		{
 			String newOptionFile = "";
-			
+
 			Boolean check1Complete = false;
 			Boolean check2Complete = false;
 			Boolean check3Complete = false;
@@ -263,7 +267,7 @@ public class BIASGeneralConfigController
 					// Delete old .OPTION file
 					File f= new File(file.toString());    
 					f.delete();     
-						
+
 					// Write new .OPTION file
 					FileWriter fileWriter;		
 					fileWriter = new FileWriter(file);
@@ -274,7 +278,7 @@ public class BIASGeneralConfigController
 				{
 					ErrorShutdown.displayError(e, this.getClass().getCanonicalName()+".  Unable to write new .OPTION file!");
 				}
-				
+
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Success!");
 				alert.setHeaderText(null);
@@ -304,6 +308,22 @@ public class BIASGeneralConfigController
 			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
 			alert.show();
 		}
+	}
+
+	@FXML private void handleClearRegistryButton(ActionEvent event) throws BackingStoreException
+	{
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Confirmation Dialog");
+		alert.setHeaderText(null);
+		alert.setContentText("All saved BIAS elements in the System Registry will be removed!  BIAS must then be restarted.  Are you sure?");
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK)
+		{
+			prefs.removeNode();
+		}	
 	}
 
 	public static Boolean getUseRtcFolderForIniFile()

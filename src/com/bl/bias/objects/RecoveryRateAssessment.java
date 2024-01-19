@@ -2,6 +2,7 @@ package com.bl.bias.objects;
 
 public class RecoveryRateAssessment 
 {
+	private String set;
 	private String aNode;
 	private String bNode;
 	
@@ -16,8 +17,9 @@ public class RecoveryRateAssessment
 
 	private Double distanceCovered;
 				
-	public RecoveryRateAssessment(String aNode, String bNode, Integer differenceInScheduledTimeInSeconds, Integer differenceInSimulatedTimeInSeconds, Boolean dwellEventBetweenNodes, Integer dwellEventCumulativeTimeInSeconds,  Integer dwellEventOffsetCumulativeTimeInSeconds, Boolean waitOnScheduleBetweenNodes, Integer waitOnScheduleCumulativeTimeInSeconds, Double distanceCovered)
+	public RecoveryRateAssessment(String set, String aNode, String bNode, Integer differenceInScheduledTimeInSeconds, Integer differenceInSimulatedTimeInSeconds, Boolean dwellEventBetweenNodes, Integer dwellEventCumulativeTimeInSeconds,  Integer dwellEventOffsetCumulativeTimeInSeconds, Boolean waitOnScheduleBetweenNodes, Integer waitOnScheduleCumulativeTimeInSeconds, Double distanceCovered)
 	{
+		this.set = set;
 		this.aNode = aNode;
 		this.bNode = bNode;
 		this.differenceInScheduledTimeInSeconds = differenceInScheduledTimeInSeconds;
@@ -28,6 +30,11 @@ public class RecoveryRateAssessment
 		this.waitOnScheduleBetweenNodes = waitOnScheduleBetweenNodes;
 		this.waitOnScheduleCumulativeTimeInSeconds = waitOnScheduleCumulativeTimeInSeconds;
 		this.distanceCovered = distanceCovered;
+	}
+	
+	public String getSet()
+	{
+		return set;
 	}
 	
 	public String getANode()

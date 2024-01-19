@@ -14,7 +14,6 @@
        </columnConstraints>
        <rowConstraints>
       <RowConstraints fillHeight="false" maxHeight="357.0" minHeight="357.0" percentHeight="0.0" prefHeight="357.0" valignment="TOP" vgrow="ALWAYS" />
-      <RowConstraints fillHeight="false" maxHeight="50.0" minHeight="50.0" percentHeight="0.0" prefHeight="50.0" valignment="TOP" vgrow="ALWAYS" />
        </rowConstraints>
    <children>
       <GridPane fx:id="generalConfigGridPanePage1">
@@ -24,18 +23,20 @@
         <rowConstraints>
             <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
         </rowConstraints>
          <children>
@@ -112,6 +113,16 @@
             <Label text="Count of .OPTION Files" GridPane.halignment="LEFT" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets left="350.0" />
+               </GridPane.margin>
+            </Label>
+            <Button fx:id="clearRegistryButton" mnemonicParsing="false" onAction="#handleClearRegistryButton" text="Clear Registry" GridPane.halignment="LEFT" GridPane.rowIndex="16">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Button>
+            <Label text="5.  Clear all BIAS entries in Windows System Registry:" GridPane.rowIndex="15">
+               <GridPane.margin>
+                  <Insets left="32.0" />
                </GridPane.margin>
             </Label>
          </children>

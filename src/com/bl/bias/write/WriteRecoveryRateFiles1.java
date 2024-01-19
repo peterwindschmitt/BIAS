@@ -33,7 +33,7 @@ public class WriteRecoveryRateFiles1 // Set A
 
 	Integer rowCounter = 0;
 
-	Boolean validTrainFound = false;
+	Boolean trainHasRecoveryRates = false;
 
 	public WriteRecoveryRateFiles1(String textArea)
 	{
@@ -213,81 +213,87 @@ public class WriteRecoveryRateFiles1 // Set A
 				if (assessmentsSetA.get(i).getTrainHasRecoveryRatesCalculated())
 				{
 					// Valid train found
-					validTrainFound = true;
+					trainHasRecoveryRates = true;
+					int entryCount = 0;
 
 					for (int j = 0; j < assessmentsSetA.get(i).getRecoveryRateAssessments().size(); j++)
 					{
-						rowCounter++;
-						row = recoveryRatesSheetA.createRow(rowCounter);
 
-						// Train Symbol
-						if (j < 1)
+						if (assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getSet().equals("A"))
 						{
-							cell = row.createCell(0);
-							cell.setCellStyle(style5);
-							cell.setCellValue(assessmentsSetA.get(i).getTrainSymbol()+" ("+assessmentsSetA.get(i).getTrainGroupAbbreviation()+")");
-						}
+							rowCounter++;
+							entryCount++;
+							row = recoveryRatesSheetA.createRow(rowCounter);
 
-						// Node A
-						cell = row.createCell(1);
-						cell.setCellStyle(style1);
-						cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getANode());
+							// Train Symbol
+							if (entryCount == 1)
+							{
+								cell = row.createCell(0);
+								cell.setCellStyle(style5);
+								cell.setCellValue(assessmentsSetA.get(i).getTrainSymbol()+" ("+assessmentsSetA.get(i).getTrainGroupAbbreviation()+")");
+							}
 
-						// Node B
-						cell = row.createCell(2);
-						cell.setCellStyle(style1);
-						cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getBNode());
-
-						// Distance
-						cell = row.createCell(3);
-						cell.setCellStyle(style1);
-						cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDistanceCovered());
-
-						// Scheduled Time
-						Integer adjustedScheduledTimeInSeconds = assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds();
-						cell = row.createCell(4);
-						cell.setCellStyle(style1);
-						cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedScheduledTimeInSeconds));
-
-						// Minimum Time
-						Integer adjustedMinimumRunTimeInSeconds = assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getWaitOnScheduleCumulativeTimeInSeconds();
-						cell = row.createCell(5);
-						cell.setCellStyle(style1);
-						cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedMinimumRunTimeInSeconds));
-
-						// Recovery Time Available
-						Integer adjustedRecoveryTimeAvailableInSeconds = adjustedScheduledTimeInSeconds - adjustedMinimumRunTimeInSeconds - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventOffsetCumulativeTimeInSeconds();
-						cell = row.createCell(6);
-						cell.setCellStyle(style1);
-						cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedRecoveryTimeAvailableInSeconds));
-
-						// Recovery Rate
-						Double recoveryRate1 = 0.0;
-						recoveryRate1 = (double) adjustedRecoveryTimeAvailableInSeconds / (double) adjustedScheduledTimeInSeconds;
-						Double recoveryRate2 = Math.round(recoveryRate1 * 1000) / 10.0;
-						String recoveryRate3 = ""; 
-						if (assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventBetweenNodes())
-						{
-							recoveryRate3 = String.valueOf(recoveryRate2).concat("% *");
-						}
-						else
-						{
-							recoveryRate3 = String.valueOf(recoveryRate2).concat("%");
-						}
-
-						cell = row.createCell(7);
-
-						if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetALowRecoveryRate().replace("%", "")))
-							cell.setCellStyle(style8);
-						else
+							// Node A
+							cell = row.createCell(1);
 							cell.setCellStyle(style1);
+							cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getANode());
 
-						cell.setCellValue(recoveryRate3);
+							// Node B
+							cell = row.createCell(2);
+							cell.setCellStyle(style1);
+							cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getBNode());
+
+							// Distance
+							cell = row.createCell(3);
+							cell.setCellStyle(style1);
+							cell.setCellValue(assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDistanceCovered());
+
+							// Scheduled Time
+							Integer adjustedScheduledTimeInSeconds = assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDifferenceInScheduledTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds();
+							cell = row.createCell(4);
+							cell.setCellStyle(style1);
+							cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedScheduledTimeInSeconds));
+
+							// Minimum Time
+							Integer adjustedMinimumRunTimeInSeconds = assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDifferenceInSimulatedTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventCumulativeTimeInSeconds() - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getWaitOnScheduleCumulativeTimeInSeconds();
+							cell = row.createCell(5);
+							cell.setCellStyle(style1);
+							cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedMinimumRunTimeInSeconds));
+
+							// Recovery Time Available
+							Integer adjustedRecoveryTimeAvailableInSeconds = adjustedScheduledTimeInSeconds - adjustedMinimumRunTimeInSeconds - assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventOffsetCumulativeTimeInSeconds();
+							cell = row.createCell(6);
+							cell.setCellStyle(style1);
+							cell.setCellValue(ConvertDateTime.convertSecondsToDDHHMMSSString(adjustedRecoveryTimeAvailableInSeconds));
+
+							// Recovery Rate
+							Double recoveryRate1 = 0.0;
+							recoveryRate1 = (double) adjustedRecoveryTimeAvailableInSeconds / (double) adjustedScheduledTimeInSeconds;
+							Double recoveryRate2 = Math.round(recoveryRate1 * 1000) / 10.0;
+							String recoveryRate3 = ""; 
+							if (assessmentsSetA.get(i).getRecoveryRateAssessments().get(j).getDwellEventBetweenNodes())
+							{
+								recoveryRate3 = String.valueOf(recoveryRate2).concat("% *");
+							}
+							else
+							{
+								recoveryRate3 = String.valueOf(recoveryRate2).concat("%");
+							}
+
+							cell = row.createCell(7);
+
+							if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetALowRecoveryRate().replace("%", "")))
+								cell.setCellStyle(style8);
+							else
+								cell.setCellStyle(style1);
+
+							cell.setCellValue(recoveryRate3);
+						}
 					}
 				}
 			}
 
-			if (!validTrainFound) 
+			if (!trainHasRecoveryRates) 
 			{
 				// Train Symbol
 				rowCounter++;

@@ -10,7 +10,7 @@ import com.bl.bias.analyze.RecoveryRateAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadRecoveryRateAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteRecoveryRateFiles3;
+import com.bl.bias.write.WriteRecoveryRateFiles5;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -283,9 +283,13 @@ public class BIASRecoveryRateAnalysisController
 			// Ensure that there are valid groups and node pairs
 			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null)
 				&& ((BIASRecoveryRateAnalysisConfigController.getAnalyzeSetA() == true) 
-					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true))
+					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true)
+					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetC() == true)
+				    || (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetD() == true))
 				&& ((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)
-					|| (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)))
+					|| (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)
+					|| (BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisNodePairs() != null)
+				    || (BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisNodePairs() != null)))
 			{
 				// Read all objects that are required for the recovery rate analysis
 				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
@@ -304,11 +308,11 @@ public class BIASRecoveryRateAnalysisController
 					setProgressIndicator(0.80);
 
 					// Write results to spreadsheet
-					WriteRecoveryRateFiles3 writeFiles = new WriteRecoveryRateFiles3(textArea.getText().toString());
-					message = writeFiles.getResultsWriteMessage3();
+					WriteRecoveryRateFiles5 writeFiles = new WriteRecoveryRateFiles5(textArea.getText().toString());
+					message = writeFiles.getResultsWriteMessage5();
 					displayMessage(message);
 
-					if (!WriteRecoveryRateFiles3.getErrorFound())
+					if (!WriteRecoveryRateFiles5.getErrorFound())
 					{
 						setProgressIndicator(1.0);
 						displayMessage("\n*** PROCESSING COMPLETE ***");
