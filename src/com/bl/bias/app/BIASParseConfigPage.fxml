@@ -183,14 +183,14 @@
 				<ToggleGroup fx:id="toggleGroup3" />
 			</toggleGroup>
 		</RadioButton>
-		<RadioButton fx:id="viewAndEditEntriesRadioButton" maxHeight="30.0" minHeight="30.0" mnemonicParsing="false" onAction="#handleViewAndEditEntriesRadioButton" prefHeight="30.0" prefWidth="169.0" text="Edit column values (risky)" textFill="RED" toggleGroup="$toggleGroup3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+		<RadioButton fx:id="viewAndEditEntriesRadioButton" maxHeight="30.0" maxWidth="230.0" minHeight="30.0" minWidth="230.0" mnemonicParsing="false" onAction="#handleViewAndEditEntriesRadioButton" prefHeight="30.0" prefWidth="230.0" text="Edit columns/restore defaults (risky)" textFill="RED" toggleGroup="$toggleGroup3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
 			<GridPane.margin>
 				<Insets left="140.0" />
 			</GridPane.margin>
 		</RadioButton>
 		<Button fx:id="restoreDefaultsButton" alignment="CENTER" maxHeight="40.0" maxWidth="80.0" minHeight="40.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleRestoreDefaultsButton" prefHeight="40.0" prefWidth="80.0" text="Restore Defaults" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="2">
 			<GridPane.margin>
-				<Insets bottom="10.0" left="327.0" top="10.0" />
+				<Insets bottom="10.0" left="380.0" top="10.0" />
 			</GridPane.margin>
          <font>
             <Font size="11.0" />
