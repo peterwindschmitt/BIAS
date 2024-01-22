@@ -152,7 +152,7 @@ public class WriteRecoveryRateFiles5 extends WriteRecoveryRateFiles4 // Trains w
 						else if ((lineFromFile.contains("Exclude from OTP statistics: ")) && (excludedTrainSymbolFound))
 						{
 							// Modify here
-							newTrainFile += lineFromFile.replace("Exclude from OTP statistics: NO ", "Exclude from OTP statistics: YES");
+							newTrainFile += lineFromFile.replace("Exclude from OTP statistics: NO ", "Exclude from OTP statistics: YES")+"\n";
 						}
 						else
 							newTrainFile += lineFromFile+"\n";
