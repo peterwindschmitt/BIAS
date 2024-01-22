@@ -19,16 +19,19 @@ public class BIASRecoveryRateAnalysisConfigController
 {
 	private static Preferences prefs;
 
-	private static String trainGroups;
+	private static String setATrainGroups;
 	private static String setANodePairs;
 	private static String setALowRecoveryRate;
 	private static String setALabel;
+	private static String setBTrainGroups;
 	private static String setBNodePairs;
 	private static String setBLowRecoveryRate;
 	private static String setBLabel;
+	private static String setCTrainGroups;
 	private static String setCNodePairs;
 	private static String setCLowRecoveryRate;
 	private static String setCLabel;
+	private static String setDTrainGroups;
 	private static String setDNodePairs;
 	private static String setDLowRecoveryRate;
 	private static String setDLabel;
@@ -37,11 +40,19 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static Boolean analyzeSetB;
 	private static Boolean analyzeSetC;
 	private static Boolean analyzeSetD;
+	private static Boolean excludeTrainsBelowThresholdSetA;
+	private static Boolean excludeTrainsBelowThresholdSetB;
+	private static Boolean excludeTrainsBelowThresholdSetC;
+	private static Boolean excludeTrainsBelowThresholdSetD;
 
 	private static Boolean defaultAnalyzeSetA = true;
 	private static Boolean defaultAnalyzeSetB = true;
 	private static Boolean defaultAnalyzeSetC = true;
 	private static Boolean defaultAnalyzeSetD = true;
+	private static Boolean defaultExcludeTrainsBelowThresholdSetA = false;
+	private static Boolean defaultExcludeTrainsBelowThresholdSetB = false;
+	private static Boolean defaultExcludeTrainsBelowThresholdSetC = false;
+	private static Boolean defaultExcludeTrainsBelowThresholdSetD = false;
 
 	private static Integer setASchedulingImprecisionOffset;
 	private static Integer setBSchedulingImprecisionOffset;
@@ -52,11 +63,29 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static ObservableList<String> lowRecoveryRates =  FXCollections.observableArrayList("0%", "5%", "10%", "15%", "20%");
 	private static String defaultLowRecoveryRate = "15%";
 
-	@FXML TextField group1TextField;
-	@FXML TextField group2TextField;
-	@FXML TextField group3TextField;
-	@FXML TextField group4TextField;
-	@FXML TextField group5TextField;
+	@FXML TextField group1TextFieldSetA;
+	@FXML TextField group2TextFieldSetA;
+	@FXML TextField group3TextFieldSetA;
+	@FXML TextField group4TextFieldSetA;
+	@FXML TextField group5TextFieldSetA;
+
+	@FXML TextField group1TextFieldSetB;
+	@FXML TextField group2TextFieldSetB;
+	@FXML TextField group3TextFieldSetB;
+	@FXML TextField group4TextFieldSetB;
+	@FXML TextField group5TextFieldSetB;
+
+	@FXML TextField group1TextFieldSetC;
+	@FXML TextField group2TextFieldSetC;
+	@FXML TextField group3TextFieldSetC;
+	@FXML TextField group4TextFieldSetC;
+	@FXML TextField group5TextFieldSetC;
+
+	@FXML TextField group1TextFieldSetD;
+	@FXML TextField group2TextFieldSetD;
+	@FXML TextField group3TextFieldSetD;
+	@FXML TextField group4TextFieldSetD;
+	@FXML TextField group5TextFieldSetD;
 
 	@FXML TextField nodePair1FromTextFieldA;
 	@FXML TextField nodePair1ToTextFieldA;
@@ -187,7 +216,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML TextField setCLabelTextField;
 	@FXML TextField setDLabelTextField;
 
-	@FXML Button updateGroupsButton;
+	@FXML Button updateGroupsButtonSetA;
+	@FXML Button updateGroupsButtonSetB;
+	@FXML Button updateGroupsButtonSetC;
+	@FXML Button updateGroupsButtonSetD;
 	@FXML Button updateSetANodesButton;
 	@FXML Button updateSetBNodesButton;
 	@FXML Button updateSetCNodesButton;
@@ -223,29 +255,97 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML CheckBox analyzeSetCCheckBox;
 	@FXML CheckBox analyzeSetDCheckBox;
 
+	@FXML CheckBox excludeFromOTPSetACheckBox;
+	@FXML CheckBox excludeFromOTPSetBCheckBox;
+	@FXML CheckBox excludeFromOTPSetCCheckBox;
+	@FXML CheckBox excludeFromOTPSetDCheckBox;
+
 	@FXML private void initialize()
 	{
 		// Set up prefs
 		prefs = Preferences.userRoot().node("BIAS");
 
-		// See if preferences are stored for groups
-		if ((prefs.get("rr_trainGroups", "") != null) && (prefs.get("rr_trainGroups", "") != ""))
+		// See if preferences are stored for Set A groups
+		if ((prefs.get("rr_setATrainGroups", "") != null) && (prefs.get("rr_setATrainGroups", "") != ""))
 		{
-			trainGroups = prefs.get("rr_trainGroups", "");
-			String trainGroup[] = trainGroups.split(",");
+			setATrainGroups = prefs.get("rr_setATrainGroups", "");
+			String trainGroup[] = setATrainGroups.split(",");
 
 			for (int i = 0; i < trainGroup.length; i++)
 			{
 				if (i == 0)
-					group1TextField.setText(trainGroup[0]);
+					group1TextFieldSetA.setText(trainGroup[0]);
 				else if (i == 1)
-					group2TextField.setText(trainGroup[1]);
+					group2TextFieldSetA.setText(trainGroup[1]);
 				else if (i == 2)
-					group3TextField.setText(trainGroup[2]);
+					group3TextFieldSetA.setText(trainGroup[2]);
 				else if (i == 3)
-					group4TextField.setText(trainGroup[3]);
+					group4TextFieldSetA.setText(trainGroup[3]);
 				else if (i == 4)
-					group5TextField.setText(trainGroup[4]);
+					group5TextFieldSetA.setText(trainGroup[4]);
+			}
+		}
+
+		// See if preferences are stored for Set B groups
+		if ((prefs.get("rr_setBTrainGroups", "") != null) && (prefs.get("rr_setBTrainGroups", "") != ""))
+		{
+			setBTrainGroups = prefs.get("rr_setBTrainGroups", "");
+			String trainGroup[] = setBTrainGroups.split(",");
+
+			for (int i = 0; i < trainGroup.length; i++)
+			{
+				if (i == 0)
+					group1TextFieldSetB.setText(trainGroup[0]);
+				else if (i == 1)
+					group2TextFieldSetB.setText(trainGroup[1]);
+				else if (i == 2)
+					group3TextFieldSetB.setText(trainGroup[2]);
+				else if (i == 3)
+					group4TextFieldSetB.setText(trainGroup[3]);
+				else if (i == 4)
+					group5TextFieldSetB.setText(trainGroup[4]);
+			}
+		}
+
+		// See if preferences are stored for Set C groups
+		if ((prefs.get("rr_setCTrainGroups", "") != null) && (prefs.get("rr_setCTrainGroups", "") != ""))
+		{
+			setCTrainGroups = prefs.get("rr_setCTrainGroups", "");
+			String trainGroup[] = setCTrainGroups.split(",");
+
+			for (int i = 0; i < trainGroup.length; i++)
+			{
+				if (i == 0)
+					group1TextFieldSetC.setText(trainGroup[0]);
+				else if (i == 1)
+					group2TextFieldSetC.setText(trainGroup[1]);
+				else if (i == 2)
+					group3TextFieldSetC.setText(trainGroup[2]);
+				else if (i == 3)
+					group4TextFieldSetC.setText(trainGroup[3]);
+				else if (i == 4)
+					group5TextFieldSetC.setText(trainGroup[4]);
+			}
+		}
+
+		// See if preferences are stored for Set D groups
+		if ((prefs.get("rr_setDTrainGroups", "") != null) && (prefs.get("rr_setDTrainGroups", "") != ""))
+		{
+			setDTrainGroups = prefs.get("rr_setDTrainGroups", "");
+			String trainGroup[] = setDTrainGroups.split(",");
+
+			for (int i = 0; i < trainGroup.length; i++)
+			{
+				if (i == 0)
+					group1TextFieldSetD.setText(trainGroup[0]);
+				else if (i == 1)
+					group2TextFieldSetD.setText(trainGroup[1]);
+				else if (i == 2)
+					group3TextFieldSetD.setText(trainGroup[2]);
+				else if (i == 3)
+					group4TextFieldSetD.setText(trainGroup[3]);
+				else if (i == 4)
+					group5TextFieldSetD.setText(trainGroup[4]);
 			}
 		}
 
@@ -936,103 +1036,444 @@ public class BIASRecoveryRateAnalysisConfigController
 			analyzeSetD = false;
 			analyzeSetDCheckBox.setSelected(false);
 		}
-	}
 
-	@FXML private void handleGroup1TextField()
-	{
-		if (group1TextField.getText().trim().length() == 3)
+		// See if preference is stored for excluding Set A low recovery rates trains from .TRAIN file
+		if (prefs.getBoolean("rr_excludeTrainsBelowThresholdSetA", defaultExcludeTrainsBelowThresholdSetA))
 		{
-			String origText = group1TextField.getText().trim();
-			group1TextField.setText(origText.toUpperCase());
+			excludeTrainsBelowThresholdSetA = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetA", true);
+			excludeFromOTPSetACheckBox.setSelected(true);
 		}
 		else
 		{
-			group1TextField.setText("");
-		}			
-	}
+			excludeTrainsBelowThresholdSetA = false;
+			excludeFromOTPSetACheckBox.setSelected(false);
+		}
 
-	@FXML private void handleTextChangedGroup1TextField()
-	{
-		group1TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-	}
-
-	@FXML private void handleGroup2TextField()
-	{
-		if (group2TextField.getText().trim().length() == 3)
+		// See if preference is stored for excluding Set B low recovery rates trains from .TRAIN file
+		if (prefs.getBoolean("rr_excludeTrainsBelowThresholdSetB", defaultExcludeTrainsBelowThresholdSetB))
 		{
-			String origText = group2TextField.getText().trim();
-			group2TextField.setText(origText.toUpperCase());
+			excludeTrainsBelowThresholdSetB = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetB", true);
+			excludeFromOTPSetBCheckBox.setSelected(true);
 		}
 		else
 		{
-			group2TextField.setText("");
-		}			
-	}
+			excludeTrainsBelowThresholdSetB = false;
+			excludeFromOTPSetBCheckBox.setSelected(false);
+		}
 
-	@FXML private void handleTextChangedGroup2TextField()
-	{
-		group2TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-	}
-
-	@FXML private void handleGroup3TextField()
-	{
-		if (group3TextField.getText().trim().length() == 3)
+		// See if preference is stored for excluding Set C low recovery rates trains from .TRAIN file
+		if (prefs.getBoolean("rr_excludeTrainsBelowThresholdSetC", defaultExcludeTrainsBelowThresholdSetC))
 		{
-			String origText = group3TextField.getText().trim();
-			group3TextField.setText(origText.toUpperCase());
+			excludeTrainsBelowThresholdSetC = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetC", true);
+			excludeFromOTPSetCCheckBox.setSelected(true);
 		}
 		else
 		{
-			group3TextField.setText("");
-		}			
-	}
+			excludeTrainsBelowThresholdSetC = false;
+			excludeFromOTPSetCCheckBox.setSelected(false);
+		}
 
-	@FXML private void handleTextChangedGroup3TextField()
-	{
-		group3TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-	}
-
-	@FXML private void handleGroup4TextField()
-	{
-		if (group4TextField.getText().trim().length() == 3)
+		// See if preference is stored for excluding Set D low recovery rates trains from .TRAIN file
+		if (prefs.getBoolean("rr_excludeTrainsBelowThresholdSetD", defaultExcludeTrainsBelowThresholdSetD))
 		{
-			String origText = group4TextField.getText().trim();
-			group4TextField.setText(origText.toUpperCase());
+			excludeTrainsBelowThresholdSetD = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetD", true);
+			excludeFromOTPSetDCheckBox.setSelected(true);
 		}
 		else
 		{
-			group4TextField.setText("");
-		}			
+			excludeTrainsBelowThresholdSetD = false;
+			excludeFromOTPSetDCheckBox.setSelected(false);
+		}
 	}
 
-	@FXML private void handleTextChangedGroup4TextField()
+	@FXML private void handleGroup1TextFieldSetA()
 	{
-		group4TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-	}
-
-	@FXML private void handleGroup5TextField()
-	{
-		if (group5TextField.getText().trim().length() == 3)
+		if (group1TextFieldSetA.getText().trim().length() == 3)
 		{
-			String origText = group5TextField.getText().trim();
-			group5TextField.setText(origText.toUpperCase());
+			String origText = group1TextFieldSetA.getText().trim();
+			group1TextFieldSetA.setText(origText.toUpperCase());
 		}
 		else
 		{
-			group5TextField.setText("");
+			group1TextFieldSetA.setText("");
 		}			
 	}
 
-	@FXML private void handleTextChangedGroup5TextField()
+	@FXML private void handleTextChangedGroup1TextFieldSetA()
 	{
-		group5TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateGroupsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		group1TextFieldSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
+	@FXML private void handleGroup2TextFieldSetA()
+	{
+		if (group2TextFieldSetA.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetA.getText().trim();
+			group2TextFieldSetA.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group2TextFieldSetA.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup2TextFieldSetA()
+	{
+		group2TextFieldSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup3TextFieldSetA()
+	{
+		if (group3TextFieldSetA.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetA.getText().trim();
+			group3TextFieldSetA.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group3TextFieldSetA.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup3TextFieldSetA()
+	{
+		group3TextFieldSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup4TextFieldSetA()
+	{
+		if (group4TextFieldSetA.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetA.getText().trim();
+			group4TextFieldSetA.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group4TextFieldSetA.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup4TextFieldSetA()
+	{
+		group4TextFieldSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup5TextFieldSetA()
+	{
+		if (group5TextFieldSetA.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetA.getText().trim();
+			group5TextFieldSetA.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group5TextFieldSetA.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup5TextFieldSetA()
+	{
+		group5TextFieldSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleGroup1TextFieldSetB()
+	{
+		if (group1TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group1TextFieldSetB.getText().trim();
+			group1TextFieldSetB.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group1TextFieldSetB.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup1TextFieldSetB()
+	{
+		group1TextFieldSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup2TextFieldSetB()
+	{
+		if (group2TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetB.getText().trim();
+			group2TextFieldSetB.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group2TextFieldSetB.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup2TextFieldSetB()
+	{
+		group2TextFieldSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup3TextFieldSetB()
+	{
+		if (group3TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetB.getText().trim();
+			group3TextFieldSetB.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group3TextFieldSetB.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup3TextFieldSetB()
+	{
+		group3TextFieldSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup4TextFieldSetB()
+	{
+		if (group4TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetB.getText().trim();
+			group4TextFieldSetB.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group4TextFieldSetB.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup4TextFieldSetB()
+	{
+		group4TextFieldSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup5TextFieldSetB()
+	{
+		if (group5TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetB.getText().trim();
+			group5TextFieldSetB.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group5TextFieldSetB.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup5TextFieldSetB()
+	{
+		group5TextFieldSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleGroup1TextFieldSetC()
+	{
+		if (group1TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group1TextFieldSetC.getText().trim();
+			group1TextFieldSetC.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group1TextFieldSetC.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup1TextFieldSetC()
+	{
+		group1TextFieldSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup2TextFieldSetC()
+	{
+		if (group2TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetC.getText().trim();
+			group2TextFieldSetC.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group2TextFieldSetC.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup2TextFieldSetC()
+	{
+		group2TextFieldSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup3TextFieldSetC()
+	{
+		if (group3TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetC.getText().trim();
+			group3TextFieldSetC.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group3TextFieldSetC.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup3TextFieldSetC()
+	{
+		group3TextFieldSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup4TextFieldSetC()
+	{
+		if (group4TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetC.getText().trim();
+			group4TextFieldSetC.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group4TextFieldSetC.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup4TextFieldSetC()
+	{
+		group4TextFieldSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup5TextFieldSetC()
+	{
+		if (group5TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetC.getText().trim();
+			group5TextFieldSetC.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group5TextFieldSetC.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup5TextFieldSetC()
+	{
+		group5TextFieldSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetC.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup1TextFieldSetD()
+	{
+		if (group1TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group1TextFieldSetD.getText().trim();
+			group1TextFieldSetD.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group1TextFieldSetD.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup1TextFieldSetD()
+	{
+		group1TextFieldSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup2TextFieldSetD()
+	{
+		if (group2TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetD.getText().trim();
+			group2TextFieldSetD.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group2TextFieldSetD.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup2TextFieldSetD()
+	{
+		group2TextFieldSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup3TextFieldSetD()
+	{
+		if (group3TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetD.getText().trim();
+			group3TextFieldSetD.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group3TextFieldSetD.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup3TextFieldSetD()
+	{
+		group3TextFieldSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup4TextFieldSetD()
+	{
+		if (group4TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetD.getText().trim();
+			group4TextFieldSetD.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group4TextFieldSetD.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup4TextFieldSetD()
+	{
+		group4TextFieldSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleGroup5TextFieldSetD()
+	{
+		if (group5TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetD.getText().trim();
+			group5TextFieldSetD.setText(origText.toUpperCase());
+		}
+		else
+		{
+			group5TextFieldSetD.setText("");
+		}			
+	}
+
+	@FXML private void handleTextChangedGroup5TextFieldSetD()
+	{
+		group5TextFieldSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateGroupsButtonSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
 	// Node pair # 1 of 15 set A
 	@FXML private void handleNodePairFrom1TextFieldA()
 	{
@@ -2645,82 +3086,316 @@ public class BIASRecoveryRateAnalysisConfigController
 			prefs.putInt("rr_setDSchedulingImprecisionOffset", setDSchedulingImprecisionOffset);
 	}
 
-	@FXML private void handleUpdateGroupsButton()
+	@FXML private void handleUpdateGroupsButtonSetA()
 	{
-		if (group1TextField.getText().trim().length() == 3)
+		if (group1TextFieldSetA.getText().trim().length() == 3)
 		{
-			String origText = group1TextField.getText().trim();
-			group1TextField.setText(origText.toUpperCase());
-			group1TextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			String origText = group1TextFieldSetA.getText().trim();
+			group1TextFieldSetA.setText(origText.toUpperCase());
+			group1TextFieldSetA.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 		else
 		{
-			group1TextField.setText("");
+			group1TextFieldSetA.setText("");
 		}
 
-		if (group2TextField.getText().trim().length() == 3)
+		if (group2TextFieldSetA.getText().trim().length() == 3)
 		{
-			String origText = group2TextField.getText().trim();
-			group2TextField.setText(origText.toUpperCase());
-			group2TextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			String origText = group2TextFieldSetA.getText().trim();
+			group2TextFieldSetA.setText(origText.toUpperCase());
+			group2TextFieldSetA.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 		else
 		{
-			group2TextField.setText("");
+			group2TextFieldSetA.setText("");
 		}
 
-		if (group3TextField.getText().trim().length() == 3)
+		if (group3TextFieldSetA.getText().trim().length() == 3)
 		{
-			String origText = group3TextField.getText().trim();
-			group3TextField.setText(origText.toUpperCase());
-			group3TextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			String origText = group3TextFieldSetA.getText().trim();
+			group3TextFieldSetA.setText(origText.toUpperCase());
+			group3TextFieldSetA.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 		else
 		{
-			group3TextField.setText("");
+			group3TextFieldSetA.setText("");
 		}
 
-		if (group4TextField.getText().trim().length() == 3)
+		if (group4TextFieldSetA.getText().trim().length() == 3)
 		{
-			String origText = group4TextField.getText().trim();
-			group4TextField.setText(origText.toUpperCase());
-			group4TextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			String origText = group4TextFieldSetA.getText().trim();
+			group4TextFieldSetA.setText(origText.toUpperCase());
+			group4TextFieldSetA.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 		else
 		{
-			group4TextField.setText("");
+			group4TextFieldSetA.setText("");
 		}
 
-		if (group5TextField.getText().trim().length() == 3)
+		if (group5TextFieldSetA.getText().trim().length() == 3)
 		{
-			String origText = group5TextField.getText().trim();
-			group5TextField.setText(origText.toUpperCase());
-			group5TextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			String origText = group5TextFieldSetA.getText().trim();
+			group5TextFieldSetA.setText(origText.toUpperCase());
+			group5TextFieldSetA.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		}
 		else
 		{
-			group5TextField.setText("");
+			group5TextFieldSetA.setText("");
 		}
 
-		updateGroupsButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		updateGroupsButtonSetA.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 		// Write to registry
-		String groupsToWriteToRegistry = "";
-		if ((group1TextField != null) && (group1TextField.getText().trim() != ""))
-			groupsToWriteToRegistry += group1TextField.getText() + ",";
-		if ((group2TextField != null) && (group2TextField.getText().trim() != ""))
-			groupsToWriteToRegistry += group2TextField.getText() + ",";
-		if ((group3TextField != null) && (group3TextField.getText().trim() != ""))
-			groupsToWriteToRegistry += group3TextField.getText() + ",";
-		if ((group4TextField != null) && (group4TextField.getText().trim() != ""))
-			groupsToWriteToRegistry += group4TextField.getText() + ",";
-		if ((group5TextField != null) && (group5TextField.getText().trim() != ""))
-			groupsToWriteToRegistry += group5TextField.getText() + ",";
+		String setAGroupsToWriteToRegistry = "";
+		if ((group1TextFieldSetA != null) && (group1TextFieldSetA.getText().trim() != ""))
+			setAGroupsToWriteToRegistry += group1TextFieldSetA.getText() + ",";
+		if ((group2TextFieldSetA != null) && (group2TextFieldSetA.getText().trim() != ""))
+			setAGroupsToWriteToRegistry += group2TextFieldSetA.getText() + ",";
+		if ((group3TextFieldSetA != null) && (group3TextFieldSetA.getText().trim() != ""))
+			setAGroupsToWriteToRegistry += group3TextFieldSetA.getText() + ",";
+		if ((group4TextFieldSetA != null) && (group4TextFieldSetA.getText().trim() != ""))
+			setAGroupsToWriteToRegistry += group4TextFieldSetA.getText() + ",";
+		if ((group5TextFieldSetA != null) && (group5TextFieldSetA.getText().trim() != ""))
+			setAGroupsToWriteToRegistry += group5TextFieldSetA.getText() + ",";
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_trainGroups", groupsToWriteToRegistry);
+			prefs.put("rr_setATrainGroups", setAGroupsToWriteToRegistry);
 
-		trainGroups = groupsToWriteToRegistry;
+		setATrainGroups = setAGroupsToWriteToRegistry;
+	}
+	
+	@FXML private void handleUpdateGroupsButtonSetB()
+	{
+		if (group1TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group1TextFieldSetB.getText().trim();
+			group1TextFieldSetB.setText(origText.toUpperCase());
+			group1TextFieldSetB.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group1TextFieldSetB.setText("");
+		}
+
+		if (group2TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetB.getText().trim();
+			group2TextFieldSetB.setText(origText.toUpperCase());
+			group2TextFieldSetB.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group2TextFieldSetB.setText("");
+		}
+
+		if (group3TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetB.getText().trim();
+			group3TextFieldSetB.setText(origText.toUpperCase());
+			group3TextFieldSetB.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group3TextFieldSetB.setText("");
+		}
+
+		if (group4TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetB.getText().trim();
+			group4TextFieldSetB.setText(origText.toUpperCase());
+			group4TextFieldSetB.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group4TextFieldSetB.setText("");
+		}
+
+		if (group5TextFieldSetB.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetB.getText().trim();
+			group5TextFieldSetB.setText(origText.toUpperCase());
+			group5TextFieldSetB.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group5TextFieldSetB.setText("");
+		}
+
+		updateGroupsButtonSetB.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		// Write to registry
+		String setBGroupsToWriteToRegistry = "";
+		if ((group1TextFieldSetB != null) && (group1TextFieldSetB.getText().trim() != ""))
+			setBGroupsToWriteToRegistry += group1TextFieldSetB.getText() + ",";
+		if ((group2TextFieldSetB != null) && (group2TextFieldSetB.getText().trim() != ""))
+			setBGroupsToWriteToRegistry += group2TextFieldSetB.getText() + ",";
+		if ((group3TextFieldSetB != null) && (group3TextFieldSetB.getText().trim() != ""))
+			setBGroupsToWriteToRegistry += group3TextFieldSetB.getText() + ",";
+		if ((group4TextFieldSetB != null) && (group4TextFieldSetB.getText().trim() != ""))
+			setBGroupsToWriteToRegistry += group4TextFieldSetB.getText() + ",";
+		if ((group5TextFieldSetB != null) && (group5TextFieldSetB.getText().trim() != ""))
+			setBGroupsToWriteToRegistry += group5TextFieldSetB.getText() + ",";
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_setBTrainGroups", setBGroupsToWriteToRegistry);
+
+		setBTrainGroups = setBGroupsToWriteToRegistry;
+	}
+	
+	@FXML private void handleUpdateGroupsButtonSetC()
+	{
+		if (group1TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group1TextFieldSetC.getText().trim();
+			group1TextFieldSetC.setText(origText.toUpperCase());
+			group1TextFieldSetC.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group1TextFieldSetC.setText("");
+		}
+
+		if (group2TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetC.getText().trim();
+			group2TextFieldSetC.setText(origText.toUpperCase());
+			group2TextFieldSetC.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group2TextFieldSetC.setText("");
+		}
+
+		if (group3TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetC.getText().trim();
+			group3TextFieldSetC.setText(origText.toUpperCase());
+			group3TextFieldSetC.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group3TextFieldSetC.setText("");
+		}
+
+		if (group4TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetC.getText().trim();
+			group4TextFieldSetC.setText(origText.toUpperCase());
+			group4TextFieldSetC.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group4TextFieldSetC.setText("");
+		}
+
+		if (group5TextFieldSetC.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetC.getText().trim();
+			group5TextFieldSetC.setText(origText.toUpperCase());
+			group5TextFieldSetC.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group5TextFieldSetC.setText("");
+		}
+
+		updateGroupsButtonSetC.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		// Write to registry
+		String setCGroupsToWriteToRegistry = "";
+		if ((group1TextFieldSetC != null) && (group1TextFieldSetC.getText().trim() != ""))
+			setCGroupsToWriteToRegistry += group1TextFieldSetC.getText() + ",";
+		if ((group2TextFieldSetC != null) && (group2TextFieldSetC.getText().trim() != ""))
+			setCGroupsToWriteToRegistry += group2TextFieldSetC.getText() + ",";
+		if ((group3TextFieldSetC != null) && (group3TextFieldSetC.getText().trim() != ""))
+			setCGroupsToWriteToRegistry += group3TextFieldSetC.getText() + ",";
+		if ((group4TextFieldSetC != null) && (group4TextFieldSetC.getText().trim() != ""))
+			setCGroupsToWriteToRegistry += group4TextFieldSetC.getText() + ",";
+		if ((group5TextFieldSetC != null) && (group5TextFieldSetC.getText().trim() != ""))
+			setCGroupsToWriteToRegistry += group5TextFieldSetC.getText() + ",";
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_setCTrainGroups", setCGroupsToWriteToRegistry);
+
+		setCTrainGroups = setCGroupsToWriteToRegistry;
+	}
+	
+	@FXML private void handleUpdateGroupsButtonSetD()
+	{
+		if (group1TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group1TextFieldSetD.getText().trim();
+			group1TextFieldSetD.setText(origText.toUpperCase());
+			group1TextFieldSetD.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group1TextFieldSetD.setText("");
+		}
+
+		if (group2TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group2TextFieldSetD.getText().trim();
+			group2TextFieldSetD.setText(origText.toUpperCase());
+			group2TextFieldSetD.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group2TextFieldSetD.setText("");
+		}
+
+		if (group3TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group3TextFieldSetD.getText().trim();
+			group3TextFieldSetD.setText(origText.toUpperCase());
+			group3TextFieldSetD.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group3TextFieldSetD.setText("");
+		}
+
+		if (group4TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group4TextFieldSetD.getText().trim();
+			group4TextFieldSetD.setText(origText.toUpperCase());
+			group4TextFieldSetD.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group4TextFieldSetD.setText("");
+		}
+
+		if (group5TextFieldSetD.getText().trim().length() == 3)
+		{
+			String origText = group5TextFieldSetD.getText().trim();
+			group5TextFieldSetD.setText(origText.toUpperCase());
+			group5TextFieldSetD.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			group5TextFieldSetD.setText("");
+		}
+
+		updateGroupsButtonSetD.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		// Write to registry
+		String setDGroupsToWriteToRegistry = "";
+		if ((group1TextFieldSetD != null) && (group1TextFieldSetD.getText().trim() != ""))
+			setDGroupsToWriteToRegistry += group1TextFieldSetD.getText() + ",";
+		if ((group2TextFieldSetD != null) && (group2TextFieldSetD.getText().trim() != ""))
+			setDGroupsToWriteToRegistry += group2TextFieldSetD.getText() + ",";
+		if ((group3TextFieldSetD != null) && (group3TextFieldSetD.getText().trim() != ""))
+			setDGroupsToWriteToRegistry += group3TextFieldSetD.getText() + ",";
+		if ((group4TextFieldSetD != null) && (group4TextFieldSetD.getText().trim() != ""))
+			setDGroupsToWriteToRegistry += group4TextFieldSetD.getText() + ",";
+		if ((group5TextFieldSetD != null) && (group5TextFieldSetD.getText().trim() != ""))
+			setDGroupsToWriteToRegistry += group5TextFieldSetD.getText() + ",";
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("rr_setDTrainGroups", setDGroupsToWriteToRegistry);
+
+		setDTrainGroups = setDGroupsToWriteToRegistry;
 	}
 
 	@FXML private void handleUpdateSetANodesButton()
@@ -4900,6 +5575,70 @@ public class BIASRecoveryRateAnalysisConfigController
 		}
 	}
 
+	@FXML private void handleExcludeFromOTPSetACheckBox()
+	{
+		if (excludeTrainsBelowThresholdSetA)
+		{
+			excludeTrainsBelowThresholdSetA = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetA", false);
+		}
+		else
+		{
+			excludeTrainsBelowThresholdSetA = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetA", true);
+		}
+	}
+
+	@FXML private void handleExcludeFromOTPSetBCheckBox()
+	{
+		if (excludeTrainsBelowThresholdSetB)
+		{
+			excludeTrainsBelowThresholdSetB = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetB", false);
+		}
+		else
+		{
+			excludeTrainsBelowThresholdSetB = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetB", true);
+		}
+	}
+
+	@FXML private void handleExcludeFromOTPSetCCheckBox()
+	{
+		if (excludeTrainsBelowThresholdSetC)
+		{
+			excludeTrainsBelowThresholdSetC = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetC", false);
+		}
+		else
+		{
+			excludeTrainsBelowThresholdSetC = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetC", true);
+		}
+	}
+
+	@FXML private void handleExcludeFromOTPSetDCheckBox()
+	{
+		if (excludeTrainsBelowThresholdSetD)
+		{
+			excludeTrainsBelowThresholdSetD = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetD", false);
+		}
+		else
+		{
+			excludeTrainsBelowThresholdSetD = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetD", true);
+		}
+	}
+
 	public static String getSetALowRecoveryRate()
 	{
 		return setALowRecoveryRate;
@@ -4940,9 +5679,9 @@ public class BIASRecoveryRateAnalysisConfigController
 		return setDSchedulingImprecisionOffset;
 	}
 
-	public static String getRecoveryRateAnalysisTrainGroups()
+	public static String getSetARecoveryRateAnalysisTrainGroups()
 	{
-		return trainGroups;
+		return setATrainGroups;
 	}
 
 	public static String getSetARecoveryRateAnalysisNodePairs()
@@ -5003,5 +5742,25 @@ public class BIASRecoveryRateAnalysisConfigController
 	public static Boolean getAnalyzeSetD()
 	{
 		return analyzeSetD;
+	}
+
+	public static Boolean getExcludeTrainsBelowThresholdSetA()
+	{
+		return excludeTrainsBelowThresholdSetA;
+	}
+
+	public static Boolean getExcludeTrainsBelowThresholdSetB()
+	{
+		return excludeTrainsBelowThresholdSetB;
+	}
+
+	public static Boolean getExcludeTrainsBelowThresholdSetC()
+	{
+		return excludeTrainsBelowThresholdSetC;
+	}
+
+	public static Boolean getExcludeTrainsBelowThresholdSetD()
+	{
+		return excludeTrainsBelowThresholdSetD;
 	}
 }

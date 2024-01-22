@@ -281,7 +281,7 @@ public class BIASRecoveryRateAnalysisController
 		if (continueAnalysis)
 		{
 			// Ensure that there are valid groups and node pairs
-			if ((BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups() != null)
+			if ((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups() != null)
 				&& ((BIASRecoveryRateAnalysisConfigController.getAnalyzeSetA() == true) 
 					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true)
 					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetC() == true)

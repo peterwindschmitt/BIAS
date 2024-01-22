@@ -13,7 +13,10 @@ public class RecoveryRateAnalysis
 {
 	private static String resultsMessage;
 
-	private static ArrayList<String> groupsToAnalyze = new ArrayList<String>();
+	private static ArrayList<String> groupsToAnalyzeSetA = new ArrayList<String>();
+	private static ArrayList<String> groupsToAnalyzeSetB = new ArrayList<String>();
+	private static ArrayList<String> groupsToAnalyzeSetC = new ArrayList<String>();
+	private static ArrayList<String> groupsToAnalyzeSetD = new ArrayList<String>();
 	private static ArrayList<String> nodePairsToAnalyzeSetA = new ArrayList<String>();
 	private static ArrayList<String> nodePairsToAnalyzeSetB = new ArrayList<String>();
 	private static ArrayList<String> nodePairsToAnalyzeSetC = new ArrayList<String>();
@@ -31,11 +34,11 @@ public class RecoveryRateAnalysis
 	{
 		resultsMessage = "Started analyzing recovery rates at "+ConvertDateTime.getTimeStamp()+"\n";
 
-		// Add groups from Recovery Rate Analysis config
-		groupsToAnalyze.clear();
-		for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups().split(",").length; i++)
+		// Add groups from Set A Recovery Rate Analysis config
+		groupsToAnalyzeSetA.clear();
+		for (int i = 0; i < BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups().split(",").length; i++)
 		{
-			groupsToAnalyze.add(BIASRecoveryRateAnalysisConfigController.getRecoveryRateAnalysisTrainGroups().split(",")[i]);
+			groupsToAnalyzeSetA.add(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups().split(",")[i]);
 		}
 
 		// Add node pairs from Set A Recovery Rate Analysis config
@@ -107,7 +110,7 @@ public class RecoveryRateAnalysis
 
 				if ((allScheduledNodesInTrainsRoute.contains(aNodeSetA))  // Node A of node pair
 						&& (allScheduledNodesInTrainsRoute.contains(bNodeSetA)) // Node B of node pair
-						&& (groupsToAnalyze.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
+						&& (groupsToAnalyzeSetA.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
 				{
 					trainsReadInSetA.add(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i));
 					break;
@@ -121,7 +124,7 @@ public class RecoveryRateAnalysis
 
 				if ((allScheduledNodesInTrainsRoute.contains(aNodeSetB))  // Node A of node pair
 						&& (allScheduledNodesInTrainsRoute.contains(bNodeSetB)) // Node B of node pair
-						&& (groupsToAnalyze.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
+						&& (groupsToAnalyzeSetA.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
 				{
 					trainsReadInSetB.add(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i));
 					break;
@@ -135,7 +138,7 @@ public class RecoveryRateAnalysis
 
 				if ((allScheduledNodesInTrainsRoute.contains(aNodeSetC))  // Node A of node pair
 						&& (allScheduledNodesInTrainsRoute.contains(bNodeSetC)) // Node B of node pair
-						&& (groupsToAnalyze.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
+						&& (groupsToAnalyzeSetA.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
 				{
 					trainsReadInSetC.add(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i));
 					break;
@@ -149,7 +152,7 @@ public class RecoveryRateAnalysis
 
 				if ((allScheduledNodesInTrainsRoute.contains(aNodeSetD))  // Node A of node pair
 						&& (allScheduledNodesInTrainsRoute.contains(bNodeSetD)) // Node B of node pair
-						&& (groupsToAnalyze.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
+						&& (groupsToAnalyzeSetA.contains(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i).getTrainGroupAbbreviation()))) // Group
 				{
 					trainsReadInSetD.add(ReadRecoveryRateAnalysisFiles.getTrainsReadIn().get(i));
 					break;

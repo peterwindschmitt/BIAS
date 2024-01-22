@@ -27,16 +27,15 @@
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
             <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
         </rowConstraints>
          <children>
@@ -60,70 +59,75 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <Label text="4. Update RTC .OPTION file parameters to those required by various BIAS modules:" GridPane.rowIndex="7">
+            <Label text="4. Update RTC .OPTION file parameters to those required by various BIAS modules:" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Includes" underline="true" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Includes" underline="true" GridPane.rowIndex="8">
-               <GridPane.margin>
-                  <Insets left="32.0" />
-               </GridPane.margin>
-            </Label>
-            <Label text="Excludes" underline="true" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+            <Label text="Excludes" underline="true" GridPane.halignment="LEFT" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets left="350.0" />
                </GridPane.margin>
             </Label>
-            <Label text="All Nodes (rather than just event only) to be Included in Route Report" GridPane.rowIndex="12">
+            <Label text="All Nodes (rather than just event only) to be Included in Route Report" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
             </Label>
-            <Button fx:id="updateInputFilesButton" mnemonicParsing="false" onAction="#handleUpdateInputFilesButton" text="Update .OPTION file" GridPane.halignment="LEFT" GridPane.rowIndex="14" GridPane.valignment="CENTER">
+            <Button fx:id="updateInputFilesButton" mnemonicParsing="false" onAction="#handleUpdateInputFilesButton" text="Update .OPTION file" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                <GridPane.margin>
-                  <Insets left="32.0" />
+                  <Insets left="480.0" />
                </GridPane.margin>
             </Button>
-            <Label text="Train Route Report to NOT be CSV delimited" GridPane.rowIndex="9">
+            <Label text="Train Route Report to NOT be CSV delimited" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Seed Trains Included in Route Report" GridPane.rowIndex="10">
+            <Label text="Seed Trains Included in Route Report" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Output Format to English Units for Speed and Distance" GridPane.rowIndex="11">
+            <Label text="Output Format to English Units for Speed and Distance" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Date/Time Format in .SUMMARY files  to DD:HH:MM:SS" GridPane.rowIndex="13">
+            <Label text="Date/Time Format in .SUMMARY files  to DD:HH:MM:SS" GridPane.rowIndex="14" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="32.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Any .INI File Settings" GridPane.halignment="LEFT" GridPane.rowIndex="9">
+            <Label text="Any .INI File Settings" GridPane.halignment="LEFT" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets left="350.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Count of .OPTION Files" GridPane.halignment="LEFT" GridPane.rowIndex="10">
+            <Label text="Count of .OPTION Files" GridPane.halignment="LEFT" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="350.0" />
                </GridPane.margin>
             </Label>
-            <Button fx:id="clearRegistryButton" mnemonicParsing="false" onAction="#handleClearRegistryButton" text="Clear Registry" GridPane.halignment="LEFT" GridPane.rowIndex="16">
+            <Button fx:id="clearRegistryButton" mnemonicParsing="false" onAction="#handleClearRegistryButton" text="Clear Registry" GridPane.halignment="LEFT" GridPane.rowIndex="15" GridPane.valignment="TOP">
                <GridPane.margin>
-                  <Insets left="32.0" />
+                  <Insets left="480.0" top="-5.0" />
                </GridPane.margin>
             </Button>
-            <Label text="5.  Clear all BIAS entries in Windows System Registry:" GridPane.rowIndex="15">
+            <Label text="5.  Clear all BIAS entries in Windows System Registry:" GridPane.rowIndex="15" GridPane.valignment="TOP">
                <GridPane.margin>
-                  <Insets left="32.0" />
+                  <Insets left="10.0" />
                </GridPane.margin>
+            </Label>
+            <Label text="Tools" underline="true" GridPane.rowIndex="7">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
             </Label>
          </children>
       </GridPane>
