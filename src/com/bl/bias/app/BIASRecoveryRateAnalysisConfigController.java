@@ -5683,7 +5683,22 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		return setATrainGroups;
 	}
-
+	
+	public static String getSetBRecoveryRateAnalysisTrainGroups()
+	{
+		return setBTrainGroups;
+	}
+	
+	public static String getSetCRecoveryRateAnalysisTrainGroups()
+	{
+		return setCTrainGroups;
+	}
+	
+	public static String getSetDRecoveryRateAnalysisTrainGroups()
+	{
+		return setDTrainGroups;
+	}
+	
 	public static String getSetARecoveryRateAnalysisNodePairs()
 	{
 		return setANodePairs;

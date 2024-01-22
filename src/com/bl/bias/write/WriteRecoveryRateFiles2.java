@@ -152,11 +152,11 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 			cell.setCellStyle(style0);
 			if (BIASRecoveryRateAnalysisConfigController.getSetBLabel().equals(""))
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train for Node Set B");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisTrainGroups())+" for Node Set B");
 			}
 			else
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train for Node Set B ("+BIASRecoveryRateAnalysisConfigController.getSetBLabel()+")");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisTrainGroups())+" for Node Set B ("+BIASRecoveryRateAnalysisConfigController.getSetBLabel()+")");
 			}
 
 			// Data headers
@@ -280,7 +280,11 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 							cell = row.createCell(7);
 
 							if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetBLowRecoveryRate().replace("%", "")))
+							{
+								if (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetB())
+									seedTrainsBelowTargetRecoveryRateHashSet.add(assessmentsSetB.get(i).getTrainSymbol().trim());
 								cell.setCellStyle(style8);
+							}
 							else
 								cell.setCellStyle(style1);
 
@@ -309,7 +313,7 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 			row = recoveryRatesSheetB.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates DO NOT INCLUDE work/dwell events.");
+			cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.");
 
 			if (BIASRecoveryRateAnalysisConfigController.getSetBScheduleImprecisionOffsetInSeconds() > 0)
 			{
@@ -317,7 +321,7 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 				row = recoveryRatesSheetB.createRow(rowCounter);
 				cell = row.createCell(0);
 				cell.setCellStyle(style2);
-				cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getSetBScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
+				cell.setCellValue("+ Recovery time available and recovery rate are reduced by "+BIASRecoveryRateAnalysisConfigController.getSetBScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
 			}
 
 			rowCounter++;
@@ -347,6 +351,13 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 				}
 			}
 		}
+	}
+	
+	public static String removeLastChar(String s) 
+	{
+	    return (s == null || s.length() == 0)
+	      ? null 
+	      : (s.substring(0, s.length() - 1));
 	}
 
 	public String getResultsMessageWrite2()

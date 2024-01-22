@@ -73,6 +73,7 @@ public class BIASParseConfigPageController
 	private static String t_trainType;
 	private static String t_atcEquipped;
 	private static String t_ptcEquipped;  
+	private static String t_excludeFromOTP;  
 
 	// Data from .ROUTE file
 	private static String r_trainSymbol;
@@ -339,7 +340,7 @@ public class BIASParseConfigPageController
 	{
 		curPage = 1;
 		previousPageButton.setDisable(true);
-		
+
 		restoreDefaultsButton.setDisable(true);
 
 		// Set up prefs
@@ -544,7 +545,8 @@ public class BIASParseConfigPageController
 		parseData6.addAll(new ParseLocationFormatB("Train Symbol", "t_trainSymbol", Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[1])),
 				new ParseLocationFormatB("Train Type", "t_trainType", Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])),
 				new ParseLocationFormatB("ATC Equipped", "t_atcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[1])),
-				new ParseLocationFormatB("PTC Equpped", "t_ptcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1]))
+				new ParseLocationFormatB("PTC Equpped", "t_ptcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1])),
+				new ParseLocationFormatB("Exclude from OTP", "t_excludeFromOTP", Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1]))
 				);
 
 		parseLocationsTable6.setItems(parseData6);
@@ -917,6 +919,7 @@ public class BIASParseConfigPageController
 			prefs.remove("t_trainType");
 			prefs.remove("t_atcEquipped");
 			prefs.remove("t_ptcEquipped");
+			prefs.remove("t_excludeFromOTP");
 
 			// Table 7
 			prefs.remove("r_trainSymbol");
@@ -1149,7 +1152,8 @@ public class BIASParseConfigPageController
 			parseData6.addAll(new ParseLocationFormatB("Train Symbol", "t_trainSymbol", Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[1])),
 					new ParseLocationFormatB("Train Type", "t_trainType", Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])),
 					new ParseLocationFormatB("ATC Equipped", "t_atcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[1])),
-					new ParseLocationFormatB("PTC Equpped", "t_ptcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1]))
+					new ParseLocationFormatB("PTC Equpped", "t_ptcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1])),
+					new ParseLocationFormatB("Exclude from OTP", "t_excludeFromOTP", Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1]))
 					);
 
 			startColumn6.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1332,7 +1336,7 @@ public class BIASParseConfigPageController
 	@FXML private void handleViewEntriesOnlyRadioButton(ActionEvent event) 
 	{
 		restoreDefaultsButton.setDisable(true);
-		
+
 		parseLocationsTable1.setEditable(false);
 		parseLocationsTable2.setEditable(false);
 		parseLocationsTable3.setEditable(false);
@@ -1392,7 +1396,7 @@ public class BIASParseConfigPageController
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
 	{
 		restoreDefaultsButton.setDisable(false);
-		
+
 		parseLocationsTable1.setEditable(true);
 		parseLocationsTable2.setEditable(true);
 		parseLocationsTable3.setEditable(true);
@@ -3081,6 +3085,15 @@ public class BIASParseConfigPageController
 				prefs.put("t_ptcEquipped", t_ptcEquipped);
 		}
 
+		// Exclude from OTP
+		if (prefs.get("t_excludeFromOTP", null) == null)
+		{
+			// Write value for subsequent runs
+			t_excludeFromOTP = "31,34";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_excludeFromOTP", t_excludeFromOTP);
+		}
+
 		// Table 7
 		// Train Symbol
 		if (prefs.get("r_trainSymbol", null) == null)
@@ -4430,6 +4443,12 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] t_getOtpExcluded()
+	{
+		String[] values = prefs.get("t_excludeFromOTP", t_excludeFromOTP).split(",");
+		return values;
+	}
+	
 	public static String[] r_getTrainSymbol()
 	{
 		String[] values = prefs.get("r_trainSymbol", r_trainSymbol).split(",");
@@ -4483,7 +4502,7 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("r_minDwell", r_minimumDwell).split(",");
 		return values;
 	}
-	
+
 	public static String[] r_getWaitOnSchedule()
 	{
 		String[] values = prefs.get("r_waitOnSchedule", r_waitOnSchedule).split(",");

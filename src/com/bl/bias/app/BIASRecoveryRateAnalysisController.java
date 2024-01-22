@@ -10,7 +10,7 @@ import com.bl.bias.analyze.RecoveryRateAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadRecoveryRateAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteRecoveryRateFiles5;
+import com.bl.bias.write.WriteRecoveryRateFiles6;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,6 +40,7 @@ public class BIASRecoveryRateAnalysisController
 
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
+	@FXML private Label modifyTrainFileWarningLabel;
 
 	@FXML private TextArea textArea;
 
@@ -48,6 +49,8 @@ public class BIASRecoveryRateAnalysisController
 	@FXML private void initialize()
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
+		
+		modifyTrainFileWarningLabel.setVisible(false);
 	}
 
 	@FXML private void handleSelectFileButton(ActionEvent event) 
@@ -113,6 +116,7 @@ public class BIASRecoveryRateAnalysisController
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
 				fileNameLabel.setText("");
+				modifyTrainFileWarningLabel.setVisible(false);
 			}	
 		}
 		else
@@ -160,6 +164,7 @@ public class BIASRecoveryRateAnalysisController
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
 				fileNameLabel.setText("");
+				modifyTrainFileWarningLabel.setVisible(false);
 			}	
 		}
 	}
@@ -175,6 +180,7 @@ public class BIASRecoveryRateAnalysisController
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
 		fileNameLabel.setText("");
+		modifyTrainFileWarningLabel.setVisible(false);
 	}
 
 	private void chooseFile()
@@ -204,6 +210,7 @@ public class BIASRecoveryRateAnalysisController
 		if (file != null)
 		{
 			Boolean routeFileFound = false;
+			Boolean trainFileFound = false;
 
 			executeButton.setDisable(true);
 
@@ -225,7 +232,14 @@ public class BIASRecoveryRateAnalysisController
 			else
 				message += "\n.ROUTE file is missing!";
 
-			if (routeFileFound)
+			// Check that .TRAIN file exists
+			File trainFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".TRAIN"));
+			if (trainFile.exists())
+				trainFileFound = true;
+			else
+				message += "\n.TRAIN file is missing!";
+
+			if ((routeFileFound) && (trainFileFound))
 			{
 				executeButton.setDisable(false);
 			}
@@ -233,6 +247,15 @@ public class BIASRecoveryRateAnalysisController
 				message += "\n\nUnable to perform analysis due to missing file(s)";
 
 			displayMessage(message);
+			
+			if ((BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetA()) 
+				|| (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetB()) 
+				|| (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetC())
+				|| (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetD()))
+			{
+				// Add label that .TRAIN file may be modified
+				modifyTrainFileWarningLabel.setVisible(true);
+			}
 		}
 	}                     
 
@@ -263,7 +286,7 @@ public class BIASRecoveryRateAnalysisController
 
 	private void runTask() throws InterruptedException, IOException
 	{
-		// and ENGLISH input units
+		// Check date/time format, verbose .ROUTE file, output format and ENGLISH input units
 		File optionFile = new File(fullyQualifiedPath);
 		File optionFileFolder = new File(optionFile.getParent());
 		BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
@@ -277,25 +300,33 @@ public class BIASRecoveryRateAnalysisController
 			continueAnalysis = false;
 		}
 		displayMessage(message);
-				
+
 		if (continueAnalysis)
 		{
 			// Ensure that there are valid groups and node pairs
-			if ((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups() != null)
-				&& ((BIASRecoveryRateAnalysisConfigController.getAnalyzeSetA() == true) 
-					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true)
-					|| (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetC() == true)
-				    || (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetD() == true))
-				&& ((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)
-					|| (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)
-					|| (BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisNodePairs() != null)
-				    || (BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisNodePairs() != null)))
+			if (((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups() != null) 
+					&& (!BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups().equals("")) 
+					&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetA() == true)
+					&& (BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)) ||
+					((BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisTrainGroups() != null)
+							&& (!BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisTrainGroups().equals("")) 
+							&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true)
+							&& (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)) |
+					((BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisTrainGroups() != null)
+							&& (!BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisTrainGroups().equals("")) 
+							&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetC() == true)
+							&& (BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisNodePairs() != null)) ||
+					((BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisTrainGroups() != null)
+							&& (!BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisTrainGroups().equals("")) 
+							&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetD() == true)
+							&& (BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisNodePairs() != null)))
+
 			{
 				// Read all objects that are required for the recovery rate analysis
 				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
 				message = readData.getResultsMessage();
 				displayMessage(message);
-				
+
 				setProgressIndicator(0.40);
 
 				if (continueAnalysis)
@@ -308,11 +339,11 @@ public class BIASRecoveryRateAnalysisController
 					setProgressIndicator(0.80);
 
 					// Write results to spreadsheet
-					WriteRecoveryRateFiles5 writeFiles = new WriteRecoveryRateFiles5(textArea.getText().toString());
-					message = writeFiles.getResultsWriteMessage5();
+					WriteRecoveryRateFiles6 writeFiles = new WriteRecoveryRateFiles6(textArea.getText().toString(), fullyQualifiedPath);
+					message = writeFiles.getResultsWriteMessage6();
 					displayMessage(message);
 
-					if (!WriteRecoveryRateFiles5.getErrorFound())
+					if (!WriteRecoveryRateFiles6.getErrorFound())
 					{
 						setProgressIndicator(1.0);
 						displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -330,7 +361,7 @@ public class BIASRecoveryRateAnalysisController
 			}
 			else
 			{
-				displayMessage("\nMust have select analyzing at least one set, at least one defined group\n and at least one defined node pair to run analysis");
+				displayMessage("\nMust select analyzing at least one set, at least one defined group\n and at least one defined node pair to run analysis");
 				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 			}
 		}

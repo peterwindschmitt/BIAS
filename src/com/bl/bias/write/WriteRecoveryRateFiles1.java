@@ -3,6 +3,7 @@ package com.bl.bias.write;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -26,7 +27,9 @@ public class WriteRecoveryRateFiles1 // Set A
 {
 	private LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	protected String resultsMessage = "\nStarted writing output file at "+startWriteFileTime;
-
+	protected HashSet<String> seedTrainsBelowTargetRecoveryRateHashSet = new HashSet<String>();
+	protected Boolean error = false;
+	
 	ArrayList<TrainAssessment> assessmentsSetA = new ArrayList<TrainAssessment>();
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
@@ -154,11 +157,11 @@ public class WriteRecoveryRateFiles1 // Set A
 
 			if (BIASRecoveryRateAnalysisConfigController.getSetALabel().equals(""))
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train for Node Set A");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups())+" for Node Set A");
 			}
 			else
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train for Node Set A ("+BIASRecoveryRateAnalysisConfigController.getSetALabel()+")");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups())+" for Node Set A ("+BIASRecoveryRateAnalysisConfigController.getSetALabel()+")");
 			}
 
 			// Data headers
@@ -283,7 +286,11 @@ public class WriteRecoveryRateFiles1 // Set A
 							cell = row.createCell(7);
 
 							if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetALowRecoveryRate().replace("%", "")))
+							{
+								if (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetA())
+									seedTrainsBelowTargetRecoveryRateHashSet.add(assessmentsSetA.get(i).getTrainSymbol().trim());
 								cell.setCellStyle(style8);
+							}
 							else
 								cell.setCellStyle(style1);
 
@@ -312,7 +319,7 @@ public class WriteRecoveryRateFiles1 // Set A
 			row = recoveryRatesSheetA.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates DO NOT INCLUDE work/dwell events.");
+			cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.");
 
 			if (BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds() > 0)
 			{
@@ -320,7 +327,7 @@ public class WriteRecoveryRateFiles1 // Set A
 				row = recoveryRatesSheetA.createRow(rowCounter);
 				cell = row.createCell(0);
 				cell.setCellStyle(style2);
-				cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
+				cell.setCellValue("+ Recovery time available and recovery rate are reduced by "+BIASRecoveryRateAnalysisConfigController.getSetAScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
 			}
 
 			rowCounter++;
@@ -350,6 +357,13 @@ public class WriteRecoveryRateFiles1 // Set A
 				}
 			}
 		}
+	}
+	
+	public static String removeLastChar(String s) 
+	{
+	    return (s == null || s.length() == 0)
+	      ? null 
+	      : (s.substring(0, s.length() - 1));
 	}
 
 	public String getResultsMessageWrite1()

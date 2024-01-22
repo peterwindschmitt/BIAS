@@ -29,7 +29,7 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 
 	Integer rowCounter = 0;
 
-	Boolean trainHasRecoveryRates = false;
+	Boolean trainsToHaveOtpExcluded = false;
 
 	public WriteRecoveryRateFiles4(String textArea)
 	{
@@ -152,11 +152,11 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 			cell.setCellStyle(style0);
 			if (BIASRecoveryRateAnalysisConfigController.getSetDLabel().equals(""))
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train for Node Set D");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisTrainGroups())+" for Node Set D");
 			}
 			else
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train for Node Set D ("+BIASRecoveryRateAnalysisConfigController.getSetDLabel()+")");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups())+" for Node Set D ("+BIASRecoveryRateAnalysisConfigController.getSetDLabel()+")");
 			}
 
 			// Data headers
@@ -211,7 +211,7 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 				if (assessmentsSetD.get(i).getTrainHasRecoveryRatesCalculated())
 				{
 					// Valid train found
-					trainHasRecoveryRates = true;
+					trainsToHaveOtpExcluded = true;
 					int entryCount = 0;
 
 					for (int j = 0; j < assessmentsSetD.get(i).getRecoveryRateAssessments().size(); j++)
@@ -280,7 +280,11 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 							cell = row.createCell(7);
 
 							if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetDLowRecoveryRate().replace("%", "")))
+							{
+								if (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetD())
+									seedTrainsBelowTargetRecoveryRateHashSet.add(assessmentsSetD.get(i).getTrainSymbol().trim());
 								cell.setCellStyle(style8);
+							}
 							else
 								cell.setCellStyle(style1);
 
@@ -290,7 +294,7 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 				}
 			}
 
-			if (!trainHasRecoveryRates) 
+			if (!trainsToHaveOtpExcluded) 
 			{
 				// Train Symbol
 				rowCounter++;
@@ -309,7 +313,7 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 			row = recoveryRatesSheetD.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
-			cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.  Recovery rates DO NOT INCLUDE work/dwell events.");
+			cell.setCellValue("* Denotes at least one work/dwell event occuring within the node pair.");
 
 			if (BIASRecoveryRateAnalysisConfigController.getSetDScheduleImprecisionOffsetInSeconds() > 0)
 			{
@@ -317,7 +321,7 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 				row = recoveryRatesSheetD.createRow(rowCounter);
 				cell = row.createCell(0);
 				cell.setCellStyle(style2);
-				cell.setCellValue("+ Recovery time available is reduced by "+BIASRecoveryRateAnalysisConfigController.getSetDScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
+				cell.setCellValue("+ Recovery time available and recovery rate are reduced by "+BIASRecoveryRateAnalysisConfigController.getSetDScheduleImprecisionOffsetInSeconds()+" seconds per work event/stop due to schedule imprecision.");
 			}
 
 			rowCounter++;
@@ -347,6 +351,13 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 				}
 			}
 		}
+	}
+	
+	public static String removeLastChar(String s) 
+	{
+	    return (s == null || s.length() == 0)
+	      ? null 
+	      : (s.substring(0, s.length() - 1));
 	}
 
 	public String getResultsMessageWrite4()

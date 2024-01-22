@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
 <GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASRecoveryRateAnalysisController">
 	<columnConstraints>
@@ -26,6 +27,11 @@
 		<RowConstraints maxHeight="60.0" minHeight="60.0" percentHeight="0.0" prefHeight="60.0" vgrow="NEVER" />
 		<RowConstraints maxHeight="222.0" minHeight="222.0" percentHeight="0.0" prefHeight="222.0" vgrow="NEVER" />
         <RowConstraints maxHeight="75.0" minHeight="75.0" percentHeight="0.0" prefHeight="75.0" vgrow="ALWAYS" />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
 	</rowConstraints>
 	<children>
 		<Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSelectFileButton" text="Select File" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
@@ -68,5 +74,13 @@
             <Insets bottom="15.0" left="80.0" />
          </GridPane.margin>
       </ProgressBar>
+      <Label fx:id="modifyTrainFileWarningLabel" text="WARNING:  The .TRAIN file may be modified if recovery rates are found too low.  To change this setting, deselect the &quot;Exclude trains below low recovery threshold rate ...&quot; setting on the Recovery Rate module configuration screen and reselect case." textFill="RED" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets left="10.0" right="10.0" />
+         </GridPane.margin>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
 	</children>
 </GridPane>
