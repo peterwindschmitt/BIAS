@@ -24,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.app.BIASRecoveryRateAnalysisConfigController;
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.read.ReadRecoveryRateAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteRecoveryRateFiles5 extends WriteRecoveryRateFiles4 // Trains which have had their OTP excluded
@@ -113,6 +114,14 @@ public class WriteRecoveryRateFiles5 extends WriteRecoveryRateFiles4 // Trains w
 			cell.setCellStyle(style3);
 			cell.setCellValue("Seed Train");
 
+			cell = row.createCell(1);
+			cell.setCellStyle(style3);
+			cell.setCellValue("Train Group");
+			
+			cell = row.createCell(2);
+			cell.setCellStyle(style3);
+			cell.setCellValue("Train Type");
+			
 			// Trains
 			// Convert HashSet to ArrayList
 			ArrayList<String> seedTrainsBelowTargetRecoveryRateArrayList = new ArrayList<String>();
@@ -213,6 +222,14 @@ public class WriteRecoveryRateFiles5 extends WriteRecoveryRateFiles4 // Trains w
 				cell = row.createCell(0);
 				cell.setCellStyle(style2);
 				cell.setCellValue(seedTrainsBelowTargetRecoveryRateArrayList.get(i));
+				
+				cell = row.createCell(1);
+				cell.setCellStyle(style2);
+				cell.setCellValue(ReadRecoveryRateAnalysisFiles.getTrainToGroupAssignment().get(seedTrainsBelowTargetRecoveryRateArrayList.get(i)));
+				
+				cell = row.createCell(2);
+				cell.setCellStyle(style2);
+				cell.setCellValue(ReadRecoveryRateAnalysisFiles.getTrainToTypeAssignment().get(seedTrainsBelowTargetRecoveryRateArrayList.get(i)));
 			}
 
 			if (seedTrainsBelowTargetRecoveryRateArrayList.size() == 0) 
@@ -229,6 +246,13 @@ public class WriteRecoveryRateFiles5 extends WriteRecoveryRateFiles4 // Trains w
 				resultsMessage += "\nWriting trains to exclude from OTP calculation due to below target recovery rate";
 			}
 
+
+			// Resize all columns to fit the content size
+			for (int i = 0; i <= 2; i++) 
+			{
+				seedTrainsExcludedFromOtpSheet.setColumnWidth(i, 4000);
+			}
+			
 			// Timestamp
 			LocalDate creationDate = ConvertDateTime.getDateStamp();
 			LocalTime creationTime = ConvertDateTime.getTimeStamp();

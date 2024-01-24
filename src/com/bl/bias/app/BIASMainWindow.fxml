@@ -34,7 +34,7 @@
       						<MenuItem fx:id="menuItemBridgeClosureAnalysis" mnemonicParsing="true" onAction="#handleMenuItemBridgeClosureAnalysis" text="_Bridge Closure Analysis" visible="false" />
       						<MenuItem fx:id="menuItemMaintenanceWindowAnalysis" mnemonicParsing="true" onAction="#handleMenuItemMaintenanceWindowAnalysis" text="_Maintenance Window Analysis" visible="false" />
                         	<MenuItem fx:id="menuItemGradeXingSpeeds" mnemonicParsing="true" onAction="#handleMenuItemGradeXingSpeeds" text="Grade _Crossing Speed Analysis" visible="false" />
-                        <MenuItem fx:id="menuItemRecoveryRate" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRate" text="Recovery Rate Analysis" visible="false" />
+                        	<MenuItem fx:id="menuItemRecoveryRate" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRate" text="Recovery Rate Analysis" visible="false" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Scheduling">
@@ -47,6 +47,7 @@
                   <Menu mnemonicParsing="false" text="Compliance">
                      <items>
                         	<MenuItem fx:id="menuItemUscgBridgeCompliance" mnemonicParsing="true" onAction="#handleMenuItemUscgBridgeCompliance" text="USCG Bridge Compliance" visible="false" />
+                     		<MenuItem fx:id="menuItemJuaCompliance" mnemonicParsing="true" onAction="#handleMenuItemJuaCompliance" text="JUA Compliance" visible="false" />
                      </items>
                   </Menu>
 						<SeparatorMenuItem />
@@ -76,6 +77,7 @@
                         <Menu mnemonicParsing="false" text="Compliance">
                            <items>
                               <MenuItem fx:id="menuItemUscgBridgeComplianceConfig" mnemonicParsing="false" onAction="#handleMenuItemUscgBridgeComplianceConfig" text="USCG Bridge Compliance" visible="false" />
+                           	  <MenuItem fx:id="menuItemJuaComplianceConfig" mnemonicParsing="false" onAction="#handleMenuItemJuaComplianceConfig" text="JUA Compliance" visible="false" />
                            </items>
                         </Menu>
                     </items>

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +20,8 @@ public class ReadRecoveryRateAnalysisFiles
 {
 	private static ArrayList<TrainAssessment> trainsReadIn = new ArrayList<TrainAssessment>();
 	private static ArrayList<String> nodePairsToAnalyze = new ArrayList<String>();
+	private static HashMap<String, String> trainToGroupAssignment = new HashMap<String, String>();
+	private static HashMap<String, String> trainToTypeAssignment = new HashMap<String, String>();
 
 	private static String resultsMessage;
 
@@ -26,6 +29,9 @@ public class ReadRecoveryRateAnalysisFiles
 	{
 		trainsReadIn.clear();
 		nodePairsToAnalyze.clear();
+		trainToGroupAssignment.clear();
+		trainToTypeAssignment.clear();
+		
 		resultsMessage = "\nStarted parsing Recovery Rate Analysis files at "+ConvertDateTime.getTimeStamp()+"\n";
 
 		// Read in .ROUTE file with BufferedReader then pass to Scanner
@@ -55,6 +61,7 @@ public class ReadRecoveryRateAnalysisFiles
 		{
 			String trainSymbol = null;
 			String trainGroup = null;
+			String trainType = null;
 			ArrayList<RouteEntry> routeEntries = null;
 			scanner = new Scanner(contentForScanner.toString());
 
@@ -88,7 +95,19 @@ public class ReadRecoveryRateAnalysisFiles
 						{
 							trainGroup = matcher.group(1).trim(); 
 						}
+						
+						String trainTypePattern = Pattern.quote("Type:") + "(.*?)" + Pattern.quote("Group");
+						pattern = Pattern.compile(trainTypePattern);
+						matcher = pattern.matcher(lineFromFile);
 
+						while (matcher.find()) 
+						{
+							trainType = matcher.group(1).trim(); 
+						}
+
+						trainToGroupAssignment.put(trainSymbol, trainGroup);
+						trainToTypeAssignment.put(trainSymbol, trainType);
+						
 						routeEntries = new ArrayList<RouteEntry>();
 
 						openingSequence0 = true;
@@ -103,7 +122,7 @@ public class ReadRecoveryRateAnalysisFiles
 						openingSequence0 = false;
 						openingSequence1 = false;
 
-						TrainAssessment trainToAsess = new TrainAssessment(trainSymbol, trainGroup, routeEntries);
+						TrainAssessment trainToAsess = new TrainAssessment(trainSymbol, trainGroup, trainType, routeEntries);
 						trainsReadIn.add(trainToAsess);
 					}
 					else if ((openingSequence0) && (openingSequence1))
@@ -149,6 +168,16 @@ public class ReadRecoveryRateAnalysisFiles
 	public static ArrayList<TrainAssessment> getTrainsReadIn()
 	{
 		return trainsReadIn;
+	}
+	
+	public static HashMap<String, String> getTrainToGroupAssignment()
+	{
+		return trainToGroupAssignment;
+	}
+	
+	public static HashMap<String, String> getTrainToTypeAssignment()
+	{
+		return trainToTypeAssignment;
 	}
 
 	public String getResultsMessage()

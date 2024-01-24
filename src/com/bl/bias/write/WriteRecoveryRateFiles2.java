@@ -166,8 +166,8 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 
 			cell = row.createCell(0);
 			cell.setCellStyle(style6);
-			cell.setCellValue("Train Symbol (Group)");
-
+			cell.setCellValue("Train Symbol (Group/Type)");
+			
 			cell = row.createCell(1);
 			cell.setCellStyle(style7);
 			cell.setCellValue("Node A");
@@ -227,7 +227,7 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 							{
 								cell = row.createCell(0);
 								cell.setCellStyle(style5);
-								cell.setCellValue(assessmentsSetB.get(i).getTrainSymbol()+" ("+assessmentsSetB.get(i).getTrainGroupAbbreviation()+")");
+								cell.setCellValue(assessmentsSetB.get(i).getTrainSymbol()+" ("+assessmentsSetB.get(i).getTrainGroupAbbreviation()+"/"+assessmentsSetB.get(i).getTrainType()+")");
 							}
 
 							// Node A
@@ -335,7 +335,7 @@ public class WriteRecoveryRateFiles2 extends WriteRecoveryRateFiles1 // Set B
 			{
 				if (i == 0) 
 				{
-					recoveryRatesSheetB.setColumnWidth(i, 7000);
+					recoveryRatesSheetB.setColumnWidth(i, 9000);
 				}
 				else if (i == 1)
 				{

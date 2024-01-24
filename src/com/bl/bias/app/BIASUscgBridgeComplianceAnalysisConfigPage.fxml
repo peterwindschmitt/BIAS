@@ -130,12 +130,12 @@
                   <Insets left="140.0" />
                </GridPane.margin>
             </Label>
-            <TableView fx:id="marineAccessPeriodsTable" maxHeight="218.0" maxWidth="690.0" minHeight="218.0" minWidth="690.0" prefHeight="218.0" prefWidth="690.0" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="6" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+            <TableView fx:id="marineAccessPeriodsTable" maxHeight="218.0" maxWidth="618.0" minHeight="218.0" minWidth="618.0" prefHeight="218.0" prefWidth="618.0" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="6" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
 			     <columns>
-					<TableColumn fx:id="marinePeriodStartDouble" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Marine Period &#10; Start (double)" />
-		            <TableColumn fx:id="marinePeriodStartTime" editable="false" maxWidth="98.0" minWidth="98.0" prefWidth="98.0" resizable="false" text="Marine Period &#10;  Start (time)" />
-					<TableColumn fx:id="marinePeriodEndDouble" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="Marine Period &#10; End (double)" />
-					<TableColumn fx:id="marinePeriodEndTime" editable="false" maxWidth="98.0" minWidth="98.0" prefWidth="980.0" resizable="false" text="Marine Period &#10;   End (time)" />
+					<TableColumn fx:id="marinePeriodStartDouble" editable="false" maxWidth="80.0" minWidth="80.0" text="Period Start &#10;   (double)" />
+		            <TableColumn fx:id="marinePeriodStartTime" editable="false" maxWidth="80.0" minWidth="80.0" resizable="false" text="Period Start&#10;      (time)" />
+					<TableColumn fx:id="marinePeriodEndDouble" editable="false" maxWidth="80.0" minWidth="80.0" resizable="false" text="Period End &#10;   (double)" />
+					<TableColumn fx:id="marinePeriodEndTime" editable="false" maxWidth="80.0" minWidth="80.0" resizable="false" text="Period End &#10;     (time)" />
 					<TableColumn fx:id="mo" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Mon" />
 					<TableColumn fx:id="tu" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Tue" />
 					<TableColumn fx:id="we" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Wed" />
@@ -145,7 +145,7 @@
 				 	<TableColumn fx:id="su" editable="false" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" resizable="false" text="Sun" />
 				 </columns>
 		 		 <GridPane.margin>
-					<Insets left="10.0" top="10.0" />
+					<Insets left="32.0" top="10.0" />
 		 		 </GridPane.margin>
 	  	    </TableView>
 	  		<RadioButton fx:id="viewAndEditEntriesRadioButton" maxHeight="30.0" minHeight="30.0" mnemonicParsing="false" onAction="#handleViewAndEditEntriesRadioButton" prefHeight="30.0" text="Edit column values (risky)" textFill="RED" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
@@ -162,30 +162,30 @@
                   <Insets left="20.0" />
                </padding>
             </RadioButton>
-            <Button fx:id="clearRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleClearRegistryButton" prefHeight="25.0" text="Clear Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+            <Button fx:id="clearRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" minHeight="25.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleClearRegistryButton" prefHeight="25.0" text="Clear Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
                <font>
                   <Font size="11.0" />
                </font>
                <GridPane.margin>
-                  <Insets left="20.0" />
+                  <Insets left="-40.0" top="86.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="addPeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleAddPeriodButton" prefWidth="76.0" text="Add Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+            <Button fx:id="addPeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleAddPeriodButton" prefWidth="76.0" text="Add Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
                <GridPane.margin>
-                  <Insets right="10.0" top="40.0" />
+                  <Insets left="-40.0" top="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="deletePeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleDeletePeriodButton" prefWidth="76.0" text="Del Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+            <Button fx:id="deletePeriodButton" disable="true" maxWidth="76.0" minWidth="76.0" mnemonicParsing="false" onAction="#handleDeletePeriodButton" prefWidth="76.0" text="Del Period" textFill="RED" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
                <GridPane.margin>
-                  <Insets right="10.0" top="80.0" />
+                  <Insets left="-40.0" top="48.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="saveMarineAccessPeriodsToRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" mnemonicParsing="false" onAction="#handleSaveMarineAccessPeriodsToRegistryButton" prefHeight="25.0" prefWidth="100.0" text="Save  to Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+            <Button fx:id="saveMarineAccessPeriodsToRegistryButton" alignment="CENTER" disable="true" maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" mnemonicParsing="false" onAction="#handleSaveMarineAccessPeriodsToRegistryButton" prefHeight="25.0" prefWidth="100.0" text="Save to Registry" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
                <font>
                   <Font size="11.0" />
                </font>
                <GridPane.margin>
-                  <Insets left="115.0" />
+                  <Insets left="-40.0" top="124.0" />
                </GridPane.margin>
             </Button>
             <Label text="minutes" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="4">
@@ -193,11 +193,27 @@
                   <Insets left="20.0" />
                </GridPane.margin>
             </Label>
+            <Button fx:id="saveToFileButton" alignment="CENTER" disable="true" maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" mnemonicParsing="false" onAction="#handleSaveToFileButton" prefHeight="25.0" prefWidth="100.0" text="Save to File" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="-40.0" top="162.0" />
+               </GridPane.margin>
+            </Button>
             <ComboBox fx:id="maxClosureMinutesComboBox" maxWidth="60.0" minWidth="60.0" onAction="#handleMaxClosureMinutesComboBox" prefWidth="60.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="162.0" />
                </GridPane.margin>
             </ComboBox>
+            <Button fx:id="loadFromFileButton" alignment="CENTER" disable="true" maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" mnemonicParsing="false" onAction="#handleLoadFromFileButton" prefHeight="25.0" prefWidth="100.0" text="Load from File" textAlignment="CENTER" textFill="RED" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="-40.0" top="200.0" />
+               </GridPane.margin>
+            </Button>
          </children>
          <opaqueInsets>
             <Insets />

@@ -18,6 +18,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
@@ -26,8 +27,14 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
 
+import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.MarineAccessPeriod;
 
 public class BIASUscgBridgeComplianceAnalysisConfigPageController 
@@ -51,7 +58,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static String defaultMarineAcessPeriodStartHour = "00:00";
 	private static String defaultMarineAcessPeriodEndHour = "00:00";
 	private static String defaultMaxClosureMinutes = "60";
-	
+
 	private static Double marineAccessPeriodSpan = 0.0;
 
 	private static Boolean validMarinePeriods = false;
@@ -81,6 +88,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	@FXML private Button addPeriodButton;
 	@FXML private Button deletePeriodButton;
 	@FXML private Button saveMarineAccessPeriodsToRegistryButton;
+	@FXML private Button saveToFileButton;
+	@FXML private Button loadFromFileButton;
 
 	@FXML private RadioButton viewEntriesOnlyRadioButton;
 	@FXML private RadioButton viewAndEditEntriesRadioButton;
@@ -462,6 +471,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		saveMarineAccessPeriodsToRegistryButton.setDisable(true);
 		addPeriodButton.setDisable(true);
 		deletePeriodButton.setDisable(true);
+		saveToFileButton.setDisable(true);
+		loadFromFileButton.setDisable(true);
 
 		marineAccessPeriodsTable.setEditable(false);
 		marineAccessPeriodsTable.refresh();
@@ -481,6 +492,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
 	{
 		addPeriodButton.setDisable(false);
+		loadFromFileButton.setDisable(false);
 
 		if (validMarinePeriods)
 		{
@@ -498,12 +510,14 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
 				saveMarineAccessPeriodsToRegistryButton.setDisable(false);
+				saveToFileButton.setDisable(false);
 			}
 		}
 		else
 		{
 			clearRegistryButton.setDisable(true);
 			saveMarineAccessPeriodsToRegistryButton.setDisable(true);
+			saveToFileButton.setDisable(true);
 		}
 
 		marineAccessPeriodsTable.setEditable(true);
@@ -620,6 +634,16 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 	}
 
+	@FXML private void handleSaveToFileButton(ActionEvent event)
+	{	
+		savePeriodsToFile();
+	}
+
+	@FXML private void handleLoadFromFileButton(ActionEvent event) throws FileNotFoundException
+	{	
+		loadPeriodsFromFile();
+	}
+
 	@FXML private void handleSaveMarineAccessPeriodsToRegistryButton(ActionEvent event)
 	{
 		String registryEntry = "";
@@ -720,7 +744,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	{
 		return includeSummaryResultsOnNotepad;
 	}
-	
+
 	public static Boolean getIncludeViolationsOnClosuresSheet()
 	{
 		return includeViolationsOnClosureSheet;
@@ -772,19 +796,19 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			marineAccessPeriodSpan = marineAccessPeriodSpan + 24.0;
 		return marineAccessPeriodSpan;
 	}
-	
+
 	public static Double getMarineAccessPeriodSpanAsDouble()
 	{
 		return marineAccessPeriodSpan;
 	}
-	
+
 	private static String getMarinePeriodSpanAsString()
 	{
 		String marineAccessPeriodSpanAsString = String.valueOf(marineAccessPeriodSpan).replace(".0","");
-		
+
 		return marineAccessPeriodSpanAsString;
 	}
-	
+
 	public static Integer getMarinePeriodsPerWeekAsInteger()
 	{
 		int marineAccessPeriodsPerWeekAsInteger = 0;
@@ -805,7 +829,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			if (marineAccessPeriodsData.get(i).getSu().getValue())
 				marineAccessPeriodsPerWeekAsInteger++;
 		}
-				
+
 		return marineAccessPeriodsPerWeekAsInteger;
 	}
 
@@ -857,6 +881,106 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 				alert.show();
 			}
 			return null;
+		}
+	}
+
+	void savePeriodsToFile()
+	{
+		// Get location to save file to if not using system time as file name
+		FileChooser fileChooser = new FileChooser();
+		Stage stageForFolderChooser = (Stage) saveToFileButton.getScene().getWindow();
+		fileChooser.setTitle("Select Location to Save Results");
+		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Marine Access Periods (.mrp)", "*.mrp");
+		fileChooser.getExtensionFilters().add(fileExtensions);
+
+		File file = fileChooser.showSaveDialog(stageForFolderChooser);
+
+		if (file != null) 
+		{
+			try 
+			{
+				String fileEntry = "";
+				for (int i = 0; i < marineAccessPeriodsData.size(); i++)
+				{	
+					fileEntry+="[";
+
+					fileEntry+=marineAccessPeriodsData.get(i).getMarinePeriodStartDouble()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getMarinePeriodEndDouble()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getMo().getValue()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getTu().getValue()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getWe().getValue()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getTh().getValue()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getFr().getValue()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getSa().getValue()+",";
+					fileEntry+=marineAccessPeriodsData.get(i).getSu().getValue();
+
+					if (i == (marineAccessPeriodsData.size() - 1))
+						fileEntry+="]";
+					else
+						fileEntry+="]:";
+				}
+
+				try 
+				{
+					FileWriter fileWriter = new FileWriter(file);
+					fileWriter.write(fileEntry);
+					fileWriter.close();
+				} 
+				catch (IOException e) 
+				{
+					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				}	
+			} 
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+			}
+		}
+	}
+
+	void loadPeriodsFromFile() throws FileNotFoundException
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select File");
+		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Marine Access Periods (.mrp)", "*.mrp");
+		fileChooser.getExtensionFilters().add(fileExtensions);	
+
+		Stage stageForFileChooser = (Stage) loadFromFileButton.getScene().getWindow();
+		File file = fileChooser.showOpenDialog(stageForFileChooser);
+
+		if (file != null)
+		{
+			marineAccessPeriodsData.clear();
+			
+			Scanner scanner = new Scanner(file);
+
+			while (scanner.hasNextLine()) 
+			{
+				String lineFromFile = scanner.nextLine();
+				String[] periods = lineFromFile.split(":");
+				for (int i = 0; i < periods.length; i++)
+				{
+					String[] values = periods[i].replace("[", "").replace("]", "").split(",");
+					marineAccessPeriodsData.add(new MarineAccessPeriod(Double.valueOf(values[0]), 
+							Double.valueOf(values[1]), 
+							Boolean.valueOf(values[2]), 
+							Boolean.valueOf(values[3]),
+							Boolean.valueOf(values[4]),
+							Boolean.valueOf(values[5]),
+							Boolean.valueOf(values[6]),
+							Boolean.valueOf(values[7]),
+							Boolean.valueOf(values[8])));
+				}
+			}
+			scanner.close();
+
+			if (marineAccessPeriodsData.size() > 0)
+			{
+				marineAccessPeriodsTable.setItems(marineAccessPeriodsData);	
+				saveToFileButton.setDisable(false);
+				saveMarineAccessPeriodsToRegistryButton.setDisable(false);
+				deletePeriodButton.setDisable(false); 
+			}
 		}
 	}
 }
