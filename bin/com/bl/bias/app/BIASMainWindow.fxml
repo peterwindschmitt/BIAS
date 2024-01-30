@@ -46,8 +46,8 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Compliance">
                      <items>
-                        	<MenuItem fx:id="menuItemUscgBridgeCompliance" mnemonicParsing="true" onAction="#handleMenuItemUscgBridgeCompliance" text="USCG Bridge Compliance" visible="false" />
                      		<MenuItem fx:id="menuItemJuaCompliance" mnemonicParsing="true" onAction="#handleMenuItemJuaCompliance" text="JUA Compliance" visible="false" />
+                        	<MenuItem fx:id="menuItemUscgBridgeCompliance" mnemonicParsing="true" onAction="#handleMenuItemUscgBridgeCompliance" text="USCG Bridge Compliance" visible="false" />
                      </items>
                   </Menu>
 						<SeparatorMenuItem />
@@ -76,8 +76,8 @@
                         </Menu>
                         <Menu mnemonicParsing="false" text="Compliance">
                            <items>
-                              <MenuItem fx:id="menuItemUscgBridgeComplianceConfig" mnemonicParsing="false" onAction="#handleMenuItemUscgBridgeComplianceConfig" text="USCG Bridge Compliance" visible="false" />
                            	  <MenuItem fx:id="menuItemJuaComplianceConfig" mnemonicParsing="false" onAction="#handleMenuItemJuaComplianceConfig" text="JUA Compliance" visible="false" />
+                              <MenuItem fx:id="menuItemUscgBridgeComplianceConfig" mnemonicParsing="false" onAction="#handleMenuItemUscgBridgeComplianceConfig" text="USCG Bridge Compliance" visible="false" />
                            </items>
                         </Menu>
                     </items>

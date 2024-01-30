@@ -73,7 +73,11 @@ public class BIASParseConfigPageController
 	private static String t_trainType;
 	private static String t_atcEquipped;
 	private static String t_ptcEquipped;  
-	private static String t_excludeFromOTP;  
+	private static String t_excludeFromOTP;
+	private static String t_routeNode;
+	private static String t_weekDays;
+	private static String t_trainEnabled;
+	private static String t_linkedAtOrigin;
 
 	// Data from .ROUTE file
 	private static String r_trainSymbol;
@@ -546,7 +550,11 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Train Type", "t_trainType", Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])),
 				new ParseLocationFormatB("ATC Equipped", "t_atcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[1])),
 				new ParseLocationFormatB("PTC Equpped", "t_ptcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1])),
-				new ParseLocationFormatB("Exclude from OTP", "t_excludeFromOTP", Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1]))
+				new ParseLocationFormatB("Exclude from OTP", "t_excludeFromOTP", Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1])),
+				new ParseLocationFormatB("Route Node", "t_routeNode", Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[0]), Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[1])),
+				new ParseLocationFormatB("Week Days", "t_weekDays", Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])),
+				new ParseLocationFormatB("Train Enabled", "t_trainEnabled", Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])),
+				new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1]))
 				);
 
 		parseLocationsTable6.setItems(parseData6);
@@ -920,6 +928,10 @@ public class BIASParseConfigPageController
 			prefs.remove("t_atcEquipped");
 			prefs.remove("t_ptcEquipped");
 			prefs.remove("t_excludeFromOTP");
+			prefs.remove("t_routeNode");
+			prefs.remove("t_weekDays");
+			prefs.remove("t_trainEnabled");
+			prefs.remove("t_linkedAtOrigin");
 
 			// Table 7
 			prefs.remove("r_trainSymbol");
@@ -1153,7 +1165,11 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Train Type", "t_trainType", Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])),
 					new ParseLocationFormatB("ATC Equipped", "t_atcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getAtcEquipped()[1])),
 					new ParseLocationFormatB("PTC Equpped", "t_ptcEquipped", Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[0]), Integer.valueOf(BIASParseConfigPageController.t_getPtcEquipped()[1])),
-					new ParseLocationFormatB("Exclude from OTP", "t_excludeFromOTP", Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1]))
+					new ParseLocationFormatB("Exclude from OTP", "t_excludeFromOTP", Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1])),
+					new ParseLocationFormatB("Route Node", "t_routeNode", Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[0]), Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[1])),
+					new ParseLocationFormatB("Week Days", "t_weekDays", Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])),
+					new ParseLocationFormatB("Train Enabled", "t_trainEnabled", Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])),
+					new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1]))
 					);
 
 			startColumn6.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -3094,6 +3110,42 @@ public class BIASParseConfigPageController
 				prefs.put("t_excludeFromOTP", t_excludeFromOTP);
 		}
 
+		// Route Node
+		if (prefs.get("t_routeNode", null) == null)
+		{
+			// Write value for subsequent runs
+			t_routeNode = "1,13";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_routeNode", t_routeNode);
+		}
+
+		// Week 1 Days
+		if (prefs.get("t_weekDays", null) == null)
+		{
+			// Write value for subsequent runs
+			t_weekDays = "31,58";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_weekDays", t_weekDays);
+		}
+
+		// Train Enabled
+		if (prefs.get("t_trainEnabled", null) == null)
+		{
+			// Write value for subsequent runs
+			t_trainEnabled = "31,34";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_trainEnabled", t_trainEnabled);
+		}
+
+		// Linked at Origin to
+		if (prefs.get("t_linkedAtOrigin", null) == null)
+		{
+			// Write value for subsequent runs
+			t_linkedAtOrigin = "31,52";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_linkedAtOrigin", t_linkedAtOrigin);
+		}
+
 		// Table 7
 		// Train Symbol
 		if (prefs.get("r_trainSymbol", null) == null)
@@ -4448,7 +4500,31 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("t_excludeFromOTP", t_excludeFromOTP).split(",");
 		return values;
 	}
+
+	public static String[] t_getWeekDays()
+	{
+		String[] values = prefs.get("t_weekDays", t_weekDays).split(",");
+		return values;
+	}
+
+	public static String[] t_getRouteNode()
+	{
+		String[] values = prefs.get("t_routeNode", t_routeNode).split(",");
+		return values;
+	}
+
+	public static String[] t_getTrainEnabled()
+	{
+		String[] values = prefs.get("t_trainEnabled", t_trainEnabled).split(",");
+		return values;
+	}
 	
+	public static String[] t_getLinkedAtOrigin()
+	{
+		String[] values = prefs.get("t_linkedAtOrigin", t_linkedAtOrigin).split(",");
+		return values;
+	}
+
 	public static String[] r_getTrainSymbol()
 	{
 		String[] values = prefs.get("r_trainSymbol", r_trainSymbol).split(",");

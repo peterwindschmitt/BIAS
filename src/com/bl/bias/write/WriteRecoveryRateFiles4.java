@@ -156,7 +156,7 @@ public class WriteRecoveryRateFiles4 extends WriteRecoveryRateFiles3 // Set D
 			}
 			else
 			{
-				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups())+" for Node Set D ("+BIASRecoveryRateAnalysisConfigController.getSetDLabel()+")");
+				cell.setCellValue("Recovery Rate Assessments by Train in Group(s) "+removeLastChar(BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisTrainGroups())+" for Node Set D ("+BIASRecoveryRateAnalysisConfigController.getSetDLabel()+")");
 			}
 
 			// Data headers
