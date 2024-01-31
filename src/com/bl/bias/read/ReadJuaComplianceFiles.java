@@ -28,8 +28,10 @@ public class ReadJuaComplianceFiles
 	{
 		resultsMessage = "\nStarted parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n";
 
+		complianceTrains.clear();
+		
 		// Read in .OPTION file with Scanner
-		Scanner scannerOption =null;
+		Scanner scannerOption = null;
 		try 
 		{
 			File optionFile = new File(file);
@@ -193,7 +195,7 @@ public class ReadJuaComplianceFiles
 				scannerTrain.close();
 			}
 			
-			resultsMessage += "Extracted data for "+complianceTrains.size()+" trains from the .TRAIN file\n";
+			resultsMessage += "Extracted data for "+complianceTrains.size()+" seed trains from the .TRAIN file\n";
 			resultsMessage += "Finished parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 		}
 		else

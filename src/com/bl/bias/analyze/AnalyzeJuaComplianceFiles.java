@@ -11,9 +11,24 @@ import com.bl.bias.tools.ConvertDateTime;
 public class AnalyzeJuaComplianceFiles 
 {
 	private static String resultsMessage;
-
+	
+	private static Integer totalCountOfBrightlineOperatedTrains;
+	private static Integer totalCountOfFecOperatedTrains;
+	private static Integer totalCountOfTriRailOperatedTrains;
+	
+	private static Double dailyAverageCountOfBrightlineOperatedTrains;
+	private static Double dailyAverageCountOfFecOperatedTrains;
+	private static Double dailyAverageCountOfTriRailOperatedTrains;
+	
+	private static Integer statisticalStartDay; 
+	private static Integer statisticalEndDay; 
+	
 	private static ArrayList<ComplianceTrain> trainsToAnalyzeForCompliance = new ArrayList<ComplianceTrain>();
-
+	private static ArrayList<ComplianceTrain> seedTrainsFoundEligible = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> seedTrainsFoundNotEligible = new ArrayList<ComplianceTrain>();
+	private static ArrayList<String> seedTrainSymbolsFoundEligible = new ArrayList<String>();
+	private static ArrayList<String> seedTrainSymbolsFoundNotEligible = new ArrayList<String>();
+	
 	private static ArrayList<String> brightlineTrainTypesFromConfigFile = new ArrayList<String>();
 	private static ArrayList<String> fecTrainTypesFromConfigFile = new ArrayList<String>();
 	private static ArrayList<String> triRailTrainTypesFromConfigFile = new ArrayList<String>();
@@ -28,7 +43,11 @@ public class AnalyzeJuaComplianceFiles
 
 		// For each train
 		trainsToAnalyzeForCompliance.clear();
-
+		seedTrainsFoundEligible.clear();
+		seedTrainsFoundNotEligible.clear();
+		seedTrainSymbolsFoundEligible.clear();
+		seedTrainSymbolsFoundNotEligible.clear();
+		
 		brightlineTrainTypesFromConfigFile.clear();
 		fecTrainTypesFromConfigFile.clear();
 		triRailTrainTypesFromConfigFile.clear();
@@ -39,7 +58,13 @@ public class AnalyzeJuaComplianceFiles
 
 		// Populate all arrays with necessary objects
 		trainsToAnalyzeForCompliance.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeForCompliance());
-
+		seedTrainsFoundNotEligible.addAll(trainsToAnalyzeForCompliance);
+		
+		for (int i = 0; i < trainsToAnalyzeForCompliance.size(); i++)
+		{
+			seedTrainSymbolsFoundNotEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
+		}
+		
 		for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
 		{
 			brightlineTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
@@ -71,12 +96,11 @@ public class AnalyzeJuaComplianceFiles
 		}
 
 		// Determine statistical simulation days (as integers)
-		Integer statisticalStartDay = ReadJuaComplianceFiles.getStatisticalStartDayOfWeekAsInteger();		 
-		Integer statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays() - 1; // inclusive
-
-		Integer countOfBrightlinelOperatedTrains = 0;
-		Integer countOfFecOperatedTrains = 0;
-		Integer countOfTriRailOperatedTrains = 0;
+		totalCountOfBrightlineOperatedTrains = 0;
+		totalCountOfFecOperatedTrains = 0;
+		totalCountOfTriRailOperatedTrains = 0;
+		statisticalStartDay = ReadJuaComplianceFiles.getStatisticalStartDayOfWeekAsInteger();		 
+		statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays() - 1; // inclusive
 
 		// For each train
 		for (int i = 0; i < trainsToAnalyzeForCompliance.size(); i++)
@@ -95,6 +119,8 @@ public class AnalyzeJuaComplianceFiles
 						{
 							String trainToBaseScheduleOn = trainsToAnalyzeForCompliance.get(i).getSymbol();
 							ComplianceTrain train = trainsToAnalyzeForCompliance.get(i);
+							seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
+							seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
 							do
 							{
 								for (int j = 0; j < trainsToAnalyzeForCompliance.size(); j++)
@@ -114,18 +140,26 @@ public class AnalyzeJuaComplianceFiles
 								if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
 										&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
 								{
-									countOfBrightlinelOperatedTrains++;
+									totalCountOfBrightlineOperatedTrains++;
+									// Train is eligible so remove from the ineligible list
+									seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
+									seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
 								}
 							}
 						}
 						else
 						{
+							seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
+							seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
 							for (int j = 0; j < trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size(); j++)
 							{
 								if ((trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
 										&& (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
 								{
-									countOfBrightlinelOperatedTrains++;
+									totalCountOfBrightlineOperatedTrains++;
+									// Train is eligible so remove from the ineligible list
+									seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
+									seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
 								}
 							}
 						}
@@ -146,6 +180,8 @@ public class AnalyzeJuaComplianceFiles
 						{
 							String trainToBaseScheduleOn = trainsToAnalyzeForCompliance.get(i).getSymbol();
 							ComplianceTrain train = trainsToAnalyzeForCompliance.get(i);
+							seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
+							seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
 							do
 							{
 								for (int j = 0; j < trainsToAnalyzeForCompliance.size(); j++)
@@ -165,18 +201,26 @@ public class AnalyzeJuaComplianceFiles
 								if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
 										&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
 								{
-									countOfFecOperatedTrains++;
+									totalCountOfFecOperatedTrains++;
+									// Train is eligible so remove from the ineligible list
+									seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
+									seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
 								}
 							}
 						}
 						else
 						{
+							seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
+							seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
 							for (int j = 0; j < trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size(); j++)
 							{
 								if ((trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
 										&& (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
 								{
-									countOfFecOperatedTrains++;
+									totalCountOfFecOperatedTrains++;
+									// Train is eligible so remove from the ineligible list
+									seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
+									seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
 								}
 							}
 						}
@@ -197,6 +241,8 @@ public class AnalyzeJuaComplianceFiles
 						{
 							String trainToBaseScheduleOn = trainsToAnalyzeForCompliance.get(i).getSymbol();
 							ComplianceTrain train = trainsToAnalyzeForCompliance.get(i);
+							seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
+							seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
 							do
 							{
 								for (int j = 0; j < trainsToAnalyzeForCompliance.size(); j++)
@@ -216,18 +262,26 @@ public class AnalyzeJuaComplianceFiles
 								if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
 										&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
 								{
-									countOfTriRailOperatedTrains++;
+									totalCountOfTriRailOperatedTrains++;
+									// Train is eligible so remove from the ineligible list
+									seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
+									seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
 								}
 							}
 						}
 						else
 						{
+							seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
+							seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
 							for (int j = 0; j < trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size(); j++)
 							{
 								if ((trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
 										&& (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
 								{
-									countOfTriRailOperatedTrains++;
+									totalCountOfTriRailOperatedTrains++;
+									// Train is eligible so remove from the ineligible list
+									seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
+									seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
 								}
 							}
 						}
@@ -236,13 +290,81 @@ public class AnalyzeJuaComplianceFiles
 			}
 		}
 
-		resultsMessage += "Found "+countOfBrightlinelOperatedTrains+" eligible Brightline trains operated during the statistical period of the selected case\n";
-		resultsMessage += "Found "+countOfFecOperatedTrains+" eligible FEC trains operated during the statistical period of the selected case\n";
-		resultsMessage += "Found "+countOfTriRailOperatedTrains+" eligible TriRail trains operated during the statistical period of the selected case\n";
+		resultsMessage += "Found "+seedTrainsFoundEligible.size()+" eligible seed trains operated in the selected case:\n";
+		resultsMessage += "  yielding "+totalCountOfBrightlineOperatedTrains+" dispatched Brightline trains operated during the statistical period of the selected case\n";
+		resultsMessage += "  yielding "+totalCountOfFecOperatedTrains+" dispatched FEC trains operated during the statistical period of the selected case\n";
+		resultsMessage += "  yielding "+totalCountOfTriRailOperatedTrains+" dispatched TriRail trains operated during the statistical period of the selected case\n";
+		resultsMessage += "Found "+seedTrainsFoundNotEligible.size()+" other seed trains in the selected case\n";
 		resultsMessage += "Finished analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+("\n");
 	}
 
-	public String getResultsMessage()
+	public static Integer getTotalCountOfBrightlinelOperatedTrains()
+	{
+		return totalCountOfBrightlineOperatedTrains;
+	}
+	
+	public static Integer getTotalCountOfFecOperatedTrains()
+	{
+		return totalCountOfFecOperatedTrains;
+	}
+	
+	public static Integer getTotalCountOfTriRailOperatedTrains()
+	{
+		return totalCountOfTriRailOperatedTrains;
+	}
+	
+	public static Double getDailyAverageCountOfBrightlineOperatedTrains()
+	{
+		dailyAverageCountOfBrightlineOperatedTrains = (double) totalCountOfBrightlineOperatedTrains / (double) (statisticalEndDay - statisticalStartDay + 1);
+		
+		return dailyAverageCountOfBrightlineOperatedTrains;
+	}
+	
+	public static Double getDailyAverageCountOfFecOperatedTrains()
+	{
+		dailyAverageCountOfFecOperatedTrains = (double) totalCountOfFecOperatedTrains / (double) (statisticalEndDay - statisticalStartDay + 1);
+		
+		return dailyAverageCountOfFecOperatedTrains;
+	}
+	
+	public static Double getDailyAverageCountOfTriRailOperatedTrains()
+	{
+		dailyAverageCountOfTriRailOperatedTrains = (double) totalCountOfTriRailOperatedTrains / (double) (statisticalEndDay - statisticalStartDay + 1);
+		
+		return dailyAverageCountOfTriRailOperatedTrains;
+	}
+	
+	public static ArrayList<ComplianceTrain> getSeedTrainsFoundEligible()
+	{
+		return seedTrainsFoundEligible;
+	}
+	
+	public static ArrayList<ComplianceTrain> getSeedTrainsFoundNotEligible()
+	{
+		return seedTrainsFoundNotEligible;
+	}
+	
+	public static ArrayList<String> getSeedTrainSymbolsFoundEligible()
+	{
+		return seedTrainSymbolsFoundEligible;
+	}
+	
+	public static ArrayList<String> getSeedTrainSymbolsFoundNotEligible()
+	{
+		return seedTrainSymbolsFoundNotEligible;
+	}
+	
+	public static Integer getSeedTrainSymbolCountFoundEligible()
+	{
+		return seedTrainSymbolsFoundEligible.size();
+	}
+	
+	public static Integer getSeedTrainSymbolCountFoundNotEligible()
+	{
+		return seedTrainSymbolsFoundNotEligible.size();
+	}
+	
+	public static String getResultsMessage()
 	{
 		return resultsMessage;
 	}

@@ -37,11 +37,7 @@
 				<Insets bottom="-5.0" right="10.0" />
 			</GridPane.margin>
 		</Button>
-		<Label text="1.  Select location of file to analyze:" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-			<padding>
-				<Insets left="10.0" />
-			</padding>
-		</Label>
+		<Label fx:id="selectFileLocationLabel" text="Select location of case to analyze:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
 		<Label fx:id="fileNameLabel" alignment="TOP_LEFT" maxWidth="255.0" minWidth="255.0" prefHeight="60.0" prefWidth="255.0" textFill="#e80909" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
 			<GridPane.margin>
 				<Insets left="10.0" right="-90.0" top="5.0" />
@@ -67,5 +63,10 @@
             <Insets bottom="10.0" left="10.0" />
          </GridPane.margin>
       </Button>
+      <Label text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Label>
 	</children>
 </GridPane>

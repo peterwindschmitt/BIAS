@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.read.ReadJuaComplianceFiles;
+import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteJuaComplianceFiles2;
 import com.bl.bias.analyze.AnalyzeJuaComplianceFiles;
 import com.bl.bias.exception.ErrorShutdown;
 
@@ -16,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -25,6 +28,7 @@ public class BIASJuaComplianceController
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
+	@FXML private Label selectFileLocationLabel;
 	@FXML private Label fileNameLabel;
 
 	@FXML private TextArea textArea;
@@ -33,24 +37,150 @@ public class BIASJuaComplianceController
 
 	private static Preferences prefs;
 
+	private static String saveFileLocationForUserSpecifiedFileName;
+	private static String saveFileFolderForSerialFileName;
 	private static String fileAsString;
 	private static String fullyQualifiedPath;
 	private static String message = "";
+	
+	private static Boolean continueAnalysis = true;
 
 	@FXML private void initialize() throws IOException
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
 	}
 
-	
 	@FXML private void handleExecuteButton(ActionEvent event) throws IOException 
 	{
-		startTask();
+		// Get location to save file to if not using system time as file name
+		if (!BIASGeneralConfigController.getUseSerialTimeAsFileName())
+		{
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("Select Location to Save Results");
+
+			// Check if previous location is available
+			if ((prefs.get("ju_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			{
+				Path path = Paths.get(prefs.get("ju_lastDirectorySavedTo", null));
+				if ((path.toFile().exists()) && (path !=null))
+				{
+					fileChooser.setInitialDirectory(path.toFile());
+				}
+			}
+
+			Stage stageForFolderChooser = (Stage) executeButton.getScene().getWindow();
+
+			File file = null;
+
+			file = fileChooser.showSaveDialog(stageForFolderChooser);
+
+			if (file != null) 
+			{
+				try 
+				{
+					saveFileLocationForUserSpecifiedFileName = file.toString();
+					if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+						prefs.put("ju_lastDirectorySavedTo", file.getParent());
+				} 
+				catch (Exception e) 
+				{
+					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				}
+
+				message = "\nStarting JUA Compliance Analysis at "+ConvertDateTime.getTimeStamp();
+				displayMessage(message);
+
+				selectFileLocationLabel.setDisable(true);
+				fileLocationButton.setDisable(true);
+				fileNameLabel.setDisable(true);
+				executeButton.setDisable(true);
+
+				continueAnalysis = true;
+
+				startTask();
+			}
+			else
+			{
+				//  Did not commit file to save so reset
+				resetMessage();
+
+				executeButton.setDisable(true);
+				executeButton.setVisible(true);
+				resetButton.setVisible(false);
+				fileLocationButton.setDisable(false);
+				selectFileLocationLabel.setDisable(false);
+				fileNameLabel.setText("");
+				fileNameLabel.setDisable(false);
+			}	
+		}
+		else
+		{
+			DirectoryChooser directoryChooser = new DirectoryChooser();
+
+			// See if last location is stored
+			if ((prefs.get("ju_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			{
+				Path path = Paths.get(prefs.get("ju_lastDirectorySavedTo", null));
+				if ((path.toFile().exists()) && (path !=null))
+					directoryChooser.setInitialDirectory(path.toFile());
+			}
+
+			directoryChooser.setTitle("Select Folder");
+
+			Stage stageForFolderChooser = (Stage) executeButton.getScene().getWindow();
+
+			File directory = directoryChooser.showDialog(stageForFolderChooser);
+			if (directory != null)
+			{
+				message = "\nStarting JUA Compliance Analysis at "+ConvertDateTime.getTimeStamp();
+				displayMessage(message);
+
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.put("ju_lastDirectorySavedTo", directory.toString());
+
+				saveFileFolderForSerialFileName = directory.toString();
+
+				selectFileLocationLabel.setDisable(true);
+				
+				fileLocationButton.setDisable(true);
+				fileNameLabel.setDisable(true);
+				executeButton.setDisable(true);
+
+				continueAnalysis = true;
+
+				startTask();
+			}
+			else
+			{
+				//  Did not commit file to save so reset
+				resetMessage();
+
+				executeButton.setDisable(true);
+				executeButton.setVisible(true);
+				resetButton.setVisible(false);
+				selectFileLocationLabel.setDisable(false);
+				fileLocationButton.setDisable(false);
+				fileNameLabel.setText("");
+				fileNameLabel.setDisable(false);
+			}	
+		}
 	}
 
 	@FXML private void handleResetButton(ActionEvent event) throws IOException 
 	{
+		continueAnalysis = true;
+		
+		resetMessage();
 
+		progressBar.setVisible(false);
+		setProgressIndicator(0.00);
+
+		executeButton.setVisible(true);
+		resetButton.setVisible(false);
+		fileLocationButton.setDisable(false);
+		selectFileLocationLabel.setDisable(false);
+		fileNameLabel.setText("");
+		fileNameLabel.setDisable(false);
 	}
 
 	@FXML private void handleFileLocationButton(ActionEvent event) throws IOException 
@@ -82,32 +212,36 @@ public class BIASJuaComplianceController
 		backgroundThread.setDaemon(true);
 		backgroundThread.start();
 	}
-	
+
 	private void runTask() throws InterruptedException, IOException
 	{
 		// Read all objects that are required for the recovery rate analysis
-		message = "\nFor case "+fileAsString.replace(".OPTION", "")+":";
+		message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
 		displayMessage(message);
 		ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath);
 		message = readData.getResultsMessage();
 		displayMessage(message);
-				
+
 		if (readData.getFormattedCorrectly())
 		{
 			setProgressIndicator(0.33);
-				
-			if (ReadJuaComplianceFiles.getTrainsToAnalyzeForCompliance().size() > 0)
+
+			if (ReadJuaComplianceFiles.getTrainsToAnalyzeForCompliance().size() ==	0)
+				continueAnalysis = false;
+			
+			if (continueAnalysis)
 			{
 				//  Perform Analysis
 				AnalyzeJuaComplianceFiles analyzeData = new AnalyzeJuaComplianceFiles();
 				message = analyzeData.getResultsMessage();
 				displayMessage(message);
-	
+
 				setProgressIndicator(0.66);
-	
-				// Write Results
-				/*writeFiles();
-				if (!WriteGradeXingFiles4.getErrorFound())
+
+				WriteJuaComplianceFiles2 writeFiles = new WriteJuaComplianceFiles2(textArea.getText().toString(), fullyQualifiedPath);
+				message = writeFiles.getResultsWriteMessage2();
+				displayMessage(message);
+				if (!WriteJuaComplianceFiles2.getErrorFound())
 				{
 					setProgressIndicator(1.0);
 					displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -116,7 +250,7 @@ public class BIASJuaComplianceController
 				{
 					displayMessage("\nError in writing files");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-				}*/
+				}
 			}
 			else
 			{
@@ -128,8 +262,13 @@ public class BIASJuaComplianceController
 		{
 			displayMessage("*** PROCESSING NOT COMPLETE!!! ***");
 		}
+
+		//  Now reset for next case
+		executeButton.setVisible(false);
+		resetButton.setVisible(true);
+		resetButton.setDisable(false);
 	}
-	
+
 	private void chooseFile()
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -210,5 +349,25 @@ public class BIASJuaComplianceController
 	private void setProgressIndicator(double value)
 	{
 		progressBar.setProgress(value);
+	}
+	
+	public static String getSaveFileLocationForUserSpecifiedFileName()
+	{
+		if (!saveFileLocationForUserSpecifiedFileName.toLowerCase().endsWith(".xlsx"))
+		{
+			saveFileLocationForUserSpecifiedFileName += ".xlsx";
+		}
+
+		return saveFileLocationForUserSpecifiedFileName;
+	}
+
+	public static String getSaveFileFolderForSerialFileName()
+	{
+		return saveFileFolderForSerialFileName;
+	}
+	
+	public static String getCaseNameAsString()
+	{
+		return fileAsString.replace(".OPTION", "");
 	}
 }

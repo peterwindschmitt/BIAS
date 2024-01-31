@@ -68,7 +68,7 @@
                                           <RowConstraints vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label text="1.  Check that the enabled count of trains with types:" GridPane.columnSpan="4">
+                                          <Label text="1.  Utilizing the .TRAIN file, check that the enabled count of trains with types:" GridPane.columnSpan="4">
                                              <GridPane.margin>
                                                 <Insets left="35.0" />
                                              </GridPane.margin>
@@ -139,7 +139,7 @@
                                                 <Insets left="15.0" right="10.0" top="15.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label text="2.  Check for differences against last accepted file of:" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                                          <Label text="2.  Check against the last accepted .TRAIN file of:" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="TOP">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
@@ -154,9 +154,9 @@
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
                                           </Button>
-                                          <Label fx:id="lastTrainsAcceptedFileLocationLabel" maxWidth="290.0" minWidth="290.0" prefWidth="290.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.rowSpan="2" GridPane.valignment="TOP">
+                                          <Label fx:id="lastTrainsAcceptedFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.rowSpan="2" GridPane.valignment="TOP">
                                              <GridPane.margin>
-                                                <Insets left="40.0" />
+                                                <Insets left="20.0" />
                                              </GridPane.margin>
                                           </Label>
                                           <TextArea fx:id="brightlineNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleBrightlineNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="TOP" />
@@ -226,6 +226,47 @@
                                     </GridPane>
                               </content>
                             </Tab>
+                              <Tab disable="true" text="Train Miles/Time">
+                                 <content>
+                                    <GridPane>
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="205.0" prefWidth="205.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="205.0" prefWidth="205.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="205.0" prefWidth="205.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <CheckBox fx:id="trainMileagetEnabledCheckBox" mnemonicParsing="false" onAction="#handleTrainMileageEnabledCheckBox">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </CheckBox>
+                                          <Label text="1.  Check that the total train mileage and total elapsed time over the statistical period is the same as that in the the last known .ROUTE file of:" GridPane.columnSpan="6">
+                                             <GridPane.margin>
+                                                <Insets left="35.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                       </children>
+                                    </GridPane>
+                                 </content>
+                              </Tab>
                           </tabs>
                         </TabPane>
                      </content></Tab>

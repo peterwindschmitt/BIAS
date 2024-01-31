@@ -16,6 +16,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private CheckBox trainCountEnabledCheckBox;
 	@FXML private CheckBox lastAcceptedFileEnabledCheckBox;
 	@FXML private CheckBox trainPrioritytEnabledCheckBox;
+	@FXML private CheckBox trainMileageEnabledCheckBox;
 
 	@FXML private TextArea brightlineTrainTypeTextArea;
 	@FXML private TextArea fecTrainTypeTextArea;
@@ -274,6 +275,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 
 	}
+	
+	@FXML private void handleTrainMileageEnabledCheckBox(ActionEvent event)
+	{
+
+	}
 
 	@FXML private void handleLastAcceptedFileEnabledCheckBox(ActionEvent event)
 	{
@@ -329,5 +335,20 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	public static String[] getTriRailNodes()
 	{
 		return triRailNodesAsArray;
+	}
+	
+	public static Integer getDailyBrightlinePermitted()
+	{
+		return maxBrightlineTrainCountPerDayOnAverage;
+	}
+	
+	public static Integer getDailyFecPermitted()
+	{
+		return maxFecThroughTrainCountPerDayOnAverage;
+	}
+	
+	public static Integer getDailyTriRailPermitted()
+	{
+		return maxTriRailTrainCountPerDayOnAverage;
 	}
 }

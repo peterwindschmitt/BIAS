@@ -7,19 +7,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.bl.bias.app.BIASGeneralConfigController;
-import com.bl.bias.app.BIASRecoveryRateAnalysisController;
+import com.bl.bias.app.BIASJuaComplianceController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteRecoveryRateFiles6 extends WriteRecoveryRateFiles5
+public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 {
-	String resultsMessage = getResultsMessageWrite5();
+	String resultsMessage = getResultsMessageWrite1();
 	static Boolean error = false;
 	
-	public WriteRecoveryRateFiles6(String textArea, String fullyQualifiedPath)
+	public WriteJuaComplianceFiles2(String textArea, String fullyQualifiedPath)
 	{
 		super(textArea, fullyQualifiedPath);
-		
+	
 		try 
 	    {
 			LocalTime endWriteFileTime = ConvertDateTime.getTimeStamp();
@@ -40,14 +40,14 @@ public class WriteRecoveryRateFiles6 extends WriteRecoveryRateFiles5
 			//  Determine whether file name should be system serial time or if it should be user-specified
 	    	if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(BIASRecoveryRateAnalysisController.getSaveFileFolderForSerialFileName()+"\\RecoveryRateResults_"+System.nanoTime()+".xlsx");
+	    		FileOutputStream outputStream = new FileOutputStream(BIASJuaComplianceController.getSaveFileFolderForSerialFileName()+"\\JuaComplianceResults_"+System.nanoTime()+".xlsx");
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();  
 	    	}
 	    	else
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(BIASRecoveryRateAnalysisController.getSaveFileLocationForUserSpecifiedFileName());
+	    		FileOutputStream outputStream = new FileOutputStream(BIASJuaComplianceController.getSaveFileLocationForUserSpecifiedFileName());
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();
@@ -61,7 +61,7 @@ public class WriteRecoveryRateFiles6 extends WriteRecoveryRateFiles5
 	    }		
 	}
 	
-	public String getResultsWriteMessage6()
+	public String getResultsWriteMessage2()
 	{
 		return resultsMessage;
 	}
