@@ -2,18 +2,20 @@ package com.bl.bias.app;
 
 import java.util.prefs.Preferences;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 public class BIASRecoveryRateAnalysisConfigController 
 {
@@ -21,19 +23,15 @@ public class BIASRecoveryRateAnalysisConfigController
 
 	private static String setATrainGroups;
 	private static String setANodePairs;
-	private static String setALowRecoveryRate;
 	private static String setALabel;
 	private static String setBTrainGroups;
 	private static String setBNodePairs;
-	private static String setBLowRecoveryRate;
 	private static String setBLabel;
 	private static String setCTrainGroups;
 	private static String setCNodePairs;
-	private static String setCLowRecoveryRate;
 	private static String setCLabel;
 	private static String setDTrainGroups;
 	private static String setDNodePairs;
-	private static String setDLowRecoveryRate;
 	private static String setDLabel;
 
 	private static Boolean analyzeSetA;
@@ -54,14 +52,17 @@ public class BIASRecoveryRateAnalysisConfigController
 	private static Boolean defaultExcludeTrainsBelowThresholdSetC = false;
 	private static Boolean defaultExcludeTrainsBelowThresholdSetD = false;
 
+	private static Integer setALowRecoveryRate;
+	private static Integer setBLowRecoveryRate;
+	private static Integer setCLowRecoveryRate;
+	private static Integer setDLowRecoveryRate;
 	private static Integer setASchedulingImprecisionOffset;
 	private static Integer setBSchedulingImprecisionOffset;
 	private static Integer setCSchedulingImprecisionOffset;
 	private static Integer setDSchedulingImprecisionOffset;
 	private static Integer defaultSchedulingImprecisionOffset = 0;
 
-	private static ObservableList<String> lowRecoveryRates =  FXCollections.observableArrayList("0%", "5%", "10%", "15%", "20%");
-	private static String defaultLowRecoveryRate = "15%";
+	private static Integer defaultLowRecoveryRate = 10;
 
 	@FXML TextField group1TextFieldSetA;
 	@FXML TextField group2TextFieldSetA;
@@ -229,10 +230,10 @@ public class BIASRecoveryRateAnalysisConfigController
 	@FXML Button updateSetCLabelButton;
 	@FXML Button updateSetDLabelButton;
 
-	@FXML ComboBox<String> setALowRecoveryRateComboBox;
-	@FXML ComboBox<String> setBLowRecoveryRateComboBox;
-	@FXML ComboBox<String> setCLowRecoveryRateComboBox;
-	@FXML ComboBox<String> setDLowRecoveryRateComboBox;
+	@FXML Spinner<Integer> setALowRecoveryRateSpinner;
+	@FXML Spinner<Integer> setBLowRecoveryRateSpinner;
+	@FXML Spinner<Integer> setCLowRecoveryRateSpinner;
+	@FXML Spinner<Integer> setDLowRecoveryRateSpinner;
 
 	@FXML RadioButton setANoSchedulingImprecisionRadioButton;
 	@FXML RadioButton setAThirtySecondImprecisionRadioButton;
@@ -845,76 +846,185 @@ public class BIASRecoveryRateAnalysisConfigController
 			setDOneMinuteImprecisionRadioButton.setSelected(true);
 		}
 
-		// See if preference is stored for low recovery rate Set A
-		setALowRecoveryRateComboBox.setItems(lowRecoveryRates);
+		// Set up SpinnerValueFactory for all spinners
+		SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryA = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, 10, 1);
+		valueFactoryA.setConverter(new StringConverter<Integer>(){
+			@Override
+			public String toString(Integer value) {
+				return value.toString()+"%";
+			}
+
+			@Override
+			public Integer fromString(String string) {
+				String valueWithoutUnits = string.replaceAll("%", "").trim();
+				if (valueWithoutUnits.isEmpty()) {
+					return 0 ;
+				} else {
+					return Integer.valueOf(valueWithoutUnits);
+				}
+			}
+		});
+		
+		SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryB = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, 10, 1);
+		valueFactoryB.setConverter(new StringConverter<Integer>(){
+			@Override
+			public String toString(Integer value) {
+				return value.toString()+"%";
+			}
+
+			@Override
+			public Integer fromString(String string) {
+				String valueWithoutUnits = string.replaceAll("%", "").trim();
+				if (valueWithoutUnits.isEmpty()) {
+					return 0 ;
+				} else {
+					return Integer.valueOf(valueWithoutUnits);
+				}
+			}
+		});
+		
+		SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryC = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, 10, 1);
+		valueFactoryC.setConverter(new StringConverter<Integer>(){
+			@Override
+			public String toString(Integer value) {
+				return value.toString()+"%";
+			}
+
+			@Override
+			public Integer fromString(String string) {
+				String valueWithoutUnits = string.replaceAll("%", "").trim();
+				if (valueWithoutUnits.isEmpty()) {
+					return 0 ;
+				} else {
+					return Integer.valueOf(valueWithoutUnits);
+				}
+			}
+		});
+		
+		SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryD = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, 10, 1);
+		valueFactoryD.setConverter(new StringConverter<Integer>(){
+			@Override
+			public String toString(Integer value) {
+				return value.toString()+"%";
+			}
+
+			@Override
+			public Integer fromString(String string) {
+				String valueWithoutUnits = string.replaceAll("%", "").trim();
+				if (valueWithoutUnits.isEmpty()) {
+					return 0 ;
+				} else {
+					return Integer.valueOf(valueWithoutUnits);
+				}
+			}
+		});
+
+		// Spinner A
+		setALowRecoveryRateSpinner.setValueFactory(valueFactoryA);
+		setALowRecoveryRateSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				setALowRecoveryRate = setALowRecoveryRateSpinner.getValue();
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.put("rr_setALowRecoveryRate", setALowRecoveryRate.toString());		
+			}
+		});
+
 		boolean lowRecoveryRateExistsA = prefs.get("rr_setALowRecoveryRate", null) != null;
 		if (lowRecoveryRateExistsA)
 		{
-			setALowRecoveryRate = prefs.get("rr_setALowRecoveryRate", defaultLowRecoveryRate);
-			setALowRecoveryRateComboBox.getSelectionModel().select(setALowRecoveryRate);
+			setALowRecoveryRate = prefs.getInt("rr_setALowRecoveryRate", defaultLowRecoveryRate);
+			setALowRecoveryRateSpinner.getValueFactory().setValue(Integer.valueOf(setALowRecoveryRate));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.put("rr_setALowRecoveryRate", defaultLowRecoveryRate);
+				prefs.put("rr_setALowRecoveryRate", defaultLowRecoveryRate.toString());
 			}
-			setALowRecoveryRate = prefs.get("rr_setALowRecoveryRate", defaultLowRecoveryRate);
-			setALowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
+			setALowRecoveryRate = prefs.getInt("rr_setALowRecoveryRate", defaultLowRecoveryRate);
+			setALowRecoveryRateSpinner.getValueFactory().setValue(defaultLowRecoveryRate);
 		}	
 
-		// See if preference is stored for low recovery rate Set B
-		setBLowRecoveryRateComboBox.setItems(lowRecoveryRates);
+		// Spinner B
+		setBLowRecoveryRateSpinner.setValueFactory(valueFactoryB);
+		setBLowRecoveryRateSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				setBLowRecoveryRate = setBLowRecoveryRateSpinner.getValue();
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.put("rr_setBLowRecoveryRate", setBLowRecoveryRate.toString());		
+			}
+		});
+
 		boolean lowRecoveryRateExistsB = prefs.get("rr_setBLowRecoveryRate", null) != null;
 		if (lowRecoveryRateExistsB)
 		{
-			setBLowRecoveryRate = prefs.get("rr_setBLowRecoveryRate", defaultLowRecoveryRate);
-			setBLowRecoveryRateComboBox.getSelectionModel().select(setBLowRecoveryRate);
+			setBLowRecoveryRate = prefs.getInt("rr_setBLowRecoveryRate", defaultLowRecoveryRate);
+			setBLowRecoveryRateSpinner.getValueFactory().setValue(Integer.valueOf(setBLowRecoveryRate));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.put("rr_setBLowRecoveryRate", defaultLowRecoveryRate);
+				prefs.put("rr_setBLowRecoveryRate", defaultLowRecoveryRate.toString());
 			}
-			setBLowRecoveryRate = prefs.get("rr_setBLowRecoveryRate", defaultLowRecoveryRate);
-			setBLowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
+			setBLowRecoveryRate = prefs.getInt("rr_setBLowRecoveryRate", defaultLowRecoveryRate);
+			setBLowRecoveryRateSpinner.getValueFactory().setValue(defaultLowRecoveryRate);
 		}
 
-		// See if preference is stored for low recovery rate Set C
-		setCLowRecoveryRateComboBox.setItems(lowRecoveryRates);
+		// Spinner C
+		setCLowRecoveryRateSpinner.setValueFactory(valueFactoryC);
+		setCLowRecoveryRateSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				setCLowRecoveryRate = setCLowRecoveryRateSpinner.getValue();
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.put("rr_setCLowRecoveryRate", setCLowRecoveryRate.toString());		
+			}
+		});
+
 		boolean lowRecoveryRateExistsC = prefs.get("rr_setCLowRecoveryRate", null) != null;
 		if (lowRecoveryRateExistsC)
 		{
-			setCLowRecoveryRate = prefs.get("rr_setCLowRecoveryRate", defaultLowRecoveryRate);
-			setCLowRecoveryRateComboBox.getSelectionModel().select(setCLowRecoveryRate);
+			setCLowRecoveryRate = prefs.getInt("rr_setCLowRecoveryRate", defaultLowRecoveryRate);
+			setCLowRecoveryRateSpinner.getValueFactory().setValue(Integer.valueOf(setCLowRecoveryRate));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.put("rr_setCLowRecoveryRate", defaultLowRecoveryRate);
+				prefs.put("rr_setCLowRecoveryRate", defaultLowRecoveryRate.toString());
 			}
-			setCLowRecoveryRate = prefs.get("rr_setCLowRecoveryRate", defaultLowRecoveryRate);
-			setCLowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
+			setCLowRecoveryRate = prefs.getInt("rr_setCLowRecoveryRate", defaultLowRecoveryRate);
+			setCLowRecoveryRateSpinner.getValueFactory().setValue(defaultLowRecoveryRate);
 		}
 
-		// See if preference is stored for low recovery rate Set D
-		setDLowRecoveryRateComboBox.setItems(lowRecoveryRates);
+		// Spinner D
+		setDLowRecoveryRateSpinner.setValueFactory(valueFactoryD);
+		setDLowRecoveryRateSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				setDLowRecoveryRate = setDLowRecoveryRateSpinner.getValue();
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.put("rr_setDLowRecoveryRate", setDLowRecoveryRate.toString());		
+			}
+		});
+
 		boolean lowRecoveryRateExistsD = prefs.get("rr_setDLowRecoveryRate", null) != null;
 		if (lowRecoveryRateExistsD)
 		{
-			setDLowRecoveryRate = prefs.get("rr_setDLowRecoveryRate", defaultLowRecoveryRate);
-			setDLowRecoveryRateComboBox.getSelectionModel().select(setDLowRecoveryRate);
+			setDLowRecoveryRate = prefs.getInt("rr_setDLowRecoveryRate", defaultLowRecoveryRate);
+			setDLowRecoveryRateSpinner.getValueFactory().setValue(Integer.valueOf(setDLowRecoveryRate));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.put("rr_setDLowRecoveryRate", defaultLowRecoveryRate);
+				prefs.put("rr_setDLowRecoveryRate", defaultLowRecoveryRate.toString());
 			}
-			setDLowRecoveryRate = prefs.get("rr_setDLowRecoveryRate", defaultLowRecoveryRate);
-			setDLowRecoveryRateComboBox.getSelectionModel().select(defaultLowRecoveryRate);
+			setDLowRecoveryRate = prefs.getInt("rr_setDLowRecoveryRate", defaultLowRecoveryRate);
+			setDLowRecoveryRateSpinner.getValueFactory().setValue(defaultLowRecoveryRate);
 		}
 
 		// See if preference is stored for Set A label
@@ -992,6 +1102,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			analyzeSetA = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetA", false);
 			analyzeSetACheckBox.setSelected(false);
 		}
 
@@ -1006,6 +1118,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			analyzeSetB = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetB", false);
 			analyzeSetBCheckBox.setSelected(false);
 		}
 
@@ -1020,6 +1134,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			analyzeSetC = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetC", false);
 			analyzeSetCCheckBox.setSelected(false);
 		}
 
@@ -1034,6 +1150,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			analyzeSetD = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_analyzeSetD", false);
 			analyzeSetDCheckBox.setSelected(false);
 		}
 
@@ -1048,6 +1166,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			excludeTrainsBelowThresholdSetA = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetA", false);
 			excludeFromOTPSetACheckBox.setSelected(false);
 		}
 
@@ -1062,6 +1182,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			excludeTrainsBelowThresholdSetB = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetB", false);
 			excludeFromOTPSetBCheckBox.setSelected(false);
 		}
 
@@ -1076,6 +1198,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			excludeTrainsBelowThresholdSetC = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetC", false);
 			excludeFromOTPSetCCheckBox.setSelected(false);
 		}
 
@@ -1090,6 +1214,8 @@ public class BIASRecoveryRateAnalysisConfigController
 		else
 		{
 			excludeTrainsBelowThresholdSetD = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("rr_excludeTrainsBelowThresholdSetD", false);
 			excludeFromOTPSetDCheckBox.setSelected(false);
 		}
 	}
@@ -1188,7 +1314,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		group5TextFieldSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateGroupsButtonSetA.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleGroup1TextFieldSetB()
 	{
 		if (group1TextFieldSetB.getText().trim().length() == 3)
@@ -1283,7 +1409,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		group5TextFieldSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateGroupsButtonSetB.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleGroup1TextFieldSetC()
 	{
 		if (group1TextFieldSetC.getText().trim().length() == 3)
@@ -1473,7 +1599,7 @@ public class BIASRecoveryRateAnalysisConfigController
 		group5TextFieldSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateGroupsButtonSetD.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	// Node pair # 1 of 15 set A
 	@FXML private void handleNodePairFrom1TextFieldA()
 	{
@@ -2974,34 +3100,6 @@ public class BIASRecoveryRateAnalysisConfigController
 		updateSetDNodesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleSetALowRecoveryRateComboBox()
-	{
-		setALowRecoveryRate = setALowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_setALowRecoveryRate", setALowRecoveryRate);				
-	}
-
-	@FXML private void handleSetBLowRecoveryRateComboBox()
-	{
-		setBLowRecoveryRate = setBLowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_setBLowRecoveryRate", setBLowRecoveryRate);				
-	}
-
-	@FXML private void handleSetCLowRecoveryRateComboBox()
-	{
-		setCLowRecoveryRate = setCLowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_setCLowRecoveryRate", setCLowRecoveryRate);				
-	}
-
-	@FXML private void handleSetDLowRecoveryRateComboBox()
-	{
-		setDLowRecoveryRate = setDLowRecoveryRateComboBox.getSelectionModel().getSelectedItem().toString();
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("rr_setDLowRecoveryRate", setCLowRecoveryRate);				
-	}
-
 	@FXML private void handleSetANoSchedulingImprecisionRadioButton()
 	{
 		setASchedulingImprecisionOffset = 0;
@@ -3163,7 +3261,7 @@ public class BIASRecoveryRateAnalysisConfigController
 
 		setATrainGroups = setAGroupsToWriteToRegistry;
 	}
-	
+
 	@FXML private void handleUpdateGroupsButtonSetB()
 	{
 		if (group1TextFieldSetB.getText().trim().length() == 3)
@@ -3241,7 +3339,7 @@ public class BIASRecoveryRateAnalysisConfigController
 
 		setBTrainGroups = setBGroupsToWriteToRegistry;
 	}
-	
+
 	@FXML private void handleUpdateGroupsButtonSetC()
 	{
 		if (group1TextFieldSetC.getText().trim().length() == 3)
@@ -3319,7 +3417,7 @@ public class BIASRecoveryRateAnalysisConfigController
 
 		setCTrainGroups = setCGroupsToWriteToRegistry;
 	}
-	
+
 	@FXML private void handleUpdateGroupsButtonSetD()
 	{
 		if (group1TextFieldSetD.getText().trim().length() == 3)
@@ -5639,22 +5737,22 @@ public class BIASRecoveryRateAnalysisConfigController
 		}
 	}
 
-	public static String getSetALowRecoveryRate()
+	public static Integer getSetALowRecoveryRate()
 	{
 		return setALowRecoveryRate;
 	}
 
-	public static String getSetBLowRecoveryRate()
+	public static Integer getSetBLowRecoveryRate()
 	{
 		return setBLowRecoveryRate;
 	}
 
-	public static String getSetCLowRecoveryRate()
+	public static Integer getSetCLowRecoveryRate()
 	{
 		return setCLowRecoveryRate;
 	}
 
-	public static String getSetDLowRecoveryRate()
+	public static Integer getSetDLowRecoveryRate()
 	{
 		return setDLowRecoveryRate;
 	}
@@ -5683,22 +5781,22 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		return setATrainGroups;
 	}
-	
+
 	public static String getSetBRecoveryRateAnalysisTrainGroups()
 	{
 		return setBTrainGroups;
 	}
-	
+
 	public static String getSetCRecoveryRateAnalysisTrainGroups()
 	{
 		return setCTrainGroups;
 	}
-	
+
 	public static String getSetDRecoveryRateAnalysisTrainGroups()
 	{
 		return setDTrainGroups;
 	}
-	
+
 	public static String getSetARecoveryRateAnalysisNodePairs()
 	{
 		return setANodePairs;

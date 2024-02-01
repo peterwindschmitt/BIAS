@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -81,28 +82,47 @@
                                           <TextArea fx:id="brightlineTrainTypeTextArea" onKeyTyped="#handleBrightlineTrainTypeTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                           <TextArea fx:id="fecTrainTypeTextArea" onKeyTyped="#handleFecTrainTypeTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                                           <TextArea fx:id="triRailTrainTypeTextArea" onKeyTyped="#handleBrightlineTrainTypeTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                                          <Label text="&lt;=" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="TOP" />
+                                          <Label text="&lt;=" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin></Label>
                                           <Label fx:id="maxBrightlineCountLabel" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="TOP">
                                              <GridPane.margin>
-                                                <Insets left="20.0" />
+                                                <Insets left="23.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label text="&lt;=" GridPane.columnIndex="4" GridPane.rowIndex="4" GridPane.valignment="TOP" />
+                                          <Label text="day/avg" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin></Label>
+                                          <Label text="&lt;=" GridPane.columnIndex="4" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin>
+                                          </Label>
                                           <Label fx:id="maxFecThroughCountLabel" GridPane.columnIndex="4" GridPane.rowIndex="4" GridPane.valignment="TOP">
                                              <GridPane.margin>
-                                                <Insets left="20.0" />
+                                                <Insets left="23.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label text="&lt;=" GridPane.columnIndex="6" GridPane.rowIndex="4" GridPane.valignment="TOP" />
+                                          <Label text="day/avg" GridPane.columnIndex="4" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin></Label>
+                                          <Label text="&lt;=" GridPane.columnIndex="6" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin></Label>
                                           <Label fx:id="maxTriRailCountLabel" GridPane.columnIndex="6" GridPane.rowIndex="4" GridPane.valignment="TOP">
                                              <GridPane.margin>
-                                                <Insets left="20.0" />
+                                                <Insets left="23.0" />
                                              </GridPane.margin>
                                           </Label>
-	                                     
-	                                    
-                                         
-                                          <Label text="Brightline" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                                          <Label text="day/avg" GridPane.columnIndex="6" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin></Label>
+	                                     <Label text="Brightline" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                                           <Label text="FEC Through" underline="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                                           <Label text="TriRail" underline="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                                           <Label text="SCHEDULED over any of these nodes" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
@@ -162,9 +182,6 @@
                                           <TextArea fx:id="brightlineNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleBrightlineNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="TOP" />
                                           <TextArea fx:id="fecNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleFecNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="4" GridPane.valignment="TOP" />
                                           <TextArea fx:id="triRailNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleTriRailNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="5" GridPane.rowIndex="4" GridPane.valignment="TOP" />
-                                          <Label text="day/avg" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                                          <Label text="day/avg" GridPane.columnIndex="4" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                                          <Label text="day/avg" GridPane.columnIndex="6" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
                                        </children>
                                     </GridPane>
                                  </content></Tab>
@@ -258,7 +275,7 @@
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </CheckBox>
-                                          <Label text="1.  Check that the total train mileage and total elapsed time over the statistical period is the same as that in the the last known .ROUTE file of:" GridPane.columnSpan="6">
+                                          <Label text="1.  Check that the total train mileage and total elapsed time over the statistical period is the same as that in the the last known .ROUTE file of:" wrapText="true" GridPane.columnSpan="7">
                                              <GridPane.margin>
                                                 <Insets left="35.0" />
                                              </GridPane.margin>
@@ -267,10 +284,95 @@
                                     </GridPane>
                                  </content>
                               </Tab>
+                              <Tab disable="true" text="Train Recovery Rate">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                </content>
+                              </Tab>
+                              <Tab disable="true" text="Work Events">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                </content>
+                              </Tab>
                           </tabs>
                         </TabPane>
                      </content></Tab>
-                <Tab disable="true" text="Slow Orders" />
+                  <Tab text="Infrastructure">
+                     <content>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                           <tabs>
+                            <Tab text="Slow Orders">
+                                             <content>
+                                                <GridPane>
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="205.0" prefWidth="205.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="205.0" prefWidth="205.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="205.0" prefWidth="205.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                          <CheckBox fx:id="permitsEnabledCheckBox" minWidth="400.0" mnemonicParsing="false" onAction="#handlePermitsEnabledCheckBox" prefWidth="0.0" text="1.  Comparing .PERMIT files, check that the enabled:" GridPane.columnSpan="4">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="checkQuantityOfPermitsCheckBox" minWidth="400.0" mnemonicParsing="false" onAction="#handleCheckQuantityOfPermitsCheckBox" prefWidth="0.0" text="Count of permits Is the same" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <CheckBox fx:id="checkLinearMilesCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleCheckLinearMilesCheckBox" prefWidth="0.0" text="Sum of linear miles is the same" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <CheckBox fx:id="sumOfSpeedsCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleSumOfSpeedsCheckBox" prefWidth="0.0" text="Sum of speeds is the same" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Label text="Source" underline="true" GridPane.columnSpan="2" GridPane.rowIndex="9">
+                                             <GridPane.margin>
+                                                <Insets left="15.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label fx:id="slowOrderCriteriaLabel1" text="N/A" wrapText="true" GridPane.columnSpan="6" GridPane.halignment="LEFT" GridPane.rowIndex="10" GridPane.valignment="TOP">
+                                             <font>
+                                                <Font name="System Italic" size="11.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="15.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <CheckBox fx:id="sumOfDurationsCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleSumOfDurationsCheckBox" prefWidth="0.0" text="Sum of durations is the same" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <CheckBox fx:id="permitsEnabledCheckBox1" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handlePermitsEnabledCheckBox" prefWidth="0.0" text="2.  Exclude slow orders which touch any part of a bridge link" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </CheckBox>
+                                          <Label text="Check against the last accepted .PERMIT file of:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+                                          <Button fx:id="slowOrderUpdateLastAcceptedFileButton" disable="true" mnemonicParsing="false" onAction="#handleSlowOrderUpdateLastAcceptedFileButton" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                                                         <GridPane.margin>
+                                                            <Insets right="10.0" />
+                                                         </GridPane.margin>
+                                                      </Button>
+                                                      <Label fx:id="lastSlowsAcceptedFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                       </children>
+                                   </GridPane>
+                             </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
+                     </content>
+                  </Tab>
               </tabs>
             </TabPane>
          </children>

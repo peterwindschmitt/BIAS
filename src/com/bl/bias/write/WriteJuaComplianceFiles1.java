@@ -30,28 +30,28 @@ public class WriteJuaComplianceFiles1
 	protected String resultsMessage = "\nStarted writing output file at "+startWriteFileTime;
 	protected Boolean error = false;
 
-	private static String[] brightlineTrainTypes = BIASJuaComplianceConfigController.getBrightlineTrainTypes();
-	private static String[] fecTrainTypes = BIASJuaComplianceConfigController.getFecTrainTypes();
-	private static String[] triRailTrainTypes = BIASJuaComplianceConfigController.getTriRailTrainTypes();
-	private static String[] brightlineNodes = BIASJuaComplianceConfigController.getBrightlineNodes();
-	private static String[] fecNodes = BIASJuaComplianceConfigController.getFecNodes();
-	private static String[] triRailNodes = BIASJuaComplianceConfigController.getTriRailNodes();
-	private static Integer totalCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfBrightlinelOperatedTrains();
-	private static Integer totalCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrains();
-	private static Integer totalCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrains();
-	private static Integer maxDailyBrightlineOperatedTrains = BIASJuaComplianceConfigController.getDailyBrightlinePermitted();
-	private static Integer maxDailyFecOperatedTrains = BIASJuaComplianceConfigController.getDailyFecPermitted();
-	private static Integer maxDailyTriRailOperatedTrains = BIASJuaComplianceConfigController.getDailyTriRailPermitted();
+	private static String[] brightlineTrainTypes;
+	private static String[] fecTrainTypes;
+	private static String[] triRailTrainTypes;
+	private static String[] brightlineNodes;
+	private static String[] fecNodes;
+	private static String[] triRailNodes;
+	private static Integer totalCountOfBrightlineOperatedTrains;
+	private static Integer totalCountOfFecOperatedTrains;
+	private static Integer totalCountOfTriRailOperatedTrains;
+	private static Integer maxDailyBrightlineOperatedTrains;
+	private static Integer maxDailyFecOperatedTrains;
+	private static Integer maxDailyTriRailOperatedTrains;
 
-	private static Double averageDailyCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfBrightlineOperatedTrains();
-	private static Double averageDailyCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfFecOperatedTrains();
-	private static Double averageDailyCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfTriRailOperatedTrains();
-	private static ArrayList<String> seedTrainSymbolsFoundEligible = new ArrayList<String>();
-	private static ArrayList<String> seedTrainSymbolsFoundNotEligible = new ArrayList<String>();
-	private static Integer seedTrainSymbolCountFoundEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundEligible();
-	private static Integer seedTrainSymbolCountFoundNotEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundNotEligible();
-	private static ArrayList<ComplianceTrain> allSeedTrains = new ArrayList<ComplianceTrain>();
-	private static Integer statisticalPeriodDuration = ReadJuaComplianceFiles.getStatisticalDurationInDays();
+	private static Double averageDailyCountOfBrightlineOperatedTrains;
+	private static Double averageDailyCountOfFecOperatedTrains;
+	private static Double averageDailyCountOfTriRailOperatedTrains;
+	private static ArrayList<String> seedTrainSymbolsFoundEligible;
+	private static ArrayList<String> seedTrainSymbolsFoundNotEligible;
+	private static Integer seedTrainSymbolCountFoundEligible;
+	private static Integer seedTrainSymbolCountFoundNotEligible;
+	private static ArrayList<ComplianceTrain> allSeedTrains;
+	private static Integer statisticalPeriodDuration;
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -61,6 +61,29 @@ public class WriteJuaComplianceFiles1
 
 	public WriteJuaComplianceFiles1(String textArea, String fullyQualifiedPath)
 	{
+		brightlineTrainTypes = BIASJuaComplianceConfigController.getBrightlineTrainTypes();
+		fecTrainTypes = BIASJuaComplianceConfigController.getFecTrainTypes();
+		triRailTrainTypes = BIASJuaComplianceConfigController.getTriRailTrainTypes();
+		brightlineNodes = BIASJuaComplianceConfigController.getBrightlineNodes();
+		fecNodes = BIASJuaComplianceConfigController.getFecNodes();
+		triRailNodes = BIASJuaComplianceConfigController.getTriRailNodes();
+		totalCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfBrightlinelOperatedTrains();
+		totalCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrains();
+		totalCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrains();
+		maxDailyBrightlineOperatedTrains = BIASJuaComplianceConfigController.getDailyBrightlinePermitted();
+		maxDailyFecOperatedTrains = BIASJuaComplianceConfigController.getDailyFecPermitted();
+		maxDailyTriRailOperatedTrains = BIASJuaComplianceConfigController.getDailyTriRailPermitted();
+		
+		averageDailyCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfBrightlineOperatedTrains();
+		averageDailyCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfFecOperatedTrains();
+		averageDailyCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfTriRailOperatedTrains();
+		seedTrainSymbolsFoundEligible = new ArrayList<String>();
+		seedTrainSymbolsFoundNotEligible = new ArrayList<String>();
+		seedTrainSymbolCountFoundEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundEligible();
+		seedTrainSymbolCountFoundNotEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundNotEligible();
+		allSeedTrains = new ArrayList<ComplianceTrain>();
+		statisticalPeriodDuration = ReadJuaComplianceFiles.getStatisticalDurationInDays();
+		
 		seedTrainSymbolsFoundEligible.addAll(AnalyzeJuaComplianceFiles.getSeedTrainSymbolsFoundEligible());
 		seedTrainSymbolsFoundNotEligible.addAll(AnalyzeJuaComplianceFiles.getSeedTrainSymbolsFoundNotEligible());
 		allSeedTrains.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeForCompliance());
@@ -387,7 +410,7 @@ public class WriteJuaComplianceFiles1
 		cell.setCellStyle(style10);
 		cell.setCellValue(convertArrayListOfStringsToString(seedTrainSymbolsFoundEligible));
 		juaComplianceTrainCount.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 3));
-		row.setHeight((short)(seedTrainSymbolCountFoundEligible * 12));
+		row.setHeight((short) Math.max(400, (seedTrainSymbolCountFoundEligible * 12)));
 		
 		// Show the ineligible trains
 		rowCounter++;
@@ -415,7 +438,7 @@ public class WriteJuaComplianceFiles1
 		cell.setCellStyle(style10);
 		cell.setCellValue(convertArrayListOfStringsToString(seedTrainSymbolsFoundNotEligible));
 		juaComplianceTrainCount.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 3));
-		row.setHeight((short)(seedTrainSymbolCountFoundNotEligible * 12));
+		row.setHeight((short) Math.max(400, (seedTrainSymbolCountFoundNotEligible * 12)));
 				
 		rowCounter++;
 		rowCounter++;

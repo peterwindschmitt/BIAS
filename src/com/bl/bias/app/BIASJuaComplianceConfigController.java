@@ -17,6 +17,12 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private CheckBox lastAcceptedFileEnabledCheckBox;
 	@FXML private CheckBox trainPrioritytEnabledCheckBox;
 	@FXML private CheckBox trainMileageEnabledCheckBox;
+	@FXML private CheckBox permitsEnabledCheckBox;
+	@FXML private CheckBox checkQuantityOfPermitsCheckBox;
+	@FXML private CheckBox checkLinearMilesCheckBox;
+	@FXML private CheckBox sumOfSpeedsCheckBox;
+	@FXML private CheckBox sumOfDurationsCheckBox;
+	@FXML private CheckBox excludeRestrictionsNearBridgeCheckBox;
 
 	@FXML private TextArea brightlineTrainTypeTextArea;
 	@FXML private TextArea fecTrainTypeTextArea;
@@ -27,21 +33,28 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	@FXML private Label trainCountCriteriaLabel1;
 	@FXML private Label trainCountCriteriaLabel2;
+	@FXML private Label slowOrderCriteriaLabel1;
 	@FXML private Label trainPriorityCriteriaLabel1;
 	@FXML private Label lastTrainsAcceptedFileLocationLabel;
 	@FXML private Label maxTriRailCountLabel;
 	@FXML private Label maxBrightlineCountLabel;
 	@FXML private Label maxFecThroughCountLabel;
+	@FXML private Label lastSlowsAcceptedFileLocationLabel;
 
 	@FXML private Button trainCountUpdateNodesTypesButton;
 	@FXML private Button trainCountUpdateLastAcceptedFileButton;
 	@FXML private Button trainPriorityUpdateButton;
+	@FXML private Button slowOrderUpdateLastAcceptedFileButton;
 
 	private static Boolean checkEnabledCountOfTrains;
 	private static Boolean checkLastAcceptedTrainsFile;
+	private static Boolean permitsEnabled;
+	private static Boolean checkPermitCount;
 
 	private static Boolean defaultCheckEnabledCountOfTrains = true;
 	private static Boolean defaultCheckLastAcceptedTrainsFile = true;
+	private static Boolean defaultPermitsEnabled = true;
+	private static Boolean defaultCheckPermitCount = true;
 
 	private static String brightlineTrainTypes;
 	private static String fecTrainTypes;
@@ -62,17 +75,17 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static String[] brightlineTrainTypesAsArray;
 	private static String[] fecTrainTypesAsArray;
 	private static String[] triRailTrainTypesAsArray;
-	
+
 	private static String[] brightlineNodesAsArray;
 	private static String[] fecNodesAsArray;
 	private static String[] triRailNodesAsArray;
-	
+
 	private static Integer maxCharactersNodesField = 80;
 	private static Integer maxCharactersTrainTypeField = 100;
 	private static Integer maxBrightlineTrainCountPerDayOnAverage = 36;
 	private static Integer maxFecThroughTrainCountPerDayOnAverage = 24;
 	private static Integer maxTriRailTrainCountPerDayOnAverage = 28;
-	
+
 	private static Preferences prefs;
 
 	@FXML private void initialize() throws IOException
@@ -80,7 +93,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		maxBrightlineCountLabel.setText(maxBrightlineTrainCountPerDayOnAverage.toString());
 		maxFecThroughCountLabel.setText(maxFecThroughTrainCountPerDayOnAverage.toString());
 		maxTriRailCountLabel.setText(maxTriRailTrainCountPerDayOnAverage.toString());
-		
+
 		// Set up prefs
 		prefs = Preferences.userRoot().node("BIAS");
 
@@ -95,6 +108,8 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		else
 		{
 			checkEnabledCountOfTrains = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkEnabledCountOfTrains", false);
 			trainCountEnabledCheckBox.setSelected(false);
 		}
 
@@ -109,6 +124,8 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		else
 		{
 			checkLastAcceptedTrainsFile = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
 			lastAcceptedFileEnabledCheckBox.setSelected(false);
 		}
 
@@ -160,8 +177,41 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			triRailNodesTextArea.setText(triRailNodes);
 		}
 
+		// See if preference is stored for checking permits
+		if (prefs.getBoolean("ju_permitsEnabled", defaultPermitsEnabled))
+		{
+			permitsEnabled = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_permitsEnabled", true);
+			permitsEnabledCheckBox.setSelected(true);
+		}
+		else
+		{
+			permitsEnabled = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_permitsEnabled", false);
+			permitsEnabledCheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for checking permits
+		if (prefs.getBoolean("ju_checkPermitCount", defaultCheckPermitCount))
+		{
+			checkPermitCount = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkPermitCount", true);
+			checkQuantityOfPermitsCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkPermitCount = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkPermitCount", false);
+			checkQuantityOfPermitsCheckBox.setSelected(false);
+		}
+
 		trainCountCriteriaLabel1.setText(ComplianceCriteria.jua_4_2_c()[0]+" "+ComplianceCriteria.jua_4_2_c()[1]+":  "+ComplianceCriteria.jua_4_2_c()[2]);
 		trainCountCriteriaLabel2.setText(ComplianceCriteria.trdml_ii_4()[0]+" "+ComplianceCriteria.trdml_ii_4()[1]+":  "+ComplianceCriteria.trdml_ii_4()[2]);
+		slowOrderCriteriaLabel1.setText(ComplianceCriteria.hdr_mow_1()[0]);
 		trainPriorityCriteriaLabel1.setText(ComplianceCriteria.trdml_ii_3()[0]+" "+ComplianceCriteria.trdml_ii_3()[1]+":  "+ComplianceCriteria.trdml_ii_3()[2]);
 	}
 
@@ -275,7 +325,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 
 	}
-	
+
 	@FXML private void handleTrainMileageEnabledCheckBox(ActionEvent event)
 	{
 
@@ -297,6 +347,63 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		}
 	}
 
+	@FXML private void handlePermitsEnabledCheckBox(ActionEvent event)
+	{
+		if (permitsEnabled)
+		{
+			permitsEnabled = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_permitsEnabled", false);
+		}
+		else
+		{
+			permitsEnabled = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_permitsEnabled", true);
+		}
+	}
+
+	@FXML private void handleCheckQuantityOfPermitsCheckBox(ActionEvent event)
+	{
+		if (checkPermitCount)
+		{
+			checkPermitCount = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkPermitCount", false);
+		}
+		else
+		{
+			checkPermitCount = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkPermitCount", true);
+		}
+	}
+
+	@FXML private void handleCheckLinearMilesCheckBox(ActionEvent event)
+	{
+
+	}
+
+	@FXML private void handleSumOfSpeedsCheckBox(ActionEvent event)
+	{
+
+	}
+
+	@FXML private void handleSumOfDurationsCheckBox(ActionEvent event)
+	{
+
+	}
+
+	@FXML private void handleExcludeRestrictionsNearBridgeCheckBox (ActionEvent event)
+	{
+
+	}
+
+	@FXML private void handleSlowOrderUpdateLastAcceptedFileButton (ActionEvent event)
+	{
+
+	}
+
 	@FXML private void handleTrainPriorityUpdateButton(ActionEvent event)
 	{
 
@@ -306,42 +413,42 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 
 	}
-	
+
 	public static String[] getBrightlineTrainTypes()
 	{
 		return brightlineTrainTypesAsArray;
 	}
-	
+
 	public static String[] getFecTrainTypes()
 	{
 		return fecTrainTypesAsArray;
 	}
-	
+
 	public static String[] getTriRailTrainTypes()
 	{
 		return triRailTrainTypesAsArray;
 	}
-	
+
 	public static String[] getBrightlineNodes()
 	{
 		return brightlineNodesAsArray;
 	}
-	
+
 	public static String[] getFecNodes()
 	{
 		return fecNodesAsArray;
 	}
-	
+
 	public static String[] getTriRailNodes()
 	{
 		return triRailNodesAsArray;
 	}
-	
+
 	public static Integer getDailyBrightlinePermitted()
 	{
 		return maxBrightlineTrainCountPerDayOnAverage;
 	}
-	
+
 	public static Integer getDailyFecPermitted()
 	{
 		return maxFecThroughTrainCountPerDayOnAverage;
@@ -350,5 +457,15 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	public static Integer getDailyTriRailPermitted()
 	{
 		return maxTriRailTrainCountPerDayOnAverage;
+	}
+
+	public static Boolean getCheckPermitsEnabled()
+	{
+		return permitsEnabled;
+	}
+	
+	public static Boolean getCheckPermitCount()
+	{
+		return checkPermitCount;
 	}
 }

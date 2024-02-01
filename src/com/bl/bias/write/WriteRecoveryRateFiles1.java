@@ -285,7 +285,7 @@ public class WriteRecoveryRateFiles1 // Set A
 
 							cell = row.createCell(7);
 
-							if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetALowRecoveryRate().replace("%", "")))
+							if (recoveryRate2 < Double.valueOf(BIASRecoveryRateAnalysisConfigController.getSetALowRecoveryRate()))
 							{
 								if (BIASRecoveryRateAnalysisConfigController.getExcludeTrainsBelowThresholdSetA())
 									seedTrainsBelowTargetRecoveryRateHashSet.add(assessmentsSetA.get(i).getTrainSymbol().trim());

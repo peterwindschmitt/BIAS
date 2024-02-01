@@ -1,6 +1,8 @@
 package com.bl.bias.app;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Optional;
@@ -40,6 +42,8 @@ public class BIASGeneralConfigController
 	@FXML private CheckBox useRtcFolderForIniFileCheckbox;
 
 	@FXML private Button updateInputFilesButton;
+	@FXML private Button saveFromRegistryButton;
+	@FXML private Button loadToRegistryButton;
 	@FXML private Button clearRegistryButton;
 
 	@FXML private GridPane generalConfigGridPanePage1;
@@ -325,6 +329,76 @@ public class BIASGeneralConfigController
 			prefs.removeNode();
 			System.exit(0);
 		}	
+	}
+
+	@FXML private void handleLoadToRegistryButton(ActionEvent event) throws BackingStoreException
+	{
+		// Get location to retrieve file from
+		FileChooser fileChooser = new FileChooser();
+		Stage stageForFolderChooser = (Stage) loadToRegistryButton.getScene().getWindow();
+		fileChooser.setTitle("Select Location of Registry Backup File");
+		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("XML", "*.xml");
+		fileChooser.getExtensionFilters().add(fileExtensions);
+
+		File file = fileChooser.showOpenDialog(stageForFolderChooser);
+
+		if (file != null) 
+		{
+			try 
+			{
+				final FileInputStream fileInputStream = new FileInputStream(file); 
+				{
+					Preferences.importPreferences(fileInputStream);
+				}
+			} 
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+			}
+			
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Success!");
+			alert.setHeaderText(null);
+			alert.setContentText("Registry was updated from back-up file.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+			alert.show();
+		}
+	}
+
+	@FXML private void handleSaveFromRegistryButton(ActionEvent event) throws IOException
+	{
+		// Get location to save file to
+		FileChooser fileChooser = new FileChooser();
+		Stage stageForFolderChooser = (Stage) saveFromRegistryButton.getScene().getWindow();
+		fileChooser.setTitle("Select Location to Save Results");
+		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("XML", "*.xml");
+		fileChooser.getExtensionFilters().add(fileExtensions);
+
+		File file = fileChooser.showSaveDialog(stageForFolderChooser);
+
+		if (file != null) 
+		{
+			try 
+			{
+				final FileOutputStream fileOutputStream = new FileOutputStream(file); 
+				{
+					prefs.exportNode(fileOutputStream);
+				}
+			} 
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+			}
+			
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Success!");
+			alert.setHeaderText(null);
+			alert.setContentText("Registry contents saved to file.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+			alert.show();
+		}
 	}
 
 	public static Boolean getUseRtcFolderForIniFile()

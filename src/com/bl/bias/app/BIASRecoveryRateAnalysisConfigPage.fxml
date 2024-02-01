@@ -3,9 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -297,11 +297,6 @@
                               <Insets right="20.0" />
                            </GridPane.margin>
                         </Button>
-                        <ComboBox fx:id="setALowRecoveryRateComboBox" maxWidth="70.0" minWidth="70.0" onAction="#handleSetALowRecoveryRateComboBox" prefWidth="70.0" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </ComboBox>
                         <Label text="5.  Set A:  Low recovery threshold rate (%):" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
                            <padding>
                               <Insets left="10.0" />
@@ -310,6 +305,11 @@
                               <Insets bottom="4.0" />
                            </GridPane.margin>
                         </Label>
+                        <Spinner fx:id="setALowRecoveryRateSpinner" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                           <GridPane.margin>
+                              <Insets left="-10.0" />
+                           </GridPane.margin>
+                        </Spinner>
                         <Label text="6.  Set A:  Amount added to work events/station stops  due to scheduling imprecision:" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                            <padding>
                               <Insets left="10.0" />
@@ -648,11 +648,6 @@
                               <Insets right="20.0" />
                            </GridPane.margin>
                         </Button>
-                        <ComboBox fx:id="setBLowRecoveryRateComboBox" maxWidth="70.0" minWidth="70.0" onAction="#handleSetBLowRecoveryRateComboBox" prefWidth="70.0" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </ComboBox>
                         <Label text="5.  Set B:  Low recovery threshold rate (%):" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
                            <padding>
                               <Insets left="10.0" />
@@ -661,6 +656,11 @@
                               <Insets bottom="4.0" />
                            </GridPane.margin>
                         </Label>
+                        <Spinner fx:id="setBLowRecoveryRateSpinner" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                           <GridPane.margin>
+                              <Insets left="-10.0" />
+                           </GridPane.margin>
+                        </Spinner>
                         <Label text="6.  Set B:  Amount added to work events/station stops  due to scheduling imprecision:" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                            <padding>
                               <Insets left="10.0" />
@@ -999,11 +999,6 @@
                               <Insets right="20.0" />
                            </GridPane.margin>
                         </Button>
-                        <ComboBox fx:id="setCLowRecoveryRateComboBox" maxWidth="70.0" minWidth="70.0" onAction="#handleSetCLowRecoveryRateComboBox" prefWidth="70.0" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </ComboBox>
                         <Label text="5.  Set C:  Low recovery threshold rate (%):" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
                            <padding>
                               <Insets left="10.0" />
@@ -1012,7 +1007,11 @@
                               <Insets bottom="4.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label text="6.  Set C:  Amount added to work events/station stops  due to scheduling imprecision:" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.valignment="CENTER">
+                        <Spinner fx:id="setCLowRecoveryRateSpinner" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                           <GridPane.margin>
+                              <Insets left="-10.0" />
+                           </GridPane.margin>
+                        </Spinner><Label text="6.  Set C:  Amount added to work events/station stops  due to scheduling imprecision:" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
@@ -1350,11 +1349,6 @@
                               <Insets right="20.0" />
                            </GridPane.margin>
                         </Button>
-                        <ComboBox fx:id="setDLowRecoveryRateComboBox" maxWidth="70.0" minWidth="70.0" onAction="#handleSetDLowRecoveryRateComboBox" prefWidth="70.0" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </ComboBox>
                         <Label text="5.  Set D:  Low recovery threshold rate (%):" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
                            <padding>
                               <Insets left="10.0" />
@@ -1363,6 +1357,11 @@
                               <Insets bottom="4.0" />
                            </GridPane.margin>
                         </Label>
+                        <Spinner fx:id="setDLowRecoveryRateSpinner" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                           <GridPane.margin>
+                              <Insets left="-10.0" />
+                           </GridPane.margin>
+                        </Spinner>
                         <Label text="6.  Set D:  Amount added to work events/station stops  due to scheduling imprecision:" GridPane.columnSpan="6" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                            <padding>
                               <Insets left="10.0" />
