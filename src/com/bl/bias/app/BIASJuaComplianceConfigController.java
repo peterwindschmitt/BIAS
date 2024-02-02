@@ -1,5 +1,6 @@
 package com.bl.bias.app;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
@@ -9,6 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
 import com.bl.bias.objects.ComplianceCriteria;
 
 public class BIASJuaComplianceConfigController extends ComplianceCriteria
@@ -18,7 +22,6 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private CheckBox trainPrioritytEnabledCheckBox;
 	@FXML private CheckBox trainMileageEnabledCheckBox;
 	@FXML private CheckBox permitsEnabledCheckBox;
-	@FXML private CheckBox checkQuantityOfPermitsCheckBox;
 	@FXML private CheckBox checkLinearMilesCheckBox;
 	@FXML private CheckBox sumOfSpeedsCheckBox;
 	@FXML private CheckBox sumOfDurationsCheckBox;
@@ -35,10 +38,10 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private Label trainCountCriteriaLabel2;
 	@FXML private Label slowOrderCriteriaLabel1;
 	@FXML private Label trainPriorityCriteriaLabel1;
-	@FXML private Label lastTrainsAcceptedFileLocationLabel;
 	@FXML private Label maxTriRailCountLabel;
 	@FXML private Label maxBrightlineCountLabel;
 	@FXML private Label maxFecThroughCountLabel;
+	@FXML private Label lastTrainsAcceptedFileLocationLabel;
 	@FXML private Label lastSlowsAcceptedFileLocationLabel;
 
 	@FXML private Button trainCountUpdateNodesTypesButton;
@@ -49,12 +52,14 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static Boolean checkEnabledCountOfTrains;
 	private static Boolean checkLastAcceptedTrainsFile;
 	private static Boolean permitsEnabled;
-	private static Boolean checkPermitCount;
+	private static Boolean checkLinearMilesOfSlows;
+	private static Boolean checkLinearMilesMultiplySpeedOfSlows;
 
 	private static Boolean defaultCheckEnabledCountOfTrains = true;
 	private static Boolean defaultCheckLastAcceptedTrainsFile = true;
 	private static Boolean defaultPermitsEnabled = true;
-	private static Boolean defaultCheckPermitCount = true;
+	private static Boolean defaultCheckLinearMilesOfSlows = true;
+	private static Boolean defaultCheckLinearMilesMultiplySpeedOfSlows = true;
 
 	private static String brightlineTrainTypes;
 	private static String fecTrainTypes;
@@ -79,6 +84,9 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static String[] brightlineNodesAsArray;
 	private static String[] fecNodesAsArray;
 	private static String[] triRailNodesAsArray;
+
+	private static String lastAcceptedTrainFileAsString;
+	private static String lastAcceptedPermitFileAsString;
 
 	private static Integer maxCharactersNodesField = 80;
 	private static Integer maxCharactersTrainTypeField = 100;
@@ -193,20 +201,54 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			permitsEnabledCheckBox.setSelected(false);
 		}
 
-		// See if preference is stored for checking permits
-		if (prefs.getBoolean("ju_checkPermitCount", defaultCheckPermitCount))
+		// See if preferences are stored for checking linear sum of miles for permits
+		if (prefs.getBoolean("ju_checkPermitsLinearSumOfMiles", defaultCheckLinearMilesOfSlows))
 		{
-			checkPermitCount = true;
+			checkLinearMilesOfSlows = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkPermitCount", true);
-			checkQuantityOfPermitsCheckBox.setSelected(true);
+				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", true);
+			checkLinearMilesCheckBox.setSelected(true);
 		}
 		else
 		{
-			checkPermitCount = false;
+			checkLinearMilesOfSlows = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkPermitCount", false);
-			checkQuantityOfPermitsCheckBox.setSelected(false);
+				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", false);
+			checkLinearMilesCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for checking linear sum of miles * speed for permits
+		if (prefs.getBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", defaultCheckLinearMilesMultiplySpeedOfSlows))
+		{
+			checkLinearMilesMultiplySpeedOfSlows = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", true);
+			sumOfSpeedsCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkLinearMilesMultiplySpeedOfSlows = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", false);
+			sumOfSpeedsCheckBox.setSelected(false);
+		}
+
+		// See if last accepted train file exists
+		if ((prefs.get("ju_lastAcceptedTrainFile", "") != null) && (prefs.get("ju_lastAcceptedTrainFile", "") != ""))
+		{
+			lastAcceptedTrainFileAsString = prefs.get("ju_lastAcceptedTrainFile", "");;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedTrainFile", lastAcceptedTrainFileAsString);
+			lastTrainsAcceptedFileLocationLabel.setText(lastAcceptedTrainFileAsString);
+		}
+
+		// See if last accepted permit file exists
+		if ((prefs.get("ju_lastAcceptedPermitFile", "") != null) && (prefs.get("ju_lastAcceptedPermitFile", "") != ""))
+		{
+			lastAcceptedPermitFileAsString = prefs.get("ju_lastAcceptedPermitFile", "");;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedPermitFile", lastAcceptedPermitFileAsString);
+			lastSlowsAcceptedFileLocationLabel.setText(lastAcceptedPermitFileAsString);
 		}
 
 		trainCountCriteriaLabel1.setText(ComplianceCriteria.jua_4_2_c()[0]+" "+ComplianceCriteria.jua_4_2_c()[1]+":  "+ComplianceCriteria.jua_4_2_c()[2]);
@@ -363,30 +405,36 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		}
 	}
 
-	@FXML private void handleCheckQuantityOfPermitsCheckBox(ActionEvent event)
+	@FXML private void handleCheckLinearMilesCheckBox(ActionEvent event)
 	{
-		if (checkPermitCount)
+		if (checkLinearMilesOfSlows)
 		{
-			checkPermitCount = false;
+			checkLinearMilesOfSlows = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkPermitCount", false);
+				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", false);
 		}
 		else
 		{
-			checkPermitCount = true;
+			checkLinearMilesOfSlows = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkPermitCount", true);
+				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", true);
 		}
-	}
-
-	@FXML private void handleCheckLinearMilesCheckBox(ActionEvent event)
-	{
-
 	}
 
 	@FXML private void handleSumOfSpeedsCheckBox(ActionEvent event)
 	{
-
+		if (checkLinearMilesMultiplySpeedOfSlows)
+		{
+			checkLinearMilesMultiplySpeedOfSlows = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", false);
+		}
+		else
+		{
+			checkLinearMilesMultiplySpeedOfSlows = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", true);
+		}
 	}
 
 	@FXML private void handleSumOfDurationsCheckBox(ActionEvent event)
@@ -401,8 +449,28 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	@FXML private void handleSlowOrderUpdateLastAcceptedFileButton (ActionEvent event)
 	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select File");
+		FileChooser.ExtensionFilter fileExtensions = 
+				new FileChooser.ExtensionFilter(
+						"RTC Permit Files", "*.PERMIT");
 
-	}
+		fileChooser.getExtensionFilters().add(fileExtensions);		
+
+		// Show the chooser and get the file
+		Stage stageForFileChooser = (Stage) slowOrderUpdateLastAcceptedFileButton.getScene().getWindow();
+		File file = fileChooser.showOpenDialog(stageForFileChooser);
+
+		// Valid .PERMIT file found
+		if (file != null)
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedPermitFile", file.toString());
+
+			lastSlowsAcceptedFileLocationLabel.setText(file.toString());
+			lastAcceptedPermitFileAsString = file.toString();
+		}
+	}           
 
 	@FXML private void handleTrainPriorityUpdateButton(ActionEvent event)
 	{
@@ -411,7 +479,27 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	@FXML private void handleTrainCountUpdateLastAcceptedFileButton(ActionEvent event)
 	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select File");
+		FileChooser.ExtensionFilter fileExtensions = 
+				new FileChooser.ExtensionFilter(
+						"RTC Train Files", "*.TRAIN");
 
+		fileChooser.getExtensionFilters().add(fileExtensions);		
+
+		// Show the chooser and get the file
+		Stage stageForFileChooser = (Stage) trainCountUpdateLastAcceptedFileButton.getScene().getWindow();
+		File file = fileChooser.showOpenDialog(stageForFileChooser);
+
+		// Valid .TRAIN file found
+		if (file != null)
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedTrainFile", file.toString());
+
+			lastTrainsAcceptedFileLocationLabel.setText(file.toString());
+			lastAcceptedTrainFileAsString = file.toString();
+		}
 	}
 
 	public static String[] getBrightlineTrainTypes()
@@ -453,19 +541,34 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 		return maxFecThroughTrainCountPerDayOnAverage;
 	}
-	
+
 	public static Integer getDailyTriRailPermitted()
 	{
 		return maxTriRailTrainCountPerDayOnAverage;
+	}
+
+	public static Boolean getCheckEnabledCountOfTrains()
+	{
+		return checkEnabledCountOfTrains;
 	}
 
 	public static Boolean getCheckPermitsEnabled()
 	{
 		return permitsEnabled;
 	}
-	
-	public static Boolean getCheckPermitCount()
+
+	public static Boolean getCheckPermitsSumOfLinearMiles()
 	{
-		return checkPermitCount;
+		return checkLinearMilesOfSlows;
+	}
+
+	public static Boolean getCheckLinearMilesMultiplySpeedOfSlows()
+	{
+		return checkLinearMilesMultiplySpeedOfSlows;
+	}
+
+	public static String getLastAcceptedPermitFileAsString()
+	{
+		return lastAcceptedPermitFileAsString;
 	}
 }

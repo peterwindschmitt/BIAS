@@ -1,18 +1,23 @@
 package com.bl.bias.read;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.bl.bias.app.BIASJuaComplianceConfigController;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.objects.CompliancePermit;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadJuaComplianceFiles
 {
-	private static ArrayList<ComplianceTrain> complianceTrains = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> complianceTrainsThisCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<CompliancePermit> compliancePermitsThisCase = new ArrayList<CompliancePermit>();
+	private static ArrayList<CompliancePermit> compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
 
 	private static String resultsMessage;
 
@@ -24,17 +29,19 @@ public class ReadJuaComplianceFiles
 	static String coolDownExclusion = null;
 	static String simulationBeginTime = null;
 
-	public ReadJuaComplianceFiles(String file) throws IOException
+	public ReadJuaComplianceFiles(String fileOfCaseBeingChecked, Boolean checkTrainCount, Boolean checkPermits) throws IOException
 	{
 		resultsMessage = "\nStarted parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n";
 
-		complianceTrains.clear();
-		
+		complianceTrainsThisCase.clear();
+		compliancePermitsThisCase.clear();
+		compliancePermitsLastAcceptedCase.clear();
+
 		// Read in .OPTION file with Scanner
 		Scanner scannerOption = null;
 		try 
 		{
-			File optionFile = new File(file);
+			File optionFile = new File(fileOfCaseBeingChecked);
 			scannerOption = new Scanner(optionFile);
 
 			while (scannerOption.hasNextLine()) 
@@ -83,131 +90,167 @@ public class ReadJuaComplianceFiles
 
 		if (formattedCorrectly)
 		{
-			// Read in .TRAIN file with Scanner
-			Scanner scannerTrain = null; 
-			File trainFile = new File(file.replace("OPTION","TRAIN"));
-			scannerTrain = new Scanner(trainFile);
-
-			try 
+			// Train compliance checks
+			Integer objectCount = 0;
+			if (checkTrainCount)
 			{
-				String trainSymbol = null;
-				String trainType = null;
-				String linkedAtOriginTo = null;
-				String enabled = null;
-				ArrayList<String> routeEntries = null;
-				ArrayList<Integer> daysOfOperationAsInteger = null;
-				
-				String targetSequence0 = "Train symbol: ";
-				String targetSequence1 = "Train type: ";
-				String targetSequence2 = "Week  1 Frequency: ";
-				String targetSequence3 = "Week  2 Frequency: ";
-				String targetSequence4 = "Week  3 Frequency: ";
-				String targetSequence5 = "Enabled: ";
-				String targetSequence6 = "Linked at origin to the: ";
-				String targetSequence7 = "Route Node";
-				String targetSequence8 = "=========================================";
+				// Read in .TRAIN file with Scanner
+				Scanner scannerTrain = null; 
+				File trainFileOfCaseBeingChecked = new File(fileOfCaseBeingChecked.replace("OPTION","TRAIN"));
+				scannerTrain = new Scanner(trainFileOfCaseBeingChecked);
 
-				Boolean inRouteNodeSection = false;
-				Boolean firstTrainFound = false;
-
-				while (scannerTrain.hasNextLine()) 
+				try 
 				{
-					String lineFromTrainFile = scannerTrain.nextLine();
-					if ((lineFromTrainFile.contains(targetSequence8)) && (!firstTrainFound)) // Found first train
-					{
-						firstTrainFound = true;
-					}
-					else if (lineFromTrainFile.contains(targetSequence0)) // Train symbol
-					{ 
-						daysOfOperationAsInteger = new ArrayList<Integer>();
-						routeEntries = new ArrayList<String>();
-						trainSymbol = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[1])).trim();
-					}
-					else if(lineFromTrainFile.contains(targetSequence1)) // Train type
-					{ 
-						trainType = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])).trim();
-					}
-					else if(lineFromTrainFile.contains(targetSequence2)) // Days 1 - 7
-					{ 
-						ArrayList<String> week1Days = new ArrayList<String>();
-						String week1DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
-						String[] splitted = week1DaysAsString.split(" ");
-						for (int i = 0; i < splitted.length; i++)
-							week1Days.add(splitted[i].trim().toUpperCase());
-						daysOfOperationAsInteger.addAll(convertDOWtoInteger(week1Days, 1));
-					}
-					else if(lineFromTrainFile.contains(targetSequence3)) // Days 8 - 14
-					{ 
-						ArrayList<String> week2Days = new ArrayList<String>();
-						String week2DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
-						String[] splitted = week2DaysAsString.split(" ");
-						for (int i = 0; i < splitted.length; i++)
-							week2Days.add(splitted[i].trim().toUpperCase());
-						daysOfOperationAsInteger.addAll(convertDOWtoInteger(week2Days, 2));
-					}
-					else if(lineFromTrainFile.contains(targetSequence4)) // Days 15 - 21
-					{ 
-						ArrayList<String> week3Days = new ArrayList<String>();
-						String week3DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
-						String[] splitted = week3DaysAsString.split(" ");
-						for (int i = 0; i < splitted.length; i++)
-							week3Days.add(splitted[i].trim().toUpperCase());
-						daysOfOperationAsInteger.addAll(convertDOWtoInteger(week3Days, 3));
+					objectCount = 0;
+					String trainSymbol = null;
+					String trainType = null;
+					String linkedAtOriginTo = null;
+					String enabled = null;
+					ArrayList<String> routeEntries = null;
+					ArrayList<Integer> daysOfOperationAsInteger = null;
 
-					}
-					else if (lineFromTrainFile.contains(targetSequence5)) // Train enabled
-					{ 
-						enabled = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])).trim();
-					}
-					else if (lineFromTrainFile.contains(targetSequence6)) // Linked at origin to
-					{ 
-						linkedAtOriginTo = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])).trim();
-					}
-					else if (((inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence8))) 
-						|| (!scannerTrain.hasNextLine())) // Create the train
+					String targetSequence0 = "Train symbol: ";
+					String targetSequence1 = "Train type: ";
+					String targetSequence2 = "Week  1 Frequency: ";
+					String targetSequence3 = "Week  2 Frequency: ";
+					String targetSequence4 = "Week  3 Frequency: ";
+					String targetSequence5 = "Enabled: ";
+					String targetSequence6 = "Linked at origin to the: ";
+					String targetSequence7 = "Route Node";
+					String targetSequence8 = "=========================================";
+
+					Boolean inRouteNodeSection = false;
+					Boolean firstTrainFound = false;
+
+					while (scannerTrain.hasNextLine()) 
 					{
-						inRouteNodeSection = false;
-						
-						ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, routeEntries, daysOfOperationAsInteger);
-						complianceTrains.add(train);	
-					}
-					else if (inRouteNodeSection) // Route node
-					{
-						if (!lineFromTrainFile.equals(""))
+						String lineFromTrainFile = scannerTrain.nextLine();
+						if ((lineFromTrainFile.contains(targetSequence8)) && (!firstTrainFound)) // Found first train
 						{
-							routeEntries.add(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[0]), Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[1])).trim());
+							firstTrainFound = true;
+						}
+						else if (lineFromTrainFile.contains(targetSequence0)) // Train symbol
+						{ 
+							daysOfOperationAsInteger = new ArrayList<Integer>();
+							routeEntries = new ArrayList<String>();
+							trainSymbol = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[1])).trim();
+							objectCount++;
+						}
+						else if(lineFromTrainFile.contains(targetSequence1)) // Train type
+						{ 
+							trainType = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])).trim();
+							objectCount++;
+						}
+						else if(lineFromTrainFile.contains(targetSequence2)) // Days 1 - 7
+						{ 
+							ArrayList<String> week1Days = new ArrayList<String>();
+							String week1DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
+							String[] splitted = week1DaysAsString.split(" ");
+							for (int i = 0; i < splitted.length; i++)
+								week1Days.add(splitted[i].trim().toUpperCase());
+							daysOfOperationAsInteger.addAll(convertDOWtoInteger(week1Days, 1));
+							objectCount+=7;
+						}
+						else if(lineFromTrainFile.contains(targetSequence3)) // Days 8 - 14
+						{ 
+							ArrayList<String> week2Days = new ArrayList<String>();
+							String week2DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
+							String[] splitted = week2DaysAsString.split(" ");
+							for (int i = 0; i < splitted.length; i++)
+								week2Days.add(splitted[i].trim().toUpperCase());
+							daysOfOperationAsInteger.addAll(convertDOWtoInteger(week2Days, 2));
+							objectCount+=7;
+						}
+						else if(lineFromTrainFile.contains(targetSequence4)) // Days 15 - 21
+						{ 
+							ArrayList<String> week3Days = new ArrayList<String>();
+							String week3DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
+							String[] splitted = week3DaysAsString.split(" ");
+							for (int i = 0; i < splitted.length; i++)
+								week3Days.add(splitted[i].trim().toUpperCase());
+							daysOfOperationAsInteger.addAll(convertDOWtoInteger(week3Days, 3));
+							objectCount+=7;
+						}
+						else if (lineFromTrainFile.contains(targetSequence5)) // Train enabled
+						{ 
+							enabled = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])).trim();
+							objectCount++;
+						}
+						else if (lineFromTrainFile.contains(targetSequence6)) // Linked at origin to
+						{ 
+							linkedAtOriginTo = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])).trim();
+							objectCount++;
+						}
+						else if (((inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence8))) 
+								|| (!scannerTrain.hasNextLine())) // Create the train
+						{
+							inRouteNodeSection = false;
+
+							ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, routeEntries, daysOfOperationAsInteger);
+							complianceTrainsThisCase.add(train);	
+						}
+						else if (inRouteNodeSection) // Route node
+						{
+							if (!lineFromTrainFile.equals(""))
+							{
+								routeEntries.add(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[0]), Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[1])).trim());
+								objectCount++;
+							}
+						}
+						else if ((!inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence7))) // Enter the route node section
+						{
+							inRouteNodeSection = true;
+							scannerTrain.nextLine();
+							scannerTrain.nextLine();
 						}
 					}
-					else if ((!inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence7))) // Enter the route node section
-					{
-						inRouteNodeSection = true;
-						scannerTrain.nextLine();
-						scannerTrain.nextLine();
-					}
 				}
+				catch (Exception e) 
+				{
+					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				}
+				finally
+				{
+					scannerTrain.close();
+				}
+				resultsMessage += "Extracted data from "+objectCount+" objects from the .TRAIN file\n";
 			}
-			catch (Exception e) 
+
+			// Permit Compliance Checks
+			if (checkPermits)
 			{
-				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				// Read in permits of case being checked
+				compliancePermitsThisCase = new ArrayList<CompliancePermit>();
+				compliancePermitsThisCase.addAll(retrievePermits(new File(fileOfCaseBeingChecked.replace("OPTION","PERMIT"))));
+				
+				// Read in permits of last accepted .permit file
+				compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
+				compliancePermitsLastAcceptedCase.addAll(retrievePermits(new File(BIASJuaComplianceConfigController.getLastAcceptedPermitFileAsString())));
+				
+				resultsMessage += "Extracted data from " + ((compliancePermitsThisCase.size() + compliancePermitsLastAcceptedCase.size()) * 9)+" objects from both .PERMIT files\n";
 			}
-			finally
-			{
-				scannerTrain.close();
-			}
-			
-			resultsMessage += "Extracted data for "+complianceTrains.size()+" seed trains from the .TRAIN file\n";
 			resultsMessage += "Finished parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 		}
 		else
 		{
-			resultsMessage += "Simulation duration and/or exclusion periods are not set correctly\n\n";
+			resultsMessage += "Simulation duration and/or exclusion periods are not set correctly\n";
 			scannerOption.close();
 		}
 	}
 
-	public static ArrayList<ComplianceTrain> getTrainsToAnalyzeForCompliance()
+	public static ArrayList<ComplianceTrain> getTrainsToAnalyzeThisCase()
 	{
-		return complianceTrains;
+		return complianceTrainsThisCase;
+	}
+	
+	public static ArrayList<CompliancePermit> getPermitsToAnalyzeThisCase()
+	{
+		return compliancePermitsThisCase;
+	}
+	
+	public static ArrayList<CompliancePermit> getPermitsToAnalyzeLastAcceptedCase()
+	{
+		return compliancePermitsLastAcceptedCase;
 	}
 
 	public Boolean getFormattedCorrectly()
@@ -269,6 +312,51 @@ public class ReadJuaComplianceFiles
 			}
 		}
 		return daysAsInteger;
+	}
+	
+	private ArrayList<CompliancePermit> retrievePermits(File permitFile) throws FileNotFoundException
+	{
+		ArrayList<CompliancePermit> permits = new ArrayList<CompliancePermit>();
+		Scanner scannerPermit = new Scanner(permitFile);
+		try 
+		{
+			String targetSequence0 = "xxxxxxxxxxxxxxxxxxxx";
+			
+			Boolean firstPermitFound = false;
+
+			while (scannerPermit.hasNextLine()) 
+			{
+				String lineFromPermitFile = scannerPermit.nextLine();
+				if ((lineFromPermitFile.contains(targetSequence0)) && (!firstPermitFound)) // Found first permit
+				{
+					scannerPermit.nextLine();
+					firstPermitFound = true;
+				}
+				else if (firstPermitFound)
+				{
+					// Subdivision
+					String subdivision = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getSubdivision()[0]), Integer.valueOf(BIASParseConfigPageController.b_getSubdivision()[1])).trim();
+					String beginMp = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[1])).trim();
+					String endMp = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[1])).trim();
+					String pasSpeed = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[1])).trim();
+					String frtSpeed = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[1])).trim();
+					
+					CompliancePermit permit = new CompliancePermit(subdivision, Double.valueOf(beginMp), Double.valueOf(endMp), Integer.valueOf(pasSpeed), Integer.valueOf(frtSpeed));
+					//CompliancePermit permit = new CompliancePermit(subdivision, beginMp, endMp, startTime, endTime, psgSpeed, frtSpeed);
+					permits.add(permit);
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+		}
+		finally
+		{
+			scannerPermit.close();
+		}
+		
+		return permits;
 	}
 
 	public String getResultsMessage()

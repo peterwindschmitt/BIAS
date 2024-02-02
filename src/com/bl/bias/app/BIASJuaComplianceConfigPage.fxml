@@ -169,12 +169,12 @@
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </CheckBox>
-                                          <Button fx:id="trainCountUpdateLastAcceptedFileButton" disable="true" mnemonicParsing="false" onAction="#handleTrainCountUpdateLastAcceptedFileButton" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                                          <Button fx:id="trainCountUpdateLastAcceptedFileButton" mnemonicParsing="false" onAction="#handleTrainCountUpdateLastAcceptedFileButton" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
                                           </Button>
-                                          <Label fx:id="lastTrainsAcceptedFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.rowSpan="2" GridPane.valignment="TOP">
+                                          <Label fx:id="lastTrainsAcceptedFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.rowSpan="3" GridPane.valignment="TOP">
                                              <GridPane.margin>
                                                 <Insets left="20.0" />
                                              </GridPane.margin>
@@ -332,9 +332,8 @@
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </CheckBox>
-                                          <CheckBox fx:id="checkQuantityOfPermitsCheckBox" minWidth="400.0" mnemonicParsing="false" onAction="#handleCheckQuantityOfPermitsCheckBox" prefWidth="0.0" text="Count of permits Is the same" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <CheckBox fx:id="checkLinearMilesCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleCheckLinearMilesCheckBox" prefWidth="0.0" text="Sum of linear miles is the same" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <CheckBox fx:id="sumOfSpeedsCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleSumOfSpeedsCheckBox" prefWidth="0.0" text="Sum of speeds is the same" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <CheckBox fx:id="checkLinearMilesCheckBox" minWidth="400.0" mnemonicParsing="false" onAction="#handleCheckLinearMilesCheckBox" prefWidth="0.0" text="Sum of impacted track miles is the same" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <CheckBox fx:id="sumOfSpeedsCheckBox" minWidth="400.0" mnemonicParsing="false" onAction="#handleSumOfSpeedsCheckBox" prefWidth="0.0" text="Sum of impacted track miles multiplied by speed is the same" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                           <Label text="Source" underline="true" GridPane.columnSpan="2" GridPane.rowIndex="9">
                                              <GridPane.margin>
                                                 <Insets left="15.0" />
@@ -348,21 +347,21 @@
                                                 <Insets left="15.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <CheckBox fx:id="sumOfDurationsCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleSumOfDurationsCheckBox" prefWidth="0.0" text="Sum of durations is the same" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                          <CheckBox fx:id="permitsEnabledCheckBox1" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handlePermitsEnabledCheckBox" prefWidth="0.0" text="2.  Exclude slow orders which touch any part of a bridge link" GridPane.rowIndex="5">
+                                          <CheckBox fx:id="sumOfDurationsCheckBox" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handleSumOfDurationsCheckBox" prefWidth="0.0" text="Sum of durations is the same" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <CheckBox fx:id="permitsEnabledCheckBox1" disable="true" minWidth="400.0" mnemonicParsing="false" onAction="#handlePermitsEnabledCheckBox" prefWidth="0.0" text="2.  Exclude slow orders which touch any part of a bridge link" GridPane.rowIndex="4">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </CheckBox>
-                                          <Label text="Check against the last accepted .PERMIT file of:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" />
-                                          <Button fx:id="slowOrderUpdateLastAcceptedFileButton" disable="true" mnemonicParsing="false" onAction="#handleSlowOrderUpdateLastAcceptedFileButton" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                                          <Label text="Check against the last accepted .PERMIT file of:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+                                          <Button fx:id="slowOrderUpdateLastAcceptedFileButton" mnemonicParsing="false" onAction="#handleSlowOrderUpdateLastAcceptedFileButton" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                                                          <GridPane.margin>
                                                             <Insets right="10.0" />
                                                          </GridPane.margin>
                                                       </Button>
-                                                      <Label fx:id="lastSlowsAcceptedFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                      <Label fx:id="lastSlowsAcceptedFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.rowSpan="3" GridPane.valignment="TOP">
                                                          <GridPane.margin>
-                                                            <Insets />
+                                                            <Insets top="2.0" />
                                                          </GridPane.margin>
                                                       </Label>
                                        </children>

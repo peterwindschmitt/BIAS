@@ -8,7 +8,7 @@ import java.util.prefs.Preferences;
 
 import com.bl.bias.read.ReadJuaComplianceFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteJuaComplianceFiles2;
+import com.bl.bias.write.WriteJuaComplianceFiles3;
 import com.bl.bias.analyze.AnalyzeJuaComplianceFiles;
 import com.bl.bias.exception.ErrorShutdown;
 
@@ -42,7 +42,7 @@ public class BIASJuaComplianceController
 	private static String fileAsString;
 	private static String fullyQualifiedPath;
 	private static String message = "";
-	
+
 	private static Boolean continueAnalysis = true;
 
 	@FXML private void initialize() throws IOException
@@ -141,7 +141,7 @@ public class BIASJuaComplianceController
 				saveFileFolderForSerialFileName = directory.toString();
 
 				selectFileLocationLabel.setDisable(true);
-				
+
 				fileLocationButton.setDisable(true);
 				fileNameLabel.setDisable(true);
 				executeButton.setDisable(true);
@@ -169,7 +169,7 @@ public class BIASJuaComplianceController
 	@FXML private void handleResetButton(ActionEvent event) throws IOException 
 	{
 		continueAnalysis = true;
-		
+
 		resetMessage();
 
 		progressBar.setVisible(false);
@@ -215,58 +215,76 @@ public class BIASJuaComplianceController
 
 	private void runTask() throws InterruptedException, IOException
 	{
-		// Read all objects that are required for the recovery rate analysis
-		message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
-		displayMessage(message);
-		ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath);
-		message = readData.getResultsMessage();
-		displayMessage(message);
-
-		if (readData.getFormattedCorrectly())
+		// Check that at least one check is selected in the Compliance Controller
+		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled() 
+			&& BIASJuaComplianceConfigController.getCheckPermitsSumOfLinearMiles()) 			// Make sure a subtest is selected if Permits check is enabled
+				|| BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())// and/or trains  
 		{
-			setProgressIndicator(0.33);
+			// Read all objects that are required for the recovery rate analysis
+			message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
+			displayMessage(message);
+			ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath, BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains(), BIASJuaComplianceConfigController.getCheckPermitsEnabled());
+			message = readData.getResultsMessage();
+			displayMessage(message);
 
-			if (ReadJuaComplianceFiles.getTrainsToAnalyzeForCompliance().size() ==	0)
-				continueAnalysis = false;
-			
-			if (continueAnalysis)
+			if (readData.getFormattedCorrectly())
 			{
-				//  Perform Analysis
-				AnalyzeJuaComplianceFiles analyzeData = new AnalyzeJuaComplianceFiles();
-				message = analyzeData.getResultsMessage();
-				displayMessage(message);
+				setProgressIndicator(0.33);
 
-				setProgressIndicator(0.66);
+				if (((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase().size() == 0)) 	// Request to analyze trains but no trains found
+					|| ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase().size() == 0))) 	// Request to analyze permits but no permits found																	
+					continueAnalysis = false;
 
-				WriteJuaComplianceFiles2 writeFiles = new WriteJuaComplianceFiles2(textArea.getText().toString(), fullyQualifiedPath);
-				message = writeFiles.getResultsWriteMessage2();
-				displayMessage(message);
-				if (!WriteJuaComplianceFiles2.getErrorFound())
+				if (continueAnalysis)
 				{
-					setProgressIndicator(1.0);
-					displayMessage("\n*** PROCESSING COMPLETE ***");
+					//  Perform Analysis
+					AnalyzeJuaComplianceFiles analyzeData = new AnalyzeJuaComplianceFiles();
+					message = analyzeData.getResultsMessage();
+					displayMessage(message);
+
+					setProgressIndicator(0.66);
+
+					WriteJuaComplianceFiles3 writeFiles = new WriteJuaComplianceFiles3(textArea.getText().toString(), fullyQualifiedPath);
+					message = writeFiles.getResultsWriteMessage3();
+					displayMessage(message);
+					if (!WriteJuaComplianceFiles3.getErrorFound())
+					{
+						setProgressIndicator(1.0);
+						displayMessage("\n*** PROCESSING COMPLETE ***");
+					}
+					else
+					{
+						displayMessage("\nError in writing files");
+						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+					}
 				}
 				else
 				{
-					displayMessage("\nError in writing files");
+					message += "\nUnable to perform analysis due to no trains in read in";
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
 			else
 			{
-				message += "\nUnable to perform analysis due to no trains in read in";
-				displayMessage("*** PROCESSING NOT COMPLETE!!! ***");
+				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 			}
+
+			//  Now reset for next case
+			executeButton.setVisible(false);
+			resetButton.setVisible(true);
+			resetButton.setDisable(false);
 		}
 		else
 		{
-			displayMessage("*** PROCESSING NOT COMPLETE!!! ***");
-		}
+			// No compliance checks selected
+			displayMessage("\nMust select at least one JUA Compliance check \n  in the JUA Compliance Configuration to run analysis");
+			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 
-		//  Now reset for next case
-		executeButton.setVisible(false);
-		resetButton.setVisible(true);
-		resetButton.setDisable(false);
+			//  Now reset for next case
+			executeButton.setVisible(false);
+			resetButton.setVisible(true);
+			resetButton.setDisable(false);
+		}
 	}
 
 	private void chooseFile()
@@ -350,7 +368,7 @@ public class BIASJuaComplianceController
 	{
 		progressBar.setProgress(value);
 	}
-	
+
 	public static String getSaveFileLocationForUserSpecifiedFileName()
 	{
 		if (!saveFileLocationForUserSpecifiedFileName.toLowerCase().endsWith(".xlsx"))
@@ -365,7 +383,7 @@ public class BIASJuaComplianceController
 	{
 		return saveFileFolderForSerialFileName;
 	}
-	
+
 	public static String getCaseNameAsString()
 	{
 		return fileAsString.replace(".OPTION", "");
