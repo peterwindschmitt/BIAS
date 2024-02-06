@@ -5,13 +5,13 @@ public class CompliancePermit
 	String subdivision;
 	Double beginMp;
 	Double endMp;
-	String startTime;
-	String endTime;
 	Integer psgSpeed;
 	Integer frtSpeed;
+	String startTime;
+	String endTime;
+	String enabled;
 
-	//public CompliancePermit(String subdivision, Double beginMp, Double endMp, String startTime, String endTime, Integer psgSpeed, Integer frtSpeed) 
-	public CompliancePermit(String subdivision, Double beginMp, Double endMp, Integer psgSpeed, Integer frtSpeed) 
+	public CompliancePermit(String subdivision, Double beginMp, Double endMp, Integer psgSpeed, Integer frtSpeed, String startTime, String endTime, String enabled) 
 	{
 		this.subdivision = subdivision;
 		this.beginMp = beginMp;
@@ -20,6 +20,9 @@ public class CompliancePermit
 		this.endTime = endTime;
 		this.psgSpeed = psgSpeed;
 		this.frtSpeed = frtSpeed;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.enabled = enabled;
 	}
 
 	public String getSubdivision() 
@@ -55,5 +58,10 @@ public class CompliancePermit
 	public Integer getFrtSpeed()
 	{
 		return frtSpeed;
+	}
+	
+	public String getEnabled()
+	{
+		return enabled;
 	}
 }

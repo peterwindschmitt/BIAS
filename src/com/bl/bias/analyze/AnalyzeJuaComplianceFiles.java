@@ -13,6 +13,7 @@ public class AnalyzeJuaComplianceFiles
 {
 	private static String resultsMessage;
 
+	// Trains
 	private static Integer totalCountOfBrightlineOperatedTrains;
 	private static Integer totalCountOfFecOperatedTrains;
 	private static Integer totalCountOfTriRailOperatedTrains;
@@ -21,13 +22,19 @@ public class AnalyzeJuaComplianceFiles
 	private static Double dailyAverageCountOfFecOperatedTrains;
 	private static Double dailyAverageCountOfTriRailOperatedTrains;
 
+	// Permits
 	private static Double milesOfAffectedTrackThisCase = 0.0;
 	private static Double milesOfAffectedTrackLastAcceptedCase = 0.0;
-	private static Double milesOfAffectedTrackMultiplyPassengerSpeedsThisCase = 0.0;
-	private static Double milesOfAffectedTrackMultiplyFreightSpeedsThisCase = 0.0;
-	private static Double milesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase = 0.0;
-	private static Double milesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase = 0.0;
+	private static Double averageSlowOrderPassengerSpeedThisCase = 0.0;
+	private static Double averageSlowOrderFreightSpeedThisCase = 0.0;
+	private static Double averageSlowOrderPassengerSpeedLastAcceptedCase = 0.0;
+	private static Double averageSlowOrderFreightSpeedLastAcceptedCase = 0.0;
+	private static Double hoursMilesThisCase = 0.0;
+	private static Double hoursMilesLastAcceptedCase = 0.0;
+	private static Integer permitsConsideredThisCase = 0;
+	private static Integer permitsConsideredLastAcceptedCase = 0;
 
+	// Statistical Period
 	private static Integer statisticalStartDay; 
 	private static Integer statisticalEndDay; 
 
@@ -47,6 +54,8 @@ public class AnalyzeJuaComplianceFiles
 
 	private static ArrayList<CompliancePermit> permitsToAnalyzeForThisCase = new ArrayList<CompliancePermit>();
 	private static ArrayList<CompliancePermit> permitsToAnalyzeForLastAcceptedCase = new ArrayList<CompliancePermit>();
+
+	Boolean debug = false;
 
 	public AnalyzeJuaComplianceFiles() 
 	{
@@ -73,7 +82,7 @@ public class AnalyzeJuaComplianceFiles
 			// Populate all arrays with necessary objects
 			trainsToAnalyzeForCompliance.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase());
 			seedTrainsFoundNotEligible.addAll(trainsToAnalyzeForCompliance);
-			
+
 			for (int i = 0; i < trainsToAnalyzeForCompliance.size(); i++)
 			{
 				seedTrainSymbolsFoundNotEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
@@ -114,7 +123,7 @@ public class AnalyzeJuaComplianceFiles
 			totalCountOfFecOperatedTrains = 0;
 			totalCountOfTriRailOperatedTrains = 0;
 			statisticalStartDay = ReadJuaComplianceFiles.getStatisticalStartDayOfWeekAsInteger();		 
-			statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays() - 1; // inclusive
+			statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays(); 
 
 			// For each train
 			for (int i = 0; i < trainsToAnalyzeForCompliance.size(); i++)
@@ -318,36 +327,463 @@ public class AnalyzeJuaComplianceFiles
 			permitsToAnalyzeForLastAcceptedCase.clear();
 			permitsToAnalyzeForThisCase.addAll(ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase());
 			permitsToAnalyzeForLastAcceptedCase.addAll(ReadJuaComplianceFiles.getPermitsToAnalyzeLastAcceptedCase());
-		
+
 			resultsMessage += "Found " + permitsToAnalyzeForThisCase.size() + " permits in this case's .PERMIT file and " + permitsToAnalyzeForLastAcceptedCase.size() + " permits in the last accepted .PERMIT file:\n";
 
-			// Compute miles of affected track, miles * speed and miles * duration
-			if (BIASJuaComplianceConfigController.getCheckPermitsSumOfLinearMiles())
+			// Compute miles of affected track, average slow order speed and miles * duration
+			if (BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles())
 			{
 				milesOfAffectedTrackThisCase = 0.0;
 				milesOfAffectedTrackLastAcceptedCase = 0.0;
-				milesOfAffectedTrackMultiplyPassengerSpeedsThisCase = 0.0;
-				milesOfAffectedTrackMultiplyFreightSpeedsThisCase = 0.0;
-				milesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase = 0.0;
-				milesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase = 0.0;
+				averageSlowOrderPassengerSpeedThisCase = 0.0;
+				averageSlowOrderFreightSpeedThisCase = 0.0;
+				averageSlowOrderPassengerSpeedLastAcceptedCase = 0.0;
+				averageSlowOrderFreightSpeedLastAcceptedCase = 0.0;
+				hoursMilesThisCase = 0.0;
+				hoursMilesLastAcceptedCase = 0.0;
+				Double sumOfSlowOrderPassengerSpeedThisCase = 0.0;
+				Double sumOfSlowOrderFreightSpeedThisCase = 0.0;
+				Double sumOfSlowOrderPassengerSpeedLastAcceptedCase = 0.0;
+				Double sumOfSlowOrderFreightSpeedLastAcceptedCase = 0.0;
+				permitsConsideredThisCase = 0;
+				permitsConsideredLastAcceptedCase = 0;
 
+				if (debug)
+				{
+					System.out.println("The statistical start day is "+statisticalStartDay);
+					System.out.println("The statistical end day is "+statisticalEndDay);
+				}
+
+				if (BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly())
+					resultsMessage += "Checking enabled permits only ";
+				else
+					resultsMessage += "Checking all permits (enabled and disabled) ";
+				
+				if (BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())
+					resultsMessage += "within the statistical period only\n";
+				else
+					resultsMessage += "within and outside the statistical period\n";
+				
+						
 				// This case
 				for (int i = 0; i < permitsToAnalyzeForThisCase.size(); i++)
 				{
-					milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
-					milesOfAffectedTrackMultiplyPassengerSpeedsThisCase += (milesOfAffectedTrackThisCase * permitsToAnalyzeForThisCase.get(i).getPasSpeed());
-					milesOfAffectedTrackMultiplyFreightSpeedsThisCase += (milesOfAffectedTrackThisCase * permitsToAnalyzeForThisCase.get(i).getFrtSpeed());
+					if ((BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly()) && (permitsToAnalyzeForThisCase.get(i).getEnabled().equals("YES"))) // If check enabled
+					{
+						if (debug)
+						{
+							System.out.println(" Enabled permit start time in This Case is "+permitsToAnalyzeForThisCase.get(i).getStartTime());
+							System.out.println(" Enabled permit end time in This Case is "+permitsToAnalyzeForThisCase.get(i).getEndTime());
+						}
+
+						if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit wholly within statistical Period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 1");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime());
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;
+						}	
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends before statistical period starts
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) < statisticalStartDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 2");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends after statistical period ends
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) > statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) > statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 3");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts before statistical period and ends during statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 4");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime());
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;							
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts during statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 5");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime());
+							Double timeEnd = (double) statisticalEndDay - (1/86400);
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;	
+
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts before statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 6");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = (double) statisticalEndDay;
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;	
+
+						}
+						else if(!BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Statistical period not considered
+						{
+							if (debug)
+								System.out.println("  Case 7");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime());
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;
+						}
+					}
+					else if (!BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly()) // Not enabled
+					{
+						if (debug)
+						{
+							System.out.println(" All permits considered start time in This Case is "+permitsToAnalyzeForThisCase.get(i).getStartTime());
+							System.out.println(" All permits considered end time in This Case is "+permitsToAnalyzeForThisCase.get(i).getEndTime());
+						}
+
+						if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit wholly within statistical Period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 8");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime());
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;
+						}	
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends before statistical period starts
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) < statisticalStartDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 9");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends after statistical period ends
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) > statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) > statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 10");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts before statistical period and ends during statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 11");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime());
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;							
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts during statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 12");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime());
+							Double timeEnd = (double) statisticalEndDay - (1/86400);
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;	
+
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts before statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 13");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = (double) statisticalEndDay;
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;	
+
+						}
+						else if(!BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Statistical period not considered
+						{
+							if (debug)
+								System.out.println("  Case 14");
+							milesOfAffectedTrackThisCase += Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedThisCase += permitsToAnalyzeForThisCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForThisCase.get(i).getEndTime());
+
+							hoursMilesThisCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForThisCase.get(i).getEndMp() - permitsToAnalyzeForThisCase.get(i).getBeginMp()));
+							permitsConsideredThisCase++;
+						}
+					}
 				}
 
 				// Last accepted case
 				for (int i = 0; i < permitsToAnalyzeForLastAcceptedCase.size(); i++)
 				{
-					milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
-					milesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase += (milesOfAffectedTrackLastAcceptedCase * permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed());
-					milesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase += (milesOfAffectedTrackLastAcceptedCase * permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed());
+					if ((BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly()) && (permitsToAnalyzeForLastAcceptedCase.get(i).getEnabled().equals("YES"))) // If check enabled
+					{
+						if (debug)
+						{
+							System.out.println(" Enabled permit start time in Last Accepted Case is "+permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							System.out.println(" Enabled permit end time in Last Accepted Case is "+permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+						}
+
+						if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit wholly within statistical Period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 21");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;
+						}	
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends before statistical period starts
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) < statisticalStartDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 22");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends after statistical period ends
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) > statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) > statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 23");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts before statistical period and ends during statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 24");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;							
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts during statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 25");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							Double timeEnd = (double) statisticalEndDay - (1/86400);
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;	
+
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts before statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 26");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = (double) statisticalEndDay;
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;	
+
+						}
+						else if(!BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Statistical period not considered
+						{
+							if (debug)
+								System.out.println("  Case 27");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;
+						}
+					}
+					else if (!BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly()) // Not enabled
+					{
+						if (debug)
+						{
+							System.out.println(" All permits considered start time in Last Accepted Case is "+permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							System.out.println(" All permits considered end time in Last Accepted Case is "+permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+						}
+
+						if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit wholly within statistical Period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 28");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;
+						}	
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends before statistical period starts
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) < statisticalStartDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 29");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts and ends after statistical period ends
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) > statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) > statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 30");
+							continue;
+						}
+						else if ((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Permit starts before statistical period and ends during statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) < statisticalEndDay)) 
+						{
+							if (debug)
+								System.out.println("  Case 31");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;							
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts during statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) >= statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalEndDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 32");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							Double timeEnd = (double) statisticalEndDay - (1/86400);
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;	
+
+						}
+						else if((BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())  // Permit starts before statistical period and ends after statistical period
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime()) < statisticalStartDay) 
+								&& (ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime()) > statisticalEndDay))
+						{
+							if (debug)
+								System.out.println("  Case 33");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = (double) statisticalStartDay;
+							Double timeEnd = (double) statisticalEndDay;
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;	
+
+						}
+						else if(!BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly()) // Statistical period not considered
+						{
+							if (debug)
+								System.out.println("  Case 34");
+							milesOfAffectedTrackLastAcceptedCase += Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp());
+							sumOfSlowOrderPassengerSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getPasSpeed();
+							sumOfSlowOrderFreightSpeedLastAcceptedCase += permitsToAnalyzeForLastAcceptedCase.get(i).getFrtSpeed();
+							Double timeStart = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getStartTime());
+							Double timeEnd = ConvertDateTime.convertDDHHMMSSStringToSerial(permitsToAnalyzeForLastAcceptedCase.get(i).getEndTime());
+
+							hoursMilesLastAcceptedCase += ((timeEnd - timeStart) * Math.abs(permitsToAnalyzeForLastAcceptedCase.get(i).getEndMp() - permitsToAnalyzeForLastAcceptedCase.get(i).getBeginMp()));
+							permitsConsideredLastAcceptedCase++;
+						}
+					}
 				}
+
+				averageSlowOrderPassengerSpeedThisCase = sumOfSlowOrderPassengerSpeedThisCase/permitsToAnalyzeForThisCase.size();
+				averageSlowOrderFreightSpeedThisCase = sumOfSlowOrderFreightSpeedThisCase/permitsToAnalyzeForThisCase.size();
+				averageSlowOrderPassengerSpeedLastAcceptedCase = sumOfSlowOrderPassengerSpeedLastAcceptedCase/permitsToAnalyzeForLastAcceptedCase.size();
+				averageSlowOrderFreightSpeedLastAcceptedCase = sumOfSlowOrderFreightSpeedLastAcceptedCase/permitsToAnalyzeForLastAcceptedCase.size();
 			}
-			resultsMessage += "  comparing miles of affected track\n";
 		}
 
 		resultsMessage += "Finished analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+("\n");
@@ -428,25 +864,45 @@ public class AnalyzeJuaComplianceFiles
 	{
 		return  milesOfAffectedTrackLastAcceptedCase;
 	}
-	
-	public static Double getMilesOfAffectedTrackMultiplyPassengerSpeedsThisCase()
+
+	public static Double getAverageSlowOrderPassengerSpeedThisCase()
 	{
-		return  milesOfAffectedTrackMultiplyPassengerSpeedsThisCase;
+		return  averageSlowOrderPassengerSpeedThisCase;
 	}
 
-	public static Double getMilesOfAffectedTrackMultiplyFreightSpeedsThisCase()
+	public static Double getAverageSlowOrderFreightSpeedThisCase()
 	{
-		return  milesOfAffectedTrackMultiplyFreightSpeedsThisCase;
-	}
-	
-	public static Double getMilesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase()
-	{
-		return  milesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase;
+		return  averageSlowOrderFreightSpeedThisCase;
 	}
 
-	public static Double getMilesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase()
+	public static Double getAverageSlowOrderPassengerSpeedLastAcceptedCase()
 	{
-		return  milesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase;
+		return  averageSlowOrderPassengerSpeedLastAcceptedCase;
+	}
+
+	public static Double getAverageSlowOrderFreightSpeedLastAcceptedCase()
+	{
+		return  averageSlowOrderFreightSpeedLastAcceptedCase;
+	}
+
+	public static Double getHoursMilesThisCase()
+	{
+		return  hoursMilesThisCase;
+	}
+
+	public static Double getHoursMilesLastAcceptedCase()
+	{
+		return  hoursMilesLastAcceptedCase;
+	}
+
+	public static Integer getPermitsConisderedThisCase()
+	{
+		return  permitsConsideredThisCase;
+	}
+
+	public static Integer getPermitsConisderedLastAcceptedCase()
+	{
+		return  permitsConsideredLastAcceptedCase;
 	}
 
 	public static String getResultsMessage()

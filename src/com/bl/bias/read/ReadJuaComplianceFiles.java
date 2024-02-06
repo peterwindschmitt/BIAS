@@ -1,7 +1,9 @@
 package com.bl.bias.read;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -18,7 +20,7 @@ public class ReadJuaComplianceFiles
 	private static ArrayList<ComplianceTrain> complianceTrainsThisCase = new ArrayList<ComplianceTrain>();
 	private static ArrayList<CompliancePermit> compliancePermitsThisCase = new ArrayList<CompliancePermit>();
 	private static ArrayList<CompliancePermit> compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
-
+	
 	private static String resultsMessage;
 
 	static Boolean formattedCorrectly = true;
@@ -36,7 +38,7 @@ public class ReadJuaComplianceFiles
 		complianceTrainsThisCase.clear();
 		compliancePermitsThisCase.clear();
 		compliancePermitsLastAcceptedCase.clear();
-
+				
 		// Read in .OPTION file with Scanner
 		Scanner scannerOption = null;
 		try 
@@ -222,11 +224,11 @@ public class ReadJuaComplianceFiles
 				// Read in permits of case being checked
 				compliancePermitsThisCase = new ArrayList<CompliancePermit>();
 				compliancePermitsThisCase.addAll(retrievePermits(new File(fileOfCaseBeingChecked.replace("OPTION","PERMIT"))));
-				
+
 				// Read in permits of last accepted .permit file
 				compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
 				compliancePermitsLastAcceptedCase.addAll(retrievePermits(new File(BIASJuaComplianceConfigController.getLastAcceptedPermitFileAsString())));
-				
+
 				resultsMessage += "Extracted data from " + ((compliancePermitsThisCase.size() + compliancePermitsLastAcceptedCase.size()) * 9)+" objects from both .PERMIT files\n";
 			}
 			resultsMessage += "Finished parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n\n";
@@ -242,12 +244,12 @@ public class ReadJuaComplianceFiles
 	{
 		return complianceTrainsThisCase;
 	}
-	
+
 	public static ArrayList<CompliancePermit> getPermitsToAnalyzeThisCase()
 	{
 		return compliancePermitsThisCase;
 	}
-	
+
 	public static ArrayList<CompliancePermit> getPermitsToAnalyzeLastAcceptedCase()
 	{
 		return compliancePermitsLastAcceptedCase;
@@ -313,7 +315,7 @@ public class ReadJuaComplianceFiles
 		}
 		return daysAsInteger;
 	}
-	
+
 	private ArrayList<CompliancePermit> retrievePermits(File permitFile) throws FileNotFoundException
 	{
 		ArrayList<CompliancePermit> permits = new ArrayList<CompliancePermit>();
@@ -321,7 +323,7 @@ public class ReadJuaComplianceFiles
 		try 
 		{
 			String targetSequence0 = "xxxxxxxxxxxxxxxxxxxx";
-			
+
 			Boolean firstPermitFound = false;
 
 			while (scannerPermit.hasNextLine()) 
@@ -334,15 +336,16 @@ public class ReadJuaComplianceFiles
 				}
 				else if (firstPermitFound)
 				{
-					// Subdivision
 					String subdivision = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getSubdivision()[0]), Integer.valueOf(BIASParseConfigPageController.b_getSubdivision()[1])).trim();
 					String beginMp = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[1])).trim();
 					String endMp = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[1])).trim();
 					String pasSpeed = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[1])).trim();
 					String frtSpeed = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[1])).trim();
-					
-					CompliancePermit permit = new CompliancePermit(subdivision, Double.valueOf(beginMp), Double.valueOf(endMp), Integer.valueOf(pasSpeed), Integer.valueOf(frtSpeed));
-					//CompliancePermit permit = new CompliancePermit(subdivision, beginMp, endMp, startTime, endTime, psgSpeed, frtSpeed);
+					String startTime = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getStartTime()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartTime()[1])).trim();
+					String endTime = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getEndTime()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndTime()[1])).trim();
+					String enabled = lineFromPermitFile.substring(Integer.valueOf(BIASParseConfigPageController.b_getEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEnabled()[1])).trim();
+
+					CompliancePermit permit = new CompliancePermit(subdivision, Double.valueOf(beginMp), Double.valueOf(endMp), Integer.valueOf(pasSpeed), Integer.valueOf(frtSpeed), startTime, endTime, enabled);
 					permits.add(permit);
 				}
 			}
@@ -355,7 +358,7 @@ public class ReadJuaComplianceFiles
 		{
 			scannerPermit.close();
 		}
-		
+
 		return permits;
 	}
 

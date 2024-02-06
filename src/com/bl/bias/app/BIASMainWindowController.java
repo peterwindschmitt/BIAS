@@ -273,7 +273,7 @@ public class BIASMainWindowController
 
 	@FXML private void handleMenuItemTTestConfig(ActionEvent event)
 	{
-		showModuleOnMainGridPane(nodeTTest);
+		showModuleOnMainGridPane(nodeTTestConfig);
 	}
 
 	@FXML private void handleMenuItemRTCResultsAnalysisConfig(ActionEvent event)

@@ -134,6 +134,9 @@ public class BIASParseConfigPageController
 	private static String b_endMp;
 	private static String b_pasSpeed;
 	private static String b_frtSpeed;
+	private static String b_startTime;
+	private static String b_endTime;
+	private static String b_enabled;
 
 	// Data from RTC.INI file
 	private static String i_allowAlphaDOW;
@@ -904,7 +907,10 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Start MP", "b_startMp", Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[1])),
 				new ParseLocationFormatB("End MP", "b_endMp", Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[1])),
 				new ParseLocationFormatB("Passenger Speed", "b_pasSpeed", Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[1])),
-				new ParseLocationFormatB("Freight Speed", "b_frtSpeed", Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[1]))
+				new ParseLocationFormatB("Freight Speed", "b_frtSpeed", Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[1])),
+				new ParseLocationFormatB("Start Time", "b_startTime", Integer.valueOf(BIASParseConfigPageController.b_getStartTime()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartTime()[1])),
+				new ParseLocationFormatB("End Time", "b_endTime", Integer.valueOf(BIASParseConfigPageController.b_getEndTime()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndTime()[1])),
+				new ParseLocationFormatB("Enabled", "b_enabled", Integer.valueOf(BIASParseConfigPageController.b_getEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEnabled()[1]))
 				);
 
 		parseLocationsTable14.setItems(parseData14);
@@ -1125,6 +1131,9 @@ public class BIASParseConfigPageController
 			prefs.remove("b_endMp");
 			prefs.remove("b_pasSpeed");
 			prefs.remove("b_frtSpeed");
+			prefs.remove("b_startTime");
+			prefs.remove("b_endTime");
+			prefs.remove("b_enabled");
 
 			// Add parameters
 			getParseParameters();
@@ -1406,7 +1415,10 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Start MP", "b_startMp", Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartMp()[1])),
 					new ParseLocationFormatB("End MP", "b_endMp", Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndMp()[1])),
 					new ParseLocationFormatB("Passenger Speed", "b_pasSpeed", Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getPasSpeed()[1])),
-					new ParseLocationFormatB("Freight Speed", "b_frtSpeed", Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[1]))
+					new ParseLocationFormatB("Freight Speed", "b_frtSpeed", Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.b_getFrtSpeed()[1])),
+					new ParseLocationFormatB("Start Time", "b_startTime", Integer.valueOf(BIASParseConfigPageController.b_getStartTime()[0]), Integer.valueOf(BIASParseConfigPageController.b_getStartTime()[1])),
+					new ParseLocationFormatB("End Time", "b_endTime", Integer.valueOf(BIASParseConfigPageController.b_getEndTime()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEndTime()[1])),
+					new ParseLocationFormatB("Enabled", "b_enabled", Integer.valueOf(BIASParseConfigPageController.b_getEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.b_getEnabled()[1]))
 					);
 			startColumn14.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 			endColumn14.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -4540,6 +4552,33 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("b_frtSpeed", b_frtSpeed);
 		}
+
+		// Start Time
+		if (prefs.get("b_startTime", null) == null)
+		{
+			// Write value for subsequent runs
+			b_startTime = "143,155";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("b_startTime", b_startTime);
+		}
+
+		// End Time
+		if (prefs.get("b_endTime", null) == null)
+		{
+			// Write value for subsequent runs
+			b_endTime = "158,170";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("b_endTime", b_endTime);
+		}
+
+		// Enabled
+		if (prefs.get("b_enabled", null) == null)
+		{
+			// Write value for subsequent runs
+			b_enabled = "201,204";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("b_enabled", b_enabled);
+		}
 	}
 
 	public static String[] x_getTrainCat()
@@ -5549,16 +5588,34 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("b_endMp", "b_endMp").split(",");
 		return values;
 	}
-	
+
 	public static String[] b_getPasSpeed()
 	{
 		String[] values = prefs.get("b_pasSpeed", "b_pasSpeed").split(",");
 		return values;
 	}
-	
+
 	public static String[] b_getFrtSpeed()
 	{
 		String[] values = prefs.get("b_frtSpeed", "b_frtSpeed").split(",");
+		return values;
+	}
+	
+	public static String[] b_getStartTime()
+	{
+		String[] values = prefs.get("b_startTime", "b_startTime").split(",");
+		return values;
+	}
+	
+	public static String[] b_getEndTime()
+	{
+		String[] values = prefs.get("b_endTime", "b_endTime").split(",");
+		return values;
+	}
+	
+	public static String[] b_getEnabled()
+	{
+		String[] values = prefs.get("b_enabled", "b_enabled").split(",");
 		return values;
 	}
 

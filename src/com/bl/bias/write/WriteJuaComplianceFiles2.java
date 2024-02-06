@@ -1,4 +1,4 @@
-package com.bl.bias.write;
+	package com.bl.bias.write;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,7 +37,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 		super(textArea, fullyQualifiedPath);
 
 		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) 
-				&& (BIASJuaComplianceConfigController.getCheckPermitsSumOfLinearMiles()))
+				&& (BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles()))
 		{
 			// Set styles
 			CellStyle style0 = workbook.createCellStyle();
@@ -184,7 +184,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell.setCellValue("");
 
 			cell = row.createCell(1);
-			cell.setCellStyle(style6);
+			cell.setCellStyle(style7);
 			cell.setCellValue("Comparison of Cases");
 
 			cell = row.createCell(2);
@@ -207,8 +207,25 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell.setCellStyle(style11);
 			cell.setCellValue(lastAcceptedPermitFileName2 + "\n[Last Accepted .PERMIT File]");
 
+			// Permit count
+			rowCounter++;
+			rowCounter++;
+			row = juaComplianceSlowOrders.createRow(rowCounter);
+
+			cell = row.createCell(0);
+			cell.setCellStyle(style1);
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getPermitsConisderedThisCase());
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style1);
+			cell.setCellValue("Permit Count*^");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style1);
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getPermitsConisderedLastAcceptedCase());
+
 			// Sum of impacted track miles
-			if (BIASJuaComplianceConfigController.getCheckPermitsSumOfLinearMiles())
+			if (BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles())
 			{
 				rowCounter++;
 				rowCounter++;
@@ -233,8 +250,8 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 			}
 
-			// Sum of impacted track miles * speed
-			if (BIASJuaComplianceConfigController.getCheckLinearMilesMultiplySpeedOfSlows())
+			// Average slow order speed
+			if (BIASJuaComplianceConfigController.getAverageSlowOrderSpeed())
 			{
 				rowCounter++;
 				rowCounter++;
@@ -242,7 +259,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 				cell = row.createCell(1);
 				cell.setCellStyle(style1);
-				cell.setCellValue("Sum of Impacted Track Miles * Reduced Speed");
+				cell.setCellValue("Average Slow Order Speed");
 
 				// Passenger
 				rowCounter++;
@@ -250,7 +267,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 				cell = row.createCell(0);
 				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyPassengerSpeedsThisCase(), 1));
+				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedThisCase(), 1));
 
 
 				cell = row.createCell(1);
@@ -259,7 +276,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 				cell = row.createCell(2);
 				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase(), 1));
+				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedLastAcceptedCase(), 1));
 
 				// Freight
 				rowCounter++;
@@ -267,7 +284,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 				cell = row.createCell(0);
 				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyFreightSpeedsThisCase(), 1));
+				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedThisCase(), 1));
 
 
 				cell = row.createCell(1);
@@ -276,43 +293,45 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 				cell = row.createCell(2);
 				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase(), 1));
+				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedLastAcceptedCase(), 1));
 
 
 				if (permitFilesOfBothCasesEqual)
 				{
-					if (((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyPassengerSpeedsThisCase(), 1)) + (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyFreightSpeedsThisCase(), 1))) !=
-							((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyPassengerSpeedsLastAcceptedCase(), 1)) + (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfAffectedTrackMultiplyFreightSpeedsLastAcceptedCase(), 1))))
+					if (((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedThisCase(), 1)) != (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedLastAcceptedCase(), 1))) ||
+							((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedThisCase(), 1)) != (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedLastAcceptedCase(), 1))))
 					{
 						permitFilesOfBothCasesEqual = false;
 					}
 				}
 			}
 
-			/* Sum of durations
-			rowCounter++;
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
+			// Sum of duration * miles
+			if (BIASJuaComplianceConfigController.getSumOfDurationMiles())
+			{
+				rowCounter++;
+				rowCounter++;
+				row = juaComplianceSlowOrders.createRow(rowCounter);
 
-			cell = row.createCell(0);
-			cell.setCellStyle(style1);
-			cell.setCellValue("");
+				cell = row.createCell(0);
+				cell.setCellStyle(style1);
+				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesThisCase(), 2));
 
-			cell = row.createCell(1);
-			cell.setCellStyle(style1);
-			cell.setCellValue("Sum of Permit Durations");
 
-			cell = row.createCell(2);
-			cell.setCellStyle(style1);
-			cell.setCellValue("");
-			 */
-			// Show the disjointed permits
-			//rowCounter++;
-			//rowCounter++;
-			//row = juaComplianceSlowOrders.createRow(rowCounter);
-			//cell = row.createCell(0);
-			//cell.setCellStyle(style6);
-			//cell.setCellValue("Disjointed Permits");
+				cell = row.createCell(1);
+				cell.setCellStyle(style1);
+				cell.setCellValue("Sum of Impacted Track Miles x Duration (days)");
+
+				cell = row.createCell(2);
+				cell.setCellStyle(style1);
+				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesLastAcceptedCase(), 2));
+
+				if (permitFilesOfBothCasesEqual)
+				{
+					if ((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesThisCase(), 1)) != (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesLastAcceptedCase(), 1)))
+						permitFilesOfBothCasesEqual = false;
+				}
+			}
 
 			// Equality determination
 			rowCounter++;
@@ -339,6 +358,32 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			row = juaComplianceSlowOrders.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
+			if (BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly())
+			{
+				cell.setCellValue("*Only enabled permits are considered");
+			}
+			else
+			{
+				cell.setCellValue("*Enabled and disabled permits are considered");
+			}
+
+			rowCounter++;
+			row = juaComplianceSlowOrders.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			if (BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())
+			{
+				cell.setCellValue("^Only permits within the statistical period are considered");
+			}
+			else
+			{
+				cell.setCellValue("^Permits withing and outside the statistical period are considered");
+			}
+			
+			rowCounter++;
+			row = juaComplianceSlowOrders.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
 			cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 
 			// Resize all columns to fit the content size
@@ -350,7 +395,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 				}
 				else if (i == 1)
 				{
-					juaComplianceSlowOrders.setColumnWidth(i, 5000);
+					juaComplianceSlowOrders.setColumnWidth(i, 6000);
 				}
 				else if (i == 2)
 				{

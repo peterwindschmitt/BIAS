@@ -217,7 +217,7 @@ public class BIASJuaComplianceController
 	{
 		// Check that at least one check is selected in the Compliance Controller
 		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled() 
-			&& BIASJuaComplianceConfigController.getCheckPermitsSumOfLinearMiles()) 			// Make sure a subtest is selected if Permits check is enabled
+			&& BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles()) 			// Make sure a subtest is selected if Permits check is enabled
 				|| BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())// and/or trains  
 		{
 			// Read all objects that are required for the recovery rate analysis

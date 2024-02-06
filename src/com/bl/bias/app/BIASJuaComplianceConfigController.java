@@ -6,10 +6,13 @@ import java.util.prefs.Preferences;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -23,9 +26,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private CheckBox trainMileageEnabledCheckBox;
 	@FXML private CheckBox permitsEnabledCheckBox;
 	@FXML private CheckBox checkLinearMilesCheckBox;
-	@FXML private CheckBox sumOfSpeedsCheckBox;
-	@FXML private CheckBox sumOfDurationsCheckBox;
+	@FXML private CheckBox averageSlowOrderSpeedCheckBox;
+	@FXML private CheckBox sumOfDurationMilesCheckBox;
 	@FXML private CheckBox excludeRestrictionsNearBridgeCheckBox;
+	@FXML private CheckBox checkEnabledPermitsOnlyCheckBox;
+	@FXML private CheckBox checkStatisticalPeriodOnlyCheckBox;
 
 	@FXML private TextArea brightlineTrainTypeTextArea;
 	@FXML private TextArea fecTrainTypeTextArea;
@@ -33,6 +38,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private TextArea brightlineNodesTextArea;
 	@FXML private TextArea fecNodesTextArea;
 	@FXML private TextArea triRailNodesTextArea;
+	@FXML private TextArea bridgeMpsTextArea;
 
 	@FXML private Label trainCountCriteriaLabel1;
 	@FXML private Label trainCountCriteriaLabel2;
@@ -48,18 +54,27 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private Button trainCountUpdateLastAcceptedFileButton;
 	@FXML private Button trainPriorityUpdateButton;
 	@FXML private Button slowOrderUpdateLastAcceptedFileButton;
+	@FXML private Button updateBridgeMpsButton;
 
 	private static Boolean checkEnabledCountOfTrains;
 	private static Boolean checkLastAcceptedTrainsFile;
 	private static Boolean permitsEnabled;
-	private static Boolean checkLinearMilesOfSlows;
-	private static Boolean checkLinearMilesMultiplySpeedOfSlows;
+	private static Boolean checkPermitsSumOfTrackMiles;
+	private static Boolean checkAverageSlowOrderSpeed;
+	private static Boolean checkSumOfDurationMiles;
+	private static Boolean checkEnabledPermitsOnly;
+	private static Boolean checkStatisticalPeriodOnly;
+	private static Boolean excludeRestrictionsNearBridge;
 
 	private static Boolean defaultCheckEnabledCountOfTrains = true;
 	private static Boolean defaultCheckLastAcceptedTrainsFile = true;
 	private static Boolean defaultPermitsEnabled = true;
 	private static Boolean defaultCheckLinearMilesOfSlows = true;
-	private static Boolean defaultCheckLinearMilesMultiplySpeedOfSlows = true;
+	private static Boolean defaultCheckSlowOrderSpeed = true;
+	private static Boolean defaultCheckSumOfDurationMiles = true;
+	private static Boolean defaultCheckEnabledPermitsOnly = true;
+	private static Boolean defaultCheckStatisticalPeriodOnly = true;
+	private static Boolean defaultExcludeRestrictionsNearBridge = true;
 
 	private static String brightlineTrainTypes;
 	private static String fecTrainTypes;
@@ -72,10 +87,12 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static String brightlineNodes;
 	private static String fecNodes;
 	private static String triRailNodes;
+	private static String bridgeMps;
 
 	private static String brightlineNodesLabel;
 	private static String fecNodesLabel;
 	private static String triRailNodesLabel;
+	private static String bridgeMpsLabel;
 
 	private static String[] brightlineTrainTypesAsArray;
 	private static String[] fecTrainTypesAsArray;
@@ -84,6 +101,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static String[] brightlineNodesAsArray;
 	private static String[] fecNodesAsArray;
 	private static String[] triRailNodesAsArray;
+	private static String[] bridgeMpsAsArray;
 
 	private static String lastAcceptedTrainFileAsString;
 	private static String lastAcceptedPermitFileAsString;
@@ -201,36 +219,108 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			permitsEnabledCheckBox.setSelected(false);
 		}
 
-		// See if preferences are stored for checking linear sum of miles for permits
+		// See if preferences are stored for checking sum of track miles for permits
 		if (prefs.getBoolean("ju_checkPermitsLinearSumOfMiles", defaultCheckLinearMilesOfSlows))
 		{
-			checkLinearMilesOfSlows = true;
+			checkPermitsSumOfTrackMiles = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", true);
 			checkLinearMilesCheckBox.setSelected(true);
 		}
 		else
 		{
-			checkLinearMilesOfSlows = false;
+			checkPermitsSumOfTrackMiles = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", false);
 			checkLinearMilesCheckBox.setSelected(false);
 		}
 
-		// See if preferences are stored for checking linear sum of miles * speed for permits
-		if (prefs.getBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", defaultCheckLinearMilesMultiplySpeedOfSlows))
+		// See if preferences are stored for checking average slow order speeds
+		if (prefs.getBoolean("ju_checkSlowOrderSpeeds", defaultCheckSlowOrderSpeed))
 		{
-			checkLinearMilesMultiplySpeedOfSlows = true;
+			checkAverageSlowOrderSpeed = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", true);
-			sumOfSpeedsCheckBox.setSelected(true);
+				prefs.putBoolean("ju_checkSlowOrderSpeeds", true);
+			averageSlowOrderSpeedCheckBox.setSelected(true);
 		}
 		else
 		{
-			checkLinearMilesMultiplySpeedOfSlows = false;
+			checkAverageSlowOrderSpeed = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", false);
-			sumOfSpeedsCheckBox.setSelected(false);
+				prefs.putBoolean("ju_checkSlowOrderSpeeds", false);
+			averageSlowOrderSpeedCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for checking sum of duration miles
+		if (prefs.getBoolean("ju_checkSumOfDurationMiles", defaultCheckSumOfDurationMiles))
+		{
+			checkSumOfDurationMiles = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkSumOfDurationMiles", true);
+			sumOfDurationMilesCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkSumOfDurationMiles = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkSumOfDurationMiles", false);
+			sumOfDurationMilesCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for checking enabled permits only
+		if (prefs.getBoolean("ju_checkEnabledPermitsOnly", defaultCheckEnabledPermitsOnly))
+		{
+			checkEnabledPermitsOnly = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkEnabledPermitsOnly", true);
+			checkEnabledPermitsOnlyCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkEnabledPermitsOnly = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkEnabledPermitsOnly", false);
+			checkEnabledPermitsOnlyCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for checking permits in statistical period only
+		if (prefs.getBoolean("ju_checkStatisticalPeriodPermitsOnly", defaultCheckStatisticalPeriodOnly))
+		{
+			checkStatisticalPeriodOnly = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkStatisticalPeriodPermitsOnly", true);
+			checkStatisticalPeriodOnlyCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkStatisticalPeriodOnly = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkStatisticalPeriodPermitsOnly", false);
+			checkStatisticalPeriodOnlyCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for excluding permits which touch a bridge link
+		if (prefs.getBoolean("ju_excludeRestrictionsNearBridge", defaultExcludeRestrictionsNearBridge))
+		{
+			excludeRestrictionsNearBridge = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_excludeRestrictionsNearBridge", true);
+			excludeRestrictionsNearBridgeCheckBox.setSelected(true);
+		}
+		else
+		{
+			excludeRestrictionsNearBridge = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_excludeRestrictionsNearBridge", false);
+			excludeRestrictionsNearBridgeCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for bridge field MPs
+		if ((prefs.get("ju_bridgeMps", "") != null) && (prefs.get("ju_bridgeMps", "") != ""))
+		{
+			bridgeMps = prefs.get("ju_bridgeMps", "");
+			bridgeMpsAsArray = bridgeMps.split(",");
+			bridgeMpsTextArea.setText(bridgeMps);
 		}
 
 		// See if last accepted train file exists
@@ -309,6 +399,12 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		trainCountUpdateNodesTypesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
+	@FXML private void handleBridgeMpsTextArea()
+	{
+		bridgeMpsTextArea.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateBridgeMpsButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
 	@FXML private void handleTrainCountUpdateNodesTypesButton(ActionEvent event)
 	{
 		// Train types
@@ -373,6 +469,42 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	}
 
+	@FXML private void handleUpdateBridgeMpsButton(ActionEvent event)
+	{
+		// Should be digits, comma and decimal only
+		if ((bridgeMpsTextArea.getText().trim().equals("")) ||
+		(((bridgeMpsTextArea.getText().trim().matches("^[0-9]{0,4}\\.?[0-9]{0,3}(,[0-9]{0,4}\\.?[0-9]{0,3})*$"))) 
+				&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(".")))
+				&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(",")))
+				&& (!bridgeMpsTextArea.getText().trim().substring(0).equals(","))
+				&& (!bridgeMpsTextArea.getText().trim().substring(0).equals("."))))
+		{
+			bridgeMpsLabel = bridgeMpsTextArea.getText(0, Math.min(bridgeMpsTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase();
+			bridgeMps = bridgeMpsLabel;
+			bridgeMpsTextArea.setText(bridgeMpsLabel);
+			
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_bridgeMps", bridgeMpsLabel);	
+			
+
+			bridgeMpsTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			updateBridgeMpsButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Only digits 0-9 and '.' are permitted!  Seperate multiple Field MPs by ','.  Please try again.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
+			
+			bridgeMpsTextArea.setText(bridgeMps); 
+		}
+	}
+
 	@FXML private void handleLastAcceptedFileEnabledCheckBox(ActionEvent event)
 	{
 		if (checkLastAcceptedTrainsFile)
@@ -407,44 +539,98 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	@FXML private void handleCheckLinearMilesCheckBox(ActionEvent event)
 	{
-		if (checkLinearMilesOfSlows)
+		if (checkPermitsSumOfTrackMiles)
 		{
-			checkLinearMilesOfSlows = false;
+			checkPermitsSumOfTrackMiles = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", false);
 		}
 		else
 		{
-			checkLinearMilesOfSlows = true;
+			checkPermitsSumOfTrackMiles = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkPermitsLinearSumOfMiles", true);
 		}
 	}
 
-	@FXML private void handleSumOfSpeedsCheckBox(ActionEvent event)
+	@FXML private void handleAverageSlowOrderSpeedCheckBox(ActionEvent event)
 	{
-		if (checkLinearMilesMultiplySpeedOfSlows)
+		if (checkAverageSlowOrderSpeed)
 		{
-			checkLinearMilesMultiplySpeedOfSlows = false;
+			checkAverageSlowOrderSpeed = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", false);
+				prefs.putBoolean("ju_checkSlowOrderSpeeds", false);
 		}
 		else
 		{
-			checkLinearMilesMultiplySpeedOfSlows = true;
+			checkAverageSlowOrderSpeed = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkLinearMilesMultiplySpeedOfSlows", true);
+				prefs.putBoolean("ju_checkSlowOrderSpeeds", true);
 		}
 	}
 
-	@FXML private void handleSumOfDurationsCheckBox(ActionEvent event)
+	@FXML private void handleSumOfDurationMilesCheckBox(ActionEvent event)
 	{
-
+		if (checkSumOfDurationMiles)
+		{
+			checkSumOfDurationMiles = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkSumOfDurationMiles", false);
+		}
+		else
+		{
+			checkSumOfDurationMiles = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkSumOfDurationMiles", true);
+		}
 	}
 
 	@FXML private void handleExcludeRestrictionsNearBridgeCheckBox (ActionEvent event)
 	{
+		if (excludeRestrictionsNearBridge)
+		{
+			excludeRestrictionsNearBridge = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_excludeRestrictionsNearBridge", false);
+		}
+		else
+		{
+			excludeRestrictionsNearBridge = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_excludeRestrictionsNearBridge", true);
+		}
+	}
 
+	@FXML private void handleCheckEnabledPermitsOnlyCheckBox (ActionEvent event)
+	{
+		if (checkEnabledPermitsOnly)
+		{
+			checkEnabledPermitsOnly = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkEnabledPermitsOnly", false);
+		}
+		else
+		{
+			checkEnabledPermitsOnly = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkEnabledPermitsOnly", true);
+		}
+	}
+
+	@FXML private void handleCheckStatisticalPeriodOnlyCheckBox (ActionEvent event)
+	{
+		if (checkStatisticalPeriodOnly)
+		{
+			checkStatisticalPeriodOnly = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkStatisticalPeriodPermitsOnly", false);
+		}
+		else
+		{
+			checkStatisticalPeriodOnly = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkStatisticalPeriodPermitsOnly", true);
+		}
 	}
 
 	@FXML private void handleSlowOrderUpdateLastAcceptedFileButton (ActionEvent event)
@@ -557,18 +743,43 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		return permitsEnabled;
 	}
 
-	public static Boolean getCheckPermitsSumOfLinearMiles()
+	public static Boolean getCheckPermitsSumOfTrackMiles()
 	{
-		return checkLinearMilesOfSlows;
+		return checkPermitsSumOfTrackMiles;
 	}
 
-	public static Boolean getCheckLinearMilesMultiplySpeedOfSlows()
+	public static Boolean getAverageSlowOrderSpeed()
 	{
-		return checkLinearMilesMultiplySpeedOfSlows;
+		return checkAverageSlowOrderSpeed;
+	}
+
+	public static Boolean getSumOfDurationMiles()
+	{
+		return checkSumOfDurationMiles;
+	}
+
+	public static Boolean getCheckEnabledPermitsOnly()
+	{
+		return checkEnabledPermitsOnly;
+	}
+
+	public static Boolean getCheckStatisticalPeriodOnly()
+	{
+		return checkStatisticalPeriodOnly;
+	}
+
+	public static Boolean getExcludePermitsnearBridge()
+	{
+		return excludeRestrictionsNearBridge;
 	}
 
 	public static String getLastAcceptedPermitFileAsString()
 	{
 		return lastAcceptedPermitFileAsString;
+	}
+
+	public static String[] getBridgeMps()
+	{
+		return bridgeMpsAsArray;
 	}
 }
