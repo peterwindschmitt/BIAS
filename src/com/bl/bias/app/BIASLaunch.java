@@ -137,7 +137,7 @@ public class BIASLaunch extends Application
 		{
 			try 
 			{
-				root1 = FXMLLoader.load(getClass().getResource("BIASMainWindow.fxml"));
+				root1 = FXMLLoader.load(getClass().getResource("/com/bl/bias/fxml/BIASMainWindow.fxml"));
 			} 
 			catch (IOException e) 
 			{

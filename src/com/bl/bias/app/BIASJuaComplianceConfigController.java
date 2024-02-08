@@ -473,13 +473,13 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 		// Should be digits, comma and decimal only
 		if ((bridgeMpsTextArea.getText().trim().equals("")) ||
-		(((bridgeMpsTextArea.getText().trim().matches("^[0-9]{0,4}\\.?[0-9]{0,3}(,[0-9]{0,4}\\.?[0-9]{0,3})*$"))) 
+		(((bridgeMpsTextArea.getText().trim().matches("^[0-9]{0,4}\\.?[0-9]{0,3}(,\\s?[0-9]{0,4}\\.?[0-9]{0,3})*$"))) 
 				&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(".")))
 				&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(",")))
 				&& (!bridgeMpsTextArea.getText().trim().substring(0).equals(","))
 				&& (!bridgeMpsTextArea.getText().trim().substring(0).equals("."))))
 		{
-			bridgeMpsLabel = bridgeMpsTextArea.getText(0, Math.min(bridgeMpsTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase();
+			bridgeMpsLabel = bridgeMpsTextArea.getText(0, Math.min(bridgeMpsTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase().replace(" ", "");
 			bridgeMps = bridgeMpsLabel;
 			bridgeMpsTextArea.setText(bridgeMpsLabel);
 			
@@ -768,7 +768,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		return checkStatisticalPeriodOnly;
 	}
 
-	public static Boolean getExcludePermitsnearBridge()
+	public static Boolean getExcludePermitsNearBridge()
 	{
 		return excludeRestrictionsNearBridge;
 	}

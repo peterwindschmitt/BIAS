@@ -218,7 +218,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style1);
-			cell.setCellValue("Permit Count*^");
+			cell.setCellValue("Permit Count*^$");
 
 			cell = row.createCell(2);
 			cell.setCellStyle(style1);
@@ -378,6 +378,28 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			else
 			{
 				cell.setCellValue("^Permits withing and outside the statistical period are considered");
+			}
+			
+			rowCounter++;
+			row = juaComplianceSlowOrders.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			if (BIASJuaComplianceConfigController.getExcludePermitsNearBridge())
+			{
+				String bridgeExclusionMessage = "$Permits encompassing bridges near ";
+				for (int i = 0; i < BIASJuaComplianceConfigController.getBridgeMps().length; i++)
+				{
+					if (i == BIASJuaComplianceConfigController.getBridgeMps().length - 1)
+						bridgeExclusionMessage += BIASJuaComplianceConfigController.getBridgeMps()[i];
+					else
+						bridgeExclusionMessage += BIASJuaComplianceConfigController.getBridgeMps()[i]+", ";
+				}
+				bridgeExclusionMessage+= " are considered";
+				cell.setCellValue(bridgeExclusionMessage);
+			}
+			else
+			{
+				cell.setCellValue("$Permits on bridges are considered");
 			}
 			
 			rowCounter++;

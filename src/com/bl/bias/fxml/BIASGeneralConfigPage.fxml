@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="validateOptionFile" alignment="TOP_CENTER" centerShape="true" maxHeight="407.0" maxWidth="800.0" minHeight="407.0" minWidth="800.0" prefHeight="407.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASGeneralConfigController">
+       <columnConstraints>
+             <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="481.0" />
+       </columnConstraints>
+       <rowConstraints>
+      <RowConstraints fillHeight="false" maxHeight="357.0" minHeight="357.0" percentHeight="0.0" prefHeight="357.0" valignment="TOP" vgrow="ALWAYS" />
+       </rowConstraints>
+   <children>
+      <GridPane fx:id="generalConfigGridPanePage1">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+            <RowConstraints minHeight="30.0" />
+            <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" />
+            <RowConstraints maxHeight="34.0" minHeight="34.0" prefHeight="34.0" />
+            <RowConstraints maxHeight="33.0" minHeight="33.0" prefHeight="33.0" />
+        </rowConstraints>
+         <children>
+            <CheckBox fx:id="useSerialTimeForFileNameCheckbox" disable="false" mnemonicParsing="false" onAction="#handleUseSerialTimeForFileNameCheckbox" selected="true" text="1. When saving files use system time stamp as file name rather than asking user to name file" wrapText="true" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="useLastDirectoryCheckbox" mnemonicParsing="false" onAction="#handleUseLastDirectoryCheckbox" selected="true" text="2. Default to last used folder location, if available" wrapText="true" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Label text="Input/Output" underline="true">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <CheckBox fx:id="useRtcFolderForIniFileCheckbox" mnemonicParsing="false" onAction="#handleUseRtcFolderForIniFileCheckbox" selected="true" text="3. If checked, find the RTC.INI file in &quot;C:\RTC&quot;.  If not checked, use the project folder." wrapText="true" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Label text="4. Update RTC .OPTION file parameters to those required by various BIAS modules:" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Includes" underline="true" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Excludes" underline="true" GridPane.halignment="LEFT" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets left="350.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="All Nodes (rather than just event only) to be Included in Route Report" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Label>
+            <Button fx:id="updateInputFilesButton" mnemonicParsing="false" onAction="#handleUpdateInputFilesButton" text="Update .OPTION file" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets left="480.0" />
+               </GridPane.margin>
+            </Button>
+            <Label text="Train Route Report to NOT be CSV delimited" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Seed Trains Included in Route Report" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Output Format to English Units for Speed and Distance" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Date/Time Format in .SUMMARY files  to DD:HH:MM:SS" GridPane.rowIndex="11" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets left="32.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Any .INI File Settings" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="350.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Count of .OPTION Files" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="350.0" />
+               </GridPane.margin>
+            </Label>
+            <Button fx:id="clearRegistryButton" mnemonicParsing="false" onAction="#handleClearRegistryButton" text="Clear Registry" GridPane.halignment="LEFT" GridPane.rowIndex="14" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets left="480.0" />
+               </GridPane.margin>
+            </Button>
+            <Label text="7.  Clear all BIAS entries in Windows System Registry:" GridPane.rowIndex="14" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Tools" underline="true" GridPane.rowIndex="4">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label text="5.  Save BIAS entries in Windows System Registry to a file:" GridPane.rowIndex="12">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="6.  Load BIAS entries in a file to Windows System Registry:" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Button fx:id="loadToRegistryButton" mnemonicParsing="false" onAction="#handleLoadToRegistryButton" text="Load to Registry" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets left="480.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="saveFromRegistryButton" mnemonicParsing="false" onAction="#handleSaveFromRegistryButton" text="Save from Registry" GridPane.rowIndex="12">
+               <GridPane.margin>
+                  <Insets left="480.0" />
+               </GridPane.margin>
+            </Button>
+         </children>
+      </GridPane>
+   </children>
+</GridPane>
