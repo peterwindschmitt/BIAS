@@ -60,8 +60,6 @@ public class WriteJuaComplianceFiles1
 
 	Integer rowCounter = 0;
 
-	Boolean trainHasRecoveryRates = false;
-
 	public WriteJuaComplianceFiles1(String textArea, String fullyQualifiedPath)
 	{
 		if (BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())
@@ -72,25 +70,25 @@ public class WriteJuaComplianceFiles1
 			brightlineNodes = BIASJuaComplianceConfigController.getBrightlineNodes();
 			fecNodes = BIASJuaComplianceConfigController.getFecNodes();
 			triRailNodes = BIASJuaComplianceConfigController.getTriRailNodes();
-			totalCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfBrightlinelOperatedTrains();
-			totalCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrains();
-			totalCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrains();
+			totalCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase();
+			totalCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase();
+			totalCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase();
 			maxDailyBrightlineOperatedTrains = BIASJuaComplianceConfigController.getDailyBrightlinePermitted();
 			maxDailyFecOperatedTrains = BIASJuaComplianceConfigController.getDailyFecPermitted();
 			maxDailyTriRailOperatedTrains = BIASJuaComplianceConfigController.getDailyTriRailPermitted();
 
-			averageDailyCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfBrightlineOperatedTrains();
-			averageDailyCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfFecOperatedTrains();
-			averageDailyCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfTriRailOperatedTrains();
+			averageDailyCountOfBrightlineOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfBrightlineOperatedTrainsThisCase();
+			averageDailyCountOfFecOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfFecOperatedTrainsThisCase();
+			averageDailyCountOfTriRailOperatedTrains = AnalyzeJuaComplianceFiles.getDailyAverageCountOfTriRailOperatedTrainsThisCase();
 			seedTrainSymbolsFoundEligible = new ArrayList<String>();
 			seedTrainSymbolsFoundNotEligible = new ArrayList<String>();
-			seedTrainSymbolCountFoundEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundEligible();
-			seedTrainSymbolCountFoundNotEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundNotEligible();
+			seedTrainSymbolCountFoundEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundEligibleThisCase();
+			seedTrainSymbolCountFoundNotEligible = AnalyzeJuaComplianceFiles.getSeedTrainSymbolCountFoundNotEligibleThisCase();
 			allSeedTrains = new ArrayList<ComplianceTrain>();
 			statisticalPeriodDuration = ReadJuaComplianceFiles.getStatisticalDurationInDays();
 
-			seedTrainSymbolsFoundEligible.addAll(AnalyzeJuaComplianceFiles.getSeedTrainSymbolsFoundEligible());
-			seedTrainSymbolsFoundNotEligible.addAll(AnalyzeJuaComplianceFiles.getSeedTrainSymbolsFoundNotEligible());
+			seedTrainSymbolsFoundEligible.addAll(AnalyzeJuaComplianceFiles.getSeedTrainSymbolsFoundEligibleThisCase());
+			seedTrainSymbolsFoundNotEligible.addAll(AnalyzeJuaComplianceFiles.getSeedTrainSymbolsFoundNotEligibleThisCase());
 			allSeedTrains.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase());
 
 			// Set styles
@@ -106,7 +104,6 @@ public class WriteJuaComplianceFiles1
 			CellStyle style9 = workbook.createCellStyle();
 			CellStyle style10 = workbook.createCellStyle();
 
-			// Write Set A
 			XSSFSheet juaComplianceTrainCount;
 			juaComplianceTrainCount = workbook.createSheet("Train Count");
 			resultsMessage += "\nWriting train counts";

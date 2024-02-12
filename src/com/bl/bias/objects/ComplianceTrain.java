@@ -9,15 +9,15 @@ public class ComplianceTrain
 	private String linkedAtOriginTo;
 	private String enabled;
 
-	private ArrayList<String> routeEntries;
+	private ArrayList<ComplianceTrainRouteEntry> routeEntries;
 	private ArrayList<Integer> daysOfOperationAsInteger;
 	
-	public ComplianceTrain(String symbol, String type, String linkedAtOriginTo, String enabled, ArrayList<String> routeEntries, ArrayList<Integer> daysOfOperationAsInteger) 
+	public ComplianceTrain(String symbol, String type, String linkedAtOriginTo, String enabled, ArrayList<ComplianceTrainRouteEntry> routeEntries, ArrayList<Integer> daysOfOperationAsInteger) 
 	{
-		this.symbol = symbol;
-		this.type = type;
-		this.linkedAtOriginTo = linkedAtOriginTo;
-		this.enabled = enabled;
+		this.symbol = symbol.toUpperCase();
+		this.type = type.toUpperCase();
+		this.linkedAtOriginTo = linkedAtOriginTo.toUpperCase();
+		this.enabled = enabled.toUpperCase();
 		this.routeEntries = routeEntries;
 		this.daysOfOperationAsInteger = daysOfOperationAsInteger;
 	}
@@ -42,7 +42,7 @@ public class ComplianceTrain
 		return enabled;
 	}
 
-	public ArrayList<String> getRouteEntries()
+	public ArrayList<ComplianceTrainRouteEntry> getRouteEntries()
 	{
 		return routeEntries;
 	}

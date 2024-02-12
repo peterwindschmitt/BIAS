@@ -8,7 +8,7 @@ import java.util.prefs.Preferences;
 
 import com.bl.bias.read.ReadJuaComplianceFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteJuaComplianceFiles3;
+import com.bl.bias.write.WriteJuaComplianceFiles9;
 import com.bl.bias.analyze.AnalyzeJuaComplianceFiles;
 import com.bl.bias.exception.ErrorShutdown;
 
@@ -218,9 +218,9 @@ public class BIASJuaComplianceController
 		// Check that at least one check is selected in the Compliance Controller
 		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled() 
 			&& BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles()) 			// Make sure a subtest is selected if Permits check is enabled
-				|| BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())// and/or trains  
+				|| BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())		// and/or trains  
 		{
-			// Read all objects that are required for the recovery rate analysis
+			// Read all objects that are required for JUA Compliance Analysis
 			message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
 			displayMessage(message);
 			ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath, BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains(), BIASJuaComplianceConfigController.getCheckPermitsEnabled());
@@ -230,9 +230,10 @@ public class BIASJuaComplianceController
 			if (readData.getFormattedCorrectly())
 			{
 				setProgressIndicator(0.33);
-
-				if (((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase().size() == 0)) 	// Request to analyze trains but no trains found
-					|| ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase().size() == 0))) 	// Request to analyze permits but no permits found																	
+				
+				if (((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase().size() == 0)) 				// Request to analyze trains in this case but no trains found
+					|| ((BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase().size() == 0))  // Request to analyze trains in last accepted case but no trains found
+					|| ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase().size() == 0))) 				// Request to analyze permits but no permits found																	
 					continueAnalysis = false;
 
 				if (continueAnalysis)
@@ -244,10 +245,10 @@ public class BIASJuaComplianceController
 
 					setProgressIndicator(0.66);
 
-					WriteJuaComplianceFiles3 writeFiles = new WriteJuaComplianceFiles3(textArea.getText().toString(), fullyQualifiedPath);
-					message = writeFiles.getResultsWriteMessage3();
+					WriteJuaComplianceFiles9 writeFiles = new WriteJuaComplianceFiles9(textArea.getText().toString(), fullyQualifiedPath);
+					message = writeFiles.getResultsWriteMessage9();
 					displayMessage(message);
-					if (!WriteJuaComplianceFiles3.getErrorFound())
+					if (!WriteJuaComplianceFiles9.getErrorFound())
 					{
 						setProgressIndicator(1.0);
 						displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -260,8 +261,8 @@ public class BIASJuaComplianceController
 				}
 				else
 				{
-					message += "\nUnable to perform analysis due to no trains in read in";
-					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+					message += "Unable to perform analysis due to no trains/permits found for at least one requested case";
+					displayMessage(message+"\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
 			else

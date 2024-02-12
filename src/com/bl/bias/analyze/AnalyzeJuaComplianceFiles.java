@@ -2,9 +2,9 @@ package com.bl.bias.analyze;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import com.bl.bias.app.BIASJuaComplianceConfigController;
-import com.bl.bias.app.BIASRecoveryRateAnalysisConfigController;
 import com.bl.bias.objects.CompliancePermit;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.read.ReadJuaComplianceFiles;
@@ -15,13 +15,19 @@ public class AnalyzeJuaComplianceFiles
 	private static String resultsMessage;
 
 	// Trains
-	private static Integer totalCountOfBrightlineOperatedTrains;
-	private static Integer totalCountOfFecOperatedTrains;
-	private static Integer totalCountOfTriRailOperatedTrains;
+	private static Integer totalCountOfBrightlineOperatedTrainsThisCase;
+	private static Integer totalCountOfFecOperatedTrainsThisCase;
+	private static Integer totalCountOfTriRailOperatedTrainsThisCase;
+	private static Integer totalCountOfBrightlineOperatedTrainsLastAcceptedCase;
+	private static Integer totalCountOfFecOperatedTrainsLastAcceptedCase;
+	private static Integer totalCountOfTriRailOperatedTrainsLastAcceptedCase;
 
-	private static Double dailyAverageCountOfBrightlineOperatedTrains;
-	private static Double dailyAverageCountOfFecOperatedTrains;
-	private static Double dailyAverageCountOfTriRailOperatedTrains;
+	private static Double dailyAverageCountOfBrightlineOperatedTrainsThisCase;
+	private static Double dailyAverageCountOfFecOperatedTrainsThisCase;
+	private static Double dailyAverageCountOfTriRailOperatedTrainsThisCase;
+	private static Double dailyAverageCountOfBrightlineOperatedTrainsLastAcceptedCase;
+	private static Double dailyAverageCountOfFecOperatedTrainsLastAcceptedCase;
+	private static Double dailyAverageCountOfTriRailOperatedTrainsLastAcceptedCase;
 
 	// Permits
 	private static Double milesOfAffectedTrackThisCase = 0.0;
@@ -39,11 +45,16 @@ public class AnalyzeJuaComplianceFiles
 	private static Integer statisticalStartDay; 
 	private static Integer statisticalEndDay; 
 
-	private static ArrayList<ComplianceTrain> trainsToAnalyzeForCompliance = new ArrayList<ComplianceTrain>();
-	private static ArrayList<ComplianceTrain> seedTrainsFoundEligible = new ArrayList<ComplianceTrain>();
-	private static ArrayList<ComplianceTrain> seedTrainsFoundNotEligible = new ArrayList<ComplianceTrain>();
-	private static ArrayList<String> seedTrainSymbolsFoundEligible = new ArrayList<String>();
-	private static ArrayList<String> seedTrainSymbolsFoundNotEligible = new ArrayList<String>();
+	private static ArrayList<ComplianceTrain> trainsToAnalyzeForComplianceThisCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> trainsToAnalyzeForComplianceLastAcceptedCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> seedTrainsFoundEligibleThisCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> seedTrainsFoundNotEligibleThisCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> seedTrainsFoundEligibleLastAcceptedCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<ComplianceTrain> seedTrainsFoundNotEligibleLastAcceptedCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<String> seedTrainSymbolsFoundEligibleThisCase = new ArrayList<String>();
+	private static ArrayList<String> seedTrainSymbolsFoundNotEligibleThisCase = new ArrayList<String>();
+	private static ArrayList<String> seedTrainSymbolsFoundEligibleLastAcceptedCase = new ArrayList<String>();
+	private static ArrayList<String> seedTrainSymbolsFoundNotEligibleLastAcceptedCase = new ArrayList<String>();
 
 	private static ArrayList<String> brightlineTrainTypesFromConfigFile = new ArrayList<String>();
 	private static ArrayList<String> fecTrainTypesFromConfigFile = new ArrayList<String>();
@@ -62,15 +73,15 @@ public class AnalyzeJuaComplianceFiles
 	{
 		resultsMessage = "Started analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+"\n";
 
-		// Trains
+		// Trains - This Case
 		if (BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())
 		{
 			// For each train
-			trainsToAnalyzeForCompliance.clear();
-			seedTrainsFoundEligible.clear();
-			seedTrainsFoundNotEligible.clear();
-			seedTrainSymbolsFoundEligible.clear();
-			seedTrainSymbolsFoundNotEligible.clear();
+			trainsToAnalyzeForComplianceThisCase.clear();
+			seedTrainsFoundEligibleThisCase.clear();
+			seedTrainsFoundNotEligibleThisCase.clear();
+			seedTrainSymbolsFoundEligibleThisCase.clear();
+			seedTrainSymbolsFoundNotEligibleThisCase.clear();
 
 			brightlineTrainTypesFromConfigFile.clear();
 			fecTrainTypesFromConfigFile.clear();
@@ -81,12 +92,12 @@ public class AnalyzeJuaComplianceFiles
 			triRailNodesFromConfigFile.clear();
 
 			// Populate all arrays with necessary objects
-			trainsToAnalyzeForCompliance.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase());
-			seedTrainsFoundNotEligible.addAll(trainsToAnalyzeForCompliance);
+			trainsToAnalyzeForComplianceThisCase.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase());
+			seedTrainsFoundNotEligibleThisCase.addAll(trainsToAnalyzeForComplianceThisCase);
 
-			for (int i = 0; i < trainsToAnalyzeForCompliance.size(); i++)
+			for (int i = 0; i < trainsToAnalyzeForComplianceThisCase.size(); i++)
 			{
-				seedTrainSymbolsFoundNotEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
+				seedTrainSymbolsFoundNotEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
 			}
 
 			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
@@ -120,131 +131,140 @@ public class AnalyzeJuaComplianceFiles
 			}
 
 			// Determine statistical simulation days (as integers)
-			totalCountOfBrightlineOperatedTrains = 0;
-			totalCountOfFecOperatedTrains = 0;
-			totalCountOfTriRailOperatedTrains = 0;
+			totalCountOfBrightlineOperatedTrainsThisCase = 0;
+			totalCountOfFecOperatedTrainsThisCase = 0;
+			totalCountOfTriRailOperatedTrainsThisCase = 0;
 			statisticalStartDay = ReadJuaComplianceFiles.getStatisticalStartDayOfWeekAsInteger();		 
 			statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays(); 
-
 			// For each train
-			for (int i = 0; i < trainsToAnalyzeForCompliance.size(); i++)
+			for (int i = 0; i < trainsToAnalyzeForComplianceThisCase.size(); i++)
 			{
 				// Check Brightline type
-				if (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForCompliance.get(i).getType().toUpperCase()))
+				if (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase()))
 				{
 					// Check if enabled
-					if (trainsToAnalyzeForCompliance.get(i).getEnabled().toUpperCase().equals("YES"))
+					if (trainsToAnalyzeForComplianceThisCase.get(i).getEnabled().toUpperCase().equals("YES"))
 					{
 						// Check if through a valid node
-						if (!Collections.disjoint(brightlineNodesFromConfigFile, trainsToAnalyzeForCompliance.get(i).getRouteEntries()))
+						for (int k = 0; k < trainsToAnalyzeForComplianceThisCase.get(i).getRouteEntries().size(); k++)
 						{
-							// Check how many times train operates during statistical period
-							if (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size() == 0)
+							if (brightlineNodesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getRouteEntries().get(k).getNode()))
 							{
-								String trainToBaseScheduleOn = trainsToAnalyzeForCompliance.get(i).getSymbol();
-								ComplianceTrain train = trainsToAnalyzeForCompliance.get(i);
-								seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
-								seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
-								do
+								// Check how many times train operates during statistical period
+								if (trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().size() == 0)
 								{
-									for (int j = 0; j < trainsToAnalyzeForCompliance.size(); j++)
+									String trainToBaseScheduleOn = trainsToAnalyzeForComplianceThisCase.get(i).getSymbol();
+									ComplianceTrain train = trainsToAnalyzeForComplianceThisCase.get(i);
+									seedTrainsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i));
+									seedTrainSymbolsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+									do
 									{
-										if (trainToBaseScheduleOn.equals(trainsToAnalyzeForCompliance.get(j).getSymbol()))
+										for (int j = 0; j < trainsToAnalyzeForComplianceThisCase.size(); j++)
 										{
-											train = trainsToAnalyzeForCompliance.get(j);
-											break; 
+											if (trainToBaseScheduleOn.equals(trainsToAnalyzeForComplianceThisCase.get(j).getSymbol()))
+											{
+												train = trainsToAnalyzeForComplianceThisCase.get(j);
+												break; 
+											}
+										}
+										trainToBaseScheduleOn = train.getLinkedAtOriginTo();
+									}
+									while (train.getDaysOfOperationAsInteger().size() == 0);
+
+									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfBrightlineOperatedTrainsThisCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i));
+											seedTrainSymbolsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+											// Increment the by type counter
 										}
 									}
-									trainToBaseScheduleOn = train.getLinkedAtOriginTo();
 								}
-								while (train.getDaysOfOperationAsInteger().size() == 0);
-
-								for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+								else
 								{
-									if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-											&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+									seedTrainsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i));
+									seedTrainSymbolsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+									for (int j = 0; j < trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().size(); j++)
 									{
-										totalCountOfBrightlineOperatedTrains++;
-										// Train is eligible so remove from the ineligible list
-										seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
-										seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
-									}
-								}
-							}
-							else
-							{
-								seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
-								seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
-								for (int j = 0; j < trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size(); j++)
-								{
-									if ((trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-											&& (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
-									{
-										totalCountOfBrightlineOperatedTrains++;
-										// Train is eligible so remove from the ineligible list
-										seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
-										seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
+										if ((trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfBrightlineOperatedTrainsThisCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i));
+											seedTrainSymbolsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
 									}
 								}
 							}
 						}
 					}
-				}
+				}				
 				// Check FEC type
-				else if (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForCompliance.get(i).getType().toUpperCase()))
+				else if (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase()))
 				{
 					// Check if enabled
-					if (trainsToAnalyzeForCompliance.get(i).getEnabled().toUpperCase().equals("YES"))
+					if (trainsToAnalyzeForComplianceThisCase.get(i).getEnabled().toUpperCase().equals("YES"))
 					{
 						// Check if through a valid node
-						if (!Collections.disjoint(fecNodesFromConfigFile, trainsToAnalyzeForCompliance.get(i).getRouteEntries()))
+						for (int k = 0; k < trainsToAnalyzeForComplianceThisCase.get(i).getRouteEntries().size(); k++)
 						{
-							// Check how many times train operates during statistical period
-							if (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size() == 0)
+							if (fecNodesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getRouteEntries().get(k).getNode()))
 							{
-								String trainToBaseScheduleOn = trainsToAnalyzeForCompliance.get(i).getSymbol();
-								ComplianceTrain train = trainsToAnalyzeForCompliance.get(i);
-								seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
-								seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
-								do
+								// Check how many times train operates during statistical period
+								if (trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().size() == 0)
 								{
-									for (int j = 0; j < trainsToAnalyzeForCompliance.size(); j++)
+									String trainToBaseScheduleOn = trainsToAnalyzeForComplianceThisCase.get(i).getSymbol();
+									ComplianceTrain train = trainsToAnalyzeForComplianceThisCase.get(i);
+									seedTrainsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i));
+									seedTrainSymbolsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+									do
 									{
-										if (trainToBaseScheduleOn.equals(trainsToAnalyzeForCompliance.get(j).getSymbol()))
+										for (int j = 0; j < trainsToAnalyzeForComplianceThisCase.size(); j++)
 										{
-											train = trainsToAnalyzeForCompliance.get(j);
-											break; 
+											if (trainToBaseScheduleOn.equals(trainsToAnalyzeForComplianceThisCase.get(j).getSymbol()))
+											{
+												train = trainsToAnalyzeForComplianceThisCase.get(j);
+												break; 
+											}
+										}
+										trainToBaseScheduleOn = train.getLinkedAtOriginTo();
+									}
+									while (train.getDaysOfOperationAsInteger().size() == 0);
+
+									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfFecOperatedTrainsThisCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i));
+											seedTrainSymbolsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+											// Increment the by type counter
 										}
 									}
-									trainToBaseScheduleOn = train.getLinkedAtOriginTo();
 								}
-								while (train.getDaysOfOperationAsInteger().size() == 0);
-
-								for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+								else
 								{
-									if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-											&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+									seedTrainsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i));
+									seedTrainSymbolsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+									for (int j = 0; j < trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().size(); j++)
 									{
-										totalCountOfFecOperatedTrains++;
-										// Train is eligible so remove from the ineligible list
-										seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
-										seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
-									}
-								}
-							}
-							else
-							{
-								seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
-								seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
-								for (int j = 0; j < trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size(); j++)
-								{
-									if ((trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-											&& (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
-									{
-										totalCountOfFecOperatedTrains++;
-										// Train is eligible so remove from the ineligible list
-										seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
-										seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
+										if ((trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfFecOperatedTrainsThisCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i));
+											seedTrainSymbolsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
 									}
 								}
 							}
@@ -252,60 +272,65 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 				// Check TriRail type
-				else if (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForCompliance.get(i).getType().toUpperCase()))
+				else if (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase()))
 				{
 					// Check if enabled
-					if (trainsToAnalyzeForCompliance.get(i).getEnabled().toUpperCase().equals("YES"))
+					if (trainsToAnalyzeForComplianceThisCase.get(i).getEnabled().toUpperCase().equals("YES"))
 					{
 						// Check if through a valid node
-						if (!Collections.disjoint(triRailNodesFromConfigFile, trainsToAnalyzeForCompliance.get(i).getRouteEntries()))
+						for (int k = 0; k < trainsToAnalyzeForComplianceThisCase.get(i).getRouteEntries().size(); k++)
 						{
-							// Check how many times train operates during statistical period
-							if (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size() == 0)
+							if (triRailNodesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getRouteEntries().get(k).getNode()))
 							{
-								String trainToBaseScheduleOn = trainsToAnalyzeForCompliance.get(i).getSymbol();
-								ComplianceTrain train = trainsToAnalyzeForCompliance.get(i);
-								seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
-								seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
-								do
+								// Check how many times train operates during statistical period
+								if (trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().size() == 0)
 								{
-									for (int j = 0; j < trainsToAnalyzeForCompliance.size(); j++)
+									String trainToBaseScheduleOn = trainsToAnalyzeForComplianceThisCase.get(i).getSymbol();
+									ComplianceTrain train = trainsToAnalyzeForComplianceThisCase.get(i);
+									seedTrainsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i));
+									seedTrainSymbolsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+									do
 									{
-										if (trainToBaseScheduleOn.equals(trainsToAnalyzeForCompliance.get(j).getSymbol()))
+										for (int j = 0; j < trainsToAnalyzeForComplianceThisCase.size(); j++)
 										{
-											train = trainsToAnalyzeForCompliance.get(j);
-											break; 
+											if (trainToBaseScheduleOn.equals(trainsToAnalyzeForComplianceThisCase.get(j).getSymbol()))
+											{
+												train = trainsToAnalyzeForComplianceThisCase.get(j);
+												break; 
+											}
+										}
+										trainToBaseScheduleOn = train.getLinkedAtOriginTo();
+									}
+									while (train.getDaysOfOperationAsInteger().size() == 0);
+
+									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfTriRailOperatedTrainsThisCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i));
+											seedTrainSymbolsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+											// Increment the by type counter
 										}
 									}
-									trainToBaseScheduleOn = train.getLinkedAtOriginTo();
 								}
-								while (train.getDaysOfOperationAsInteger().size() == 0);
-
-								for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+								else
 								{
-									if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-											&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+									seedTrainsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i));
+									seedTrainSymbolsFoundEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+									for (int j = 0; j < trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().size(); j++)
 									{
-										totalCountOfTriRailOperatedTrains++;
-										// Train is eligible so remove from the ineligible list
-										seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
-										seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
-									}
-								}
-							}
-							else
-							{
-								seedTrainsFoundEligible.add(trainsToAnalyzeForCompliance.get(i));
-								seedTrainSymbolsFoundEligible.add(trainsToAnalyzeForCompliance.get(i).getSymbol());
-								for (int j = 0; j < trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().size(); j++)
-								{
-									if ((trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-											&& (trainsToAnalyzeForCompliance.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
-									{
-										totalCountOfTriRailOperatedTrains++;
-										// Train is eligible so remove from the ineligible list
-										seedTrainsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i));
-										seedTrainSymbolsFoundNotEligible.remove(trainsToAnalyzeForCompliance.get(i).getSymbol());
+										if ((trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (trainsToAnalyzeForComplianceThisCase.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfTriRailOperatedTrainsThisCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i));
+											seedTrainSymbolsFoundNotEligibleThisCase.remove(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
 									}
 								}
 							}
@@ -314,14 +339,296 @@ public class AnalyzeJuaComplianceFiles
 				}
 			}
 
-			resultsMessage += "Found "+seedTrainsFoundEligible.size()+" eligible seed trains operated in the selected case:\n";
-			resultsMessage += "  yielding "+totalCountOfBrightlineOperatedTrains+" dispatched Brightline trains operated during the statistical period of the selected case\n";
-			resultsMessage += "  yielding "+totalCountOfFecOperatedTrains+" dispatched FEC trains operated during the statistical period of the selected case\n";
-			resultsMessage += "  yielding "+totalCountOfTriRailOperatedTrains+" dispatched TriRail trains operated during the statistical period of the selected case\n";
-			resultsMessage += "Found "+seedTrainsFoundNotEligible.size()+" other seed trains in the selected case\n";
+			resultsMessage += "Found "+seedTrainsFoundEligibleThisCase.size()+" eligible seed trains operated in the selected case:\n";
+			resultsMessage += "  yielding "+totalCountOfBrightlineOperatedTrainsThisCase+" dispatched Brightline trains operated during the statistical period of the selected case\n";
+			resultsMessage += "  yielding "+totalCountOfFecOperatedTrainsThisCase+" dispatched FEC trains operated during the statistical period of the selected case\n";
+			resultsMessage += "  yielding "+totalCountOfTriRailOperatedTrainsThisCase+" dispatched TriRail trains operated during the statistical period of the selected case\n";
+			resultsMessage += "Found "+seedTrainsFoundNotEligibleThisCase.size()+" other seed trains in the selected case\n\n";
 		}
 
-		// Permits
+		// Trains - Last Accepted Case
+		if (BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile())
+		{
+			// For each train
+			trainsToAnalyzeForComplianceLastAcceptedCase.clear();
+			seedTrainsFoundEligibleLastAcceptedCase.clear();
+			seedTrainsFoundNotEligibleLastAcceptedCase.clear();
+			seedTrainSymbolsFoundEligibleLastAcceptedCase.clear();
+			seedTrainSymbolsFoundNotEligibleLastAcceptedCase.clear();
+
+			brightlineTrainTypesFromConfigFile.clear();
+			fecTrainTypesFromConfigFile.clear();
+			triRailTrainTypesFromConfigFile.clear();
+
+			brightlineNodesFromConfigFile.clear();
+			fecNodesFromConfigFile.clear();
+			triRailNodesFromConfigFile.clear();
+
+			// Populate all arrays with necessary objects
+			trainsToAnalyzeForComplianceLastAcceptedCase.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase());
+			seedTrainsFoundNotEligibleLastAcceptedCase.addAll(trainsToAnalyzeForComplianceLastAcceptedCase);
+
+			for (int i = 0; i < trainsToAnalyzeForComplianceLastAcceptedCase.size(); i++)
+			{
+				seedTrainSymbolsFoundNotEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+			}
+
+			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+			{
+				brightlineTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+			}
+
+			for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+			{
+				fecTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+			}
+
+			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+			{
+				triRailTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+			}
+
+			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineNodes().length; i++)
+			{
+				brightlineNodesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineNodes()[i].trim());
+			}
+
+			for (int i = 0; i < BIASJuaComplianceConfigController.getFecNodes().length; i++)
+			{
+				fecNodesFromConfigFile.add(BIASJuaComplianceConfigController.getFecNodes()[i].trim());
+			}
+
+			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailNodes().length; i++)
+			{
+				triRailNodesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailNodes()[i].trim());
+			}
+
+			// Determine statistical simulation days (as integers)
+			totalCountOfBrightlineOperatedTrainsLastAcceptedCase = 0;
+			totalCountOfFecOperatedTrainsLastAcceptedCase = 0;
+			totalCountOfTriRailOperatedTrainsLastAcceptedCase = 0;
+			statisticalStartDay = ReadJuaComplianceFiles.getStatisticalStartDayOfWeekAsInteger();		 
+			statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays(); 
+
+			// For each train
+			for (int i = 0; i < trainsToAnalyzeForComplianceLastAcceptedCase.size(); i++)
+			{
+				// Check Brightline type
+				if (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase()))
+				{
+					// Check if enabled
+					if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getEnabled().toUpperCase().equals("YES"))
+					{
+						// Check if through a valid node
+						for (int k = 0; k < trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getRouteEntries().size(); k++)
+						{
+							if (brightlineNodesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getRouteEntries().get(k).getNode()))
+							{
+								// Check how many times train operates during statistical period
+								if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().size() == 0)
+								{
+									String trainToBaseScheduleOn = trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol();
+									ComplianceTrain train = trainsToAnalyzeForComplianceLastAcceptedCase.get(i);
+									seedTrainsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+									seedTrainSymbolsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+									do
+									{
+										for (int j = 0; j < trainsToAnalyzeForComplianceLastAcceptedCase.size(); j++)
+										{
+											if (trainToBaseScheduleOn.equals(trainsToAnalyzeForComplianceLastAcceptedCase.get(j).getSymbol()))
+											{
+												train = trainsToAnalyzeForComplianceLastAcceptedCase.get(j);
+												break; 
+											}
+										}
+										trainToBaseScheduleOn = train.getLinkedAtOriginTo();
+									}
+									while (train.getDaysOfOperationAsInteger().size() == 0);
+
+									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfBrightlineOperatedTrainsLastAcceptedCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+											seedTrainSymbolsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
+									}
+								}
+								else
+								{
+									seedTrainsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+									seedTrainSymbolsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+									for (int j = 0; j < trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfBrightlineOperatedTrainsLastAcceptedCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+											seedTrainSymbolsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				// Check FEC type
+				else if (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase()))
+				{
+					// Check if enabled
+					if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getEnabled().toUpperCase().equals("YES"))
+					{
+						// Check if through a valid node
+						for (int k = 0; k < trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getRouteEntries().size(); k++)
+						{
+							if (fecNodesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getRouteEntries().get(k).getNode()))
+							{
+								// Check how many times train operates during statistical period
+								if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().size() == 0)
+								{
+									String trainToBaseScheduleOn = trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol();
+									ComplianceTrain train = trainsToAnalyzeForComplianceLastAcceptedCase.get(i);
+									seedTrainsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+									seedTrainSymbolsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+									do
+									{
+										for (int j = 0; j < trainsToAnalyzeForComplianceLastAcceptedCase.size(); j++)
+										{
+											if (trainToBaseScheduleOn.equals(trainsToAnalyzeForComplianceLastAcceptedCase.get(j).getSymbol()))
+											{
+												train = trainsToAnalyzeForComplianceLastAcceptedCase.get(j);
+												break; 
+											}
+										}
+										trainToBaseScheduleOn = train.getLinkedAtOriginTo();
+									}
+									while (train.getDaysOfOperationAsInteger().size() == 0);
+
+									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfFecOperatedTrainsLastAcceptedCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+											seedTrainSymbolsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
+									}
+								}
+								else
+								{
+									seedTrainsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+									seedTrainSymbolsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+									for (int j = 0; j < trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfFecOperatedTrainsLastAcceptedCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+											seedTrainSymbolsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				// Check TriRail type
+				else if (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase()))
+				{
+					// Check if enabled
+					if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getEnabled().toUpperCase().equals("YES"))
+					{
+						// Check if through a valid node
+						for (int k = 0; k < trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getRouteEntries().size(); k++)
+						{
+							if (triRailNodesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getRouteEntries().get(k).getNode()))
+							{
+								// Check how many times train operates during statistical period
+								if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().size() == 0)
+								{
+									String trainToBaseScheduleOn = trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol();
+									ComplianceTrain train = trainsToAnalyzeForComplianceLastAcceptedCase.get(i);
+									seedTrainsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+									seedTrainSymbolsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+									do
+									{
+										for (int j = 0; j < trainsToAnalyzeForComplianceLastAcceptedCase.size(); j++)
+										{
+											if (trainToBaseScheduleOn.equals(trainsToAnalyzeForComplianceLastAcceptedCase.get(j).getSymbol()))
+											{
+												train = trainsToAnalyzeForComplianceLastAcceptedCase.get(j);
+												break; 
+											}
+										}
+										trainToBaseScheduleOn = train.getLinkedAtOriginTo();
+									}
+									while (train.getDaysOfOperationAsInteger().size() == 0);
+
+									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfTriRailOperatedTrainsLastAcceptedCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+											seedTrainSymbolsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
+									}
+								}
+								else
+								{
+									seedTrainsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+									seedTrainSymbolsFoundEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+									for (int j = 0; j < trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().size(); j++)
+									{
+										if ((trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
+												&& (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+										{
+											totalCountOfTriRailOperatedTrainsLastAcceptedCase++;
+											// Train is eligible so remove from the ineligible list
+											seedTrainsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i));
+											seedTrainSymbolsFoundNotEligibleLastAcceptedCase.remove(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+											// Increment the by type counter
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			resultsMessage += "Found "+seedTrainsFoundEligibleLastAcceptedCase.size()+" eligible seed trains operated in the last approved .TRAIN file:\n";
+			resultsMessage += "  yielding "+totalCountOfBrightlineOperatedTrainsLastAcceptedCase+" dispatched Brightline trains operated during the statistical period in the last approved .TRAIN file\n";
+			resultsMessage += "  yielding "+totalCountOfFecOperatedTrainsLastAcceptedCase+" dispatched FEC trains operated during the statistical period in the last approved .TRAIN file\n";
+			resultsMessage += "  yielding "+totalCountOfTriRailOperatedTrainsLastAcceptedCase+" dispatched TriRail trains operated during the statistical period in the last approved .TRAIN file\n";
+			resultsMessage += "Found "+seedTrainsFoundNotEligibleLastAcceptedCase.size()+" other seed trains in the last approved .TRAIN file\n\n";
+
+			// Compare both files
+
+			// Check seed train count
+			// Check seed train end-to-end scheduled duration
+			// Check seed train work event count
+			// Check seed train DOW
+			// Check seed type
+		}
+
+		// Permits - Common
 		if (BIASJuaComplianceConfigController.getCheckPermitsEnabled())
 		{
 			permitsToAnalyzeForThisCase.clear();
@@ -389,7 +696,7 @@ public class AnalyzeJuaComplianceFiles
 					resultsMessage += "\n";
 				}
 
-				// This case
+				// Permits - This case
 				for (int i = 0; i < permitsToAnalyzeForThisCase.size(); i++)
 				{
 					Boolean permitContainsABridgeMp = false;
@@ -625,7 +932,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 
-				// Last accepted case
+				// Permits - Last accepted case
 				for (int i = 0; i < permitsToAnalyzeForLastAcceptedCase.size(); i++)
 				{
 					Boolean permitContainsABridgeMp = false;
@@ -870,70 +1177,136 @@ public class AnalyzeJuaComplianceFiles
 		resultsMessage += "Finished analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+("\n");
 	}
 
-	public static Integer getTotalCountOfBrightlinelOperatedTrains()
+	public static Integer getTotalCountOfBrightlineOperatedTrainsThisCase()
 	{
-		return totalCountOfBrightlineOperatedTrains;
+		return totalCountOfBrightlineOperatedTrainsThisCase;
 	}
 
-	public static Integer getTotalCountOfFecOperatedTrains()
+	public static Integer getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase()
 	{
-		return totalCountOfFecOperatedTrains;
+		return totalCountOfBrightlineOperatedTrainsLastAcceptedCase;
 	}
 
-	public static Integer getTotalCountOfTriRailOperatedTrains()
+	public static Integer getTotalCountOfFecOperatedTrainsThisCase()
 	{
-		return totalCountOfTriRailOperatedTrains;
+		return totalCountOfFecOperatedTrainsThisCase;
 	}
 
-	public static Double getDailyAverageCountOfBrightlineOperatedTrains()
+	public static Integer getTotalCountOfFecOperatedTrainsLastAcceptedCase()
 	{
-		dailyAverageCountOfBrightlineOperatedTrains = (double) totalCountOfBrightlineOperatedTrains / (double) (statisticalEndDay - statisticalStartDay + 1);
-
-		return dailyAverageCountOfBrightlineOperatedTrains;
+		return totalCountOfFecOperatedTrainsLastAcceptedCase;
 	}
 
-	public static Double getDailyAverageCountOfFecOperatedTrains()
+	public static Integer getTotalCountOfTriRailOperatedTrainsThisCase()
 	{
-		dailyAverageCountOfFecOperatedTrains = (double) totalCountOfFecOperatedTrains / (double) (statisticalEndDay - statisticalStartDay + 1);
-
-		return dailyAverageCountOfFecOperatedTrains;
+		return totalCountOfTriRailOperatedTrainsThisCase;
 	}
 
-	public static Double getDailyAverageCountOfTriRailOperatedTrains()
+	public static Integer getTotalCountOfTriRailOperatedTrainsLastAcceptedCase()
 	{
-		dailyAverageCountOfTriRailOperatedTrains = (double) totalCountOfTriRailOperatedTrains / (double) (statisticalEndDay - statisticalStartDay + 1);
-
-		return dailyAverageCountOfTriRailOperatedTrains;
+		return totalCountOfTriRailOperatedTrainsLastAcceptedCase;
 	}
 
-	public static ArrayList<ComplianceTrain> getSeedTrainsFoundEligible()
+	public static Double getDailyAverageCountOfBrightlineOperatedTrainsThisCase()
 	{
-		return seedTrainsFoundEligible;
+		dailyAverageCountOfBrightlineOperatedTrainsThisCase = (double) totalCountOfBrightlineOperatedTrainsThisCase / (double) (statisticalEndDay - statisticalStartDay + 1);
+
+		return dailyAverageCountOfBrightlineOperatedTrainsThisCase;
 	}
 
-	public static ArrayList<ComplianceTrain> getSeedTrainsFoundNotEligible()
+	public static Double getDailyAverageCountOfBrightlineOperatedTrainsLastAcceptedCase()
 	{
-		return seedTrainsFoundNotEligible;
+		dailyAverageCountOfBrightlineOperatedTrainsLastAcceptedCase = (double) totalCountOfBrightlineOperatedTrainsLastAcceptedCase / (double) (statisticalEndDay - statisticalStartDay + 1);
+
+		return dailyAverageCountOfBrightlineOperatedTrainsLastAcceptedCase;
 	}
 
-	public static ArrayList<String> getSeedTrainSymbolsFoundEligible()
+	public static Double getDailyAverageCountOfFecOperatedTrainsThisCase()
 	{
-		return seedTrainSymbolsFoundEligible;
+		dailyAverageCountOfFecOperatedTrainsThisCase = (double) totalCountOfFecOperatedTrainsThisCase / (double) (statisticalEndDay - statisticalStartDay + 1);
+
+		return dailyAverageCountOfFecOperatedTrainsThisCase;
 	}
 
-	public static ArrayList<String> getSeedTrainSymbolsFoundNotEligible()
+	public static Double getDailyAverageCountOfFecOperatedTrainsLastAcceptedCase()
 	{
-		return seedTrainSymbolsFoundNotEligible;
+		dailyAverageCountOfFecOperatedTrainsLastAcceptedCase = (double) totalCountOfFecOperatedTrainsLastAcceptedCase / (double) (statisticalEndDay - statisticalStartDay + 1);
+
+		return dailyAverageCountOfFecOperatedTrainsLastAcceptedCase;
 	}
 
-	public static Integer getSeedTrainSymbolCountFoundEligible()
+	public static Double getDailyAverageCountOfTriRailOperatedTrainsLastAcceptedCase()
 	{
-		return seedTrainSymbolsFoundEligible.size();
+		dailyAverageCountOfTriRailOperatedTrainsLastAcceptedCase = (double) totalCountOfTriRailOperatedTrainsLastAcceptedCase / (double) (statisticalEndDay - statisticalStartDay + 1);
+
+		return dailyAverageCountOfTriRailOperatedTrainsLastAcceptedCase;
 	}
 
-	public static Integer getSeedTrainSymbolCountFoundNotEligible()
+	public static Double getDailyAverageCountOfTriRailOperatedTrainsThisCase()
 	{
-		return seedTrainSymbolsFoundNotEligible.size();
+		dailyAverageCountOfTriRailOperatedTrainsThisCase = (double) totalCountOfTriRailOperatedTrainsThisCase / (double) (statisticalEndDay - statisticalStartDay + 1);
+
+		return dailyAverageCountOfTriRailOperatedTrainsThisCase;
+	}
+
+	public static ArrayList<ComplianceTrain> getSeedTrainsFoundEligibleThisCase()
+	{
+		return seedTrainsFoundEligibleThisCase;
+	}
+
+	public static ArrayList<ComplianceTrain> getSeedTrainsFoundNotEligibleThisCase()
+	{
+		return seedTrainsFoundNotEligibleThisCase;
+	}
+
+	public static ArrayList<ComplianceTrain> getSeedTrainsFoundEligibleLastAcceptedCase()
+	{
+		return seedTrainsFoundEligibleLastAcceptedCase;
+	}
+
+	public static ArrayList<ComplianceTrain> getSeedTrainsFoundNotEligibleLastAcceptedCase()
+	{
+		return seedTrainsFoundNotEligibleLastAcceptedCase;
+	}
+
+	public static ArrayList<String> getSeedTrainSymbolsFoundEligibleThisCase()
+	{
+		return seedTrainSymbolsFoundEligibleThisCase;
+	}
+
+	public static ArrayList<String> getSeedTrainSymbolsFoundNotEligibleThisCase()
+	{
+		return seedTrainSymbolsFoundNotEligibleThisCase;
+	}
+
+	public static ArrayList<String> getSeedTrainSymbolsFoundEligibleLastAcceptedCase()
+	{
+		return seedTrainSymbolsFoundEligibleLastAcceptedCase;
+	}
+
+	public static ArrayList<String> getSeedTrainSymbolsFoundNotEligibleLastAcceptedCase()
+	{
+		return seedTrainSymbolsFoundNotEligibleLastAcceptedCase;
+	}
+
+	public static Integer getSeedTrainSymbolCountFoundEligibleThisCase()
+	{
+		return seedTrainSymbolsFoundEligibleThisCase.size();
+	}
+
+	public static Integer getSeedTrainSymbolCountFoundNotEligibleThisCase()
+	{
+		return seedTrainSymbolsFoundNotEligibleThisCase.size();
+	}
+
+	public static Integer getSeedTrainSymbolCountFoundEligibleLastAcceptedCase()
+	{
+		return seedTrainSymbolsFoundEligibleLastAcceptedCase.size();
+	}
+
+	public static Integer getSeedTrainSymbolCountFoundNotEligibleLastAcceptedCase()
+	{
+		return seedTrainSymbolsFoundNotEligibleLastAcceptedCase.size();
 	}
 
 	public static Double getMilesOfImpactedTrackThisCase()

@@ -1,8 +1,9 @@
-	package com.bl.bias.write;
+package com.bl.bias.write;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -19,7 +20,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.bl.bias.analyze.AnalyzeJuaComplianceFiles;
 import com.bl.bias.app.BIASJuaComplianceConfigController;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.tools.ConvertNumberDatatypes;
 
 public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 {
@@ -27,17 +27,20 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 	Integer rowCounter = 0;
 
-	private static String lastAcceptedPermitFileName1 = BIASJuaComplianceConfigController.getLastAcceptedPermitFileAsString().replace(".PERMIT","");
-	private static String lastAcceptedPermitFileName2 = lastAcceptedPermitFileName1.substring( lastAcceptedPermitFileName1.lastIndexOf("\\") + 1);
+	private static String lastAcceptedTrainFileName1 = BIASJuaComplianceConfigController.getLastAcceptedTrainFileAsString().replace(".TRAIN","");
+	private static String lastAcceptedTrainFileName2 = lastAcceptedTrainFileName1.substring(lastAcceptedTrainFileName1.lastIndexOf("\\") + 1);
 
-	private static Boolean permitFilesOfBothCasesEqual = true;
+	private static HashMap<String, Integer> countByTrainTypeThisCase = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> countByTrainTypeLastAcceptedCase = new HashMap<String, Integer>();
 
 	public WriteJuaComplianceFiles2(String textArea, String fullyQualifiedPath) 
 	{
 		super(textArea, fullyQualifiedPath);
 
-		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) 
-				&& (BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles()))
+		countByTrainTypeThisCase.clear();
+		countByTrainTypeLastAcceptedCase.clear();
+
+		if (BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile())
 		{
 			// Set styles
 			CellStyle style0 = workbook.createCellStyle();
@@ -53,11 +56,10 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			CellStyle style10 = workbook.createCellStyle();
 			CellStyle style11 = workbook.createCellStyle();
 
-			// Write Set A
-			XSSFSheet juaComplianceSlowOrders;
-			juaComplianceSlowOrders = workbook.createSheet("Slow Orders");
-			juaComplianceSlowOrders.setDisplayGridlines(false);
-			resultsMessage += "\nWriting slow order assessment";
+			XSSFSheet juaComplianceTrainComparison;
+			juaComplianceTrainComparison = workbook.createSheet("Train Comparison");
+			resultsMessage += "\nWriting train comparisons";
+			juaComplianceTrainComparison.setDisplayGridlines(false);
 
 			// Fonts
 			// Font 0 - 14pt White text
@@ -164,40 +166,24 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 			// Header rows
 			// Case name
-			juaComplianceSlowOrders.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
+			juaComplianceTrainComparison.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
 
 			Row row;
 			Cell cell;
 
-			row = juaComplianceSlowOrders.createRow(rowCounter);
+			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style0);
-			cell.setCellValue("JUA Compliance:  Slow Order Assessment for " + thisCase + " Case");
+			cell.setCellValue("JUA Compliance:  Train Comparison Between "+thisCase + " .TRAIN File and "+lastAcceptedTrainFileName2+" .TRAIN File");
 
-			// Header
+			// Header rows
 			rowCounter++;
 			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
-
-			cell = row.createCell(0);
-			cell.setCellStyle(style6);
-			cell.setCellValue("");
-
-			cell = row.createCell(1);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Comparison of Cases");
-
-			cell = row.createCell(2);
-			cell.setCellStyle(style6);
-			cell.setCellValue("");
-
-			rowCounter++;
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
+			row = juaComplianceTrainComparison.createRow(rowCounter);
 
 			cell = row.createCell(0);
 			cell.setCellStyle(style11);
-			cell.setCellValue(thisCase + "\n[This Case's .PERMIT File]");
+			cell.setCellValue(thisCase + "\n[This Case's .TRAIN File]");
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style1);
@@ -205,205 +191,177 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 			cell = row.createCell(2);
 			cell.setCellStyle(style11);
-			cell.setCellValue(lastAcceptedPermitFileName2 + "\n[Last Accepted .PERMIT File]");
+			cell.setCellValue(lastAcceptedTrainFileName2 + "\n[Last Accepted .TRAIN File]");
+			rowCounter++;
+			rowCounter++;
 
-			// Permit count
-			rowCounter++;
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
+			// Operated train counts
+			row = juaComplianceTrainComparison.createRow(rowCounter);
 
 			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Trains Operated*");
+			rowCounter++;
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
 			cell.setCellStyle(style1);
-			cell.setCellValue(AnalyzeJuaComplianceFiles.getPermitsConisderedThisCase());
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase());
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style1);
-			cell.setCellValue("Permit Count*^$");
+			cell.setCellValue("Brightline Trains Operated");
 
 			cell = row.createCell(2);
 			cell.setCellStyle(style1);
-			cell.setCellValue(AnalyzeJuaComplianceFiles.getPermitsConisderedLastAcceptedCase());
-
-			// Sum of impacted track miles
-			if (BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles())
-			{
-				rowCounter++;
-				rowCounter++;
-				row = juaComplianceSlowOrders.createRow(rowCounter);
-
-				cell = row.createCell(0);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfImpactedTrackThisCase(), 1));
-
-				cell = row.createCell(1);
-				cell.setCellStyle(style1);
-				cell.setCellValue("Sum of Impacted Track Miles");
-
-				cell = row.createCell(2);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfImpactedTrackLastAcceptedCase(), 1));
-
-				if (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfImpactedTrackThisCase(), 1) == ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getMilesOfImpactedTrackLastAcceptedCase(), 1))
-					permitFilesOfBothCasesEqual = true;
-				else
-					permitFilesOfBothCasesEqual = false;
-
-			}
-
-			// Average slow order speed
-			if (BIASJuaComplianceConfigController.getAverageSlowOrderSpeed())
-			{
-				rowCounter++;
-				rowCounter++;
-				row = juaComplianceSlowOrders.createRow(rowCounter);
-
-				cell = row.createCell(1);
-				cell.setCellStyle(style1);
-				cell.setCellValue("Average Slow Order Speed");
-
-				// Passenger
-				rowCounter++;
-				row = juaComplianceSlowOrders.createRow(rowCounter);
-
-				cell = row.createCell(0);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedThisCase(), 1));
-
-
-				cell = row.createCell(1);
-				cell.setCellStyle(style1);
-				cell.setCellValue("[Passenger]");
-
-				cell = row.createCell(2);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedLastAcceptedCase(), 1));
-
-				// Freight
-				rowCounter++;
-				row = juaComplianceSlowOrders.createRow(rowCounter);
-
-				cell = row.createCell(0);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedThisCase(), 1));
-
-
-				cell = row.createCell(1);
-				cell.setCellStyle(style1);
-				cell.setCellValue("[Freight]");
-
-				cell = row.createCell(2);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedLastAcceptedCase(), 1));
-
-
-				if (permitFilesOfBothCasesEqual)
-				{
-					if (((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedThisCase(), 1)) != (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderPassengerSpeedLastAcceptedCase(), 1))) ||
-							((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedThisCase(), 1)) != (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getAverageSlowOrderFreightSpeedLastAcceptedCase(), 1))))
-					{
-						permitFilesOfBothCasesEqual = false;
-					}
-				}
-			}
-
-			// Sum of duration * miles
-			if (BIASJuaComplianceConfigController.getSumOfDurationMiles())
-			{
-				rowCounter++;
-				rowCounter++;
-				row = juaComplianceSlowOrders.createRow(rowCounter);
-
-				cell = row.createCell(0);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesThisCase(), 2));
-
-
-				cell = row.createCell(1);
-				cell.setCellStyle(style1);
-				cell.setCellValue("Sum of Impacted Track Miles x Duration (days)");
-
-				cell = row.createCell(2);
-				cell.setCellStyle(style1);
-				cell.setCellValue(ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesLastAcceptedCase(), 2));
-
-				if (permitFilesOfBothCasesEqual)
-				{
-					if ((ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesThisCase(), 1)) != (ConvertNumberDatatypes.round(AnalyzeJuaComplianceFiles.getHoursMilesLastAcceptedCase(), 1)))
-						permitFilesOfBothCasesEqual = false;
-				}
-			}
-
-			// Equality determination
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase());
 			rowCounter++;
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
+
+			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
-			if (permitFilesOfBothCasesEqual)
-			{
-				cell.setCellStyle(style9);
-				cell.setCellValue("The slow order impact of both files is EQUAL");
-			}
-			else
-			{
-				cell.setCellStyle(style8);
-				cell.setCellValue("The slow order impact of both files is NOT EQUAL");
-			}
+			cell.setCellStyle(style1);
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase());
 
-			// Timestamp and footnote
+			cell = row.createCell(1);
+			cell.setCellStyle(style1);
+			cell.setCellValue("FEC Trains Operated");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style1);
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase());
+			rowCounter++;
+
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style1);
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase());
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style1);
+			cell.setCellValue("TriRail Trains Operated");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style1);
+			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase());
+			rowCounter++;
+			rowCounter++;
+
+			// Check sum of operated trains end-to-end scheduled duration by train type
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Sum of Starts by Type*");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+
+
+			cell = row.createCell(0);
+			cell.setCellStyle(style1);
+			cell.setCellValue("0");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style1);
+			cell.setCellValue("XXXX*");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style1);
+			cell.setCellValue("0");
+
+			// Check sum of operated trains end-to-end scheduled duration by train type
+			rowCounter++;
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Sum of End-to-End Durations by Type (DD:HH:MM:SS)^");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+
+			cell = row.createCell(0);
+			cell.setCellStyle(style1);
+			cell.setCellValue("0:00:00");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style1);
+			cell.setCellValue("XXXX*");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style1);
+			cell.setCellValue("0:00:00");
+			
+
+			// Check duration of work events by location for seed trains over statistical period 
+			rowCounter++;
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Sum of Work Events by Location (DD:HH:MM:SS)$");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+
+			cell = row.createCell(0);
+			cell.setCellStyle(style1);
+			cell.setCellValue("0:00:00");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style1);
+			cell.setCellValue("XXXX*");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style1);
+			cell.setCellValue("0:00:00");
+			
+			// Footer notes
+			rowCounter++;
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("*Only eligible operated trains, as selected in the JUA Compliance Configuration Train Count parameters, are considered");
+
+			// Timestamp 
 			LocalDate creationDate = ConvertDateTime.getDateStamp();
 			LocalTime creationTime = ConvertDateTime.getTimeStamp();
 
 			rowCounter++;
 			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
-			cell = row.createCell(0);
-			cell.setCellStyle(style2);
-			if (BIASJuaComplianceConfigController.getCheckEnabledPermitsOnly())
-			{
-				cell.setCellValue("*Only enabled permits are considered");
-			}
-			else
-			{
-				cell.setCellValue("*Enabled and disabled permits are considered");
-			}
-
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
-			cell = row.createCell(0);
-			cell.setCellStyle(style2);
-			if (BIASJuaComplianceConfigController.getCheckStatisticalPeriodOnly())
-			{
-				cell.setCellValue("^Only permits within the statistical period are considered");
-			}
-			else
-			{
-				cell.setCellValue("^Permits withing and outside the statistical period are considered");
-			}
-			
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
-			cell = row.createCell(0);
-			cell.setCellStyle(style2);
-			if (BIASJuaComplianceConfigController.getExcludePermitsNearBridge())
-			{
-				String bridgeExclusionMessage = "$Permits encompassing bridges near ";
-				for (int i = 0; i < BIASJuaComplianceConfigController.getBridgeMps().length; i++)
-				{
-					if (i == BIASJuaComplianceConfigController.getBridgeMps().length - 1)
-						bridgeExclusionMessage += BIASJuaComplianceConfigController.getBridgeMps()[i];
-					else
-						bridgeExclusionMessage += BIASJuaComplianceConfigController.getBridgeMps()[i]+", ";
-				}
-				bridgeExclusionMessage+= " are considered";
-				cell.setCellValue(bridgeExclusionMessage);
-			}
-			else
-			{
-				cell.setCellValue("$Permits on bridges are considered");
-			}
-			
-			rowCounter++;
-			row = juaComplianceSlowOrders.createRow(rowCounter);
+			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("Created on "+creationDate+" at "+creationTime);
@@ -413,15 +371,15 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			{
 				if (i == 0) 
 				{
-					juaComplianceSlowOrders.setColumnWidth(i, 15000);
+					juaComplianceTrainComparison.setColumnWidth(i, 15000);
 				}
 				else if (i == 1)
 				{
-					juaComplianceSlowOrders.setColumnWidth(i, 6000);
+					juaComplianceTrainComparison.setColumnWidth(i, 7000);
 				}
 				else if (i == 2)
 				{
-					juaComplianceSlowOrders.setColumnWidth(i, 15000);
+					juaComplianceTrainComparison.setColumnWidth(i, 15000);
 				}
 			}
 		}

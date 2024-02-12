@@ -21,7 +21,7 @@ import com.bl.bias.objects.ComplianceCriteria;
 public class BIASJuaComplianceConfigController extends ComplianceCriteria
 {
 	@FXML private CheckBox trainCountEnabledCheckBox;
-	@FXML private CheckBox lastAcceptedFileEnabledCheckBox;
+	@FXML private CheckBox checkLastAcceptedTrainsFileCheckBox;
 	@FXML private CheckBox trainPrioritytEnabledCheckBox;
 	@FXML private CheckBox trainMileageEnabledCheckBox;
 	@FXML private CheckBox permitsEnabledCheckBox;
@@ -145,14 +145,14 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			checkLastAcceptedTrainsFile = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", true);
-			lastAcceptedFileEnabledCheckBox.setSelected(true);
+			checkLastAcceptedTrainsFileCheckBox.setSelected(true);
 		}
 		else
 		{
 			checkLastAcceptedTrainsFile = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
-			lastAcceptedFileEnabledCheckBox.setSelected(false);
+			checkLastAcceptedTrainsFileCheckBox.setSelected(false);
 		}
 
 		// See if preferences are stored for Brightline train types
@@ -505,7 +505,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		}
 	}
 
-	@FXML private void handleLastAcceptedFileEnabledCheckBox(ActionEvent event)
+	@FXML private void handleCheckLastAcceptedTrainsFileCheckBoxx(ActionEvent event)
 	{
 		if (checkLastAcceptedTrainsFile)
 		{
@@ -687,6 +687,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			lastAcceptedTrainFileAsString = file.toString();
 		}
 	}
+	
+	public static Boolean getCheckLastAcceptedTrainsFile()
+	{
+		return checkLastAcceptedTrainsFile;
+	}
 
 	public static String[] getBrightlineTrainTypes()
 	{
@@ -773,6 +778,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		return excludeRestrictionsNearBridge;
 	}
 
+	public static String getLastAcceptedTrainFileAsString()
+	{
+		return lastAcceptedTrainFileAsString;
+	}
+	
 	public static String getLastAcceptedPermitFileAsString()
 	{
 		return lastAcceptedPermitFileAsString;

@@ -78,6 +78,9 @@ public class BIASParseConfigPageController
 	private static String t_weekDays;
 	private static String t_trainEnabled;
 	private static String t_linkedAtOrigin;
+	private static String t_arrivalTime;
+	private static String t_departureTime;
+	private static String t_minimumDwellTime;
 
 	// Data from .ROUTE file
 	private static String r_trainSymbol;
@@ -572,7 +575,10 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Route Node", "t_routeNode", Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[0]), Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[1])),
 				new ParseLocationFormatB("Week Days", "t_weekDays", Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])),
 				new ParseLocationFormatB("Train Enabled", "t_trainEnabled", Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])),
-				new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1]))
+				new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])),
+				new ParseLocationFormatB("Arrival Time", "t_arrivalTime", Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[1])),
+				new ParseLocationFormatB("DepartureTime", "t_departureTime", Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[1])),
+				new ParseLocationFormatB("Minimum Dwell Time", "t_minimumDwellTime", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[1]))
 				);
 
 		parseLocationsTable6.setItems(parseData6);
@@ -983,6 +989,9 @@ public class BIASParseConfigPageController
 			prefs.remove("t_weekDays");
 			prefs.remove("t_trainEnabled");
 			prefs.remove("t_linkedAtOrigin");
+			prefs.remove("t_arrivalTime");
+			prefs.remove("t_departureTime");
+			prefs.remove("t_minimumDwellTime");
 
 			// Table 7
 			prefs.remove("r_trainSymbol");
@@ -1231,7 +1240,10 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Route Node", "t_routeNode", Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[0]), Integer.valueOf(BIASParseConfigPageController.t_getRouteNode()[1])),
 					new ParseLocationFormatB("Week Days", "t_weekDays", Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])),
 					new ParseLocationFormatB("Train Enabled", "t_trainEnabled", Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])),
-					new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1]))
+					new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])),
+					new ParseLocationFormatB("Arrival Time", "t_arrivalTime", Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[1])),
+					new ParseLocationFormatB("DepartureTime", "t_departureTime", Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[1])),
+					new ParseLocationFormatB("Minimum Dwell Time", "t_minimumDwellTime", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[1]))
 					);
 
 			startColumn6.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -3357,6 +3369,33 @@ public class BIASParseConfigPageController
 				prefs.put("t_linkedAtOrigin", t_linkedAtOrigin);
 		}
 
+		// Arrival Time at Route Node
+		if (prefs.get("t_arrivalTime", null) == null)
+		{
+			// Write value for subsequent runs
+			t_arrivalTime = "16,28";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_arrivalTime", t_arrivalTime);
+		}
+
+		// Departure Time at Route Node
+		if (prefs.get("t_departureTime", null) == null)
+		{
+			// Write value for subsequent runs
+			t_departureTime = "30,42";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_departureTime", t_departureTime);
+		}
+
+		// Dwell Time at Route Node
+		if (prefs.get("t_minimumDwellTime", null) == null)
+		{
+			// Write value for subsequent runs
+			t_minimumDwellTime = "44,56";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_minimumDwellTime", t_minimumDwellTime);
+		}
+
 		// Table 7
 		// Train Symbol
 		if (prefs.get("r_trainSymbol", null) == null)
@@ -4808,6 +4847,24 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("t_linkedAtOrigin", t_linkedAtOrigin).split(",");
 		return values;
 	}
+	
+	public static String[] t_getArrivalTime()
+	{
+		String[] values = prefs.get("t_arrivalTime", t_arrivalTime).split(",");
+		return values;
+	}
+	
+	public static String[] t_getDepartureTime()
+	{
+		String[] values = prefs.get("t_departureTime", t_departureTime).split(",");
+		return values;
+	}
+	
+	public static String[] t_getMinimumDwellTime()
+	{
+		String[] values = prefs.get("t_minimumDwellTime", t_minimumDwellTime).split(",");
+		return values;
+	}
 
 	public static String[] r_getTrainSymbol()
 	{
@@ -5600,19 +5657,19 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("b_frtSpeed", "b_frtSpeed").split(",");
 		return values;
 	}
-	
+
 	public static String[] b_getStartTime()
 	{
 		String[] values = prefs.get("b_startTime", "b_startTime").split(",");
 		return values;
 	}
-	
+
 	public static String[] b_getEndTime()
 	{
 		String[] values = prefs.get("b_endTime", "b_endTime").split(",");
 		return values;
 	}
-	
+
 	public static String[] b_getEnabled()
 	{
 		String[] values = prefs.get("b_enabled", "b_enabled").split(",");
