@@ -434,13 +434,16 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		// Train nodes
 		brightlineNodesLabel = brightlineNodesTextArea.getText(0, Math.min(brightlineNodesTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase();
 		brightlineNodesTextArea.setText(brightlineNodesLabel);
+		brightlineNodesAsArray = brightlineNodesLabel.split(",");
 
 		fecNodesLabel = fecNodesTextArea.getText(0, Math.min(fecNodesTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase();
 		fecNodesTextArea.setText(fecNodesLabel);
+		fecNodesAsArray = fecNodesLabel.split(",");
 
 		triRailNodesLabel = triRailNodesTextArea.getText(0, Math.min(triRailNodesTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase();
 		triRailNodesTextArea.setText(triRailNodesLabel);
-
+		triRailNodesAsArray = triRailNodesLabel.split(",");
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("ju_brightlineNodes", brightlineNodesLabel);	
 

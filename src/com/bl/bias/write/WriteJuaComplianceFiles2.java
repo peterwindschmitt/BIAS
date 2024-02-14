@@ -3,7 +3,9 @@ package com.bl.bias.write;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -24,21 +26,56 @@ import com.bl.bias.tools.ConvertDateTime;
 public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 {
 	protected Boolean error = false;
+	
+	private Boolean casesAreSame = true;
 
 	Integer rowCounter = 0;
 
 	private static String lastAcceptedTrainFileName1 = BIASJuaComplianceConfigController.getLastAcceptedTrainFileAsString().replace(".TRAIN","");
 	private static String lastAcceptedTrainFileName2 = lastAcceptedTrainFileName1.substring(lastAcceptedTrainFileName1.lastIndexOf("\\") + 1);
 
-	private static HashMap<String, Integer> countByTrainTypeThisCase = new HashMap<String, Integer>();
-	private static HashMap<String, Integer> countByTrainTypeLastAcceptedCase = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> setOfOperatedByTrainTypeThisCase = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> setOfOperatedByTrainTypeLastAcceptedCase = new HashMap<String, Integer>();
+
+	private static HashMap<String, Integer> setOfSeedTrainsByTypeThisCase = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> setOfSeedTrainsByTrainTypeLastAcceptedCase = new HashMap<String, Integer>();
+
+	private static HashMap<String, Double> setOfSumOfSeedTrainsByTrainTypeThisCase = new HashMap<String, Double>();
+	private static HashMap<String, Double> setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase = new HashMap<String, Double>();
+
+	private static HashMap<String, Double> setOfSumOfSeedTrainDwellByLocationThisCase = new HashMap<String, Double>();
+	private static HashMap<String, Double> setOfSumOfSeedTrainDwellByLocationLastAcceptedCase = new HashMap<String, Double>();
+
+	private static Integer thisCaseSubTotal = 0;
+	private static Integer lastAcceptedCaseSubTotal = 0;
 
 	public WriteJuaComplianceFiles2(String textArea, String fullyQualifiedPath) 
 	{
 		super(textArea, fullyQualifiedPath);
 
-		countByTrainTypeThisCase.clear();
-		countByTrainTypeLastAcceptedCase.clear();
+		setOfSeedTrainsByTypeThisCase.clear();
+		setOfSeedTrainsByTrainTypeLastAcceptedCase.clear();
+
+		setOfOperatedByTrainTypeThisCase.clear();
+		setOfOperatedByTrainTypeLastAcceptedCase.clear();
+
+		setOfSumOfSeedTrainsByTrainTypeThisCase.clear();
+		setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase.clear();
+
+		setOfSumOfSeedTrainDwellByLocationThisCase.clear();
+		setOfSumOfSeedTrainDwellByLocationLastAcceptedCase.clear();
+
+		setOfSeedTrainsByTypeThisCase = AnalyzeJuaComplianceFiles.getSortedSeedTrainsByTypeThisCase(); // This map is reverse sorted by entry
+		setOfSeedTrainsByTrainTypeLastAcceptedCase = AnalyzeJuaComplianceFiles.getSeedTrainsByTypeLastAcceptedCase();
+
+		setOfOperatedByTrainTypeThisCase = AnalyzeJuaComplianceFiles.getSortedTrainsOperatedByTypeThisCase();  // This map is reverse sorted by entry
+		setOfOperatedByTrainTypeLastAcceptedCase = AnalyzeJuaComplianceFiles.getTrainsOperatedByTypeLastAcceptedCase();
+
+		setOfSumOfSeedTrainsByTrainTypeThisCase = AnalyzeJuaComplianceFiles.getSortedSumOfSeedDurationsByTypeThisCase();  // This map is reverse sorted by entry
+		setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase = AnalyzeJuaComplianceFiles.getSumOfSeedDurationsByTypeLastAcceptedCase();
+
+		setOfSumOfSeedTrainDwellByLocationThisCase = AnalyzeJuaComplianceFiles.getSumOfSeedTrainDwellByLocationThisCase();
+		setOfSumOfSeedTrainDwellByLocationLastAcceptedCase = AnalyzeJuaComplianceFiles.getSumOfSeedTrainDwellByLocationLastAcceptedCase();
 
 		if (BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile())
 		{
@@ -195,7 +232,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			rowCounter++;
 			rowCounter++;
 
-			// Operated train counts
+			// Count of operated trains by operator
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 
 			cell = row.createCell(0);
@@ -204,7 +241,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style7);
-			cell.setCellValue("Trains Operated*");
+			cell.setCellValue("Count of Trains Operated by Operator*");
 			rowCounter++;
 
 			cell = row.createCell(2);
@@ -215,6 +252,8 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell = row.createCell(0);
 			cell.setCellStyle(style1);
 			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase());
+			thisCaseSubTotal = AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase();
+
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style1);
@@ -223,13 +262,18 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell = row.createCell(2);
 			cell.setCellStyle(style1);
 			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase());
+			lastAcceptedCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase();
 			rowCounter++;
-
+			
+			if (AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase() != AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase())
+				casesAreSame = false;
+			
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style1);
 			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase());
-
+			thisCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase();
+			
 			cell = row.createCell(1);
 			cell.setCellStyle(style1);
 			cell.setCellValue("FEC Trains Operated");
@@ -237,12 +281,17 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell = row.createCell(2);
 			cell.setCellStyle(style1);
 			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase());
+			lastAcceptedCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase();
 			rowCounter++;
-
+			
+			if (AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase() != AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase())
+				casesAreSame = false;
+			
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style1);
 			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase());
+			thisCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase();
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style1);
@@ -251,74 +300,31 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell = row.createCell(2);
 			cell.setCellStyle(style1);
 			cell.setCellValue(AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase());
+			lastAcceptedCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase();
 			rowCounter++;
-			rowCounter++;
-
-			// Check sum of operated trains end-to-end scheduled duration by train type
-			row = juaComplianceTrainComparison.createRow(rowCounter);
-			cell = row.createCell(0);
-			cell.setCellStyle(style6);
-			cell.setCellValue("");
-
-			cell = row.createCell(1);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Sum of Starts by Type*");
-
-			cell = row.createCell(2);
-			cell.setCellStyle(style6);
-			cell.setCellValue("");
-
-			rowCounter++;
-			row = juaComplianceTrainComparison.createRow(rowCounter);
-
-
-			cell = row.createCell(0);
-			cell.setCellStyle(style1);
-			cell.setCellValue("0");
-
-			cell = row.createCell(1);
-			cell.setCellStyle(style1);
-			cell.setCellValue("XXXX*");
-
-			cell = row.createCell(2);
-			cell.setCellStyle(style1);
-			cell.setCellValue("0");
-
-			// Check sum of operated trains end-to-end scheduled duration by train type
-			rowCounter++;
-			rowCounter++;
-			row = juaComplianceTrainComparison.createRow(rowCounter);
-			cell = row.createCell(0);
-			cell.setCellStyle(style6);
-			cell.setCellValue("");
-
-			cell = row.createCell(1);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Sum of End-to-End Durations by Type (DD:HH:MM:SS)^");
-
-			cell = row.createCell(2);
-			cell.setCellStyle(style6);
-			cell.setCellValue("");
-
-			rowCounter++;
-			row = juaComplianceTrainComparison.createRow(rowCounter);
-
-			cell = row.createCell(0);
-			cell.setCellStyle(style1);
-			cell.setCellValue("0:00:00");
-
-			cell = row.createCell(1);
-			cell.setCellStyle(style1);
-			cell.setCellValue("XXXX*");
-
-			cell = row.createCell(2);
-			cell.setCellStyle(style1);
-			cell.setCellValue("0:00:00");
 			
+			if (AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase() != AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase())
+				casesAreSame = false;
+			
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style11);
+			cell.setCellValue(thisCaseSubTotal);
 
-			// Check duration of work events by location for seed trains over statistical period 
+			cell = row.createCell(1);
+			cell.setCellStyle(style11);
+			cell.setCellValue("Total Operated");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(lastAcceptedCaseSubTotal);
 			rowCounter++;
 			rowCounter++;
+
+			// Count of operated trains by type
+			thisCaseSubTotal = 0;
+			lastAcceptedCaseSubTotal = 0;
+
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style6);
@@ -326,27 +332,289 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 
 			cell = row.createCell(1);
 			cell.setCellStyle(style7);
-			cell.setCellValue("Sum of Work Events by Location (DD:HH:MM:SS)$");
+			cell.setCellValue("Count of Operated Trains by Type*");
 
 			cell = row.createCell(2);
 			cell.setCellStyle(style6);
 			cell.setCellValue("");
 
+			for (int i = 0; i < setOfOperatedByTrainTypeThisCase.keySet().size(); i++)
+			{
+				rowCounter++;
+				row = juaComplianceTrainComparison.createRow(rowCounter);
+
+				cell = row.createCell(0);
+				cell.setCellStyle(style1);
+				if (setOfOperatedByTrainTypeThisCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]) != null)
+				{
+					cell.setCellValue(setOfOperatedByTrainTypeThisCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]));
+					thisCaseSubTotal += setOfOperatedByTrainTypeThisCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]);
+				}
+				else
+					cell.setCellValue("0");
+
+				cell = row.createCell(1);
+				cell.setCellStyle(style1);
+				cell.setCellValue(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i].toString());
+
+				cell = row.createCell(2);
+				cell.setCellStyle(style1);
+				cell.setCellValue("0");
+				if (setOfOperatedByTrainTypeLastAcceptedCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]) != null)
+				{
+					cell.setCellValue(setOfOperatedByTrainTypeLastAcceptedCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]));
+					lastAcceptedCaseSubTotal += setOfOperatedByTrainTypeLastAcceptedCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]);
+				}
+				else
+					cell.setCellValue("0");
+				
+				if (!setOfOperatedByTrainTypeThisCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i]).equals(setOfOperatedByTrainTypeLastAcceptedCase.get(setOfOperatedByTrainTypeThisCase.keySet().toArray()[i])))
+					casesAreSame = false;
+			}
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style11);
+			cell.setCellValue(thisCaseSubTotal);
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style11);
+			cell.setCellValue("Total Operated");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(lastAcceptedCaseSubTotal);
+			rowCounter++;
+			rowCounter++;
+
+			// Count of seed trains by type
+			thisCaseSubTotal = 0;
+			lastAcceptedCaseSubTotal = 0;
+
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Count of Seed Trains by Type*");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			for (int i = 0; i < setOfSeedTrainsByTypeThisCase.keySet().size(); i++)
+			{
+				rowCounter++;
+				row = juaComplianceTrainComparison.createRow(rowCounter);
+
+				cell = row.createCell(0);
+				cell.setCellStyle(style1);
+				if (setOfSeedTrainsByTypeThisCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]) != null)
+				{
+					cell.setCellValue(setOfSeedTrainsByTypeThisCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]));
+					thisCaseSubTotal += setOfSeedTrainsByTypeThisCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]);
+				}
+				else
+					cell.setCellValue("0");
+
+				cell = row.createCell(1);
+				cell.setCellStyle(style1);
+				cell.setCellValue(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i].toString());
+
+				cell = row.createCell(2);
+				cell.setCellStyle(style1);
+				cell.setCellValue("0");
+				if (setOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]) != null)
+				{
+					cell.setCellValue(setOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]));
+					lastAcceptedCaseSubTotal += setOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]);
+				}
+				else
+					cell.setCellValue("0");
+				
+				if (!setOfSeedTrainsByTypeThisCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i]).equals(setOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSeedTrainsByTypeThisCase.keySet().toArray()[i])))
+					casesAreSame = false;
+			}
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style11);
+			cell.setCellValue(thisCaseSubTotal);
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style11);
+			cell.setCellValue("Total Seed");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(lastAcceptedCaseSubTotal);
+			rowCounter++;
+			rowCounter++;
+
+			// Sum of seed trains end-to-end scheduled duration by train type
+			double thisCaseSubTotal = 0.0;
+			double lastAcceptedCaseSubTotal = 0.0;
+
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Sum of Seed Trains' End-to-End Duration by Type (DD:HH:MM:SS)^");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			for (int i = 0; i < setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().size(); i++)
+			{
+				rowCounter++;
+				row = juaComplianceTrainComparison.createRow(rowCounter);
+
+				cell = row.createCell(0);
+				cell.setCellStyle(style1);
+				if (setOfSumOfSeedTrainsByTrainTypeThisCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i]) != null)
+				{
+					cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(setOfSumOfSeedTrainsByTrainTypeThisCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i])));
+					thisCaseSubTotal += setOfSumOfSeedTrainsByTrainTypeThisCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i]);
+				}
+				else
+					cell.setCellValue("N/A");
+
+				cell = row.createCell(1);
+				cell.setCellStyle(style1);
+				cell.setCellValue(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i].toString());
+
+				cell = row.createCell(2);
+				cell.setCellStyle(style1);
+				if (setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i]) != null)
+				{
+					cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i])));
+					lastAcceptedCaseSubTotal += setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i]);
+				}
+				else
+					cell.setCellValue("N/A");
+				
+				if (!setOfSumOfSeedTrainsByTrainTypeThisCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i]).equals(setOfSumOfSeedTrainsByTrainTypeLastAcceptedCase.get(setOfSumOfSeedTrainsByTrainTypeThisCase.keySet().toArray()[i])))
+					casesAreSame = false;
+			}
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style11);
+			cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(thisCaseSubTotal));
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style11);
+			cell.setCellValue("Total Seed");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(lastAcceptedCaseSubTotal));
+			rowCounter++;
+			rowCounter++;
+
+			// Check for DIFFERENCES in duration of scheduled dwell by location for seed trains over the statistical period
+			thisCaseSubTotal = 0.0;
+			lastAcceptedCaseSubTotal = 0.0;
+
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Difference in Sum of Scheduled Dwell by Location (DD:HH:MM:SS)$");
+
+			cell = row.createCell(2);
+			cell.setCellStyle(style6);
+			cell.setCellValue("");
+
+			// Create a set of all dwell locations
+			HashSet<String> allDwellLocationsAsHashSet = new HashSet<String>();
+			allDwellLocationsAsHashSet.addAll(setOfSumOfSeedTrainDwellByLocationThisCase.keySet());
+			allDwellLocationsAsHashSet.addAll(setOfSumOfSeedTrainDwellByLocationLastAcceptedCase.keySet());
+			ArrayList<String> allDwellLocationsAsArrayList = new ArrayList<String>();
+			allDwellLocationsAsArrayList.addAll(allDwellLocationsAsHashSet);
+			Collections.sort(allDwellLocationsAsArrayList);
+
+			for (int i = 0; i <  allDwellLocationsAsArrayList.size(); i++)
+			{
+				Double thisCaseEntry = 0.0;
+				Double lastCaseEntry = 0.0;
+				if (setOfSumOfSeedTrainDwellByLocationThisCase.get(allDwellLocationsAsArrayList.get(i)) != null) 
+				{
+					thisCaseEntry = setOfSumOfSeedTrainDwellByLocationThisCase.get(allDwellLocationsAsArrayList.get(i));
+				}
+
+				if (setOfSumOfSeedTrainDwellByLocationLastAcceptedCase.get(allDwellLocationsAsArrayList.get(i)) != null) 
+				{
+					lastCaseEntry = setOfSumOfSeedTrainDwellByLocationLastAcceptedCase.get(allDwellLocationsAsArrayList.get(i));
+				}
+
+				if (thisCaseEntry.equals(lastCaseEntry))
+				{
+					continue;
+				}
+				else
+				{
+					rowCounter++;
+					row = juaComplianceTrainComparison.createRow(rowCounter);
+
+					cell = row.createCell(0);
+					cell.setCellStyle(style1); 
+					cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(thisCaseEntry));
+					thisCaseSubTotal += thisCaseEntry;
+
+					cell = row.createCell(1);
+					cell.setCellStyle(style1);
+					cell.setCellValue(allDwellLocationsAsArrayList.get(i));
+
+					cell = row.createCell(2);
+					cell.setCellStyle(style1);
+					cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(lastCaseEntry));
+					lastAcceptedCaseSubTotal += lastCaseEntry;
+					
+					casesAreSame = false;
+				}
+			}
 			rowCounter++;
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 
 			cell = row.createCell(0);
-			cell.setCellStyle(style1);
-			cell.setCellValue("0:00:00");
+			cell.setCellStyle(style11);
+			cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(thisCaseSubTotal));
 
 			cell = row.createCell(1);
-			cell.setCellStyle(style1);
-			cell.setCellValue("XXXX*");
+			cell.setCellStyle(style11);
+			cell.setCellValue("Total Seed");
 
 			cell = row.createCell(2);
-			cell.setCellStyle(style1);
-			cell.setCellValue("0:00:00");
+			cell.setCellStyle(style11);
+			cell.setCellValue(ConvertDateTime.convertSerialToDDHHMMSSString(lastAcceptedCaseSubTotal));
 			
+			// Case equality determination
+			rowCounter++;
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+
+			if (casesAreSame)
+			{
+				cell.setCellStyle(style9);
+				cell.setCellValue("Train impact is EQUIVALENT");
+			}
+			else
+			{
+				cell.setCellStyle(style8);
+				cell.setCellValue("Train impact is NOT EQUIVALENT");
+			}
+
 			// Footer notes
 			rowCounter++;
 			rowCounter++;
@@ -354,6 +622,18 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell = row.createCell(0);
 			cell.setCellStyle(style2);
 			cell.setCellValue("*Only eligible operated trains, as selected in the JUA Compliance Configuration Train Count parameters, are considered");
+
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("^Reflects the sum, by type, of each seed train's scheduled duration, for one trip, from initial origin to final destination");
+
+			rowCounter++;
+			row = juaComplianceTrainComparison.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("$Reflects the sum, by location, of each seed train's scheduled dwell, for one trip, from initial origin to final destination");
 
 			// Timestamp 
 			LocalDate creationDate = ConvertDateTime.getDateStamp();

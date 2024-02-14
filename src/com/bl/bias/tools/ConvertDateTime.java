@@ -319,6 +319,50 @@ public class ConvertDateTime
 
 		return formattedTime;
 	}
+	
+	public static String convertSerialToDDHHMMSSString(double serialTime)
+	{
+		int totalSeconds = (int) (serialTime  * 86400);
+		int days = Math.abs(totalSeconds / 86400);
+		int secondsLeft = Math.abs(totalSeconds - days * 86400);
+		int hours = Math.abs(secondsLeft / 3600);
+		secondsLeft = secondsLeft - hours * 3600;
+		int minutes = Math.abs(secondsLeft / 60);
+		secondsLeft = secondsLeft - minutes * 60;
+		int seconds = Math.abs(secondsLeft);
+
+		String formattedTime;
+		if (totalSeconds >= 0)
+			formattedTime = "";
+		else
+			formattedTime = "-";
+
+		if (days > 0)
+			formattedTime +=days +":";
+
+		if ((hours < 10) && (days > 0))
+			formattedTime += "0"+hours+":";
+		else if (hours > 0)
+			formattedTime += hours + ":";
+
+		if ((minutes < 10) && ((hours > 0) || (days>0)))
+			formattedTime += "0"+minutes+":";
+		else if (minutes > 0)
+			formattedTime += minutes + ":";
+
+		if ((seconds < 10) && ((minutes > 0) || (hours > 0) || (days > 0)))
+			formattedTime += "0"+seconds;
+		else if ((seconds > 0) && ((minutes > 0) || (hours > 0) || (days > 0)))
+			formattedTime += seconds ;
+		else if ((seconds > 0) && (seconds < 10))
+			formattedTime += "0:0"+seconds;
+		else if (seconds > 0)
+			formattedTime += "0:"+seconds;
+		else 
+			formattedTime = "0";
+
+		return formattedTime;
+	}
 
 	public static String convertSerialToHHMMString(double serialTime)
 	{

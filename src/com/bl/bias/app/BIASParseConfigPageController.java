@@ -3382,7 +3382,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("t_departureTime", null) == null)
 		{
 			// Write value for subsequent runs
-			t_departureTime = "30,42";
+			t_departureTime = "29,41";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("t_departureTime", t_departureTime);
 		}

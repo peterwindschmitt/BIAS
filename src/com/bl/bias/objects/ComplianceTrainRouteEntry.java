@@ -6,7 +6,7 @@ public class ComplianceTrainRouteEntry
 	private String arrivalTime;
 	private String departureTime;
 	private String minimumDwellTime;
-
+	
 	public ComplianceTrainRouteEntry(String node, String arrivalTime, String departureTime, String minimumDwellTime) 
 	{
 		this.node = node;

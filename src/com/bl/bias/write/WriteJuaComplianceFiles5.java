@@ -54,7 +54,7 @@ public class WriteJuaComplianceFiles5 extends WriteJuaComplianceFiles2
 			CellStyle style11 = workbook.createCellStyle();
 
 			XSSFSheet juaComplianceSlowOrders;
-			juaComplianceSlowOrders = workbook.createSheet("Slow Orders");
+			juaComplianceSlowOrders = workbook.createSheet("Slow Order Comparison");
 			juaComplianceSlowOrders.setDisplayGridlines(false);
 			resultsMessage += "\nWriting slow order assessment";
 
