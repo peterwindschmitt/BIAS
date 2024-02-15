@@ -386,7 +386,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			cell.setCellValue(lastAcceptedCaseSubTotal);
 			rowCounter++;
 			rowCounter++;
-
+			
 			// Count of seed trains by type
 			thisCaseSubTotal = 0;
 			lastAcceptedCaseSubTotal = 0;

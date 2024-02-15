@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.bl.bias.app.BIASJuaComplianceConfigController;
 import com.bl.bias.objects.CompliancePermit;
@@ -75,6 +76,8 @@ public class AnalyzeJuaComplianceFiles
 	private static HashMap<String, Double> sumOfSeedDurationsByTypeThisCase = new HashMap<>();
 	private static HashMap<String, Double> sortedSumOfSeedDurationsByTypeThisCase = new HashMap<>();
 	private static HashMap<String, Double> sumOfSeedDurationsByTypeLastAcceptedCase = new HashMap<>();
+	private static HashMap<String, Integer> trainsOperatedThisCase = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> trainsOperatedLastAcceptedCase = new HashMap<String, Integer>();
 
 	// Collections - nodes
 	private static ArrayList<String> brightlineNodesFromConfigFile = new ArrayList<String>();
@@ -100,6 +103,7 @@ public class AnalyzeJuaComplianceFiles
 		{
 			// Clear collections of/used by trains
 			trainsToAnalyzeForComplianceThisCase.clear();
+			trainsToAnalyzeForComplianceLastAcceptedCase.clear();
 			seedTrainsFoundEligibleThisCase.clear();
 			seedTrainsFoundNotEligibleThisCase.clear();
 			seedTrainSymbolsFoundEligibleThisCase.clear();
@@ -119,6 +123,9 @@ public class AnalyzeJuaComplianceFiles
 
 			operatedTrainsByTypeThisCase.clear();
 			operatedTrainsByTypeLastAcceptedCase.clear();
+
+			trainsOperatedThisCase.clear();
+			trainsOperatedLastAcceptedCase.clear();
 
 			allTrainTypesFromConfigFile.clear();
 
@@ -185,6 +192,12 @@ public class AnalyzeJuaComplianceFiles
 				operatedTrainsByTypeThisCase.put(allTrainTypesFromConfigFile.get(i), 0);
 				seedTrainsByTypeThisCase.put(allTrainTypesFromConfigFile.get(i), 0);
 				seedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(i), 0);
+			}
+
+			// Add all train symbols to a HashMap for this case 
+			for (int i = 0; i < trainsToAnalyzeForComplianceThisCase.size(); i++)
+			{
+				trainsOperatedThisCase.put(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol(), 0);
 			}
 
 			// Determine statistical simulation days (as integers)
@@ -427,10 +440,15 @@ public class AnalyzeJuaComplianceFiles
 											{
 												if (train.getType().equals(allTrainTypesFromConfigFile.get(k)))
 												{
-													// Increment hashmap entry by 1
+													// Increment hashmap entry by 1 for by type
 													int oldValue = operatedTrainsByTypeThisCase.get(allTrainTypesFromConfigFile.get(k));
 													int newValue = oldValue + 1;
 													operatedTrainsByTypeThisCase.put(allTrainTypesFromConfigFile.get(k), newValue);
+
+													// Increment hashmap entry by 1 for by symbol
+													oldValue = trainsOperatedThisCase.get(train.getSymbol());
+													newValue = oldValue + 1;
+													trainsOperatedThisCase.put(train.getSymbol(), newValue);
 												}
 											}
 										}
@@ -454,10 +472,15 @@ public class AnalyzeJuaComplianceFiles
 											{
 												if (trainsToAnalyzeForComplianceThisCase.get(i).getType().equals(allTrainTypesFromConfigFile.get(k)))
 												{
-													// Increment hashmap entry by 1
+													// Increment hashmap entry by 1 by type 
 													int oldValue = operatedTrainsByTypeThisCase.get(allTrainTypesFromConfigFile.get(k));
 													int newValue = oldValue + 1;
 													operatedTrainsByTypeThisCase.put(allTrainTypesFromConfigFile.get(k), newValue);
+
+													// Increment hashmap entry by 1 for by symbol
+													oldValue = trainsOperatedThisCase.get(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
+													newValue = oldValue + 1;
+													trainsOperatedThisCase.put(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol(), newValue);
 												}
 											}
 										}
@@ -493,7 +516,7 @@ public class AnalyzeJuaComplianceFiles
 			brightlineNodesFromConfigFile.clear();
 			fecNodesFromConfigFile.clear();
 			triRailNodesFromConfigFile.clear();
-			
+
 			// Populate all arrays with necessary objects
 			trainsToAnalyzeForComplianceLastAcceptedCase.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase());
 
@@ -534,6 +557,12 @@ public class AnalyzeJuaComplianceFiles
 				triRailNodesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailNodes()[i].trim());
 			}
 
+			// Add all train symbols to a HashMap for last accepted case 
+			for (int i = 0; i < trainsToAnalyzeForComplianceLastAcceptedCase.size(); i++)
+			{
+				trainsOperatedLastAcceptedCase.put(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol(), 0);
+			}
+
 			// Determine statistical simulation days (as integers)
 			totalCountOfBrightlineOperatedTrainsLastAcceptedCase = 0;
 			totalCountOfFecOperatedTrainsLastAcceptedCase = 0;
@@ -548,7 +577,7 @@ public class AnalyzeJuaComplianceFiles
 			{
 				operatedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(i), 0);
 			}
-			
+
 			// For each train
 			for (int i = 0; i < trainsToAnalyzeForComplianceLastAcceptedCase.size(); i++)
 			{
@@ -682,7 +711,7 @@ public class AnalyzeJuaComplianceFiles
 									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
 									{
 										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+												&& (train.getDaysOfOperationAsInteger().get(j) < statisticalEndDay)) 
 										{
 											totalCountOfFecOperatedTrainsLastAcceptedCase++;
 											// Train is eligible so remove from the ineligible list
@@ -772,7 +801,7 @@ public class AnalyzeJuaComplianceFiles
 									for (int j = 0; j < train.getDaysOfOperationAsInteger().size(); j++)
 									{
 										if ((train.getDaysOfOperationAsInteger().get(j) >= statisticalStartDay) 
-												&& (train.getDaysOfOperationAsInteger().get(j) <= statisticalEndDay)) 
+												&& (train.getDaysOfOperationAsInteger().get(j) < statisticalEndDay)) 
 										{
 											totalCountOfTriRailOperatedTrainsLastAcceptedCase++;
 											// Train is eligible so remove from the ineligible list
@@ -783,10 +812,15 @@ public class AnalyzeJuaComplianceFiles
 											{
 												if (train.getType().equals(allTrainTypesFromConfigFile.get(k)))
 												{
-													// Increment hashmap entry by 1
+													// Increment hashmap entry by 1 for by type
 													int oldValue = operatedTrainsByTypeLastAcceptedCase.get(allTrainTypesFromConfigFile.get(k));
 													int newValue = oldValue + 1;
 													operatedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(k), newValue);
+
+													// Increment hashmap entry by 1 for by symbol
+													oldValue = trainsOperatedLastAcceptedCase.get(train.getSymbol());
+													newValue = oldValue + 1;
+													trainsOperatedLastAcceptedCase.put(train.getSymbol(), newValue);
 												}
 											}
 										}
@@ -810,10 +844,15 @@ public class AnalyzeJuaComplianceFiles
 											{
 												if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().equals(allTrainTypesFromConfigFile.get(k)))
 												{
-													// Increment hashmap entry by 1
+													// Increment hashmap entry by 1 for by type
 													int oldValue = operatedTrainsByTypeLastAcceptedCase.get(allTrainTypesFromConfigFile.get(k));
 													int newValue = oldValue + 1;
 													operatedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(k), newValue);
+
+													// Increment hashmap entry by 1 for by symbol
+													oldValue = trainsOperatedLastAcceptedCase.get(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
+													newValue = oldValue + 1;
+													trainsOperatedLastAcceptedCase.put(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol(), newValue);
 												}
 											}
 										}
@@ -824,7 +863,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 			}
-			
+
 			// Check sum of end-to-end scheduled duration 
 			// Set all train types to cumulative zero duration
 			for (int i = 0; i < allTrainTypesFromConfigFile.size(); i++)
@@ -926,7 +965,7 @@ public class AnalyzeJuaComplianceFiles
 				}
 				sumOfSeedDurationsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(i), durationForThisTypeInLastAcceptedCase);
 			}
-			
+
 			// Check sum of scheduled dwell by location 
 			// Set all locations to cumulative zero duration this case
 			HashSet<String> thisCaseScheduledDwellLocationsHashSet = new HashSet<String>();
@@ -960,7 +999,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 			}
-			
+
 			// Set all locations to cumulative zero duration last accepted case
 			HashSet<String> lastCaseScheduledDwellLocationsHashSet = new HashSet<String>();
 			ArrayList<String> lastAcceptedCaseScheduledDwellLocationsArrayList = new ArrayList<String>();
@@ -993,7 +1032,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 			}
-			
+
 			// Sort operated trains by type
 			ArrayList<Integer> listInteger = new ArrayList<>();
 			LinkedHashMap<String, Integer> sortedMapInteger = new LinkedHashMap<>();
@@ -1029,7 +1068,7 @@ public class AnalyzeJuaComplianceFiles
 				}
 			}
 			sortedSeedTrainsByTypeThisCase = sortedMapInteger;
-		
+
 			// Sort seed train durations by type
 			ArrayList<Double> listDouble = new ArrayList<>();
 			LinkedHashMap<String, Double> sortedMapDouble = new LinkedHashMap<>();
@@ -1047,14 +1086,14 @@ public class AnalyzeJuaComplianceFiles
 				}
 			}
 			sortedSumOfSeedDurationsByTypeThisCase = sortedMapDouble;
-			
+
 			resultsMessage += "Found "+seedTrainsFoundEligibleLastAcceptedCase.size()+" eligible seed trains in the last approved .TRAIN file:\n";
 			resultsMessage += "  yielding "+totalCountOfBrightlineOperatedTrainsLastAcceptedCase+" dispatched Brightline trains operated during the statistical period in the last approved .TRAIN file\n";
 			resultsMessage += "  yielding "+totalCountOfFecOperatedTrainsLastAcceptedCase+" dispatched FEC trains operated during the statistical period in the last approved .TRAIN file\n";
 			resultsMessage += "  yielding "+totalCountOfTriRailOperatedTrainsLastAcceptedCase+" dispatched TriRail trains operated during the statistical period in the last approved .TRAIN file\n";
 			resultsMessage += "Found "+seedTrainsFoundNotEligibleLastAcceptedCase.size()+" other seed trains in the last approved .TRAIN file\n\n";
 		}
-		
+
 		// Permits - Common
 		if (BIASJuaComplianceConfigController.getCheckPermitsEnabled())
 		{
@@ -1829,6 +1868,16 @@ public class AnalyzeJuaComplianceFiles
 	public static ArrayList<String> getAllTrainTypesFromAnalysisFile()
 	{
 		return allTrainTypesFromConfigFile;
+	}
+	
+	public static HashMap<String, Integer> getTrainsOperatedThisCase()
+	{
+		return trainsOperatedThisCase;
+	}
+	
+	public static HashMap<String, Integer> getTrainsOperatedLastAcceptedCase()
+	{
+		return trainsOperatedLastAcceptedCase;
 	}
 
 	public static String getResultsMessage()
