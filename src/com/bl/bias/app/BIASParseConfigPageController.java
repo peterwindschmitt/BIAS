@@ -47,6 +47,7 @@ public class BIASParseConfigPageController
 	private static String l_linkDestinationNode;
 	private static String l_linkClass;
 	private static String l_linkDirection;
+	private static String l_linkDistance;
 	private static String l_linkMaxPassengerSpeed;
 	private static String l_linkMaxThroughSpeed;
 	private static String l_linkMaxLocalSpeed;
@@ -476,6 +477,7 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Link Destination Node", "l_linkDestinationNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])),
 				new ParseLocationFormatB("Link Class", "l_linkClass", Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])),
 				new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1])),
+				new ParseLocationFormatB("Link Distance", "l_linkDistance", Integer.valueOf(BIASParseConfigPageController.l_getLinkDistance()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDistance()[1])),
 				new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1])),
 				new ParseLocationFormatB("Link Max Through Speed", "l_linkMaxThroughSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(l_getLinkMaxThroughSpeed()[1])),
 				new ParseLocationFormatB("Link Max Local Speed", "l_linkMaxLocalSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(l_getLinkMaxLocalSpeed()[1]))
@@ -958,6 +960,7 @@ public class BIASParseConfigPageController
 			prefs.remove("l_linkDestinationNode");
 			prefs.remove("l_linkClass");
 			prefs.remove("l_linkDirection");
+			prefs.remove("l_linkDistance");
 			prefs.remove("l_linkMaxPassengerSpeed");
 			prefs.remove("l_linkMaxThroughSpeed");
 			prefs.remove("l_linkMaxLocalSpeed");
@@ -1195,6 +1198,7 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Link Destination Node", "l_linkDestinationNode", Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDestinationNode()[1])),
 					new ParseLocationFormatB("Link Class", "l_linkClass", Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkClass()[1])),
 					new ParseLocationFormatB("Link Direction", "l_linkDirection", Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDirection()[1])),
+					new ParseLocationFormatB("Link Distance", "l_linkDistance", Integer.valueOf(BIASParseConfigPageController.l_getLinkDistance()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDistance()[1])),
 					new ParseLocationFormatB("Link Max Passenger Speed", "l_linkMaxPassengerSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(l_getLinkMaxPassengerSpeed()[1])),
 					new ParseLocationFormatB("Link Max Through Speed", "l_linkMaxThroughSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(l_getLinkMaxThroughSpeed()[1])),
 					new ParseLocationFormatB("Link Max Local Speed", "l_linkMaxLocalSpeed", Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(l_getLinkMaxLocalSpeed()[1]))
@@ -3141,6 +3145,15 @@ public class BIASParseConfigPageController
 				prefs.put("l_linkDirection", l_linkDirection);
 		}
 
+		// Link distance
+		if (prefs.get("l_linkDistance", null) == null)
+		{
+			// Write value for subsequent runs
+			l_linkDistance = "71,80";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("l_linkDistance", l_linkDistance);
+		}
+
 		// Link max passenger speed
 		if (prefs.get("l_linkMaxPassengerSpeed", null) == null)
 		{
@@ -4697,6 +4710,12 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("l_linkDirection", l_linkDirection).split(",");
 		return values;
 	}
+	
+	public static String[] l_getLinkDistance()
+	{
+		String[] values = prefs.get("l_linkDistance", l_linkDistance).split(",");
+		return values;
+	}
 
 	public static String[] l_getLinkMaxPassengerSpeed()
 	{
@@ -4847,19 +4866,19 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("t_linkedAtOrigin", t_linkedAtOrigin).split(",");
 		return values;
 	}
-	
+
 	public static String[] t_getArrivalTime()
 	{
 		String[] values = prefs.get("t_arrivalTime", t_arrivalTime).split(",");
 		return values;
 	}
-	
+
 	public static String[] t_getDepartureTime()
 	{
 		String[] values = prefs.get("t_departureTime", t_departureTime).split(",");
 		return values;
 	}
-	
+
 	public static String[] t_getMinimumDwellTime()
 	{
 		String[] values = prefs.get("t_minimumDwellTime", t_minimumDwellTime).split(",");

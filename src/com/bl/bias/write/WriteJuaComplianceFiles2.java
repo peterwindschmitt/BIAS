@@ -265,9 +265,8 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			lastAcceptedCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase();
 			rowCounter++;
 			
-			if (AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase() != AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase())
+			if (!AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsThisCase().equals(AnalyzeJuaComplianceFiles.getTotalCountOfBrightlineOperatedTrainsLastAcceptedCase()))
 				casesAreSame = false;
-			
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style1);
@@ -284,9 +283,8 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			lastAcceptedCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase();
 			rowCounter++;
 			
-			if (AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase() != AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase())
+			if (!AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsThisCase().equals(AnalyzeJuaComplianceFiles.getTotalCountOfFecOperatedTrainsLastAcceptedCase()))
 				casesAreSame = false;
-			
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style1);
@@ -303,9 +301,8 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 			lastAcceptedCaseSubTotal += AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase();
 			rowCounter++;
 			
-			if (AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase() != AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase())
+			if (!AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsThisCase().equals(AnalyzeJuaComplianceFiles.getTotalCountOfTriRailOperatedTrainsLastAcceptedCase()))
 				casesAreSame = false;
-			
 			row = juaComplianceTrainComparison.createRow(rowCounter);
 			cell = row.createCell(0);
 			cell.setCellStyle(style11);

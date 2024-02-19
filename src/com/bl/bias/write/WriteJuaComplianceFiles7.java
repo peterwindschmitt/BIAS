@@ -11,12 +11,12 @@ import com.bl.bias.app.BIASJuaComplianceController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteJuaComplianceFiles9 extends WriteJuaComplianceFiles5
+public class WriteJuaComplianceFiles7 extends WriteJuaComplianceFiles6
 {
-	String resultsMessage = getResultsMessageWrite5();
+	String resultsMessage = getResultsMessageWrite6();
 	static Boolean error = false;
 	
-	public WriteJuaComplianceFiles9(String textArea, String fullyQualifiedPath)
+	public WriteJuaComplianceFiles7(String textArea, String fullyQualifiedPath)
 	{
 		super(textArea, fullyQualifiedPath);
 	
@@ -61,7 +61,7 @@ public class WriteJuaComplianceFiles9 extends WriteJuaComplianceFiles5
 	    }		
 	}
 	
-	public String getResultsWriteMessage9()
+	public String getResultsWriteMessage7()
 	{
 		return resultsMessage;
 	}

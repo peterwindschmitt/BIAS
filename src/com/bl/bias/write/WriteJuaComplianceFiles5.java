@@ -416,7 +416,7 @@ public class WriteJuaComplianceFiles5 extends WriteJuaComplianceFiles2
 				}
 				else if (i == 1)
 				{
-					juaComplianceSlowOrders.setColumnWidth(i, 6000);
+					juaComplianceSlowOrders.setColumnWidth(i, 7000);
 				}
 				else if (i == 2)
 				{

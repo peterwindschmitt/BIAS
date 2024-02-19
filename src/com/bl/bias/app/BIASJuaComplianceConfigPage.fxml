@@ -159,7 +159,7 @@
                                                 <Insets left="15.0" right="10.0" top="15.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label text="2.  Check against the last accepted .TRAIN file of:" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                                          <Label fx:id="checkLastAcceptedTrainFileLabel" text="2.  Check against the last accepted .TRAIN file of:" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="TOP">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
@@ -342,7 +342,7 @@
                                    </GridPane>
                              </content>
                               </Tab>
-                              <Tab disable="true" text="Track">
+                              <Tab text="Track">
                                  <content>
                                     <GridPane disable="true">
                                        <columnConstraints>
@@ -368,7 +368,7 @@
                                           <RowConstraints minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <CheckBox minWidth="400.0" mnemonicParsing="false" prefWidth="0.0" text="1.  Comparing .LINK files, check that the enabled:" GridPane.columnSpan="4">
+                                          <CheckBox fx:id="analyzeLinksCheckBox" minWidth="400.0" mnemonicParsing="false" onAction="#handleAnalyzeLinksCheckBox" prefWidth="0.0" text="1.  Comparing .LINK files, check that the enabled:" GridPane.columnSpan="4">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
@@ -386,19 +386,14 @@
                                                 <Insets left="15.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <CheckBox minWidth="400.0" mnemonicParsing="false" prefWidth="0.0" text="Sum of speed * track miles is the same for all Train Groups" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <CheckBox minWidth="400.0" mnemonicParsing="false" prefWidth="0.0" text="Only consider enabled links" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </CheckBox>
+                                          <CheckBox disable="true" minWidth="400.0" mnemonicParsing="false" prefWidth="0.0" selected="true" text="Sum of speed * track miles is the same for all Train Groups" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <Label text="Check against the last accepted .LINK file of:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                                          <Label maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.rowSpan="3" GridPane.valignment="TOP">
+                                          <Label fx:id="lastAcceptedLinksFileLocationLabel" maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.rowSpan="3" GridPane.valignment="TOP">
                                              <GridPane.margin>
                                                 <Insets left="-10.0" top="4.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Button mnemonicParsing="false" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                                          <Button fx:id="updateLastAcceptedLinksFileButton" mnemonicParsing="false" onAction="#handleUpdateLastAcceptedLinksFileButton" text="Update Last Accepted File" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
@@ -409,11 +404,6 @@
                               </Tab>
                            </tabs>
                         </TabPane>
-                     </content>
-                  </Tab>
-                  <Tab disable="true" text="Operating Results">
-                     <content>
-                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
                      </content>
                   </Tab>
               </tabs>

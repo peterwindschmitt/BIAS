@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.bl.bias.app.BIASJuaComplianceConfigController;
+import com.bl.bias.objects.ComplianceLink;
 import com.bl.bias.objects.CompliancePermit;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.read.ReadJuaComplianceFiles;
@@ -45,6 +45,18 @@ public class AnalyzeJuaComplianceFiles
 	private static Double hoursMilesLastAcceptedCase = 0.0;
 	private static Integer permitsConsideredThisCase = 0;
 	private static Integer permitsConsideredLastAcceptedCase = 0;
+
+	// Link statistics
+	private static Double milesOfTrackThisCase = 0.0;
+	private static Double milesOfTrackLastAcceptedCase = 0.0;
+	private static Double passengerSpeedMilesThisCase = 0.0;
+	private static Double passengerSpeedMilesLastAcceptedCase = 0.0;
+	private static Double throughSpeedMilesThisCase = 0.0;
+	private static Double throughSpeedMilesLastAcceptedCase = 0.0;
+	private static Double localSpeedMilesThisCase = 0.0;
+	private static Double localSpeedMilesLastAcceptedCase = 0.0;
+	private static Integer linkCountThisCase = 0;
+	private static Integer linkCountLastAcceptedCase = 0;
 
 	// Statistical Period
 	private static Integer statisticalStartDay; 
@@ -91,6 +103,10 @@ public class AnalyzeJuaComplianceFiles
 	// Collections - locations
 	private static HashMap<String, Double> sumOfSeedTrainDwellByLocationThisCase = new HashMap<>();
 	private static HashMap<String, Double> sumOfSeedTrainDwellByLocationLastAcceptedCase = new HashMap<>();
+
+	// Collections - links
+	private static ArrayList<ComplianceLink> linksToAnalyzeForThisCase = new ArrayList<ComplianceLink>();
+	private static ArrayList<ComplianceLink> linksToAnalyzeForLastAcceptedCase = new ArrayList<ComplianceLink>();
 
 	Boolean debug = false;
 
@@ -1159,7 +1175,7 @@ public class AnalyzeJuaComplianceFiles
 						else
 							resultsMessage += BIASJuaComplianceConfigController.getBridgeMps()[i]+", ";
 					}
-					resultsMessage += "\n";
+					resultsMessage += "\n\n";
 				}
 
 				// Permits - This case
@@ -1640,6 +1656,46 @@ public class AnalyzeJuaComplianceFiles
 			}
 		}
 
+		// Links - Common
+		if (BIASJuaComplianceConfigController.getAnalyzeLinks())
+		{
+			linksToAnalyzeForThisCase.clear();
+			linksToAnalyzeForLastAcceptedCase.clear();
+			linksToAnalyzeForThisCase.addAll(ReadJuaComplianceFiles.getLinksToAnalyzeThisCase());
+			linksToAnalyzeForLastAcceptedCase.addAll(ReadJuaComplianceFiles.getLinksToAnalyzeLastAcceptedCase());
+
+			resultsMessage += "Found " + linksToAnalyzeForThisCase.size() + " links in this case's .LINK file and " + linksToAnalyzeForLastAcceptedCase.size() + " links in the last accepted .LINK file\n";
+			resultsMessage += "Calculating sum of miles multiplied by speed for track classes\n";
+
+			// Compute miles of links, and miles * speed for three train groups
+			milesOfTrackThisCase = 0.0;
+			milesOfTrackLastAcceptedCase = 0.0;
+			passengerSpeedMilesThisCase = 0.0;
+			passengerSpeedMilesLastAcceptedCase = 0.0;
+			throughSpeedMilesThisCase = 0.0;
+			throughSpeedMilesLastAcceptedCase = 0.0;
+			localSpeedMilesThisCase = 0.0;
+			localSpeedMilesLastAcceptedCase = 0.0;
+			linkCountThisCase = linksToAnalyzeForThisCase.size();
+			linkCountLastAcceptedCase = linksToAnalyzeForLastAcceptedCase.size();
+			
+			for (int i = 0; i < linkCountThisCase; i++)
+			{
+				milesOfTrackThisCase += linksToAnalyzeForThisCase.get(i).getLinkDistance();
+				passengerSpeedMilesThisCase += (linksToAnalyzeForThisCase.get(i).getLinkDistance() * linksToAnalyzeForThisCase.get(i).getPassengerSpeed());
+				throughSpeedMilesThisCase += (linksToAnalyzeForThisCase.get(i).getLinkDistance() * linksToAnalyzeForThisCase.get(i).getThroughSpeed());
+				localSpeedMilesThisCase += (linksToAnalyzeForThisCase.get(i).getLinkDistance() * linksToAnalyzeForThisCase.get(i).getLocalSpeed());
+			}
+			
+			for (int i = 0; i < linkCountLastAcceptedCase; i++)
+			{
+				milesOfTrackLastAcceptedCase += linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance();
+				passengerSpeedMilesLastAcceptedCase += (linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance() * linksToAnalyzeForLastAcceptedCase.get(i).getPassengerSpeed());
+				throughSpeedMilesLastAcceptedCase += (linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance() * linksToAnalyzeForLastAcceptedCase.get(i).getThroughSpeed());
+				localSpeedMilesLastAcceptedCase += (linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance() * linksToAnalyzeForLastAcceptedCase.get(i).getLocalSpeed());
+			}
+		}
+
 		resultsMessage += "Finished analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+("\n");
 	}
 
@@ -1844,7 +1900,57 @@ public class AnalyzeJuaComplianceFiles
 	{
 		return  permitsConsideredLastAcceptedCase;
 	}
-
+	
+	public static Integer getLinkCountThisCase()
+	{
+		return linkCountThisCase;
+	}
+	
+	public static Integer getLinkCountLastAcceptedCase()
+	{
+		return linkCountLastAcceptedCase;
+	}
+	
+	public static Double getMilesOfTrackThisCase()
+	{
+		return milesOfTrackThisCase;
+	}
+	
+	public static Double getMilesOfTrackLastAcceptedCase()
+	{
+		return milesOfTrackLastAcceptedCase;
+	}
+	
+	public static Double getPassengerSpeedMilesThisCase()
+	{
+		return passengerSpeedMilesThisCase;
+	}
+	
+	public static Double getPassengerSpeedMilesLastAcceptedCase()
+	{
+		return passengerSpeedMilesLastAcceptedCase;
+	}
+	
+	public static Double getThroughSpeedMilesThisCase()
+	{
+		return throughSpeedMilesThisCase;
+	}
+	
+	public static Double getThroughSpeedMilesLastAcceptedCase()
+	{
+		return throughSpeedMilesLastAcceptedCase;
+	}
+	
+	public static Double getLocalSpeedMilesThisCase()
+	{
+		return localSpeedMilesThisCase;
+	}
+	
+	public static Double getLocalSpeedMilesLastAcceptedCase()
+	{
+		return localSpeedMilesLastAcceptedCase;
+	}
+	
 	public static HashMap<String, Integer> getSortedSeedTrainsByTypeThisCase()
 	{
 		return sortedSeedTrainsByTypeThisCase;
@@ -1869,12 +1975,12 @@ public class AnalyzeJuaComplianceFiles
 	{
 		return allTrainTypesFromConfigFile;
 	}
-	
+
 	public static HashMap<String, Integer> getTrainsOperatedThisCase()
 	{
 		return trainsOperatedThisCase;
 	}
-	
+
 	public static HashMap<String, Integer> getTrainsOperatedLastAcceptedCase()
 	{
 		return trainsOperatedLastAcceptedCase;

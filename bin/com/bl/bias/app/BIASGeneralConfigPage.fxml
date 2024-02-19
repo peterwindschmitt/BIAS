@@ -100,7 +100,7 @@
             </Label>
             <Label text="Date/Time Format in .SUMMARY files  to DD:HH:MM:SS" GridPane.rowIndex="11" GridPane.valignment="TOP">
                <GridPane.margin>
-                  <Insets left="32.0" />
+                  <Insets left="32.0" top="2.0" />
                </GridPane.margin>
             </Label>
             <Label text="Any .INI File Settings" GridPane.halignment="LEFT" GridPane.rowIndex="7">

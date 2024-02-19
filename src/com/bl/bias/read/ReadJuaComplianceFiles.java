@@ -9,6 +9,7 @@ import java.util.Scanner;
 import com.bl.bias.app.BIASJuaComplianceConfigController;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.objects.ComplianceLink;
 import com.bl.bias.objects.CompliancePermit;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.objects.ComplianceTrainRouteEntry;
@@ -17,9 +18,11 @@ import com.bl.bias.tools.ConvertDateTime;
 public class ReadJuaComplianceFiles
 {
 	private static ArrayList<ComplianceTrain> complianceTrainsThisCase = new ArrayList<ComplianceTrain>();
-	private static ArrayList<ComplianceTrain> complianceTrainsLastAcceptedCase = new ArrayList<ComplianceTrain>();
-	private static ArrayList<CompliancePermit> compliancePermitsThisCase = new ArrayList<CompliancePermit>();
+	private static ArrayList<ComplianceTrain> comparisonTrainsLastAcceptedCase = new ArrayList<ComplianceTrain>();
+	private static ArrayList<CompliancePermit> comparisonPermitsThisCase = new ArrayList<CompliancePermit>();
 	private static ArrayList<CompliancePermit> compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
+	private static ArrayList<ComplianceLink> comparisonLinksThisCase = new ArrayList<ComplianceLink>();
+	private static ArrayList<ComplianceLink> comparisonLinksLastAcceptedCase = new ArrayList<ComplianceLink>();
 
 	private static String resultsMessage;
 
@@ -31,14 +34,16 @@ public class ReadJuaComplianceFiles
 	static String coolDownExclusion = null;
 	static String simulationBeginTime = null;
 
-	public ReadJuaComplianceFiles(String fileOfCaseBeingChecked, Boolean checkTrainCount, Boolean checkPermits) throws IOException
+	public ReadJuaComplianceFiles(String fileOfCaseBeingChecked, Boolean checkTrainCount, Boolean checkPermits, Boolean checkLinks) throws IOException
 	{
 		resultsMessage = "\nStarted parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n";
 
 		complianceTrainsThisCase.clear();
-		complianceTrainsLastAcceptedCase.clear();
-		compliancePermitsThisCase.clear();
+		comparisonTrainsLastAcceptedCase.clear();
+		comparisonPermitsThisCase.clear();
 		compliancePermitsLastAcceptedCase.clear();
+		comparisonLinksThisCase.clear();
+		comparisonLinksLastAcceptedCase.clear();
 
 		// Read in .OPTION file with Scanner
 		Scanner scannerOption = null;
@@ -223,7 +228,7 @@ public class ReadJuaComplianceFiles
 				}
 
 				// Last accepted train file 
-				if ((BIASJuaComplianceConfigController.getLastAcceptedTrainFileAsString() != null) && (BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile()))
+				if ((BIASJuaComplianceConfigController.getLastAcceptedTrainFileExists()) && (BIASJuaComplianceConfigController.getLastAcceptedTrainFileAsString() != null) && (BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile()))
 				{
 					File trainFileOfLastAcceptedCase = new File(BIASJuaComplianceConfigController.getLastAcceptedTrainFileAsString());
 					scannerTrain = new Scanner(trainFileOfLastAcceptedCase);
@@ -316,7 +321,7 @@ public class ReadJuaComplianceFiles
 								inRouteNodeSection = false;
 
 								ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, routeEntries, daysOfOperationAsInteger);
-								complianceTrainsLastAcceptedCase.add(train);	
+								comparisonTrainsLastAcceptedCase.add(train);	
 							}
 							else if (inRouteNodeSection) // Route node
 							{
@@ -350,20 +355,34 @@ public class ReadJuaComplianceFiles
 
 			}
 
-
-			// Permit Compliance Checks
-			if (checkPermits)
+			// Permit Comparison Checks
+			if ((checkPermits) && (BIASJuaComplianceConfigController.getLastAcceptedTrainFileExists()))
 			{
 				// Read in permits of case being checked
-				compliancePermitsThisCase = new ArrayList<CompliancePermit>();
-				compliancePermitsThisCase.addAll(retrievePermits(new File(fileOfCaseBeingChecked.replace("OPTION","PERMIT"))));
+				comparisonPermitsThisCase = new ArrayList<CompliancePermit>();
+				comparisonPermitsThisCase.addAll(retrievePermits(new File(fileOfCaseBeingChecked.replace("OPTION","PERMIT"))));
 
 				// Read in permits of last accepted .permit file
 				compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
 				compliancePermitsLastAcceptedCase.addAll(retrievePermits(new File(BIASJuaComplianceConfigController.getLastAcceptedPermitFileAsString())));
 
-				resultsMessage += "Extracted data from " + ((compliancePermitsThisCase.size() + compliancePermitsLastAcceptedCase.size()) * 9)+" objects from both .PERMIT files\n";
+				resultsMessage += "Extracted data from " + ((comparisonPermitsThisCase.size() + compliancePermitsLastAcceptedCase.size()) * 9)+" objects from both .PERMIT files\n";
 			}
+			
+			// Link Comparison Checks
+			if ((checkLinks) && (BIASJuaComplianceConfigController.getLastAcceptedLinkFileExists()))
+			{
+				// Read in permits of case being checked
+				comparisonLinksThisCase = new ArrayList<ComplianceLink>();
+				comparisonLinksThisCase.addAll(retrieveLinks(new File(fileOfCaseBeingChecked.replace("OPTION","LINK"))));
+
+				// Read in permits of last accepted .permit file
+				comparisonLinksLastAcceptedCase = new ArrayList<ComplianceLink>();
+				comparisonLinksLastAcceptedCase.addAll(retrieveLinks(new File(BIASJuaComplianceConfigController.getLastAcceptedLinkFileAsString())));
+
+				resultsMessage += "Extracted data from " + ((comparisonLinksThisCase.size() + comparisonLinksLastAcceptedCase.size()) * 4)+" objects from both .LINK files\n";
+			}
+						
 			resultsMessage += "Finished parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 		}
 		else
@@ -380,17 +399,27 @@ public class ReadJuaComplianceFiles
 
 	public static ArrayList<ComplianceTrain> getTrainsToAnalyzeLastAcceptedCase()
 	{
-		return complianceTrainsLastAcceptedCase;
+		return comparisonTrainsLastAcceptedCase;
 	}
 
 	public static ArrayList<CompliancePermit> getPermitsToAnalyzeThisCase()
 	{
-		return compliancePermitsThisCase;
+		return comparisonPermitsThisCase;
 	}
 
 	public static ArrayList<CompliancePermit> getPermitsToAnalyzeLastAcceptedCase()
 	{
 		return compliancePermitsLastAcceptedCase;
+	}
+	
+	public static ArrayList<ComplianceLink> getLinksToAnalyzeThisCase() 
+	{
+		return comparisonLinksThisCase;
+	}
+	
+	public static ArrayList<ComplianceLink> getLinksToAnalyzeLastAcceptedCase() 
+	{
+		return comparisonLinksLastAcceptedCase;
 	}
 
 	public Boolean getFormattedCorrectly()
@@ -500,6 +529,48 @@ public class ReadJuaComplianceFiles
 		return permits;
 	}
 
+	private ArrayList<ComplianceLink> retrieveLinks(File linkFile) throws FileNotFoundException
+	{
+		ArrayList<ComplianceLink> links = new ArrayList<ComplianceLink>();
+		Scanner scannerLink = new Scanner(linkFile);
+		try 
+		{
+			String targetSequence0 = "xxxxxxxxxxxxxxxxxxxx";
+
+			Boolean firstLinkFound = false;
+
+			while (scannerLink.hasNextLine()) 
+			{
+				String lineFromLinkFile = scannerLink.nextLine();
+				if ((lineFromLinkFile.contains(targetSequence0)) && (!firstLinkFound)) // Found first link
+				{
+					scannerLink.nextLine();
+					firstLinkFound = true;
+				}
+				else if (firstLinkFound)
+				{
+					String distance = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkDistance()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkDistance()[1])).trim();
+					String passengerSpeed = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[1])).trim();
+					String throughSpeed = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[1])).trim();
+					String localSpeed = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[1])).trim();
+					
+					ComplianceLink link = new ComplianceLink(Double.valueOf(distance), Integer.valueOf(passengerSpeed), Integer.valueOf(throughSpeed), Integer.valueOf(localSpeed));
+					links.add(link);
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+		}
+		finally
+		{
+			scannerLink.close();
+		}
+
+		return links;
+	}
+	
 	public String getResultsMessage()
 	{
 		return resultsMessage;

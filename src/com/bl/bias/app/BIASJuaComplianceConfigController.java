@@ -31,6 +31,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private CheckBox excludeRestrictionsNearBridgeCheckBox;
 	@FXML private CheckBox checkEnabledPermitsOnlyCheckBox;
 	@FXML private CheckBox checkStatisticalPeriodOnlyCheckBox;
+	@FXML private CheckBox analyzeLinksCheckBox;
 
 	@FXML private TextArea brightlineTrainTypeTextArea;
 	@FXML private TextArea fecTrainTypeTextArea;
@@ -49,12 +50,15 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private Label maxFecThroughCountLabel;
 	@FXML private Label lastTrainsAcceptedFileLocationLabel;
 	@FXML private Label lastSlowsAcceptedFileLocationLabel;
+	@FXML private Label lastAcceptedLinksFileLocationLabel;
+	@FXML private Label checkLastAcceptedTrainFileLabel;
 
 	@FXML private Button trainCountUpdateNodesTypesButton;
 	@FXML private Button trainCountUpdateLastAcceptedFileButton;
 	@FXML private Button trainPriorityUpdateButton;
 	@FXML private Button slowOrderUpdateLastAcceptedFileButton;
 	@FXML private Button updateBridgeMpsButton;
+	@FXML private Button updateLastAcceptedLinksFileButton;
 
 	private static Boolean checkEnabledCountOfTrains;
 	private static Boolean checkLastAcceptedTrainsFile;
@@ -65,6 +69,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static Boolean checkEnabledPermitsOnly;
 	private static Boolean checkStatisticalPeriodOnly;
 	private static Boolean excludeRestrictionsNearBridge;
+	private static Boolean analyzeLinks;
 
 	private static Boolean defaultCheckEnabledCountOfTrains = true;
 	private static Boolean defaultCheckLastAcceptedTrainsFile = true;
@@ -75,6 +80,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static Boolean defaultCheckEnabledPermitsOnly = true;
 	private static Boolean defaultCheckStatisticalPeriodOnly = true;
 	private static Boolean defaultExcludeRestrictionsNearBridge = true;
+	private static Boolean defaultAnalyzeLinks = true;
 
 	private static String brightlineTrainTypes;
 	private static String fecTrainTypes;
@@ -105,6 +111,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	private static String lastAcceptedTrainFileAsString;
 	private static String lastAcceptedPermitFileAsString;
+	private static String lastAcceptedLinksFileAsString;
 
 	private static Integer maxCharactersNodesField = 80;
 	private static Integer maxCharactersTrainTypeField = 100;
@@ -137,24 +144,33 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkEnabledCountOfTrains", false);
 			trainCountEnabledCheckBox.setSelected(false);
-		}
-
-		// See if preference is stored for checking against last accepted file
-		if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckEnabledCountOfTrains))
-		{
-			checkLastAcceptedTrainsFile = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", true);
-			checkLastAcceptedTrainsFileCheckBox.setSelected(true);
-		}
-		else
-		{
 			checkLastAcceptedTrainsFile = false;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
 			checkLastAcceptedTrainsFileCheckBox.setSelected(false);
+			checkLastAcceptedTrainsFileCheckBox.setDisable(true);
+			lastTrainsAcceptedFileLocationLabel.setDisable(true);
+			trainCountUpdateLastAcceptedFileButton.setDisable(true);
+			checkLastAcceptedTrainFileLabel.setDisable(true);
 		}
 
+		// See if preference is stored for checking against last accepted train file
+		if (checkEnabledCountOfTrains)
+		{
+			if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckEnabledCountOfTrains))
+			{
+				checkLastAcceptedTrainsFile = true;
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", true);
+				checkLastAcceptedTrainsFileCheckBox.setSelected(true);
+			}
+			else
+			{
+				checkLastAcceptedTrainsFile = false;
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
+				checkLastAcceptedTrainsFileCheckBox.setSelected(false);
+			}
+		}
+		
 		// See if preferences are stored for Brightline train types
 		if ((prefs.get("ju_brightlineTrainTypes", "") != null) && (prefs.get("ju_brightlineTrainTypes", "") != ""))
 		{
@@ -315,6 +331,22 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			excludeRestrictionsNearBridgeCheckBox.setSelected(false);
 		}
 
+		// See if preferences are stored for analyzing networks' links
+		if (prefs.getBoolean("ju_analyzeLinks", defaultAnalyzeLinks))
+		{
+			analyzeLinks = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_analyzeLinks", true);
+			analyzeLinksCheckBox.setSelected(true);
+		}
+		else
+		{
+			analyzeLinks = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_analyzeLinks", false);
+			analyzeLinksCheckBox.setSelected(false);
+		}
+
 		// See if preferences are stored for bridge field MPs
 		if ((prefs.get("ju_bridgeMps", "") != null) && (prefs.get("ju_bridgeMps", "") != ""))
 		{
@@ -341,6 +373,15 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			lastSlowsAcceptedFileLocationLabel.setText(lastAcceptedPermitFileAsString);
 		}
 
+		// See if last accepted link file exists
+		if ((prefs.get("ju_lastAcceptedLinksFile", "") != null) && (prefs.get("ju_lastAcceptedLinksFile", "") != ""))
+		{
+			lastAcceptedLinksFileAsString = prefs.get("ju_lastAcceptedLinksFile", "");;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedLinksFile", lastAcceptedLinksFileAsString);
+			lastAcceptedLinksFileLocationLabel.setText(lastAcceptedLinksFileAsString);
+		}
+
 		trainCountCriteriaLabel1.setText(ComplianceCriteria.jua_4_2_c()[0]+" "+ComplianceCriteria.jua_4_2_c()[1]+":  "+ComplianceCriteria.jua_4_2_c()[2]);
 		trainCountCriteriaLabel2.setText(ComplianceCriteria.trdml_ii_4()[0]+" "+ComplianceCriteria.trdml_ii_4()[1]+":  "+ComplianceCriteria.trdml_ii_4()[2]);
 		slowOrderCriteriaLabel1.setText(ComplianceCriteria.hdr_mow_1()[0]);
@@ -354,12 +395,34 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			checkEnabledCountOfTrains = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkEnabledCountOfTrains", false);
+			
+			checkLastAcceptedTrainsFile = false;
+			checkLastAcceptedTrainsFileCheckBox.setSelected(false);
+			
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
+				
+			checkLastAcceptedTrainsFileCheckBox.setDisable(true);
+			lastTrainsAcceptedFileLocationLabel.setDisable(true);
+			trainCountUpdateLastAcceptedFileButton.setDisable(true);
+			checkLastAcceptedTrainFileLabel.setDisable(true);
 		}
 		else
 		{
 			checkEnabledCountOfTrains = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkEnabledCountOfTrains", true);
+			
+			if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckEnabledCountOfTrains))
+			{
+				checkLastAcceptedTrainsFile = true;
+				checkLastAcceptedTrainsFileCheckBox.setSelected(true);
+			}
+			
+			checkLastAcceptedTrainsFileCheckBox.setDisable(false);
+			lastTrainsAcceptedFileLocationLabel.setDisable(false);
+			trainCountUpdateLastAcceptedFileButton.setDisable(false);
+			checkLastAcceptedTrainFileLabel.setDisable(false);
 		}
 	}
 
@@ -443,7 +506,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		triRailNodesLabel = triRailNodesTextArea.getText(0, Math.min(triRailNodesTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase();
 		triRailNodesTextArea.setText(triRailNodesLabel);
 		triRailNodesAsArray = triRailNodesLabel.split(",");
-		
+
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("ju_brightlineNodes", brightlineNodesLabel);	
 
@@ -476,20 +539,20 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 		// Should be digits, comma and decimal only
 		if ((bridgeMpsTextArea.getText().trim().equals("")) ||
-		(((bridgeMpsTextArea.getText().trim().matches("^[0-9]{0,4}\\.?[0-9]{0,3}(,\\s?[0-9]{0,4}\\.?[0-9]{0,3})*$"))) 
-				&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(".")))
-				&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(",")))
-				&& (!bridgeMpsTextArea.getText().trim().substring(0).equals(","))
-				&& (!bridgeMpsTextArea.getText().trim().substring(0).equals("."))))
+				(((bridgeMpsTextArea.getText().trim().matches("^[0-9]{0,4}\\.?[0-9]{0,3}(,\\s?[0-9]{0,4}\\.?[0-9]{0,3})*$"))) 
+						&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(".")))
+						&& ((!bridgeMpsTextArea.getText().trim().substring(bridgeMpsTextArea.getText().trim().length() - 1).equals(",")))
+						&& (!bridgeMpsTextArea.getText().trim().substring(0).equals(","))
+						&& (!bridgeMpsTextArea.getText().trim().substring(0).equals("."))))
 		{
 			bridgeMpsLabel = bridgeMpsTextArea.getText(0, Math.min(bridgeMpsTextArea.getText().length(), maxCharactersNodesField)).trim().toUpperCase().replace(" ", "");
 			bridgeMps = bridgeMpsLabel;
 			bridgeMpsTextArea.setText(bridgeMpsLabel);
-			
+
 
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("ju_bridgeMps", bridgeMpsLabel);	
-			
+
 
 			bridgeMpsTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateBridgeMpsButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
@@ -503,7 +566,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
 			alert.show();
-			
+
 			bridgeMpsTextArea.setText(bridgeMps); 
 		}
 	}
@@ -636,6 +699,22 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		}
 	}
 
+	@FXML private void handleAnalyzeLinksCheckBox(ActionEvent event)
+	{
+		if (analyzeLinks)
+		{
+			analyzeLinks = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_analyzeLinks", false);
+		}
+		else
+		{
+			analyzeLinks = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_analyzeLinks", true);
+		}
+	}
+
 	@FXML private void handleSlowOrderUpdateLastAcceptedFileButton (ActionEvent event)
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -659,7 +738,32 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			lastSlowsAcceptedFileLocationLabel.setText(file.toString());
 			lastAcceptedPermitFileAsString = file.toString();
 		}
-	}           
+	}      
+	
+	@FXML private void handleUpdateLastAcceptedLinksFileButton (ActionEvent event)
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select File");
+		FileChooser.ExtensionFilter fileExtensions = 
+				new FileChooser.ExtensionFilter(
+						"RTC Link Files", "*.LINK");
+
+		fileChooser.getExtensionFilters().add(fileExtensions);		
+
+		// Show the chooser and get the file
+		Stage stageForFileChooser = (Stage) updateLastAcceptedLinksFileButton.getScene().getWindow();
+		File file = fileChooser.showOpenDialog(stageForFileChooser);
+
+		// Valid .LINK file found
+		if (file != null)
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedLinksFile", file.toString());
+
+			lastAcceptedLinksFileLocationLabel.setText(file.toString());
+			lastAcceptedLinksFileAsString = file.toString();
+		}
+	}      
 
 	@FXML private void handleTrainPriorityUpdateButton(ActionEvent event)
 	{
@@ -690,7 +794,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			lastAcceptedTrainFileAsString = file.toString();
 		}
 	}
-	
+
 	public static Boolean getCheckLastAcceptedTrainsFile()
 	{
 		return checkLastAcceptedTrainsFile;
@@ -780,19 +884,56 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 		return excludeRestrictionsNearBridge;
 	}
+	
+	public static Boolean getAnalyzeLinks()
+	{
+		return analyzeLinks;
+	}
 
 	public static String getLastAcceptedTrainFileAsString()
 	{
 		return lastAcceptedTrainFileAsString;
 	}
-	
+
 	public static String getLastAcceptedPermitFileAsString()
 	{
 		return lastAcceptedPermitFileAsString;
+	}
+	
+	public static String getLastAcceptedLinkFileAsString()
+	{
+		return lastAcceptedLinksFileAsString;
 	}
 
 	public static String[] getBridgeMps()
 	{
 		return bridgeMpsAsArray;
+	}
+
+	public static Boolean getLastAcceptedTrainFileExists() 
+	{
+		File f = new File(lastAcceptedTrainFileAsString);
+		if(f.exists() && !f.isDirectory()) 
+		    return true;
+		else
+			return false;
+	}
+	
+	public static Boolean getLastAcceptedLinkFileExists() 
+	{
+		File f = new File(lastAcceptedLinksFileAsString);
+		if(f.exists() && !f.isDirectory()) 
+		    return true;
+		else
+			return false;
+	}
+	
+	public static Boolean getLastAcceptedPermitFileExists() 
+	{
+		File f = new File(lastAcceptedPermitFileAsString);
+		if(f.exists() && !f.isDirectory()) 
+		    return true;
+		else
+			return false;
 	}
 }

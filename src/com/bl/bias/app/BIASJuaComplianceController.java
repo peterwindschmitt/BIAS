@@ -8,7 +8,7 @@ import java.util.prefs.Preferences;
 
 import com.bl.bias.read.ReadJuaComplianceFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteJuaComplianceFiles9;
+import com.bl.bias.write.WriteJuaComplianceFiles7;
 import com.bl.bias.analyze.AnalyzeJuaComplianceFiles;
 import com.bl.bias.exception.ErrorShutdown;
 
@@ -215,25 +215,35 @@ public class BIASJuaComplianceController
 
 	private void runTask() throws InterruptedException, IOException
 	{
-		// Check that at least one check is selected in the Compliance Controller
-		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled() 
-			&& BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles()) 			// Make sure a subtest is selected if Permits check is enabled
-				|| BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())		// and/or trains  
+		Boolean lastAcceptedTrainFileExists = BIASJuaComplianceConfigController.getLastAcceptedTrainFileExists();
+		Boolean lastAcceptedPermitFileExists = BIASJuaComplianceConfigController.getLastAcceptedPermitFileExists();
+		Boolean lastAcceptedLinkFileExists = BIASJuaComplianceConfigController.getLastAcceptedLinkFileExists();
+
+		// Check that at least one valid check is selected in the Compliance Controller
+		if ((((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (lastAcceptedPermitFileExists))     	// Make sure a subtest is selected if Permits check is enabled, or
+				&& ((BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles())	
+						|| (BIASJuaComplianceConfigController.getAverageSlowOrderSpeed())	
+						|| (BIASJuaComplianceConfigController.getSumOfDurationMiles()))) 		
+				|| ((BIASJuaComplianceConfigController.getAnalyzeLinks()) && (lastAcceptedLinkFileExists))			// Check links is enabled, or
+				|| (BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())								// Check train count COMPLIANCE is enabled, or
+				|| ((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) 								// Check train count COMPARISON is enabled	
+						&&	(BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile() && (lastAcceptedTrainFileExists))))	
 		{
 			// Read all objects that are required for JUA Compliance Analysis
 			message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
 			displayMessage(message);
-			ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath, BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains(), BIASJuaComplianceConfigController.getCheckPermitsEnabled());
+			ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath, BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains(), BIASJuaComplianceConfigController.getCheckPermitsEnabled(), BIASJuaComplianceConfigController.getAnalyzeLinks());
 			message = readData.getResultsMessage();
 			displayMessage(message);
 
 			if (readData.getFormattedCorrectly())
 			{
 				setProgressIndicator(0.33);
-				
+
 				if (((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase().size() == 0)) 				// Request to analyze trains in this case but no trains found
-					|| ((BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase().size() == 0))  // Request to analyze trains in last accepted case but no trains found
-					|| ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase().size() == 0))) 				// Request to analyze permits but no permits found																	
+						|| ((BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase().size() == 0))  // Request to analyze trains in last accepted case but no trains found
+						|| ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase().size() == 0)) 				// Request to analyze permits but no permits found																	
+						|| ((BIASJuaComplianceConfigController.getAnalyzeLinks()) && (ReadJuaComplianceFiles.getLinksToAnalyzeThisCase().size() == 0)))
 					continueAnalysis = false;
 
 				if (continueAnalysis)
@@ -245,10 +255,10 @@ public class BIASJuaComplianceController
 
 					setProgressIndicator(0.66);
 
-					WriteJuaComplianceFiles9 writeFiles = new WriteJuaComplianceFiles9(textArea.getText().toString(), fullyQualifiedPath);
-					message = writeFiles.getResultsWriteMessage9();
+					WriteJuaComplianceFiles7 writeFiles = new WriteJuaComplianceFiles7(textArea.getText().toString(), fullyQualifiedPath);
+					message = writeFiles.getResultsWriteMessage7();
 					displayMessage(message);
-					if (!WriteJuaComplianceFiles9.getErrorFound())
+					if (!WriteJuaComplianceFiles7.getErrorFound())
 					{
 						setProgressIndicator(1.0);
 						displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -278,7 +288,7 @@ public class BIASJuaComplianceController
 		else
 		{
 			// No compliance checks selected
-			displayMessage("\nMust select at least one JUA Compliance check \n  in the JUA Compliance Configuration to run analysis");
+			displayMessage("\nMust select at least one JUA Compliance check \n  in the JUA Compliance Configuration to run analysis.  \n  Also check that requested comparison files exist.");
 			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 
 			//  Now reset for next case
