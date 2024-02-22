@@ -227,7 +227,7 @@ public class BIASJuaComplianceController
 				|| ((BIASJuaComplianceConfigController.getAnalyzeLinks()) && (lastAcceptedLinkFileExists))			// Check links is enabled, or
 				|| (BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())								// Check train count COMPLIANCE is enabled, or
 				|| ((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) 								// Check train count COMPARISON is enabled	
-						&&	(BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile() && (lastAcceptedTrainFileExists))))	
+						&&	(BIASJuaComplianceConfigController.getCheckLastAcceptedOptionsFile() && (lastAcceptedTrainFileExists))))	
 		{
 			// Read all objects that are required for JUA Compliance Analysis
 			message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
@@ -241,7 +241,7 @@ public class BIASJuaComplianceController
 				setProgressIndicator(0.33);
 
 				if (((BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeThisCase().size() == 0)) 				// Request to analyze trains in this case but no trains found
-						|| ((BIASJuaComplianceConfigController.getCheckLastAcceptedTrainsFile()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase().size() == 0))  // Request to analyze trains in last accepted case but no trains found
+						|| ((BIASJuaComplianceConfigController.getCheckLastAcceptedOptionsFile()) && (ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase().size() == 0))  // Request to analyze trains in last accepted case but no trains found
 						|| ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) && (ReadJuaComplianceFiles.getPermitsToAnalyzeThisCase().size() == 0)) 				// Request to analyze permits but no permits found																	
 						|| ((BIASJuaComplianceConfigController.getAnalyzeLinks()) && (ReadJuaComplianceFiles.getLinksToAnalyzeThisCase().size() == 0)))
 					continueAnalysis = false;

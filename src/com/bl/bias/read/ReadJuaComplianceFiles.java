@@ -11,6 +11,7 @@ import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.ComplianceLink;
 import com.bl.bias.objects.CompliancePermit;
+import com.bl.bias.objects.CompliancePriority;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.objects.ComplianceTrainRouteEntry;
 import com.bl.bias.tools.ConvertDateTime;
@@ -23,6 +24,8 @@ public class ReadJuaComplianceFiles
 	private static ArrayList<CompliancePermit> compliancePermitsLastAcceptedCase = new ArrayList<CompliancePermit>();
 	private static ArrayList<ComplianceLink> comparisonLinksThisCase = new ArrayList<ComplianceLink>();
 	private static ArrayList<ComplianceLink> comparisonLinksLastAcceptedCase = new ArrayList<ComplianceLink>();
+	private static ArrayList<CompliancePriority> trainPrioritiesThisCase = new ArrayList<CompliancePriority>();
+	private static ArrayList<CompliancePriority> trainPrioritiesLastAcceptedCase = new ArrayList<CompliancePriority>();
 
 	private static String resultsMessage;
 
@@ -44,11 +47,19 @@ public class ReadJuaComplianceFiles
 		compliancePermitsLastAcceptedCase.clear();
 		comparisonLinksThisCase.clear();
 		comparisonLinksLastAcceptedCase.clear();
+		trainPrioritiesThisCase.clear();
+		trainPrioritiesLastAcceptedCase.clear();
 
-		// Read in .OPTION file with Scanner
+		// Read in this cases .OPTION file with Scanner
 		Scanner scannerOption = null;
 		try 
 		{
+			String targetSequence0 = "-----------------------------------------";
+			Boolean firstTargetFound = false;
+			Boolean secondTargetFound = false;
+			Boolean thirdTargetFound = false;
+			Boolean fourthTargetFound = false;
+
 			File optionFile = new File(fileOfCaseBeingChecked);
 			scannerOption = new Scanner(optionFile);
 
@@ -75,6 +86,46 @@ public class ReadJuaComplianceFiles
 				{
 					simulationBeginTime = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[1]));
 				}
+				else if (lineFromOptionFile.contains("[Train types]"))
+				{
+					if ((!firstTargetFound) && (!secondTargetFound) && (!thirdTargetFound))
+					{
+						firstTargetFound = true;
+					}
+				}
+				else if ((firstTargetFound) && (!secondTargetFound) && (!thirdTargetFound) && (!fourthTargetFound) && (lineFromOptionFile.contains(targetSequence0)))
+				{
+					secondTargetFound = true;
+				}
+				else if ((firstTargetFound) && (secondTargetFound) && (!thirdTargetFound) && (!fourthTargetFound) && (lineFromOptionFile.contains(targetSequence0)))
+				{
+					thirdTargetFound = true;
+				}	
+				else if ((firstTargetFound) && (secondTargetFound) && (thirdTargetFound) && (!fourthTargetFound))
+				{
+					if (lineFromOptionFile.contains(targetSequence0))
+					{
+						fourthTargetFound = true;
+					}
+					else
+					{
+						String trainType = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])).trim();
+						String minimumDelayCost = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[1])).trim();
+						String initialDelayCost = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[1])).trim();
+						String maximumDelayCost = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[1])).trim();
+						String conflictRank = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1])).trim();
+
+						if ((trainType == null) || (trainType.equals("")))
+						{
+							continue;
+						}
+						else
+						{
+							CompliancePriority trainPriority = new CompliancePriority(trainType, Integer.valueOf(minimumDelayCost), Integer.valueOf(initialDelayCost), Integer.valueOf(maximumDelayCost), Integer.valueOf(conflictRank));
+							trainPrioritiesThisCase.add(trainPriority);
+						}
+					}
+				}
 			}
 		}
 		catch (Exception e) 
@@ -83,7 +134,99 @@ public class ReadJuaComplianceFiles
 		}
 		finally
 		{
+			resultsMessage += "Extracted hierarchy of "+trainPrioritiesThisCase.size()+" train type priorities from this case's .OPTION file\n";
 			scannerOption.close();
+		}
+
+		// Read in last accepted cases .OPTION file with Scanner
+		if ((BIASJuaComplianceConfigController.getCheckLastAcceptedOptionsFile()) && (BIASJuaComplianceConfigController.getLastAcceptedOptionFileExists()))
+		{
+			scannerOption = null;
+			try 
+			{
+				String targetSequence0 = "-----------------------------------------";
+				Boolean firstTargetFound = false;
+				Boolean secondTargetFound = false;
+				Boolean thirdTargetFound = false;
+				Boolean fourthTargetFound = false;
+
+				File optionFile = new File(BIASJuaComplianceConfigController.getLastAcceptedOptionFileAsString());
+				scannerOption = new Scanner(optionFile);
+
+				while (scannerOption.hasNextLine()) 
+				{
+					String lineFromOptionFile = scannerOption.nextLine();
+					if (lineFromOptionFile.contains("Simulation begin day: "))
+					{
+						simulationStartDayOfWeek = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginDay()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginDay()[1])).trim();
+					}
+					else if (lineFromOptionFile.contains("Simulation duration (DD:HH:MM): "))
+					{
+						simulationDuration = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationDuration()[1]));
+					}
+					else if (lineFromOptionFile.contains("Warm-up statistical exclusion (DD:HH:MM): "))
+					{
+						warmUpExclusion = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getWarmUpExclusion()[1]));
+					}
+					else if (lineFromOptionFile.contains("Cool-down statistical exclusion (DD:HH:MM): "))
+					{
+						coolDownExclusion = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCoolDownExclusion()[1]));
+					}
+					else if (lineFromOptionFile.contains("Simulation begin time (HH:MM): "))
+					{
+						simulationBeginTime = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[0]), Integer.valueOf(BIASParseConfigPageController.o_getSimulationBeginTime()[1]));
+					}
+					else if (lineFromOptionFile.contains("[Train types]"))
+					{
+						if ((!firstTargetFound) && (!secondTargetFound) && (!thirdTargetFound))
+						{
+							firstTargetFound = true;
+						}
+					}
+					else if ((firstTargetFound) && (!secondTargetFound) && (!thirdTargetFound) && (!fourthTargetFound) && (lineFromOptionFile.contains(targetSequence0)))
+					{
+						secondTargetFound = true;
+					}
+					else if ((firstTargetFound) && (secondTargetFound) && (!thirdTargetFound) && (!fourthTargetFound) && (lineFromOptionFile.contains(targetSequence0)))
+					{
+						thirdTargetFound = true;
+					}	
+					else if ((firstTargetFound) && (secondTargetFound) && (thirdTargetFound) && (!fourthTargetFound))
+					{
+						if (lineFromOptionFile.contains(targetSequence0))
+						{
+							fourthTargetFound = true;
+						}
+						else
+						{
+							String trainType = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])).trim();
+							String minimumDelayCost = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[1])).trim();
+							String initialDelayCost = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[1])).trim();
+							String maximumDelayCost = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[1])).trim();
+							String conflictRank = lineFromOptionFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1])).trim();
+
+							if ((trainType == null) || (trainType.equals("")))
+							{
+								continue;
+							}
+							else
+							{
+								CompliancePriority trainPriority = new CompliancePriority(trainType, Integer.valueOf(minimumDelayCost), Integer.valueOf(initialDelayCost), Integer.valueOf(maximumDelayCost), Integer.valueOf(conflictRank));
+								trainPrioritiesLastAcceptedCase.add(trainPriority);
+							}
+						}
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+			}
+			finally
+			{
+				resultsMessage += "Extracted hierarchy of "+trainPrioritiesThisCase.size()+" train type priorities from the last accepted .OPTION file\n";
+				scannerOption.close();
+			}
 		}
 
 		// Check .OPTION parameters to determine if compliance analysis can continue
@@ -115,18 +258,22 @@ public class ReadJuaComplianceFiles
 					String trainType = null;
 					String linkedAtOriginTo = null;
 					String enabled = null;
+					Integer minimumPriority = null;
+					Integer initialPriority = null;
+					Integer maximumPriority = null;
 					ArrayList<ComplianceTrainRouteEntry> routeEntries = null;
 					ArrayList<Integer> daysOfOperationAsInteger = null;
 
 					String targetSequence0 = "Train symbol: ";
 					String targetSequence1 = "Train type: ";
-					String targetSequence2 = "Week  1 Frequency: ";
-					String targetSequence3 = "Week  2 Frequency: ";
-					String targetSequence4 = "Week  3 Frequency: ";
-					String targetSequence5 = "Enabled: ";
-					String targetSequence6 = "Linked at origin to the: ";
-					String targetSequence7 = "Route Node";
-					String targetSequence8 = "=========================================";
+					String targetSequence2 = "Initial priority (0-9999): ";
+					String targetSequence3 = "Week  1 Frequency: ";
+					String targetSequence4 = "Week  2 Frequency: ";
+					String targetSequence5 = "Week  3 Frequency: ";
+					String targetSequence6 = "Enabled: ";
+					String targetSequence7 = "Linked at origin to the: ";
+					String targetSequence8 = "Route Node";
+					String targetSequence9 = "=========================================";
 
 					Boolean inRouteNodeSection = false;
 					Boolean firstTrainFound = false;
@@ -134,7 +281,7 @@ public class ReadJuaComplianceFiles
 					while (scannerTrain.hasNextLine()) 
 					{
 						String lineFromTrainFile = scannerTrain.nextLine();
-						if ((lineFromTrainFile.contains(targetSequence8)) && (!firstTrainFound)) // Found first train
+						if ((lineFromTrainFile.contains(targetSequence9)) && (!firstTrainFound)) // Found first train
 						{
 							firstTrainFound = true;
 						}
@@ -150,7 +297,14 @@ public class ReadJuaComplianceFiles
 							trainType = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])).trim();
 							objectCount++;
 						}
-						else if(lineFromTrainFile.contains(targetSequence2)) // Days 1 - 7
+						else if(lineFromTrainFile.contains(targetSequence2)) // Train priority
+						{ 
+							minimumPriority = Integer.valueOf(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[1])).trim());
+							initialPriority = Integer.valueOf(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[1])).trim());
+							maximumPriority = Integer.valueOf(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[1])).trim());
+							objectCount+=3;
+						}
+						else if(lineFromTrainFile.contains(targetSequence3)) // Days 1 - 7
 						{ 
 							ArrayList<String> week1Days = new ArrayList<String>();
 							String week1DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
@@ -160,7 +314,7 @@ public class ReadJuaComplianceFiles
 							daysOfOperationAsInteger.addAll(convertDOWtoInteger(week1Days, 1));
 							objectCount+=7;
 						}
-						else if(lineFromTrainFile.contains(targetSequence3)) // Days 8 - 14
+						else if(lineFromTrainFile.contains(targetSequence4)) // Days 8 - 14
 						{ 
 							ArrayList<String> week2Days = new ArrayList<String>();
 							String week2DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
@@ -170,7 +324,7 @@ public class ReadJuaComplianceFiles
 							daysOfOperationAsInteger.addAll(convertDOWtoInteger(week2Days, 2));
 							objectCount+=7;
 						}
-						else if(lineFromTrainFile.contains(targetSequence4)) // Days 15 - 21
+						else if(lineFromTrainFile.contains(targetSequence5)) // Days 15 - 21
 						{ 
 							ArrayList<String> week3Days = new ArrayList<String>();
 							String week3DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
@@ -180,22 +334,22 @@ public class ReadJuaComplianceFiles
 							daysOfOperationAsInteger.addAll(convertDOWtoInteger(week3Days, 3));
 							objectCount+=7;
 						}
-						else if (lineFromTrainFile.contains(targetSequence5)) // Train enabled
+						else if (lineFromTrainFile.contains(targetSequence6)) // Train enabled
 						{ 
 							enabled = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])).trim();
 							objectCount++;
 						}
-						else if (lineFromTrainFile.contains(targetSequence6)) // Linked at origin to
+						else if (lineFromTrainFile.contains(targetSequence7)) // Linked at origin to
 						{ 
 							linkedAtOriginTo = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])).trim();
 							objectCount++;
 						}
-						else if (((inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence8))) 
+						else if (((inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence9))) 
 								|| (!scannerTrain.hasNextLine())) // Create the train
 						{
 							inRouteNodeSection = false;
 
-							ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, routeEntries, daysOfOperationAsInteger);
+							ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, minimumPriority, initialPriority, maximumPriority, routeEntries, daysOfOperationAsInteger);
 							complianceTrainsThisCase.add(train);	
 						}
 						else if (inRouteNodeSection) // Route node
@@ -209,7 +363,7 @@ public class ReadJuaComplianceFiles
 								objectCount+=4;
 							}
 						}
-						else if ((!inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence7))) // Enter the route node section
+						else if ((!inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence8))) // Enter the route node section
 						{
 							inRouteNodeSection = true;
 							scannerTrain.nextLine();
@@ -240,18 +394,22 @@ public class ReadJuaComplianceFiles
 						String trainType = null;
 						String linkedAtOriginTo = null;
 						String enabled = null;
+						Integer minimumPriority = null;
+						Integer initialPriority = null;
+						Integer maximumPriority = null;
 						ArrayList<ComplianceTrainRouteEntry> routeEntries = null;
 						ArrayList<Integer> daysOfOperationAsInteger = null;
 
 						String targetSequence0 = "Train symbol: ";
 						String targetSequence1 = "Train type: ";
-						String targetSequence2 = "Week  1 Frequency: ";
-						String targetSequence3 = "Week  2 Frequency: ";
-						String targetSequence4 = "Week  3 Frequency: ";
-						String targetSequence5 = "Enabled: ";
-						String targetSequence6 = "Linked at origin to the: ";
-						String targetSequence7 = "Route Node";
-						String targetSequence8 = "=========================================";
+						String targetSequence2 = "Initial priority (0-9999): ";
+						String targetSequence3 = "Week  1 Frequency: ";
+						String targetSequence4 = "Week  2 Frequency: ";
+						String targetSequence5 = "Week  3 Frequency: ";
+						String targetSequence6 = "Enabled: ";
+						String targetSequence7 = "Linked at origin to the: ";
+						String targetSequence8 = "Route Node";
+						String targetSequence9 = "=========================================";
 
 						Boolean inRouteNodeSection = false;
 						Boolean firstTrainFound = false;
@@ -259,7 +417,7 @@ public class ReadJuaComplianceFiles
 						while (scannerTrain.hasNextLine()) 
 						{
 							String lineFromTrainFile = scannerTrain.nextLine();
-							if ((lineFromTrainFile.contains(targetSequence8)) && (!firstTrainFound)) // Found first train
+							if ((lineFromTrainFile.contains(targetSequence9)) && (!firstTrainFound)) // Found first train
 							{
 								firstTrainFound = true;
 							}
@@ -275,7 +433,14 @@ public class ReadJuaComplianceFiles
 								trainType = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])).trim();
 								objectCount++;
 							}
-							else if(lineFromTrainFile.contains(targetSequence2)) // Days 1 - 7
+							else if(lineFromTrainFile.contains(targetSequence2)) // Train priority
+							{ 
+								minimumPriority = Integer.valueOf(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[1])).trim());
+								initialPriority = Integer.valueOf(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[1])).trim());
+								maximumPriority = Integer.valueOf(lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[1])).trim());
+								objectCount+=3;
+							}
+							else if(lineFromTrainFile.contains(targetSequence3)) // Days 1 - 7
 							{ 
 								ArrayList<String> week1Days = new ArrayList<String>();
 								String week1DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
@@ -285,7 +450,7 @@ public class ReadJuaComplianceFiles
 								daysOfOperationAsInteger.addAll(convertDOWtoInteger(week1Days, 1));
 								objectCount+=7;
 							}
-							else if(lineFromTrainFile.contains(targetSequence3)) // Days 8 - 14
+							else if(lineFromTrainFile.contains(targetSequence4)) // Days 8 - 14
 							{ 
 								ArrayList<String> week2Days = new ArrayList<String>();
 								String week2DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
@@ -295,7 +460,7 @@ public class ReadJuaComplianceFiles
 								daysOfOperationAsInteger.addAll(convertDOWtoInteger(week2Days, 2));
 								objectCount+=7;
 							}
-							else if(lineFromTrainFile.contains(targetSequence4)) // Days 15 - 21
+							else if(lineFromTrainFile.contains(targetSequence5)) // Days 15 - 21
 							{ 
 								ArrayList<String> week3Days = new ArrayList<String>();
 								String week3DaysAsString = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[0]), Integer.valueOf(BIASParseConfigPageController.t_getWeekDays()[1])).trim();
@@ -305,22 +470,22 @@ public class ReadJuaComplianceFiles
 								daysOfOperationAsInteger.addAll(convertDOWtoInteger(week3Days, 3));
 								objectCount+=7;
 							}
-							else if (lineFromTrainFile.contains(targetSequence5)) // Train enabled
+							else if (lineFromTrainFile.contains(targetSequence6)) // Train enabled
 							{ 
 								enabled = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])).trim();
 								objectCount++;
 							}
-							else if (lineFromTrainFile.contains(targetSequence6)) // Linked at origin to
+							else if (lineFromTrainFile.contains(targetSequence7)) // Linked at origin to
 							{ 
 								linkedAtOriginTo = lineFromTrainFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])).trim();
 								objectCount++;
 							}
-							else if (((inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence8))) 
+							else if (((inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence9))) 
 									|| (!scannerTrain.hasNextLine())) // Create the train
 							{
 								inRouteNodeSection = false;
 
-								ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, routeEntries, daysOfOperationAsInteger);
+								ComplianceTrain train = new ComplianceTrain(trainSymbol, trainType, linkedAtOriginTo, enabled, minimumPriority, initialPriority, maximumPriority, routeEntries, daysOfOperationAsInteger);
 								comparisonTrainsLastAcceptedCase.add(train);	
 							}
 							else if (inRouteNodeSection) // Route node
@@ -334,7 +499,7 @@ public class ReadJuaComplianceFiles
 									objectCount+=4;
 								}
 							}
-							else if ((!inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence7))) // Enter the route node section
+							else if ((!inRouteNodeSection) && (lineFromTrainFile.contains(targetSequence8))) // Enter the route node section
 							{
 								inRouteNodeSection = true;
 								scannerTrain.nextLine();
@@ -368,7 +533,7 @@ public class ReadJuaComplianceFiles
 
 				resultsMessage += "Extracted data from " + ((comparisonPermitsThisCase.size() + compliancePermitsLastAcceptedCase.size()) * 9)+" objects from both .PERMIT files\n";
 			}
-			
+
 			// Link Comparison Checks
 			if ((checkLinks) && (BIASJuaComplianceConfigController.getLastAcceptedLinkFileExists()))
 			{
@@ -382,7 +547,7 @@ public class ReadJuaComplianceFiles
 
 				resultsMessage += "Extracted data from " + ((comparisonLinksThisCase.size() + comparisonLinksLastAcceptedCase.size()) * 4)+" objects from both .LINK files\n";
 			}
-						
+
 			resultsMessage += "Finished parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 		}
 		else
@@ -411,12 +576,12 @@ public class ReadJuaComplianceFiles
 	{
 		return compliancePermitsLastAcceptedCase;
 	}
-	
+
 	public static ArrayList<ComplianceLink> getLinksToAnalyzeThisCase() 
 	{
 		return comparisonLinksThisCase;
 	}
-	
+
 	public static ArrayList<ComplianceLink> getLinksToAnalyzeLastAcceptedCase() 
 	{
 		return comparisonLinksLastAcceptedCase;
@@ -444,6 +609,16 @@ public class ReadJuaComplianceFiles
 		adjustedDuration -= Integer.valueOf(coolDownExclusion.substring(0, 2).trim());
 
 		return adjustedDuration;
+	}
+
+	public static ArrayList<CompliancePriority> retrieveTrainPrioritiesThisCase()
+	{
+		return trainPrioritiesThisCase;
+	}
+	
+	public static ArrayList<CompliancePriority> retrieveTrainPrioritiesLastAcceptedCase()
+	{
+		return trainPrioritiesLastAcceptedCase;
 	}
 
 	private static ArrayList<Integer> convertDOWtoInteger(ArrayList<String> days, Integer week) // 1 = SUNDAY
@@ -553,7 +728,7 @@ public class ReadJuaComplianceFiles
 					String passengerSpeed = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxPassengerSpeed()[1])).trim();
 					String throughSpeed = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxThroughSpeed()[1])).trim();
 					String localSpeed = lineFromLinkFile.substring(Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[0]), Integer.valueOf(BIASParseConfigPageController.l_getLinkMaxLocalSpeed()[1])).trim();
-					
+
 					ComplianceLink link = new ComplianceLink(Double.valueOf(distance), Integer.valueOf(passengerSpeed), Integer.valueOf(throughSpeed), Integer.valueOf(localSpeed));
 					links.add(link);
 				}
@@ -570,7 +745,7 @@ public class ReadJuaComplianceFiles
 
 		return links;
 	}
-	
+
 	public String getResultsMessage()
 	{
 		return resultsMessage;

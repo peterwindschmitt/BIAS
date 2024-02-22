@@ -82,6 +82,9 @@ public class BIASParseConfigPageController
 	private static String t_arrivalTime;
 	private static String t_departureTime;
 	private static String t_minimumDwellTime;
+	private static String t_minimumDelayCost;
+	private static String t_initialDelayCost;
+	private static String t_maximumDelayCost;
 
 	// Data from .ROUTE file
 	private static String r_trainSymbol;
@@ -116,6 +119,10 @@ public class BIASParseConfigPageController
 	private static String o_trainGroupAbbreviation;
 	private static String o_trainTypeName;
 	private static String o_trainTypeGroup;
+	private static String o_minimumDelayCost;
+	private static String o_initialDelayCost;
+	private static String o_maximumDelayCost;
+	private static String o_conflictRank;
 
 	// Data from .LINE file
 	private static String w_lineName;
@@ -580,7 +587,10 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])),
 				new ParseLocationFormatB("Arrival Time", "t_arrivalTime", Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[1])),
 				new ParseLocationFormatB("DepartureTime", "t_departureTime", Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[1])),
-				new ParseLocationFormatB("Minimum Dwell Time", "t_minimumDwellTime", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[1]))
+				new ParseLocationFormatB("Minimum Dwell Time", "t_minimumDwellTime", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[1])),
+				new ParseLocationFormatB("Minimum Delay Cost", "t_minimumDelayCost", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[1])),
+				new ParseLocationFormatB("Initial Delay Cost", "t_initialDelayCost", Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[1])),
+				new ParseLocationFormatB("Maximum Delay Cost", "t_maximumDelayCost", Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[1]))
 				);
 
 		parseLocationsTable6.setItems(parseData6);
@@ -659,7 +669,11 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Show Seed Trains in Route Report", "o_showSeedTrainsInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[1])),
 				new ParseLocationFormatB("Train Group Abbreviation", "o_trainGroupAbbreviation", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])),
 				new ParseLocationFormatB("Train Type Name", "o_trainTypeName", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])),
-				new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1]))
+				new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1])),
+				new ParseLocationFormatB("Minimum Delay Cost", "o_minimumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[1])),
+				new ParseLocationFormatB("Initial Delay Cost", "o_initialDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[1])),
+				new ParseLocationFormatB("Maximum Delay Cost", "o_maximumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[1])),
+				new ParseLocationFormatB("Conflict Rank", "o_conflictRank", Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1]))
 				);
 
 		parseLocationsTable8.setItems(parseData8);
@@ -995,6 +1009,9 @@ public class BIASParseConfigPageController
 			prefs.remove("t_arrivalTime");
 			prefs.remove("t_departureTime");
 			prefs.remove("t_minimumDwellTime");
+			prefs.remove("t_minimumDelayCost");
+			prefs.remove("t_initialDelayCost");
+			prefs.remove("t_maximumDelayCost");
 
 			// Table 7
 			prefs.remove("r_trainSymbol");
@@ -1029,6 +1046,10 @@ public class BIASParseConfigPageController
 			prefs.remove("o_trainGroupAbbreviation");
 			prefs.remove("o_trainTypeName");
 			prefs.remove("o_trainTypeGroup");
+			prefs.remove("o_minimumDelayCost");
+			prefs.remove("o_initialDelayCost");
+			prefs.remove("o_maximumDelayCost");
+			prefs.remove("o_conflictRank");
 
 			// Table 9
 			prefs.remove("w_lineName");
@@ -1247,7 +1268,10 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Linked at Origin to", "t_linkedAtOrigin", Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[0]), Integer.valueOf(BIASParseConfigPageController.t_getLinkedAtOrigin()[1])),
 					new ParseLocationFormatB("Arrival Time", "t_arrivalTime", Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getArrivalTime()[1])),
 					new ParseLocationFormatB("DepartureTime", "t_departureTime", Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getDepartureTime()[1])),
-					new ParseLocationFormatB("Minimum Dwell Time", "t_minimumDwellTime", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[1]))
+					new ParseLocationFormatB("Minimum Dwell Time", "t_minimumDwellTime", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDwellTime()[1])),
+					new ParseLocationFormatB("Minimum Delay Cost", "t_minimumDelayCost", Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMinimumDelayCost()[1])),
+					new ParseLocationFormatB("Initial Delay Cost", "t_initialDelayCost", Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getInitialDelayCost()[1])),
+					new ParseLocationFormatB("Maximum Delay Cost", "t_maximumDelayCost", Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.t_getMaximumDelayCost()[1]))
 					);
 
 			startColumn6.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1288,10 +1312,13 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Route Is Comma Delimited", "o_commaDelimitedRouteFile", Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[0]), Integer.valueOf(BIASParseConfigPageController.o_getCommaDelimited()[1])),
 					new ParseLocationFormatB("All Nodes in Route Report", "o_allNodesInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getAllNodesInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getAllNodesInRouteReport()[1])),
 					new ParseLocationFormatB("Show Seed Trains in Route Report", "o_showSeedTrainsInRouteReport", Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[0]), Integer.valueOf(BIASParseConfigPageController.o_getShowSeedTrainsInRouteReport()[1])),
-					new ParseLocationFormatB("Train Group Name", "o_trainGroupName", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupName()[1])),
 					new ParseLocationFormatB("Train Group Abbreviation", "o_trainGroupAbbreviation", Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainGroupAbbreviation()[1])),
 					new ParseLocationFormatB("Train Type Name", "o_trainTypeName", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])),
-					new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1]))
+					new ParseLocationFormatB("Train Type Group", "o_trainTypeGroup", Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeGroup()[1])),
+					new ParseLocationFormatB("Minimum Delay Cost", "o_minimumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[1])),
+					new ParseLocationFormatB("Initial Delay Cost", "o_initialDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[1])),
+					new ParseLocationFormatB("Maximum Delay Cost", "o_maximumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[1])),
+					new ParseLocationFormatB("Conflict Rank", "o_conflictRank", Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1]))
 					);
 
 			startColumn8.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -3408,6 +3435,33 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("t_minimumDwellTime", t_minimumDwellTime);
 		}
+		
+		// Minimum delay cost
+		if (prefs.get("t_minimumDelayCost", null) == null)
+		{
+			// Write value for subsequent runs
+			t_minimumDelayCost = "42,46";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_minimumDelayCost", t_minimumDelayCost);
+		}
+		
+		// Initial delay cost
+		if (prefs.get("t_initialDelayCost", null) == null)
+		{
+			// Write value for subsequent runs
+			t_initialDelayCost = "31,35";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_initialDelayCost", t_initialDelayCost);
+		}
+
+		// Maximum delay cost
+		if (prefs.get("t_maximumDelayCost", null) == null)
+		{
+			// Write value for subsequent runs
+			t_maximumDelayCost = "53,57";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("t_maximumDelayCost", t_maximumDelayCost);
+		}
 
 		// Table 7
 		// Train Symbol
@@ -3679,6 +3733,42 @@ public class BIASParseConfigPageController
 			o_trainTypeGroup = "38,42";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("o_trainTypeGroup", o_trainTypeGroup);
+		}
+
+		// Minimum delay cost
+		if (prefs.get("o_minimumDelayCost", null) == null)
+		{
+			// Write value for subsequent runs
+			o_minimumDelayCost = "46,50";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_minimumDelayCost", o_minimumDelayCost);
+		}
+		
+		// Initial delay cost
+		if (prefs.get("o_initialDelayCost", null) == null)
+		{
+			// Write value for subsequent runs
+			o_initialDelayCost = "55,59";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_initialDelayCost", o_initialDelayCost);
+		}
+
+		// Maximum delay cost
+		if (prefs.get("o_maximumDelayCost", null) == null)
+		{
+			// Write value for subsequent runs
+			o_maximumDelayCost = "64,68";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_maximumDelayCost", o_maximumDelayCost);
+		}
+
+		// Conflict rank
+		if (prefs.get("o_conflictRank", null) == null)
+		{
+			// Write value for subsequent runs
+			o_conflictRank = "75,76";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_conflictRank", o_conflictRank);
 		}
 
 		// Table 9
@@ -4710,7 +4800,7 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("l_linkDirection", l_linkDirection).split(",");
 		return values;
 	}
-	
+
 	public static String[] l_getLinkDistance()
 	{
 		String[] values = prefs.get("l_linkDistance", l_linkDistance).split(",");
@@ -4885,6 +4975,24 @@ public class BIASParseConfigPageController
 		return values;
 	}
 
+	public static String[] t_getMinimumDelayCost()
+	{
+		String[] values = prefs.get("t_minimumDelayCost", t_minimumDelayCost).split(",");
+		return values;
+	}
+	
+	public static String[] t_getInitialDelayCost()
+	{
+		String[] values = prefs.get("t_initialDelayCost", t_initialDelayCost).split(",");
+		return values;
+	}
+	
+	public static String[] t_getMaximumDelayCost()
+	{
+		String[] values = prefs.get("t_maximumDelayCost", t_maximumDelayCost).split(",");
+		return values;
+	}
+	
 	public static String[] r_getTrainSymbol()
 	{
 		String[] values = prefs.get("r_trainSymbol", r_trainSymbol).split(",");
@@ -5062,6 +5170,30 @@ public class BIASParseConfigPageController
 	public static String[] o_getTrainTypeGroup()
 	{
 		String[] values = prefs.get("o_trainTypeGroup", o_trainTypeGroup).split(",");
+		return values;
+	}
+	
+	public static String[] o_getMinimumDelayCost()
+	{
+		String[] values = prefs.get("o_minimumDelayCost", o_minimumDelayCost).split(",");
+		return values;
+	}
+	
+	public static String[] o_getInitialDelayCost()
+	{
+		String[] values = prefs.get("o_initialDelayCost", o_initialDelayCost).split(",");
+		return values;
+	}
+	
+	public static String[] o_getMaximumDelayCost()
+	{
+		String[] values = prefs.get("o_maximumDelayCost", o_maximumDelayCost).split(",");
+		return values;
+	}
+	
+	public static String[] o_getConflictRank()
+	{
+		String[] values = prefs.get("o_conflictRank", o_conflictRank).split(",");
 		return values;
 	}
 

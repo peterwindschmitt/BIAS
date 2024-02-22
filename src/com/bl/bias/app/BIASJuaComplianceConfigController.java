@@ -22,6 +22,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 {
 	@FXML private CheckBox trainCountEnabledCheckBox;
 	@FXML private CheckBox checkLastAcceptedTrainsFileCheckBox;
+	@FXML private CheckBox checkLastAcceptedOptionsFileCheckBox;
 	@FXML private CheckBox permitsEnabledCheckBox;
 	@FXML private CheckBox checkLinearMilesCheckBox;
 	@FXML private CheckBox averageSlowOrderSpeedCheckBox;
@@ -51,6 +52,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private Label maxTriRailCountLabel;
 	@FXML private Label maxBrightlineCountLabel;
 	@FXML private Label maxFecThroughCountLabel;
+	@FXML private Label lastOptionsAcceptedFileLocationLabel;
 	@FXML private Label lastTrainsAcceptedFileLocationLabel;
 	@FXML private Label lastSlowsAcceptedFileLocationLabel;
 	@FXML private Label lastAcceptedLinksFileLocationLabel;
@@ -65,8 +67,8 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private Button updateLastAcceptedPriorityFileButton;
 
 	private static Boolean checkEnabledCountOfTrains;
+	private static Boolean checkLastAcceptedOptionsFile;
 	private static Boolean checkLastAcceptedTrainsFile;
-	private static Boolean checkLastAcceptedTrainPriorityFile;
 	private static Boolean permitsEnabled;
 	private static Boolean checkPermitsSumOfTrackMiles;
 	private static Boolean checkAverageSlowOrderSpeed;
@@ -79,7 +81,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 
 	private static Boolean defaultCheckEnabledCountOfTrains = true;
 	private static Boolean defaultCheckLastAcceptedTrainsFile = true;
-	private static Boolean defaultCheckLastAcceptedTrainPriorityFile = true;
+	private static Boolean defaultCheckLastAcceptedOptionsFile = true;
 	private static Boolean defaultPermitsEnabled = true;
 	private static Boolean defaultCheckLinearMilesOfSlows = true;
 	private static Boolean defaultCheckSlowOrderSpeed = true;
@@ -116,20 +118,21 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static String triRailNodesLabel;
 	private static String bridgeMpsLabel;
 
-	private static String[] brightlineTrainTypesAsArray;
-	private static String[] fecTrainTypesAsArray;
-	private static String[] triRailTrainTypesAsArray;
+	private static String[] brightlineTrainTypesAsArray = new String[0];
+	private static String[] fecTrainTypesAsArray = new String[0];
+	private static String[] triRailTrainTypesAsArray = new String[0];
 	private static String[] tier1TrainTypesAsArray;
 	private static String[] tier2TrainTypesAsArray;
 	private static String[] tier3TrainTypesAsArray;
 	private static String[] tier4TrainTypesAsArray;
 
-	private static String[] brightlineNodesAsArray;
-	private static String[] fecNodesAsArray;
-	private static String[] triRailNodesAsArray;
-	private static String[] bridgeMpsAsArray;
+	private static String[] brightlineNodesAsArray = new String[0];
+	private static String[] fecNodesAsArray = new String[0];
+	private static String[] triRailNodesAsArray = new String[0];
+	private static String[] bridgeMpsAsArray = new String[0];
 
 	private static String lastAcceptedTrainFileAsString;
+	private static String lastAcceptedOptionFileAsString;
 	private static String lastAcceptedPermitFileAsString;
 	private static String lastAcceptedLinksFileAsString;
 
@@ -190,24 +193,29 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 				checkLastAcceptedTrainsFileCheckBox.setSelected(false);
 			}
 		}
-
-		// See if preference is stored for checking against last accepted train file
-		if (checkEnabledCountOfTrains)
+		else
 		{
-			if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckLastAcceptedTrainsFile))
-			{
-				checkLastAcceptedTrainsFile = true;
-				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-					prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", true);
-				checkLastAcceptedTrainsFileCheckBox.setSelected(true);
-			}
-			else
-			{
-				checkLastAcceptedTrainsFile = false;
-				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-					prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
-				checkLastAcceptedTrainsFileCheckBox.setSelected(false);
-			}
+			checkLastAcceptedTrainsFile = false;
+			checkLastAcceptedTrainsFileCheckBox.setDisable(true);
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
+			checkLastAcceptedTrainsFileCheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for checking against last accepted option file
+		if (prefs.getBoolean("ju_checkAgainstLastAcceptedOptionsFile", defaultCheckLastAcceptedOptionsFile))
+		{
+			checkLastAcceptedOptionsFile = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedOptionsFile", true);
+			checkLastAcceptedOptionsFileCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkLastAcceptedOptionsFile = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedOptionsFile", false);
+			checkLastAcceptedOptionsFileCheckBox.setSelected(false);
 		}
 
 		// See if preferences are stored for Brightline train types
@@ -403,6 +411,15 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			lastTrainsAcceptedFileLocationLabel.setText(lastAcceptedTrainFileAsString);
 		}
 
+		// See if last accepted option file exists
+		if ((prefs.get("ju_lastAcceptedOptionFile", "") != null) && (prefs.get("ju_lastAcceptedOptionFile", "") != ""))
+		{
+			lastAcceptedOptionFileAsString = prefs.get("ju_lastAcceptedOptionFile", "");;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedOptionFile", lastAcceptedOptionFileAsString);
+			lastOptionsAcceptedFileLocationLabel.setText(lastAcceptedOptionFileAsString);
+		}
+
 		// See if last accepted permit file exists
 		if ((prefs.get("ju_lastAcceptedPermitFile", "") != null) && (prefs.get("ju_lastAcceptedPermitFile", "") != ""))
 		{
@@ -489,10 +506,10 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkAgainstLastAcceptedTrainsFile", false);
 
-			checkLastAcceptedTrainsFileCheckBox.setDisable(true);
 			lastTrainsAcceptedFileLocationLabel.setDisable(true);
 			trainCountUpdateLastAcceptedFileButton.setDisable(true);
 			checkLastAcceptedTrainFileLabel.setDisable(true);
+			checkLastAcceptedTrainsFileCheckBox.setDisable(true);
 		}
 		else
 		{
@@ -500,11 +517,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkEnabledCountOfTrains", true);
 
-			if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckEnabledCountOfTrains))
-			{
-				checkLastAcceptedTrainsFile = true;
-				checkLastAcceptedTrainsFileCheckBox.setSelected(true);
-			}
+			//if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckEnabledCountOfTrains))
+			//{
+			//	checkLastAcceptedTrainsFile = true;
+			//	checkLastAcceptedTrainsFileCheckBox.setSelected(true);
+			//}
 
 			checkLastAcceptedTrainsFileCheckBox.setDisable(false);
 			lastTrainsAcceptedFileLocationLabel.setDisable(false);
@@ -584,12 +601,15 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		// Train types
 		brightlineTrainTypeLabel = brightlineTrainTypeTextArea.getText(0, Math.min(brightlineTrainTypeTextArea.getText().length(), maxCharactersTrainTypeField)).trim().toUpperCase();
 		brightlineTrainTypeTextArea.setText(brightlineTrainTypeLabel);
+		brightlineTrainTypesAsArray = brightlineTrainTypeLabel.split(",");
 
 		fecTrainTypeLabel = fecTrainTypeTextArea.getText(0, Math.min(fecTrainTypeTextArea.getText().length(), maxCharactersTrainTypeField)).trim().toUpperCase();
 		fecTrainTypeTextArea.setText(fecTrainTypeLabel);
+		fecTrainTypesAsArray = fecTrainTypeLabel.split(",");
 
 		triRailTrainTypeLabel = triRailTrainTypeTextArea.getText(0, Math.min(triRailTrainTypeTextArea.getText().length(), maxCharactersTrainTypeField)).trim().toUpperCase();
 		triRailTrainTypeTextArea.setText(triRailTrainTypeLabel);
+		triRailTrainTypesAsArray = triRailTrainTypeLabel.split(",");
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("ju_brightlineTrainTypes", brightlineTrainTypeLabel);	
@@ -669,6 +689,22 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			alert.show();
 
 			bridgeMpsTextArea.setText(bridgeMps); 
+		}
+	}
+
+	@FXML private void handleCheckLastAcceptedOptionsFileCheckBox(ActionEvent event)
+	{
+		if (checkLastAcceptedOptionsFile)
+		{
+			checkLastAcceptedOptionsFile = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedOptionsFile", false);
+		}
+		else
+		{
+			checkLastAcceptedOptionsFile = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkAgainstLastAcceptedOptionsFile", true);
 		}
 	}
 
@@ -949,6 +985,31 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		}
 	}
 
+	@FXML private void handleLastAcceptedPriorityButton(ActionEvent event)
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select File");
+		FileChooser.ExtensionFilter fileExtensions = 
+				new FileChooser.ExtensionFilter(
+						"RTC Option Files", "*.OPTION");
+
+		fileChooser.getExtensionFilters().add(fileExtensions);		
+
+		// Show the chooser and get the file
+		Stage stageForFileChooser = (Stage) updateLastAcceptedPriorityFileButton.getScene().getWindow();
+		File file = fileChooser.showOpenDialog(stageForFileChooser);
+
+		// Valid .OPTION file found
+		if (file != null)
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("ju_lastAcceptedOptionFile", file.toString());
+
+			lastOptionsAcceptedFileLocationLabel.setText(file.toString());
+			lastAcceptedOptionFileAsString = file.toString();
+		}
+	}
+
 	@FXML private void handleTrainCountUpdateLastAcceptedFileButton(ActionEvent event)
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -974,6 +1035,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		}
 	}
 
+	public static Boolean getCheckLastAcceptedOptionsFile()
+	{
+		return checkLastAcceptedOptionsFile;
+	}
+	
 	public static Boolean getCheckLastAcceptedTrainsFile()
 	{
 		return checkLastAcceptedTrainsFile;
@@ -1073,6 +1139,11 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 		return lastAcceptedTrainFileAsString;
 	}
+	
+	public static String getLastAcceptedOptionFileAsString()
+	{
+		return lastAcceptedOptionFileAsString;
+	}
 
 	public static String getLastAcceptedPermitFileAsString()
 	{
@@ -1089,22 +1160,27 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		return bridgeMpsAsArray;
 	}
 
-	public static String[] getTier1TrainPrioritiesAsArray()
+	public static Boolean getCheckTrainPriority()
+	{
+		return checkTrainPriority;
+	}
+
+	public static String[] getTier1TrainTypesAsArray()
 	{
 		return tier1TrainTypesAsArray;
 	}
 
-	public static String[] getTier2TrainPrioritiesAsArray()
+	public static String[] getTier2TrainTypesAsArray()
 	{
 		return tier2TrainTypesAsArray;
 	}
 
-	public static String[] getTier3TrainPrioritiesAsArray()
+	public static String[] getTier3TrainTypesAsArray()
 	{
 		return tier3TrainTypesAsArray;
 	}
 
-	public static String[] getTier4TrainPrioritiesAsArray()
+	public static String[] getTier4TrainTypesAsArray()
 	{
 		return tier4TrainTypesAsArray;
 	}
@@ -1112,6 +1188,15 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	public static Boolean getLastAcceptedTrainFileExists() 
 	{
 		File f = new File(lastAcceptedTrainFileAsString);
+		if(f.exists() && !f.isDirectory()) 
+			return true;
+		else
+			return false;
+	}
+	
+	public static Boolean getLastAcceptedOptionFileExists() 
+	{
+		File f = new File(lastAcceptedOptionFileAsString);
 		if(f.exists() && !f.isDirectory()) 
 			return true;
 		else

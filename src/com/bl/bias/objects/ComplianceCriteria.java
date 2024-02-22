@@ -34,7 +34,7 @@ public class ComplianceCriteria
 	
 	protected static final String[] hdr_mow_1()
 	{
-		String source = "1.  Jointly agreed with FEC representative.  Received in April 2023 as RTC file (case id 'FEC 230403 for Brightline').";
+		String source = "Jointly agreed with FEC representative.  Received in April 2023 as RTC file (case id 'FEC 230403 for Brightline').";
 		
 		return new String[] {source};
 	}

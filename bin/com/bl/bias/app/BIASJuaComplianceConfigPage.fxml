@@ -64,7 +64,7 @@
                                           <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                                        <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints vgrow="SOMETIMES" />
                                       </rowConstraints>
@@ -132,8 +132,11 @@
                                           <Label text="* Trains with types or nodes not applicable to a project will not be counted" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" GridPane.valignment="TOP">
                                              <GridPane.margin>
                                                 <Insets top="-10.0" />
-                                             </GridPane.margin></Label>
-                                          <Button fx:id="trainCountUpdateNodesTypesButton" mnemonicParsing="false" onAction="#handleTrainCountUpdateNodesTypesButton" text="Upate Types/Nodes" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                                             </GridPane.margin>
+                                             <font>
+                                                <Font name="System Italic" size="10.0" />
+                                             </font></Label>
+                                          <Button fx:id="trainCountUpdateNodesTypesButton" mnemonicParsing="false" onAction="#handleTrainCountUpdateNodesTypesButton" text="Update Types/Nodes" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
@@ -182,6 +185,14 @@
                                           <TextArea fx:id="brightlineNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleBrightlineNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="TOP" />
                                           <TextArea fx:id="fecNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleFecNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="4" GridPane.valignment="TOP" />
                                           <TextArea fx:id="triRailNodesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleTriRailNodesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="5" GridPane.rowIndex="4" GridPane.valignment="TOP" />
+                                          <Label text="* Must select Option 1" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                             <font>
+                                                <Font name="System Italic" size="10.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" top="15.0" />
+                                             </GridPane.margin>
+                                          </Label>
                                        </children>
                                     </GridPane>
                                  </content></Tab>
@@ -190,8 +201,9 @@
                                     <GridPane>
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
-                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="205.0" minWidth="0.0" prefWidth="129.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0" minWidth="50.0" prefWidth="631.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="294.0" minWidth="0.0" prefWidth="284.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="296.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="660.0" minWidth="50.0" prefWidth="194.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
                                           <ColumnConstraints />
                                           <ColumnConstraints />
@@ -199,11 +211,11 @@
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="45.0" minHeight="45.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -221,7 +233,7 @@
                                                 <Insets left="35.0" />
                                              </GridPane.margin>
                                           </Label>
-                                            <Button disable="true" mnemonicParsing="false" text="Update Last Accepted Files" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                                            <Button fx:id="updateLastAcceptedPriorityFileButton" mnemonicParsing="false" onAction="#handleLastAcceptedPriorityButton" text="Update Last Accepted Files" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                                              <GridPane.margin>
                                                 <Insets />
                                              </GridPane.margin></Button>
@@ -238,16 +250,11 @@
                                                 <Insets left="15.0" right="10.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label fx:id="checkLastAcceptedTrainFileLabel1" disable="true" text="2.  Check against the last accepted .TRAIN and .OPTION files of:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                                          <Label fx:id="checkLastAcceptedTrainFileLabel1" text="2.  Check against the last accepted .OPTION file of:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
                                              <GridPane.margin>
                                                 <Insets left="5.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <CheckBox disable="true" mnemonicParsing="false" GridPane.rowIndex="6">
-                                             <GridPane.margin>
-                                                <Insets left="10.0" />
-                                             </GridPane.margin>
-                                          </CheckBox>
                                           <Label text="Highest Train Types" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
@@ -258,39 +265,49 @@
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <TextArea fx:id="tier1PriorityTrainTextArea" maxHeight="32.0" minHeight="32.0" onKeyPressed="#handleTier1PriorityTrainTextArea" prefHeight="32.0" prefWidth="431.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                                          <TextArea fx:id="tier1PriorityTrainTextArea" maxHeight="40.0" maxWidth="600.0" minHeight="40.0" minWidth="600.0" onKeyPressed="#handleTier1PriorityTrainTextArea" prefHeight="40.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
                                              <font>
                                                 <Font size="10.0" />
                                              </font></TextArea>
-                                          <TextArea fx:id="tier2PriorityTrainTextArea" maxHeight="32.0" minHeight="32.0" onKeyPressed="#handleTier2PriorityTrainTextArea" prefHeight="32.0" prefWidth="431.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="NEVER">
+                                          <TextArea fx:id="tier2PriorityTrainTextArea" maxHeight="40.0" maxWidth="600.0" minHeight="40.0" minWidth="600.0" onKeyPressed="#handleTier2PriorityTrainTextArea" prefHeight="40.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="NEVER">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
                                              <font>
                                                 <Font size="10.0" />
                                              </font></TextArea>
-                                          <TextArea fx:id="tier3PriorityTrainTextArea" maxHeight="32.0" minHeight="32.0" onKeyPressed="#handleTier3PriorityTrainTextArea" prefHeight="32.0" prefWidth="431.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
+                                          <TextArea fx:id="tier3PriorityTrainTextArea" maxHeight="40.0" maxWidth="600.0" minHeight="40.0" minWidth="600.0" onKeyPressed="#handleTier3PriorityTrainTextArea" prefHeight="40.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
                                              <font>
                                                 <Font size="10.0" />
                                              </font></TextArea>
-                                          <TextArea fx:id="tier4PriorityTrainTextArea" maxHeight="32.0" minHeight="32.0" onKeyPressed="#handleTier4PriorityTrainTextArea" prefHeight="32.0" prefWidth="431.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="4" GridPane.vgrow="NEVER">
+                                          <TextArea fx:id="tier4PriorityTrainTextArea" maxHeight="40.0" maxWidth="600.0" minHeight="40.0" minWidth="600.0" onKeyPressed="#handleTier4PriorityTrainTextArea" prefHeight="40.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="4" GridPane.vgrow="NEVER">
                                              <GridPane.margin>
                                                 <Insets right="10.0" />
                                              </GridPane.margin>
                                              <font>
                                                 <Font size="10.0" />
                                              </font></TextArea>
+                                          <CheckBox fx:id="checkLastAcceptedOptionsFileCheckBox" mnemonicParsing="false" onAction="#handleCheckLastAcceptedOptionsFileCheckBox" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" />
+                                             </GridPane.margin>
+                                          </CheckBox>
                                           <Button fx:id="trainPriorityUpdateButton" mnemonicParsing="false" onAction="#handleTrainPriorityUpdateButton" text="Update Hierarchy" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2">
                                              <GridPane.margin>
                                                 <Insets left="10.0" />
                                              </GridPane.margin>
                                           </Button>
+                                          <Label fx:id="lastOptionsAcceptedFileLocationLabel" alignment="TOP_LEFT" maxWidth="310.0" minWidth="310.0" prefHeight="43.0" prefWidth="310.0" text="N/A" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.rowSpan="2" GridPane.valignment="TOP">
+                                             <GridPane.margin>
+                                                <Insets top="3.0" />
+                                             </GridPane.margin>
+                                          </Label>
                                        </children>
                                        
                                     </GridPane>

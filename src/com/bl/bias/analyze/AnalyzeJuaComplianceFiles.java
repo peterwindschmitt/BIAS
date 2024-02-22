@@ -1,16 +1,13 @@
 package com.bl.bias.analyze;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.bl.bias.app.BIASJuaComplianceConfigController;
 import com.bl.bias.objects.ComplianceLink;
 import com.bl.bias.objects.CompliancePermit;
+import com.bl.bias.objects.CompliancePriority;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.read.ReadJuaComplianceFiles;
 import com.bl.bias.tools.ConvertDateTime;
@@ -62,6 +59,25 @@ public class AnalyzeJuaComplianceFiles
 	private static Integer statisticalStartDay; 
 	private static Integer statisticalEndDay; 
 
+	// Priority/Rank
+	private static Integer tier1LowDelayCost = 0;
+	private static Integer tier1HighDelayCost = 0;
+	private static Integer tier2LowDelayCost = 0;
+	private static Integer tier2HighDelayCost = 0;
+	private static Integer tier3LowDelayCost = 0;
+	private static Integer tier3HighDelayCost = 0;
+	private static Integer tier4LowDelayCost = 0;
+	private static Integer tier4HighDelayCost = 0;
+
+	private static Integer tier1LowRank = 0;
+	private static Integer tier1HighRank = 0;
+	private static Integer tier2LowRank = 0;
+	private static Integer tier2HighRank = 0;
+	private static Integer tier3LowRank = 0;
+	private static Integer tier3HighRank = 0;
+	private static Integer tier4LowRank = 0;
+	private static Integer tier4HighRank = 0;
+
 	// Collections - trains
 	private static ArrayList<ComplianceTrain> trainsToAnalyzeForComplianceThisCase = new ArrayList<ComplianceTrain>();
 	private static ArrayList<ComplianceTrain> trainsToAnalyzeForComplianceLastAcceptedCase = new ArrayList<ComplianceTrain>();
@@ -80,13 +96,10 @@ public class AnalyzeJuaComplianceFiles
 	private static ArrayList<String> triRailTrainTypesFromConfigFile = new ArrayList<String>();
 	private static ArrayList<String> allTrainTypesFromConfigFile = new ArrayList<String>();
 	private static HashMap<String, Integer> seedTrainsByTypeThisCase = new HashMap<>();
-	private static HashMap<String, Integer> sortedSeedTrainsByTypeThisCase = new HashMap<>();
 	private static HashMap<String, Integer> seedTrainsByTypeLastAcceptedCase = new HashMap<>();
 	private static HashMap<String, Integer> operatedTrainsByTypeThisCase = new HashMap<>();
-	private static HashMap<String, Integer> sortedOperatedTrainsByTypeThisCase = new HashMap<>();
 	private static HashMap<String, Integer> operatedTrainsByTypeLastAcceptedCase = new HashMap<>();
 	private static HashMap<String, Double> sumOfSeedDurationsByTypeThisCase = new HashMap<>();
-	private static HashMap<String, Double> sortedSumOfSeedDurationsByTypeThisCase = new HashMap<>();
 	private static HashMap<String, Double> sumOfSeedDurationsByTypeLastAcceptedCase = new HashMap<>();
 	private static HashMap<String, Integer> trainsOperatedThisCase = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> trainsOperatedLastAcceptedCase = new HashMap<String, Integer>();
@@ -108,11 +121,33 @@ public class AnalyzeJuaComplianceFiles
 	private static ArrayList<ComplianceLink> linksToAnalyzeForThisCase = new ArrayList<ComplianceLink>();
 	private static ArrayList<ComplianceLink> linksToAnalyzeForLastAcceptedCase = new ArrayList<ComplianceLink>();
 
+	// Collections - priorities
+	private static ArrayList<CompliancePriority> trainPrioritiesFromThisCasesOptionFile = new ArrayList<CompliancePriority>();
+	private static ArrayList<CompliancePriority> trainPrioritiesFromLastAcceptedCasesOptionFile = new ArrayList<CompliancePriority>();
+	private static String[] tier1TrainPriorityTypes;
+	private static String[] tier2TrainPriorityTypes;
+	private static String[] tier3TrainPriorityTypes;
+	private static String[] tier4TrainPriorityTypes;
+
 	Boolean debug = false;
+	private static Boolean prioritiesInTrainFileMatchOptionFile = true;
+	private static Boolean prioritiesInOptionFilesMatch = true;
+	private static Boolean orderingOfRanksComportsWithJua = true;
+	private static Boolean orderingOfPrioritiesComportsWithJua = true;
 
 	public AnalyzeJuaComplianceFiles() 
 	{
 		resultsMessage = "Started analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+"\n";
+
+		// Below are needed for both checking priorities this case and last accepted case
+		trainPrioritiesFromThisCasesOptionFile.clear();
+		trainPrioritiesFromThisCasesOptionFile.addAll(ReadJuaComplianceFiles.retrieveTrainPrioritiesThisCase());
+
+		if ((BIASJuaComplianceConfigController.getCheckLastAcceptedOptionsFile()) && (ReadJuaComplianceFiles.retrieveTrainPrioritiesLastAcceptedCase() != null))
+		{
+			trainPrioritiesFromLastAcceptedCasesOptionFile.clear();
+			trainPrioritiesFromLastAcceptedCasesOptionFile.addAll(ReadJuaComplianceFiles.retrieveTrainPrioritiesLastAcceptedCase());
+		}
 
 		// Trains
 		if (BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains())
@@ -156,50 +191,78 @@ public class AnalyzeJuaComplianceFiles
 				seedTrainSymbolsFoundNotEligibleThisCase.add(trainsToAnalyzeForComplianceThisCase.get(i).getSymbol());
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+			if (BIASJuaComplianceConfigController.getBrightlineTrainTypes() != null)
 			{
-				brightlineTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+				{
+					brightlineTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+			if (BIASJuaComplianceConfigController.getFecTrainTypes() != null)
 			{
-				fecTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+
+				{
+					fecTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+			if (BIASJuaComplianceConfigController.getTriRailTrainTypes() != null)
 			{
-				triRailTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+				{
+					triRailTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineNodes().length; i++)
+			if (BIASJuaComplianceConfigController.getBrightlineNodes() != null)
 			{
-				brightlineNodesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineNodes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineNodes().length; i++)
+				{
+					brightlineNodesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineNodes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getFecNodes().length; i++)
+			if (BIASJuaComplianceConfigController.getFecNodes() != null)
 			{
-				fecNodesFromConfigFile.add(BIASJuaComplianceConfigController.getFecNodes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getFecNodes().length; i++)
+				{
+					fecNodesFromConfigFile.add(BIASJuaComplianceConfigController.getFecNodes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailNodes().length; i++)
+			if (BIASJuaComplianceConfigController.getTriRailNodes() != null)
 			{
-				triRailNodesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailNodes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailNodes().length; i++)
+				{
+					triRailNodesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailNodes()[i].trim());
+				}
 			}
 
 			// Create an array list of all train types 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+			if (BIASJuaComplianceConfigController.getBrightlineTrainTypes() != null)
 			{
-				allTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+				{
+					allTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+			if (BIASJuaComplianceConfigController.getFecTrainTypes() != null)
 			{
-				allTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+				{
+					allTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+			if (BIASJuaComplianceConfigController.getTriRailTrainTypes() != null)
 			{
-				allTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+				{
+					allTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+				}
 			}
 
 			// Add all types to a HashMap for this case 
@@ -207,7 +270,6 @@ public class AnalyzeJuaComplianceFiles
 			{
 				operatedTrainsByTypeThisCase.put(allTrainTypesFromConfigFile.get(i), 0);
 				seedTrainsByTypeThisCase.put(allTrainTypesFromConfigFile.get(i), 0);
-				seedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(i), 0);
 			}
 
 			// Add all train symbols to a HashMap for this case 
@@ -227,7 +289,7 @@ public class AnalyzeJuaComplianceFiles
 			for (int i = 0; i < trainsToAnalyzeForComplianceThisCase.size(); i++)
 			{
 				// Check Brightline type
-				if (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase()))
+				if ((brightlineTrainTypesFromConfigFile != null) & (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase())))
 				{
 					// Check if enabled
 					if (trainsToAnalyzeForComplianceThisCase.get(i).getEnabled().toUpperCase().equals("YES"))
@@ -314,10 +376,10 @@ public class AnalyzeJuaComplianceFiles
 								}
 							}
 						}
-					}
-				}				
+					}				
+				}
 				// Check FEC type
-				else if (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase()))
+				else if ((fecTrainTypesFromConfigFile != null) & (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase())))
 				{
 					// Check if enabled
 					if (trainsToAnalyzeForComplianceThisCase.get(i).getEnabled().toUpperCase().equals("YES"))
@@ -407,7 +469,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 				// Check TriRail type
-				else if (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase()))
+				else if ((triRailTrainTypesFromConfigFile != null) & (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceThisCase.get(i).getType().toUpperCase())))
 				{
 					// Check if enabled
 					if (trainsToAnalyzeForComplianceThisCase.get(i).getEnabled().toUpperCase().equals("YES"))
@@ -535,7 +597,6 @@ public class AnalyzeJuaComplianceFiles
 
 			// Populate all arrays with necessary objects
 			trainsToAnalyzeForComplianceLastAcceptedCase.addAll(ReadJuaComplianceFiles.getTrainsToAnalyzeLastAcceptedCase());
-
 			seedTrainsFoundNotEligibleLastAcceptedCase.addAll(trainsToAnalyzeForComplianceLastAcceptedCase);
 
 			for (int i = 0; i < trainsToAnalyzeForComplianceLastAcceptedCase.size(); i++)
@@ -543,34 +604,52 @@ public class AnalyzeJuaComplianceFiles
 				seedTrainSymbolsFoundNotEligibleLastAcceptedCase.add(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getSymbol());
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+			if (brightlineTrainTypesFromConfigFile != null)
 			{
-				brightlineTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineTrainTypes().length; i++)
+				{
+					brightlineTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+			if (fecTrainTypesFromConfigFile != null)
 			{
-				fecTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getFecTrainTypes().length; i++)
+				{
+					fecTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getFecTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+			if (triRailTrainTypesFromConfigFile != null)
 			{
-				triRailTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailTrainTypes().length; i++)
+				{
+					triRailTrainTypesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailTrainTypes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineNodes().length; i++)
+			if (BIASJuaComplianceConfigController.getBrightlineNodes() != null)
 			{
-				brightlineNodesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineNodes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getBrightlineNodes().length; i++)
+				{
+					brightlineNodesFromConfigFile.add(BIASJuaComplianceConfigController.getBrightlineNodes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getFecNodes().length; i++)
+			if (BIASJuaComplianceConfigController.getFecNodes() != null)
 			{
-				fecNodesFromConfigFile.add(BIASJuaComplianceConfigController.getFecNodes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getFecNodes().length; i++)
+				{
+					fecNodesFromConfigFile.add(BIASJuaComplianceConfigController.getFecNodes()[i].trim());
+				}
 			}
 
-			for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailNodes().length; i++)
+			if (BIASJuaComplianceConfigController.getTriRailNodes() != null)
 			{
-				triRailNodesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailNodes()[i].trim());
+				for (int i = 0; i < BIASJuaComplianceConfigController.getTriRailNodes().length; i++)
+				{
+					triRailNodesFromConfigFile.add(BIASJuaComplianceConfigController.getTriRailNodes()[i].trim());
+				}
 			}
 
 			// Add all train symbols to a HashMap for last accepted case 
@@ -583,8 +662,6 @@ public class AnalyzeJuaComplianceFiles
 			totalCountOfBrightlineOperatedTrainsLastAcceptedCase = 0;
 			totalCountOfFecOperatedTrainsLastAcceptedCase = 0;
 			totalCountOfTriRailOperatedTrainsLastAcceptedCase = 0;
-			operatedTrainsByTypeLastAcceptedCase.clear();
-			operatedTrainsByTypeLastAcceptedCase.clear();
 			statisticalStartDay = ReadJuaComplianceFiles.getStatisticalStartDayOfWeekAsInteger();		 
 			statisticalEndDay = statisticalStartDay + ReadJuaComplianceFiles.getStatisticalDurationInDays(); 
 
@@ -592,13 +669,14 @@ public class AnalyzeJuaComplianceFiles
 			for (int i = 0; i < allTrainTypesFromConfigFile.size(); i++)
 			{
 				operatedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(i), 0);
+				seedTrainsByTypeLastAcceptedCase.put(allTrainTypesFromConfigFile.get(i), 0);
 			}
 
 			// For each train
 			for (int i = 0; i < trainsToAnalyzeForComplianceLastAcceptedCase.size(); i++)
 			{
 				// Check Brightline type
-				if (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase()))
+				if ((brightlineTrainTypesFromConfigFile != null) & (brightlineTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase())))
 				{
 					// Check if enabled
 					if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getEnabled().toUpperCase().equals("YES"))
@@ -689,7 +767,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 				// Check FEC type
-				else if (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase()))
+				else if ((fecTrainTypesFromConfigFile != null) & (fecTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase())))
 				{
 					// Check if enabled
 					if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getEnabled().toUpperCase().equals("YES"))
@@ -779,7 +857,7 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 				// Check TriRail type
-				else if (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase()))
+				else if ((triRailTrainTypesFromConfigFile != null) & (triRailTrainTypesFromConfigFile.contains(trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getType().toUpperCase())))
 				{
 					// Check if enabled
 					if (trainsToAnalyzeForComplianceLastAcceptedCase.get(i).getEnabled().toUpperCase().equals("YES"))
@@ -877,9 +955,8 @@ public class AnalyzeJuaComplianceFiles
 							}
 						}
 					}
-				}
+				}	
 			}
-
 			// Check sum of end-to-end scheduled duration 
 			// Set all train types to cumulative zero duration
 			for (int i = 0; i < allTrainTypesFromConfigFile.size(); i++)
@@ -1048,60 +1125,6 @@ public class AnalyzeJuaComplianceFiles
 					}
 				}
 			}
-
-			// Sort operated trains by type
-			ArrayList<Integer> listInteger = new ArrayList<>();
-			LinkedHashMap<String, Integer> sortedMapInteger = new LinkedHashMap<>();
-
-			for (Map.Entry<String, Integer> entry : operatedTrainsByTypeThisCase.entrySet()) {
-				listInteger.add(entry.getValue());
-			}
-			Collections.sort(listInteger); 
-			Collections.reverse(listInteger);
-			for (int num : listInteger) {
-				for (Entry<String, Integer> entry : operatedTrainsByTypeThisCase.entrySet()) {
-					if (entry.getValue().equals(num)) {
-						sortedMapInteger.put(entry.getKey(), num);
-					}
-				}
-			}
-			sortedOperatedTrainsByTypeThisCase = sortedMapInteger;
-
-			// Sort seed trains by type
-			listInteger = new ArrayList<>();
-			sortedMapInteger = new LinkedHashMap<>();
-
-			for (Map.Entry<String, Integer> entry : seedTrainsByTypeThisCase.entrySet()) {
-				listInteger.add(entry.getValue());
-			}
-			Collections.sort(listInteger); 
-			Collections.reverse(listInteger);
-			for (int num : listInteger) {
-				for (Entry<String, Integer> entry : seedTrainsByTypeThisCase.entrySet()) {
-					if (entry.getValue().equals(num)) {
-						sortedMapInteger.put(entry.getKey(), num);
-					}
-				}
-			}
-			sortedSeedTrainsByTypeThisCase = sortedMapInteger;
-
-			// Sort seed train durations by type
-			ArrayList<Double> listDouble = new ArrayList<>();
-			LinkedHashMap<String, Double> sortedMapDouble = new LinkedHashMap<>();
-
-			for (Map.Entry<String, Double> entry : sumOfSeedDurationsByTypeThisCase.entrySet()) {
-				listDouble.add(entry.getValue());
-			}
-			Collections.sort(listDouble); 
-			Collections.reverse(listDouble);
-			for (double num : listDouble) {
-				for (Entry<String, Double> entry : sumOfSeedDurationsByTypeThisCase.entrySet()) {
-					if (entry.getValue().equals(num)) {
-						sortedMapDouble.put(entry.getKey(), num);
-					}
-				}
-			}
-			sortedSumOfSeedDurationsByTypeThisCase = sortedMapDouble;
 
 			resultsMessage += "Found "+seedTrainsFoundEligibleLastAcceptedCase.size()+" eligible seed trains in the last approved .TRAIN file:\n";
 			resultsMessage += "  yielding "+totalCountOfBrightlineOperatedTrainsLastAcceptedCase+" dispatched Brightline trains operated during the statistical period in the last approved .TRAIN file\n";
@@ -1665,7 +1688,7 @@ public class AnalyzeJuaComplianceFiles
 			linksToAnalyzeForLastAcceptedCase.addAll(ReadJuaComplianceFiles.getLinksToAnalyzeLastAcceptedCase());
 
 			resultsMessage += "Found " + linksToAnalyzeForThisCase.size() + " links in this case's .LINK file and " + linksToAnalyzeForLastAcceptedCase.size() + " links in the last accepted .LINK file\n";
-			resultsMessage += "Calculating sum of miles multiplied by speed for track classes\n";
+			resultsMessage += "Calculating sum of miles multiplied by speed for track classes\n\n";
 
 			// Compute miles of links, and miles * speed for three train groups
 			milesOfTrackThisCase = 0.0;
@@ -1678,7 +1701,7 @@ public class AnalyzeJuaComplianceFiles
 			localSpeedMilesLastAcceptedCase = 0.0;
 			linkCountThisCase = linksToAnalyzeForThisCase.size();
 			linkCountLastAcceptedCase = linksToAnalyzeForLastAcceptedCase.size();
-			
+
 			for (int i = 0; i < linkCountThisCase; i++)
 			{
 				milesOfTrackThisCase += linksToAnalyzeForThisCase.get(i).getLinkDistance();
@@ -1686,13 +1709,493 @@ public class AnalyzeJuaComplianceFiles
 				throughSpeedMilesThisCase += (linksToAnalyzeForThisCase.get(i).getLinkDistance() * linksToAnalyzeForThisCase.get(i).getThroughSpeed());
 				localSpeedMilesThisCase += (linksToAnalyzeForThisCase.get(i).getLinkDistance() * linksToAnalyzeForThisCase.get(i).getLocalSpeed());
 			}
-			
+
 			for (int i = 0; i < linkCountLastAcceptedCase; i++)
 			{
 				milesOfTrackLastAcceptedCase += linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance();
 				passengerSpeedMilesLastAcceptedCase += (linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance() * linksToAnalyzeForLastAcceptedCase.get(i).getPassengerSpeed());
 				throughSpeedMilesLastAcceptedCase += (linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance() * linksToAnalyzeForLastAcceptedCase.get(i).getThroughSpeed());
 				localSpeedMilesLastAcceptedCase += (linksToAnalyzeForLastAcceptedCase.get(i).getLinkDistance() * linksToAnalyzeForLastAcceptedCase.get(i).getLocalSpeed());
+			}
+		}
+
+		// Train priority
+		if (BIASJuaComplianceConfigController.getCheckTrainPriority())
+		{
+			tier1TrainPriorityTypes = BIASJuaComplianceConfigController.getTier1TrainTypesAsArray();
+			tier2TrainPriorityTypes = BIASJuaComplianceConfigController.getTier2TrainTypesAsArray();
+			tier3TrainPriorityTypes = BIASJuaComplianceConfigController.getTier3TrainTypesAsArray();
+			tier4TrainPriorityTypes = BIASJuaComplianceConfigController.getTier4TrainTypesAsArray();
+
+			resultsMessage += "Found " + (trainPrioritiesFromThisCasesOptionFile.size() * 5) + " train priority objects in this case's .OPTION file\n";
+
+			// Check hierarchy within the .OPTION file
+			resultsMessage += "Checking that priorities/ranks in .OPTION file comport with JUA\n";
+
+			// Find high and low priorities for Tier 1
+			int tier1HighMinimumPriority = 0;
+			int tier1LowMinimumPriority = 9999;
+			int tier1HighInitialPriority = 0;
+			int tier1LowInitialPriority = 9999;
+			int tier1HighMaximumPriority = 0;
+			int tier1LowMaximumPriority = 9999;
+
+			if (tier1TrainPriorityTypes != null)
+			{
+				// Max
+				for (int i = 0; i < tier1TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier1TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() > tier1HighMaximumPriority)
+								tier1HighMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() < tier1LowMaximumPriority)
+								tier1LowMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+						}
+					}
+				}
+				// Initial
+				for (int i = 0; i < tier1TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier1TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() > tier1HighInitialPriority)
+								tier1HighInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() < tier1LowInitialPriority)
+								tier1LowInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+						}
+					}
+				}
+				// Minimum
+				for (int i = 0; i < tier1TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier1TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() > tier1HighMinimumPriority)
+								tier1HighMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() < tier1LowMinimumPriority)
+								tier1LowMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+						}
+					}
+				}
+				tier1LowDelayCost = tier1LowMinimumPriority;
+				tier1HighDelayCost = tier1HighMaximumPriority;
+			}
+
+			// Find high and low priorities for Tier 2
+			int tier2HighMinimumPriority = 0;
+			int tier2LowMinimumPriority = 9999;
+			int tier2HighInitialPriority = 0;
+			int tier2LowInitialPriority = 9999;
+			int tier2HighMaximumPriority = 0;
+			int tier2LowMaximumPriority = 9999;
+
+			if (tier2TrainPriorityTypes != null)
+			{
+				// Max
+				for (int i = 0; i < tier2TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier2TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() > tier2HighMaximumPriority)
+								tier2HighMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() < tier2LowMaximumPriority)
+								tier2LowMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+						}
+					}
+				}
+				// Initial
+				for (int i = 0; i < tier2TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier2TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() > tier2HighInitialPriority)
+								tier2HighInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() < tier2LowInitialPriority)
+								tier2LowInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+						}
+					}
+				}
+				// Minimum
+				for (int i = 0; i < tier2TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier2TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() > tier2HighMinimumPriority)
+								tier2HighMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() < tier2LowMinimumPriority)
+								tier2LowMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+						}
+					}
+				}
+				tier2LowDelayCost = tier2LowMinimumPriority;
+				tier2HighDelayCost = tier2HighMaximumPriority;
+			}
+
+			// Find high and low priorities for Tier 3
+			int tier3HighMinimumPriority = 0;
+			int tier3LowMinimumPriority = 9999;
+			int tier3HighInitialPriority = 0;
+			int tier3LowInitialPriority = 9999;
+			int tier3HighMaximumPriority = 0;
+			int tier3LowMaximumPriority = 9999;
+
+			if (tier3TrainPriorityTypes != null)
+			{
+				// Max
+				for (int i = 0; i < tier3TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier3TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() > tier3HighMaximumPriority)
+								tier3HighMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() < tier3LowMaximumPriority)
+								tier3LowMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+						}
+					}
+				}
+				// Initial
+				for (int i = 0; i < tier3TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier3TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() > tier3HighInitialPriority)
+								tier3HighInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() < tier3LowInitialPriority)
+								tier3LowInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+						}
+					}
+				}
+				// Minimum
+				for (int i = 0; i < tier3TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier3TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() > tier3HighMinimumPriority)
+								tier3HighMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() < tier3LowMinimumPriority)
+								tier3LowMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+						}
+					}
+				}
+				tier3LowDelayCost = tier3LowMinimumPriority;
+				tier3HighDelayCost = tier3HighMaximumPriority;
+			}
+
+			// Find high and low priorities for Tier 4
+			int tier4HighMinimumPriority = 0;
+			int tier4LowMinimumPriority = 9999;
+			int tier4HighInitialPriority = 0;
+			int tier4LowInitialPriority = 9999;
+			int tier4HighMaximumPriority = 0;
+			int tier4LowMaximumPriority = 9999;
+
+			if (tier4TrainPriorityTypes != null)
+			{
+				// Max
+				for (int i = 0; i < tier4TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier4TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() > tier4HighMaximumPriority)
+								tier4HighMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost() < tier4LowMaximumPriority)
+								tier4LowMaximumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost();
+						}
+					}
+				}
+				// Initial
+				for (int i = 0; i < tier4TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier4TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() > tier4HighInitialPriority)
+								tier4HighInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost() < tier4LowInitialPriority)
+								tier4LowInitialPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost();
+						}
+					}
+				}
+				// Minimum
+				for (int i = 0; i < tier4TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier4TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() > tier4HighMinimumPriority)
+								tier4HighMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost() < tier4LowMinimumPriority)
+								tier4LowMinimumPriority = trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost();
+						}
+					}
+				}
+				tier4LowDelayCost = tier4LowMinimumPriority;
+				tier4HighDelayCost = tier4HighMaximumPriority;
+			}
+
+			ArrayList<Integer> stackOfPriorities = new ArrayList<Integer>();
+
+			if (tier1TrainPriorityTypes != null)
+			{
+				stackOfPriorities.add(tier1HighMaximumPriority);
+				stackOfPriorities.add(tier1LowMinimumPriority);
+			}
+			if (tier2TrainPriorityTypes != null)
+			{
+				stackOfPriorities.add(tier2HighMaximumPriority);
+				stackOfPriorities.add(tier2LowMinimumPriority);
+			}
+			if (tier3TrainPriorityTypes != null)
+			{
+				stackOfPriorities.add(tier3HighMaximumPriority);
+				stackOfPriorities.add(tier3LowMinimumPriority);
+			}
+			if (tier4TrainPriorityTypes != null)
+			{
+				stackOfPriorities.add(tier4HighMaximumPriority);
+				stackOfPriorities.add(tier4LowMinimumPriority);
+			}
+
+			// Check if priorities are in order
+			for (int i = 0; i < (stackOfPriorities.size()/2) - 1; i++)
+			{
+				if (stackOfPriorities.get((i*2)+1) >= stackOfPriorities.get(i*2)+2)
+				{
+					orderingOfPrioritiesComportsWithJua = false;
+					resultsMessage += "Dispatch priorities are not compliant with JUA\n";
+				}
+			}
+
+			// Check dispatch rank
+			int tier1HighDispatchRank = 7;
+			int tier1LowDispatchRank = 1;
+			int tier2HighDispatchRank = 7;
+			int tier2LowDispatchRank = 1;
+			int tier3HighDispatchRank = 7;
+			int tier3LowDispatchRank = 1;
+			int tier4HighDispatchRank = 7;
+			int tier4LowDispatchRank = 1;
+
+			// Tier 1
+			if (tier1TrainPriorityTypes != null)
+			{
+				for (int i = 0; i < tier1TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier1TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() < tier1HighDispatchRank)
+								tier1HighDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() > tier1LowDispatchRank)
+								tier1LowDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+						}
+					}
+				}
+			}
+
+			// Tier 2
+			if (tier2TrainPriorityTypes != null)
+			{
+				for (int i = 0; i < tier2TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier2TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() < tier2HighDispatchRank)
+								tier2HighDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() > tier2LowDispatchRank)
+								tier2LowDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+						}
+					}
+				}
+			}
+
+			// Tier 3
+			if (tier3TrainPriorityTypes != null)
+			{
+				for (int i = 0; i < tier3TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier3TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() < tier3HighDispatchRank)
+								tier3HighDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() > tier3LowDispatchRank)
+								tier3LowDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+						}
+					}
+				}
+			}
+
+			// Tier 4
+			if (tier4TrainPriorityTypes != null)
+			{
+
+				for (int i = 0; i < tier4TrainPriorityTypes.length; i++)
+				{
+					for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+					{
+						if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().trim().equals(tier4TrainPriorityTypes[i].trim()))
+						{
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() < tier4HighDispatchRank)
+								tier4HighDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+							if (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank() > tier4LowDispatchRank)
+								tier4LowDispatchRank = trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank();
+						}
+					}
+				}
+			}
+
+			tier1LowRank = tier1LowDispatchRank;
+			tier1HighRank = tier1HighDispatchRank;
+			tier2LowRank = tier2LowDispatchRank;
+			tier2HighRank = tier2HighDispatchRank;
+			tier3LowRank = tier3LowDispatchRank;
+			tier3HighRank = tier3HighDispatchRank;
+			tier4LowRank = tier4LowDispatchRank;
+			tier4HighRank = tier4HighDispatchRank;
+
+			ArrayList<Integer> stackOfDispatchRanks = new ArrayList<Integer>();
+
+			if (tier1TrainPriorityTypes != null)
+			{
+				stackOfDispatchRanks.add(tier1HighDispatchRank);
+				stackOfDispatchRanks.add(tier1LowDispatchRank);
+			}
+			if (tier2TrainPriorityTypes != null)
+			{
+				stackOfDispatchRanks.add(tier2HighDispatchRank);
+				stackOfDispatchRanks.add(tier2LowDispatchRank);
+			}
+			if (tier3TrainPriorityTypes != null)
+			{
+				stackOfDispatchRanks.add(tier3HighDispatchRank);
+				stackOfDispatchRanks.add(tier3LowDispatchRank);
+			}
+			if (tier4TrainPriorityTypes != null)
+			{
+				stackOfDispatchRanks.add(tier4HighDispatchRank);
+				stackOfDispatchRanks.add(tier4LowDispatchRank);
+			}
+
+			// Check if ranks are in order
+			for (int i = 0; i < (stackOfDispatchRanks.size()/2) - 1; i++)
+			{
+				if (stackOfDispatchRanks.get((i*2)+1) >= stackOfDispatchRanks.get(i*2)+2)
+				{
+					orderingOfRanksComportsWithJua = false;
+					resultsMessage += "Dispatch ranks are not compliant with JUA\n";
+				}
+			}
+
+			// Check that priorities match between .OPTION and .TRAIN files
+			resultsMessage += "Checking that priorities in .TRAIN file comport with .OPTION file\n";
+			for (int i = 0; i < trainsToAnalyzeForComplianceThisCase.size(); i++)
+			{
+				for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++)
+				{
+					if (trainPrioritiesFromThisCasesOptionFile.get(j).getType().equals(trainsToAnalyzeForComplianceThisCase.get(i).getType()))
+					{
+						// Check that .OPTION and .TRAIN match for each train type
+						if ((!trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost().equals(trainsToAnalyzeForComplianceThisCase.get(i).getMinimumPriority()))
+								|| (!trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost().equals(trainsToAnalyzeForComplianceThisCase.get(i).getInitialPriority()))
+								|| (!trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost().equals(trainsToAnalyzeForComplianceThisCase.get(i).getMaximumPriority())))
+						{
+							prioritiesInTrainFileMatchOptionFile = false;
+							resultsMessage += "Priorities on train "+trainsToAnalyzeForComplianceThisCase.get(i).getSymbol()+" are out of sync\n";
+							break;
+						}
+						else if ((trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost().equals(trainsToAnalyzeForComplianceThisCase.get(i).getMinimumPriority()))
+								&& (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost().equals(trainsToAnalyzeForComplianceThisCase.get(i).getInitialPriority()))
+								&& (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost().equals(trainsToAnalyzeForComplianceThisCase.get(i).getMaximumPriority())))
+						{
+							break;
+						}
+					}
+					else if (j == trainPrioritiesFromThisCasesOptionFile.size() - 1)
+					{
+						// Train type not found
+						prioritiesInTrainFileMatchOptionFile = false;
+					}
+				}
+			}
+		}
+
+		// Check that priorities match between both .OPTION files, if selected
+		if ((BIASJuaComplianceConfigController.getCheckLastAcceptedOptionsFile()) && (ReadJuaComplianceFiles.retrieveTrainPrioritiesLastAcceptedCase() != null))
+		{
+			resultsMessage += "Checking that priorities in .OPTION files of this case and last accepted case are the same\n";
+
+			prioritiesInOptionFilesMatch = true;
+			
+			// Create a merged set of train types from both cases
+			HashSet<String> hashSetOfMergedTrainTypes = new HashSet<String>();
+			for (int i = 0; i < trainPrioritiesFromThisCasesOptionFile.size(); i++)
+			{
+				hashSetOfMergedTrainTypes.add(trainPrioritiesFromThisCasesOptionFile.get(i).getType());
+			}
+
+			for (int i = 0; i < trainPrioritiesFromLastAcceptedCasesOptionFile.size(); i++)
+			{
+				hashSetOfMergedTrainTypes.add(trainPrioritiesFromLastAcceptedCasesOptionFile.get(i).getType());
+			}
+
+			ArrayList<String> arrayListOfMergedTrainTypes = new ArrayList<String>();
+			arrayListOfMergedTrainTypes.addAll(hashSetOfMergedTrainTypes);
+
+			trainType:
+			for (int i = 0; i < arrayListOfMergedTrainTypes.size(); i++)
+			{
+				for (int j = 0; j < trainPrioritiesFromThisCasesOptionFile.size(); j++) // This case
+				{
+					for (int k = 0; k < trainPrioritiesFromLastAcceptedCasesOptionFile.size(); k++) // Last Accepted case
+					{
+						if ((arrayListOfMergedTrainTypes.get(i).equals(trainPrioritiesFromThisCasesOptionFile.get(j).getType()))
+							&& (arrayListOfMergedTrainTypes.get(i).equals(trainPrioritiesFromLastAcceptedCasesOptionFile.get(k).getType())))
+						{
+							if ((trainPrioritiesFromThisCasesOptionFile.get(j).getMinimumDelayCost().equals(trainPrioritiesFromLastAcceptedCasesOptionFile.get(k).getMinimumDelayCost()))
+									&& (trainPrioritiesFromThisCasesOptionFile.get(j).getInitialDelayCost().equals(trainPrioritiesFromLastAcceptedCasesOptionFile.get(k).getInitialDelayCost()))
+									&& (trainPrioritiesFromThisCasesOptionFile.get(j).getMaximumDelayCost().equals(trainPrioritiesFromLastAcceptedCasesOptionFile.get(k).getMaximumDelayCost()))
+									&& (trainPrioritiesFromThisCasesOptionFile.get(j).getConflictRank().equals(trainPrioritiesFromLastAcceptedCasesOptionFile.get(k).getConflictRank())))
+							{
+								continue trainType;
+							}
+							else
+							{
+								prioritiesInOptionFilesMatch = false;
+								break;
+							}
+						}
+					}
+				}
+				prioritiesInOptionFilesMatch = false;
+				break;
 			}
 		}
 
@@ -1811,9 +2314,9 @@ public class AnalyzeJuaComplianceFiles
 		return seedTrainSymbolsFoundNotEligibleLastAcceptedCase;
 	}
 
-	public static HashMap<String, Double> getSortedSumOfSeedDurationsByTypeThisCase()
+	public static HashMap<String, Double> getSumOfSeedDurationsByTypeThisCase()
 	{
-		return sortedSumOfSeedDurationsByTypeThisCase;
+		return sumOfSeedDurationsByTypeThisCase;
 	}
 
 	public static HashMap<String, Double> getSumOfSeedDurationsByTypeLastAcceptedCase()
@@ -1900,60 +2403,140 @@ public class AnalyzeJuaComplianceFiles
 	{
 		return  permitsConsideredLastAcceptedCase;
 	}
-	
+
 	public static Integer getLinkCountThisCase()
 	{
 		return linkCountThisCase;
 	}
-	
+
 	public static Integer getLinkCountLastAcceptedCase()
 	{
 		return linkCountLastAcceptedCase;
 	}
-	
+
 	public static Double getMilesOfTrackThisCase()
 	{
 		return milesOfTrackThisCase;
 	}
-	
+
 	public static Double getMilesOfTrackLastAcceptedCase()
 	{
 		return milesOfTrackLastAcceptedCase;
 	}
-	
+
 	public static Double getPassengerSpeedMilesThisCase()
 	{
 		return passengerSpeedMilesThisCase;
 	}
-	
+
 	public static Double getPassengerSpeedMilesLastAcceptedCase()
 	{
 		return passengerSpeedMilesLastAcceptedCase;
 	}
-	
+
 	public static Double getThroughSpeedMilesThisCase()
 	{
 		return throughSpeedMilesThisCase;
 	}
-	
+
 	public static Double getThroughSpeedMilesLastAcceptedCase()
 	{
 		return throughSpeedMilesLastAcceptedCase;
 	}
-	
+
 	public static Double getLocalSpeedMilesThisCase()
 	{
 		return localSpeedMilesThisCase;
 	}
-	
+
 	public static Double getLocalSpeedMilesLastAcceptedCase()
 	{
 		return localSpeedMilesLastAcceptedCase;
 	}
-	
-	public static HashMap<String, Integer> getSortedSeedTrainsByTypeThisCase()
+
+	public static Integer getTier1LowDelayCost()
 	{
-		return sortedSeedTrainsByTypeThisCase;
+		return tier1LowDelayCost;
+	}
+
+	public static Integer getTier1HighDelayCost()
+	{
+		return tier1HighDelayCost;
+	}
+
+	public static Integer getTier2LowDelayCost()
+	{
+		return tier2LowDelayCost;
+	}
+
+	public static Integer getTier2HighDelayCost()
+	{
+		return tier2HighDelayCost;
+	}
+
+	public static Integer getTier3LowDelayCost()
+	{
+		return tier3LowDelayCost;
+	}
+
+	public static Integer getTier3HighDelayCost()
+	{
+		return tier3HighDelayCost;
+	}
+
+	public static Integer getTier4LowDelayCost()
+	{
+		return tier4LowDelayCost;
+	}
+
+	public static Integer getTier4HighDelayCost()
+	{
+		return tier4HighDelayCost;
+	}
+
+	public static Integer getTier1LowRank()
+	{
+		return tier1LowRank;
+	}
+
+	public static Integer getTier1HighRank()
+	{
+		return tier1HighRank;
+	}
+
+	public static Integer getTier2LowRank()
+	{
+		return tier2LowRank;
+	}
+
+	public static Integer getTier2HighRank()
+	{
+		return tier2HighRank;
+	}
+
+	public static Integer getTier3LowRank()
+	{
+		return tier3LowRank;
+	}
+
+	public static Integer getTier3HighRank()
+	{
+		return tier3HighRank;
+	}
+
+	public static Integer getTier4LowRank()
+	{
+		return tier4LowRank;
+	}
+
+	public static Integer getTier4HighRank()
+	{
+		return tier4HighRank;
+	}
+
+	public static HashMap<String, Integer> getSeedTrainsByTypeThisCase()
+	{
+		return  seedTrainsByTypeThisCase;
 	}
 
 	public static HashMap<String, Integer> getSeedTrainsByTypeLastAcceptedCase()
@@ -1961,9 +2544,9 @@ public class AnalyzeJuaComplianceFiles
 		return  seedTrainsByTypeLastAcceptedCase;
 	}
 
-	public static HashMap<String, Integer> getSortedTrainsOperatedByTypeThisCase()
+	public static HashMap<String, Integer> getTrainsOperatedByTypeThisCase()
 	{
-		return  sortedOperatedTrainsByTypeThisCase;
+		return  operatedTrainsByTypeThisCase;
 	}
 
 	public static HashMap<String, Integer> getTrainsOperatedByTypeLastAcceptedCase()
@@ -1976,16 +2559,19 @@ public class AnalyzeJuaComplianceFiles
 		return allTrainTypesFromConfigFile;
 	}
 
-	public static HashMap<String, Integer> getTrainsOperatedThisCase()
+	public static Boolean getErrorsWithTrainPriorityThisCase()
 	{
-		return trainsOperatedThisCase;
+		if ((prioritiesInTrainFileMatchOptionFile == false) || (orderingOfRanksComportsWithJua == false) || (orderingOfPrioritiesComportsWithJua == false))
+			return true;
+		else
+			return false;
 	}
-
-	public static HashMap<String, Integer> getTrainsOperatedLastAcceptedCase()
+	
+	public static Boolean getErrorsWithTrainPriorityLastAcceptedCase()
 	{
-		return trainsOperatedLastAcceptedCase;
+		return prioritiesInOptionFilesMatch;
 	}
-
+	
 	public static String getResultsMessage()
 	{
 		return resultsMessage;

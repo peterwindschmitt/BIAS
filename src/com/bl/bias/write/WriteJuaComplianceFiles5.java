@@ -21,7 +21,7 @@ import com.bl.bias.app.BIASJuaComplianceConfigController;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.tools.ConvertNumberDatatypes;
 
-public class WriteJuaComplianceFiles5 extends WriteJuaComplianceFiles2
+public class WriteJuaComplianceFiles5 extends WriteJuaComplianceFiles3
 {
 	protected Boolean error = false;
 
