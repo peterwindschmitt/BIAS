@@ -32,6 +32,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	@FXML private CheckBox checkStatisticalPeriodOnlyCheckBox;
 	@FXML private CheckBox analyzeLinksCheckBox;
 	@FXML private CheckBox checkTrainPriorityCheckBox;
+	@FXML private CheckBox checkRecoveryRatesCheckBox;
 
 	@FXML private TextArea brightlineTrainTypeTextArea;
 	@FXML private TextArea fecTrainTypeTextArea;
@@ -78,6 +79,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static Boolean excludeRestrictionsNearBridge;
 	private static Boolean analyzeLinks;
 	private static Boolean checkTrainPriority;
+	private static Boolean checkRecoveryRates;
 
 	private static Boolean defaultCheckEnabledCountOfTrains = true;
 	private static Boolean defaultCheckLastAcceptedTrainsFile = true;
@@ -91,6 +93,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	private static Boolean defaultExcludeRestrictionsNearBridge = true;
 	private static Boolean defaultAnalyzeLinks = true;
 	private static Boolean defaultCheckTrainPriority = true;
+	private static Boolean defaultCheckRecoveryRates = true;
 
 	private static String brightlineTrainTypes;
 	private static String fecTrainTypes;
@@ -216,6 +219,22 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkAgainstLastAcceptedOptionsFile", false);
 			checkLastAcceptedOptionsFileCheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for checking recovery rates
+		if (prefs.getBoolean("ju_checkRecoveryRates", defaultCheckRecoveryRates))
+		{
+			checkRecoveryRates = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkRecoveryRates", true);
+			checkRecoveryRatesCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkRecoveryRates = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkRecoveryRates", false);
+			checkRecoveryRatesCheckBox.setSelected(false);
 		}
 
 		// See if preferences are stored for Brightline train types
@@ -517,12 +536,6 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_checkEnabledCountOfTrains", true);
 
-			//if (prefs.getBoolean("ju_checkAgainstLastAcceptedTrainsFile", defaultCheckEnabledCountOfTrains))
-			//{
-			//	checkLastAcceptedTrainsFile = true;
-			//	checkLastAcceptedTrainsFileCheckBox.setSelected(true);
-			//}
-
 			checkLastAcceptedTrainsFileCheckBox.setDisable(false);
 			lastTrainsAcceptedFileLocationLabel.setDisable(false);
 			trainCountUpdateLastAcceptedFileButton.setDisable(false);
@@ -737,6 +750,22 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 			permitsEnabled = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("ju_permitsEnabled", true);
+		}
+	}
+
+	@FXML private void handleCheckRecoveryRatesCheckBox(ActionEvent event)
+	{
+		if (checkRecoveryRates)
+		{
+			checkRecoveryRates = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkRecoveryRates", false);
+		}
+		else
+		{
+			checkRecoveryRates = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("ju_checkRecoveryRates", true);
 		}
 	}
 
@@ -1039,7 +1068,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 	{
 		return checkLastAcceptedOptionsFile;
 	}
-	
+
 	public static Boolean getCheckLastAcceptedTrainsFile()
 	{
 		return checkLastAcceptedTrainsFile;
@@ -1135,11 +1164,16 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		return analyzeLinks;
 	}
 
+	public static Boolean getCheckRecoveryRates()
+	{
+		return checkRecoveryRates;
+	}
+
 	public static String getLastAcceptedTrainFileAsString()
 	{
 		return lastAcceptedTrainFileAsString;
 	}
-	
+
 	public static String getLastAcceptedOptionFileAsString()
 	{
 		return lastAcceptedOptionFileAsString;
@@ -1193,7 +1227,7 @@ public class BIASJuaComplianceConfigController extends ComplianceCriteria
 		else
 			return false;
 	}
-	
+
 	public static Boolean getLastAcceptedOptionFileExists() 
 	{
 		File f = new File(lastAcceptedOptionFileAsString);

@@ -9,6 +9,7 @@ import com.bl.bias.objects.ComplianceLink;
 import com.bl.bias.objects.CompliancePermit;
 import com.bl.bias.objects.CompliancePriority;
 import com.bl.bias.objects.ComplianceTrain;
+import com.bl.bias.objects.TrainAssessment;
 import com.bl.bias.read.ReadJuaComplianceFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -128,7 +129,13 @@ public class AnalyzeJuaComplianceFiles
 	private static String[] tier2TrainPriorityTypes;
 	private static String[] tier3TrainPriorityTypes;
 	private static String[] tier4TrainPriorityTypes;
-
+	
+	// Collections - recovery rates
+	private static ArrayList<TrainAssessment> setAResults = new ArrayList<TrainAssessment>();
+	private static ArrayList<TrainAssessment> setBResults = new ArrayList<TrainAssessment>();
+	private static ArrayList<TrainAssessment> setCResults = new ArrayList<TrainAssessment>();
+	private static ArrayList<TrainAssessment> setDResults = new ArrayList<TrainAssessment>();
+	
 	Boolean debug = false;
 	private static Boolean prioritiesInTrainFileMatchOptionFile = true;
 	private static Boolean prioritiesInOptionFilesMatch = true;
@@ -177,6 +184,11 @@ public class AnalyzeJuaComplianceFiles
 
 			trainsOperatedThisCase.clear();
 			trainsOperatedLastAcceptedCase.clear();
+			
+			setAResults.clear();
+			setBResults.clear();
+			setCResults.clear();
+			setDResults.clear();
 
 			allTrainTypesFromConfigFile.clear();
 
@@ -2198,6 +2210,16 @@ public class AnalyzeJuaComplianceFiles
 				break;
 			}
 		}
+		
+		// Check recovery rates
+		if (BIASJuaComplianceConfigController.getCheckRecoveryRates())
+		{
+			RecoveryRateAnalysisForJUACompliance analyzeTrainsForRecoveryRates = new RecoveryRateAnalysisForJUACompliance(ReadJuaComplianceFiles.getTrainsReadInForRecoveryAnalysisThisCase(), ReadJuaComplianceFiles.getTrainToGroupAssignmentsForRecoveryAnalysisThisCase(), ReadJuaComplianceFiles.getTrainToTypeAssignmentsForRecoveryAnalysisThisCase());
+			setAResults = analyzeTrainsForRecoveryRates. getAnalyzedTrainsSetA();
+			setBResults = analyzeTrainsForRecoveryRates. getAnalyzedTrainsSetB();
+			setCResults = analyzeTrainsForRecoveryRates. getAnalyzedTrainsSetC();
+			setDResults = analyzeTrainsForRecoveryRates. getAnalyzedTrainsSetD();
+		}
 
 		resultsMessage += "Finished analyzing JUA Compliance at "+ConvertDateTime.getTimeStamp()+("\n");
 	}
@@ -2557,6 +2579,26 @@ public class AnalyzeJuaComplianceFiles
 	public static ArrayList<String> getAllTrainTypesFromAnalysisFile()
 	{
 		return allTrainTypesFromConfigFile;
+	}
+	
+	public static ArrayList<TrainAssessment> getRecoveryRateSetAResults()
+	{
+		return setAResults;
+	}
+	
+	public static ArrayList<TrainAssessment> getRecoveryRateSetBResults()
+	{
+		return setBResults;
+	}
+	
+	public static ArrayList<TrainAssessment> getRecoveryRateSetCResults()
+	{
+		return setCResults;
+	}
+	
+	public static ArrayList<TrainAssessment> getRecoveryRateSetDResults()
+	{
+		return setDResults;
 	}
 
 	public static Boolean getErrorsWithTrainPriorityThisCase()

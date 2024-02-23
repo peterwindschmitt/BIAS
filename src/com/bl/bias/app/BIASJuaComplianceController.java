@@ -232,7 +232,7 @@ public class BIASJuaComplianceController
 			// Read all objects that are required for JUA Compliance Analysis
 			message = "\n\nFor case "+fileAsString.replace(".OPTION", "")+":";
 			displayMessage(message);
-			ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath, BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains(), BIASJuaComplianceConfigController.getCheckPermitsEnabled(), BIASJuaComplianceConfigController.getAnalyzeLinks());
+			ReadJuaComplianceFiles readData = new ReadJuaComplianceFiles(fullyQualifiedPath, BIASJuaComplianceConfigController.getCheckEnabledCountOfTrains(), BIASJuaComplianceConfigController.getCheckPermitsEnabled(), BIASJuaComplianceConfigController.getAnalyzeLinks(), BIASJuaComplianceConfigController.getCheckRecoveryRates());
 			message = readData.getResultsMessage();
 			displayMessage(message);
 

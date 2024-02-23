@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.bl.bias.app.BIASJuaComplianceConfigController;
@@ -14,6 +15,7 @@ import com.bl.bias.objects.CompliancePermit;
 import com.bl.bias.objects.CompliancePriority;
 import com.bl.bias.objects.ComplianceTrain;
 import com.bl.bias.objects.ComplianceTrainRouteEntry;
+import com.bl.bias.objects.TrainAssessment;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadJuaComplianceFiles
@@ -26,6 +28,10 @@ public class ReadJuaComplianceFiles
 	private static ArrayList<ComplianceLink> comparisonLinksLastAcceptedCase = new ArrayList<ComplianceLink>();
 	private static ArrayList<CompliancePriority> trainPrioritiesThisCase = new ArrayList<CompliancePriority>();
 	private static ArrayList<CompliancePriority> trainPrioritiesLastAcceptedCase = new ArrayList<CompliancePriority>();
+	
+	private static ArrayList<TrainAssessment> trainsReadIn = new ArrayList<TrainAssessment>();
+	private static HashMap<String, String> trainToGroupAssignment = new HashMap<String, String>();
+	private static HashMap<String, String> trainToTypeAssignment = new HashMap<String, String>();
 
 	private static String resultsMessage;
 
@@ -37,7 +43,7 @@ public class ReadJuaComplianceFiles
 	static String coolDownExclusion = null;
 	static String simulationBeginTime = null;
 
-	public ReadJuaComplianceFiles(String fileOfCaseBeingChecked, Boolean checkTrainCount, Boolean checkPermits, Boolean checkLinks) throws IOException
+	public ReadJuaComplianceFiles(String fileOfCaseBeingChecked, Boolean checkTrainCount, Boolean checkPermits, Boolean checkLinks, Boolean checkRecoveryRates) throws IOException
 	{
 		resultsMessage = "\nStarted parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n";
 
@@ -49,6 +55,9 @@ public class ReadJuaComplianceFiles
 		comparisonLinksLastAcceptedCase.clear();
 		trainPrioritiesThisCase.clear();
 		trainPrioritiesLastAcceptedCase.clear();
+		trainsReadIn.clear();
+		trainToGroupAssignment.clear();
+		trainToTypeAssignment.clear();
 
 		// Read in this cases .OPTION file with Scanner
 		Scanner scannerOption = null;
@@ -547,7 +556,18 @@ public class ReadJuaComplianceFiles
 
 				resultsMessage += "Extracted data from " + ((comparisonLinksThisCase.size() + comparisonLinksLastAcceptedCase.size()) * 4)+" objects from both .LINK files\n";
 			}
-
+			
+			// Check recovery rates
+			if ((checkRecoveryRates) && (checkFileExists(fileOfCaseBeingChecked.replace(".OPTION", ".ROUTE"))))
+			{
+				ReadRecoveryRateAnalysisFiles readRecoveryRate = new ReadRecoveryRateAnalysisFiles(fileOfCaseBeingChecked.replace(".OPTION", ".ROUTE"));
+				trainsReadIn = readRecoveryRate.getTrainsReadIn();
+				trainToGroupAssignment = readRecoveryRate.getTrainToGroupAssignment();
+				trainToTypeAssignment = readRecoveryRate.getTrainToTypeAssignment();
+				
+				resultsMessage += "Extracted data for "+trainsReadIn.size()+" trains from this case's .ROUTE file\n";
+			}
+			
 			resultsMessage += "Finished parsing JUA Compliance files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 		}
 		else
@@ -557,6 +577,21 @@ public class ReadJuaComplianceFiles
 		}
 	}
 
+	public static ArrayList<TrainAssessment> getTrainsReadInForRecoveryAnalysisThisCase()
+	{
+		return trainsReadIn;
+	}
+	
+	public static HashMap<String, String> getTrainToGroupAssignmentsForRecoveryAnalysisThisCase()
+	{
+		return trainToGroupAssignment;
+	}
+	
+	public static HashMap<String, String> getTrainToTypeAssignmentsForRecoveryAnalysisThisCase()
+	{
+		return trainToTypeAssignment;
+	}
+	
 	public static ArrayList<ComplianceTrain> getTrainsToAnalyzeThisCase()
 	{
 		return complianceTrainsThisCase;
@@ -745,7 +780,16 @@ public class ReadJuaComplianceFiles
 
 		return links;
 	}
-
+	
+	public static Boolean checkFileExists(String file) 
+	{
+		File f = new File(file);
+		if(f.exists() && !f.isDirectory()) 
+			return true;
+		else
+			return false;
+	}
+	
 	public String getResultsMessage()
 	{
 		return resultsMessage;

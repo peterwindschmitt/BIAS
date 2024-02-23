@@ -30,8 +30,9 @@ public class BIASLaunch extends Application
 	// 3.9 was 7/10/2023   (added options for calculation of bridge closure periods)
 	// 3.10 was 11/22/2023 (extended validity date until 1/31/2024)
 	// 4.00 was 12/26/2023 (added USCG bridge compliance.  extended validity date until 3/1/2024)
-	// 5.00 was 1/10/2024  (added Recovery Rate analysis module
-	private final static String version = "5.00 (January 10, 2024)";
+	// 5.00 was 1/10/2024  (added Recovery Rate analysis module)
+	// 6.00 was 2/23/2024  (added JUA Compliance module)
+	private final static String version = "6.00 (February 23, 2024)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 4;
  	//
 	// Session validity
