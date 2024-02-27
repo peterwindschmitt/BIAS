@@ -118,7 +118,7 @@
                   <Insets left="480.0" />
                </GridPane.margin>
             </Button>
-            <Label text="7.  Clear all BIAS entries in Windows System Registry:" GridPane.rowIndex="14" GridPane.valignment="CENTER">
+            <Label text="7.  Clear all BIAS entries in Windows System Registry (must restart):" GridPane.rowIndex="14" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -133,7 +133,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="6.  Load BIAS entries in a file to Windows System Registry:" GridPane.rowIndex="13">
+            <Label text="6.  Load BIAS entries in a file to Windows System Registry (must restart):" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>

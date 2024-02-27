@@ -27,7 +27,7 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 {
 	protected Boolean error = false;
 
-	private Boolean casesAreSame = true;
+	private Boolean casesAreSame;
 
 	Integer rowCounter = 0;
 
@@ -55,6 +55,8 @@ public class WriteJuaComplianceFiles2 extends WriteJuaComplianceFiles1
 	public WriteJuaComplianceFiles2(String textArea, String fullyQualifiedPath) 
 	{
 		super(textArea, fullyQualifiedPath);
+		
+		casesAreSame = true;
 
 		thisCaseSubTotal = 0;
 		lastAcceptedCaseSubTotal = 0;

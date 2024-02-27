@@ -41,6 +41,8 @@ public class BIASMainWindowController
 	@FXML private MenuItem menuItemUscgBridgeComplianceConfig;
 	@FXML private MenuItem menuItemRecoveryRateConfig;
 	@FXML private MenuItem menuItemJuaComplianceConfig;
+	@FXML private MenuItem menuItemModifiedOtp;
+	@FXML private MenuItem menuItemModifiedOtpConfig;
 	@FXML private MenuItem menuItemGeneralConfig;
 	@FXML private MenuItem menuItemParseConfig;
 	@FXML private MenuItem menuItemVersioningAndPermissions;
@@ -69,6 +71,8 @@ public class BIASMainWindowController
 	@FXML private Node nodeRecoveryRateConfig;
 	@FXML private Node nodeJuaCompliance;
 	@FXML private Node nodeJuaComplianceConfig;
+	@FXML private Node nodeModifiedOtp;
+	@FXML private Node nodeModifiedOtpConfig;
 
 	@FXML private ImageView headerBackground; 
 
@@ -103,6 +107,8 @@ public class BIASMainWindowController
 		nodeRecoveryRateConfig = FXMLLoader.load(getClass().getResource("BIASRecoveryRateAnalysisConfigPage.fxml"));
 		nodeJuaCompliance = FXMLLoader.load(getClass().getResource("BIASJuaCompliancePage.fxml"));
 		nodeJuaComplianceConfig = FXMLLoader.load(getClass().getResource("BIASJuaComplianceConfigPage.fxml"));
+		nodeModifiedOtp = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
+		nodeModifiedOtpConfig = FXMLLoader.load(getClass().getResource("BIASModifiedOtpConfigPage.fxml"));
 
 		// LOADING BELOW nodes will throw exception if trying to launch as JAR
 		nodeMaintenanceWindowAnalysis = FXMLLoader.load(getClass().getResource("BIASMaintenanceWindowAnalysisPage.fxml"));
@@ -242,6 +248,17 @@ public class BIASMainWindowController
 					handleMenuItemJuaCompliance(null);
 				}
 			}
+			else if (permittedModules[i].toString().contains("Modified OTP"))
+			{
+				menuItemModifiedOtp.setVisible(true);
+				subMenuModuleConfig.setVisible(true);
+				menuItemModifiedOtpConfig.setVisible(true);
+
+				if (i == 0)
+				{
+					handleMenuItemModifiedOtp(null);
+				}
+			}
 		}
 		menuItemVersioningAndPermissions.setVisible(true);
 	}
@@ -374,6 +391,16 @@ public class BIASMainWindowController
 	{
 		showModuleOnMainGridPane(nodeJuaComplianceConfig);
 	}
+	
+	@FXML private void handleMenuItemModifiedOtp(ActionEvent event) throws IOException
+	{
+		showModuleOnMainGridPane(nodeModifiedOtp);
+	}
+	
+	@FXML private void handleMenuItemModifiedOtpConfig(ActionEvent event) throws IOException
+	{
+		showModuleOnMainGridPane(nodeModifiedOtpConfig);
+	}
 
 	void showModuleOnMainGridPane(Node nodeToDisplay)
 	{
@@ -446,6 +473,12 @@ public class BIASMainWindowController
 		
 		if (mainGridPane.getChildren().contains(nodeJuaComplianceConfig))
 			mainGridPane.getChildren().remove(nodeJuaComplianceConfig);
+		
+		if (mainGridPane.getChildren().contains(nodeModifiedOtp))
+			mainGridPane.getChildren().remove(nodeModifiedOtp);
+		
+		if (mainGridPane.getChildren().contains(nodeModifiedOtpConfig))
+			mainGridPane.getChildren().remove(nodeModifiedOtpConfig);
 
 		// Add the desired Pane
 		mainGridPane.add(nodeToDisplay, 0, 2);    	

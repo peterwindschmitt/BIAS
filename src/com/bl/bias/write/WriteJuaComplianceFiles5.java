@@ -30,15 +30,18 @@ public class WriteJuaComplianceFiles5 extends WriteJuaComplianceFiles4
 	private static String lastAcceptedPermitFileName1 = BIASJuaComplianceConfigController.getLastAcceptedPermitFileAsString().replace(".PERMIT","");
 	private static String lastAcceptedPermitFileName2 = lastAcceptedPermitFileName1.substring(lastAcceptedPermitFileName1.lastIndexOf("\\") + 1);
 
-	private static Boolean permitFilesOfBothCasesEqual = true;
+	private static Boolean permitFilesOfBothCasesEqual;
 
 	public WriteJuaComplianceFiles5(String textArea, String fullyQualifiedPath) 
 	{
 		super(textArea, fullyQualifiedPath);
 
+		permitFilesOfBothCasesEqual = true;
+		
 		if ((BIASJuaComplianceConfigController.getCheckPermitsEnabled()) 
 				&& (BIASJuaComplianceConfigController.getCheckPermitsSumOfTrackMiles()))
 		{
+			
 			// Set styles
 			CellStyle style0 = workbook.createCellStyle();
 			CellStyle style1 = workbook.createCellStyle();

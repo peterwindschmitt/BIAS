@@ -30,12 +30,14 @@ public class WriteJuaComplianceFiles6 extends WriteJuaComplianceFiles5
 	private static String lastAcceptedLinkFileName1 = BIASJuaComplianceConfigController.getLastAcceptedLinkFileAsString().replace(".LINK","");
 	private static String lastAcceptedLinkFileName2 = lastAcceptedLinkFileName1.substring(lastAcceptedLinkFileName1.lastIndexOf("\\") + 1);
 
-	private static Boolean linkFilesOfBothCasesEqual = true;
+	private static Boolean linkFilesOfBothCasesEqual;
 
 	public WriteJuaComplianceFiles6(String textArea, String fullyQualifiedPath) 
 	{
 		super(textArea, fullyQualifiedPath);
-
+		
+		linkFilesOfBothCasesEqual = true;
+		
 		if (BIASJuaComplianceConfigController.getAnalyzeLinks()) 
 		{
 			// Set styles

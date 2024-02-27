@@ -362,7 +362,12 @@ public class BIASGeneralConfigController
 			alert.setContentText("Registry was updated from back-up file.");	
 			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
-			alert.show();
+						
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK)
+			{
+				System.exit(0);
+			}	
 		}
 	}
 
