@@ -35,7 +35,7 @@
       						<MenuItem fx:id="menuItemMaintenanceWindowAnalysis" mnemonicParsing="true" onAction="#handleMenuItemMaintenanceWindowAnalysis" text="_Maintenance Window Analysis" visible="false" />
                         	<MenuItem fx:id="menuItemGradeXingSpeeds" mnemonicParsing="true" onAction="#handleMenuItemGradeXingSpeeds" text="Grade _Crossing Speed Analysis" visible="false" />
                         	<MenuItem fx:id="menuItemRecoveryRate" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRate" text="Recovery Rate Analysis" visible="false" />
-                        <MenuItem fx:id="menuItemModifiedOtp" disable="true" mnemonicParsing="true" onAction="#handleMenuItemModifiedOtp" text="Modified _OTP Analysis" visible="false" />
+                        <MenuItem fx:id="menuItemModifiedOtp" mnemonicParsing="true" onAction="#handleMenuItemModifiedOtp" text="Modified _OTP Analysis" visible="false" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Scheduling">

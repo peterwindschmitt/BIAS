@@ -21,7 +21,12 @@ public class ConvertDateTime
 		boolean proceed = true;
 
 		// seconds
-		if (stringLength > 1)
+		if (stringLength == 0)
+		{
+			secondsTotal = 0;
+			proceed = false;
+		}
+		else if (stringLength > 1)
 		{
 			CharSequence seconds = stringTime.subSequence(stringLength-2, stringLength);
 			secondsTotal = Integer.valueOf((String) seconds);
@@ -89,6 +94,74 @@ public class ConvertDateTime
 		int totalElapsedSeconds = secondsTotal + (minutesTotal * 60) + (hoursTotal * 60 * 60) + (daysTotal * 60 * 60 * 24);
 
 		return totalElapsedSeconds;
+	}
+	
+	public static double convertDDHHMMStringToSerial(String stringTime)
+	{
+		// Convert text to seconds
+		Integer stringLength = stringTime.length();
+		Integer minutesTotal = 0;
+		Integer hoursTotal = 0;
+		Integer daysTotal = 0;
+		boolean proceed = true;
+
+		// minutes
+		if ((stringLength > 2) && proceed)
+		{
+			CharSequence minutes = stringTime.subSequence(stringLength-2, stringLength);
+			minutesTotal = Integer.valueOf((String) minutes);
+		}
+		else if (stringLength == 2)
+		{
+			CharSequence minutes = stringTime.subSequence(stringLength-2, stringLength);
+			minutesTotal = Integer.valueOf((String) minutes);
+			proceed = false;
+		}
+		else if (stringLength == 1)
+		{
+			CharSequence minutes= stringTime.subSequence(stringLength-1, stringLength);
+			minutesTotal = Integer.valueOf((String) minutes);
+			proceed = false;
+		}
+		else
+		{
+			proceed = false;
+		}
+
+		// hours            	
+		if ((stringLength > 5) && proceed)
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-5, stringLength-3);
+			hoursTotal = Integer.valueOf((String) hours);
+		}
+		else if (stringLength == 5)
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-5, stringLength-3);
+			hoursTotal = Integer.valueOf((String) hours);
+			proceed = false;
+		}
+		else if (stringLength == 1)
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-4, stringLength-2);
+			hoursTotal = Integer.valueOf((String) hours);
+			proceed = false;
+		}
+		else
+		{
+			proceed = false;
+		}
+
+		// days            	
+		if (proceed)
+		{
+			CharSequence days = stringTime.subSequence(0, stringLength-6);
+			daysTotal = Integer.valueOf((String) days);
+		}
+
+		int totalElapsedSeconds = (minutesTotal * 60) + (hoursTotal * 60 * 60) + (daysTotal * 60 * 60 * 24);
+		Double totalElapsedSerialTime = (double) totalElapsedSeconds / (double) 86400;
+
+		return totalElapsedSerialTime;
 	}
 
 	public static double convertSecondsToSerial(int totalSeconds)

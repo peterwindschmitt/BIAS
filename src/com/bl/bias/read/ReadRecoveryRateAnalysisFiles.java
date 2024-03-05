@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.TrainAssessment;
-import com.bl.bias.objects.RouteEntry;
+import com.bl.bias.objects.RouteEntryForRecoveryRateAssessment;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadRecoveryRateAnalysisFiles
@@ -62,7 +62,7 @@ public class ReadRecoveryRateAnalysisFiles
 			String trainSymbol = null;
 			String trainGroup = null;
 			String trainType = null;
-			ArrayList<RouteEntry> routeEntries = null;
+			ArrayList<RouteEntryForRecoveryRateAssessment> routeEntries = null;
 			scanner = new Scanner(contentForScanner.toString());
 
 			boolean openingSequence0 = false;
@@ -108,7 +108,7 @@ public class ReadRecoveryRateAnalysisFiles
 						trainToGroupAssignment.put(trainSymbol, trainGroup);
 						trainToTypeAssignment.put(trainSymbol, trainType);
 						
-						routeEntries = new ArrayList<RouteEntry>();
+						routeEntries = new ArrayList<RouteEntryForRecoveryRateAssessment>();
 
 						openingSequence0 = true;
 						scanner.nextLine();
@@ -142,7 +142,7 @@ public class ReadRecoveryRateAnalysisFiles
 							String cumulativeElapsedTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getCumulativeElapsedTime()[1])).trim();
 							String waitOnSchedule = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[0]), Integer.valueOf(BIASParseConfigPageController.r_getWaitOnSchedule()[1])).trim();
 							Double cumulativeDistance = Double.valueOf(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getDistance()[0]), Integer.valueOf(BIASParseConfigPageController.r_getDistance()[1])).trim());
-							RouteEntry routeEntry = new RouteEntry(rtcIncrement, node, scheduledDepartureTime, scheduledArrivalTime, simulatedDepartureTime, 
+							RouteEntryForRecoveryRateAssessment routeEntry = new RouteEntryForRecoveryRateAssessment(rtcIncrement, node, scheduledDepartureTime, scheduledArrivalTime, simulatedDepartureTime, 
 									simulatedArrivalTime, cumulativeElapsedTime, minimumDwellTime, waitOnSchedule, cumulativeDistance);
 							routeEntries.add(routeEntry);
 						}

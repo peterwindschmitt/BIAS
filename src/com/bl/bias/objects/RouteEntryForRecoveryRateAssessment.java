@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class RouteEntry
+public class RouteEntryForRecoveryRateAssessment
 {
 	private Integer rtcIncrement;
 	
@@ -15,7 +15,7 @@ public class RouteEntry
 	
 	private Double cumulativeDistance;
 				
-	public RouteEntry(Integer rtcIncrement, String node, String scheduledDepartureTimeAsString, String scheduledArrivalTimeAsString, String simulatedDepartureTimeAsString, 
+	public RouteEntryForRecoveryRateAssessment(Integer rtcIncrement, String node, String scheduledDepartureTimeAsString, String scheduledArrivalTimeAsString, String simulatedDepartureTimeAsString, 
 			String simulatedArrivalTimeAsString, String cumulativeElapsedTimeAsString, String minimumDwellTimeAsString, String waitOnScheduleAsString, Double cumulativeDistance)
 	{
 		this.rtcIncrement = rtcIncrement;

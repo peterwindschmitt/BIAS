@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
+import com.bl.bias.analyze.ModifiedOtpAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.read.ReadModifiedOtpFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
 import javafx.event.ActionEvent;
@@ -37,7 +39,7 @@ public class BIASModifiedOtpPageController
 
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
-	
+
 	@FXML private TextArea textArea;
 
 	@FXML private ProgressBar progressBar;
@@ -185,9 +187,9 @@ public class BIASModifiedOtpPageController
 		fileChooser.getExtensionFilters().add(fileExtensions);		
 
 		// See if last directory is stored
-		if ((prefs.get("mo_lastDirectoryForRecoveryAnalysis", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+		if ((prefs.get("mo_lastDirectoryForModifiedOtp", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 		{
-			Path path = Paths.get(prefs.get("mo_lastDirectoryForRecoveryAnalysis", null));
+			Path path = Paths.get(prefs.get("mo_lastDirectoryForModifiedOtp", null));
 
 			if ((path.toFile().exists()) && (path !=null))
 				fileChooser.setInitialDirectory(path.toFile());
@@ -201,6 +203,8 @@ public class BIASModifiedOtpPageController
 		if (file != null)
 		{
 			Boolean trainFileFound = false;
+			Boolean routeFileFound = false;
+			Boolean reportFileFound = false;
 
 			executeButton.setDisable(true);
 
@@ -213,7 +217,7 @@ public class BIASModifiedOtpPageController
 			fullyQualifiedPath = file.toString();
 			fileNameLabel.setText(fullyQualifiedPath);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("mo_lastDirectoryForRecoveryAnalysis", file.getParent());
+				prefs.put("mo_lastDirectoryForModifiedOtp", file.getParent());
 
 			// Check that .TRAIN file exists
 			File trainFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".TRAIN"));
@@ -222,7 +226,21 @@ public class BIASModifiedOtpPageController
 			else
 				message += "\n.TRAIN file is missing!";
 
-			if (trainFileFound)
+			// Check that .ROUTE file exists
+			File routeFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".ROUTE"));
+			if (routeFile.exists())
+				routeFileFound = true;
+			else
+				message += "\n.ROUTE file is missing!";
+
+			// Check that .REPORT file exists
+			File reportFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".REPORT"));
+			if (reportFile.exists())
+				reportFileFound = true;
+			else
+				message += "\n.REPORT file is missing!";
+
+			if ((routeFileFound) && (trainFileFound) && (reportFileFound))
 			{
 				executeButton.setDisable(false);
 			}
@@ -277,42 +295,26 @@ public class BIASModifiedOtpPageController
 
 		if (continueAnalysis)
 		{
-			/*
-			// Ensure that there are valid groups and node pairs
-			if (((BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups() != null) 
-					&& (!BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisTrainGroups().equals("")) 
-					&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetA() == true)
-					&& (BIASRecoveryRateAnalysisConfigController.getSetARecoveryRateAnalysisNodePairs() != null)) ||
-					((BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisTrainGroups() != null)
-							&& (!BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisTrainGroups().equals("")) 
-							&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetB() == true)
-							&& (BIASRecoveryRateAnalysisConfigController.getSetBRecoveryRateAnalysisNodePairs() != null)) |
-					((BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisTrainGroups() != null)
-							&& (!BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisTrainGroups().equals("")) 
-							&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetC() == true)
-							&& (BIASRecoveryRateAnalysisConfigController.getSetCRecoveryRateAnalysisNodePairs() != null)) ||
-					((BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisTrainGroups() != null)
-							&& (!BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisTrainGroups().equals("")) 
-							&& (BIASRecoveryRateAnalysisConfigController.getAnalyzeSetD() == true)
-							&& (BIASRecoveryRateAnalysisConfigController.getSetDRecoveryRateAnalysisNodePairs() != null)))
-
+			// Ensure that there is at least one valid entry from config
+			if (BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length > 0) 
 			{
 				// Read all objects that are required for the modified OTP analysis
-				ReadRecoveryRateAnalysisFiles readData = new ReadRecoveryRateAnalysisFiles(fullyQualifiedPath);
+				ReadModifiedOtpFiles readData = new ReadModifiedOtpFiles(fullyQualifiedPath);
 				message = readData.getResultsMessage();
 				displayMessage(message);
 
-				setProgressIndicator(0.40);
-
-				if (continueAnalysis)
+				setProgressIndicator(0.20);
+				
+				if (readData.getTrainsForModifiedOtp().size() > 0)
 				{
-					// Analyze trains' recovery rates
-					RecoveryRateAnalysis analyze = new RecoveryRateAnalysis();
+					// Analyze trains' modified OTP
+					ModifiedOtpAnalysis analyze = new ModifiedOtpAnalysis();
 					message = analyze.getResultsMessage();
 					displayMessage(message);
 
 					setProgressIndicator(0.80);
-
+					
+					/*
 					// Write results to spreadsheet
 					WriteRecoveryRateFiles6 writeFiles = new WriteRecoveryRateFiles6(textArea.getText().toString(), fullyQualifiedPath);
 					message = writeFiles.getResultsWriteMessage6();
@@ -327,18 +329,19 @@ public class BIASModifiedOtpPageController
 					{
 						displayMessage("\nError in writing files");
 						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-					}
+					}*/
 				}
 				else
 				{
+					displayMessage("\nNo qualifying run-time trains were found to compare schedule points against.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
 			else
 			{
-				displayMessage("\nMust select analyzing at least one set, at least one defined group\n and at least one defined node pair to run analysis");
+				displayMessage("\nMust select at least one train, node and departure time to run analysis");
 				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-			}*/
+			}
 		}
 		else
 		{

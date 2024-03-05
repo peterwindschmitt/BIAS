@@ -7,11 +7,11 @@ public class TrainAssessment
 	private String trainSymbol;
 	private String trainGroupAbbreviation;
 	private String trainType;
-	private ArrayList<RouteEntry> routeEntries = new ArrayList<RouteEntry>();
+	private ArrayList<RouteEntryForRecoveryRateAssessment> routeEntries = new ArrayList<RouteEntryForRecoveryRateAssessment>();
 	private ArrayList<RecoveryRateAssessment> recoveryRateAssesments = new ArrayList<RecoveryRateAssessment>();
 	private Boolean trainHasRecoveryRatesCalculated;
 				
-	public TrainAssessment(String trainSymbol, String trainGroupAbbreviation, String trainType, ArrayList<RouteEntry> routeEntries)
+	public TrainAssessment(String trainSymbol, String trainGroupAbbreviation, String trainType, ArrayList<RouteEntryForRecoveryRateAssessment> routeEntries)
 	{
 		this.trainSymbol = trainSymbol;
 		this.trainGroupAbbreviation = trainGroupAbbreviation;
@@ -36,7 +36,7 @@ public class TrainAssessment
 		return trainType;
 	}
 	
-	public ArrayList<RouteEntry> getRouteEntries() 
+	public ArrayList<RouteEntryForRecoveryRateAssessment> getRouteEntries() 
 	{
 		return routeEntries;
 	}

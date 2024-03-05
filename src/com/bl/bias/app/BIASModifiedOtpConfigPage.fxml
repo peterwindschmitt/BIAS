@@ -76,7 +76,7 @@
                   <ToggleGroup fx:id="generateVsExcludeToggleGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="excludeTrainsRadioButton" mnemonicParsing="false" onAction="#handleExcludeTrainsRadioButton" text="Generate a report, exclude from OTP and recalculate OTP" toggleGroup="$generateVsExcludeToggleGroup" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+            <RadioButton fx:id="excludeTrainsRadioButton" disable="true" mnemonicParsing="false" onAction="#handleExcludeTrainsRadioButton" text="Generate a report, exclude from OTP and recalculate OTP" toggleGroup="$generateVsExcludeToggleGroup" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="90.0" />
                </GridPane.margin>
@@ -123,7 +123,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </Label>
-            
             <TextField fx:id="train1TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain1TextField" onKeyPressed="#handleTextChangedTrain1TextField" prefWidth="80.0" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -138,7 +137,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train2TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain2TextField" onKeyPressed="#handleTextChangedTrain2TextField" prefWidth="80.0" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -153,7 +151,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train3TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain3TextField" onKeyPressed="#handleTextChangedTrain3TextField" prefWidth="80.0" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -168,7 +165,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train4TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain4TextField" onKeyPressed="#handleTextChangedTrain4TextField" prefWidth="80.0" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -183,7 +179,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train5TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain5TextField" onKeyPressed="#handleTextChangedTrain5TextField" prefWidth="80.0" GridPane.rowIndex="8">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -198,7 +193,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-      
              <TextField fx:id="train6TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain6TextField" onKeyPressed="#handleTextChangedTrain6TextField" prefWidth="80.0" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -213,7 +207,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-          
             <TextField fx:id="train7TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain7TextField" onKeyPressed="#handleTextChangedTrain7TextField" prefWidth="80.0" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -228,7 +221,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
              <TextField fx:id="train8TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain8TextField" onKeyPressed="#handleTextChangedTrain8TextField" prefWidth="80.0" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -243,7 +235,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train9TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain9TextField" onKeyPressed="#handleTextChangedTrain9TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -258,7 +249,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train10TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain10TextField" onKeyPressed="#handleTextChangedTrain10TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -273,7 +263,6 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
-            
             <TextField fx:id="train11TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain11TextField" onKeyPressed="#handleTextChangedTrain11TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets left="11.0" />
@@ -288,7 +277,6 @@
                   <Insets right="11.0" />
                </GridPane.margin>
             </TextField>
-            
              <TextField fx:id="train12TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain12TextField" onKeyPressed="#handleTextChangedTrain12TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="12.0" />
@@ -303,7 +291,174 @@
                   <Insets right="12.0" />
                </GridPane.margin>
             </TextField>
-            
+             <TextField fx:id="train13TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain13TextField" onKeyPressed="#handleTextChangedTrain13TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node13TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode13TextField" onKeyPressed="#handleTextChangedNode13TextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime13TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime13TextField" onKeyPressed="#handleTextChangedDepartureTime13TextField" prefWidth="70.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train14TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain14TextField" onKeyPressed="#handleTextChangedTrain14TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node14TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode14TextField" onKeyPressed="#handleTextChangedNode14TextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime14TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime14TextField" onKeyPressed="#handleTextChangedDepartureTime14TextField" prefWidth="70.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train15TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain15TextField" onKeyPressed="#handleTextChangedTrain15TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node15TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode15TextField" onKeyPressed="#handleTextChangedNode15TextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime15TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime15TextField" onKeyPressed="#handleTextChangedDepartureTime15TextField" prefWidth="70.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>           
+            <TextField fx:id="train16TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain16TextField" onKeyPressed="#handleTextChangedTrain16TextField" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node16TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode16TextField" onKeyPressed="#handleTextChangedNode16TextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime16TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime16TextField" onKeyPressed="#handleTextChangedDepartureTime16TextField" prefWidth="70.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train17TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain17TextField" onKeyPressed="#handleTextChangedTrain17TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node17TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode17TextField" onKeyPressed="#handleTextChangedNode17TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime17TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime17TextField" onKeyPressed="#handleTextChangedDepartureTime17TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train18TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain18TextField" onKeyPressed="#handleTextChangedTrain18TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node18TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode18TextField" onKeyPressed="#handleTextChangedNode18TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime18TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime18TextField" onKeyPressed="#handleTextChangedDepartureTime18TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train19TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain19TextField" onKeyPressed="#handleTextChangedTrain19TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node19TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode19TextField" onKeyPressed="#handleTextChangedNode19TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime19TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime19TextField" onKeyPressed="#handleTextChangedDepartureTime19TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train20TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain20TextField" onKeyPressed="#handleTextChangedTrain20TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node20TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode20TextField" onKeyPressed="#handleTextChangedNode20TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime20TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime20TextField" onKeyPressed="#handleTextChangedDepartureTime20TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+             <TextField fx:id="train21TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain21TextField" onKeyPressed="#handleTextChangedTrain21TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node21TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode21TextField" onKeyPressed="#handleTextChangedNode21TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime21TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime21TextField" onKeyPressed="#handleTextChangedDepartureTime21TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+             <TextField fx:id="train22TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain22TextField" onKeyPressed="#handleTextChangedTrain22TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node22TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode22TextField" onKeyPressed="#handleTextChangedNode22TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime22TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime22TextField" onKeyPressed="#handleTextChangedDepartureTime22TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+              <TextField fx:id="train23TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain23TextField" onKeyPressed="#handleTextChangedTrain23TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node23TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode23TextField" onKeyPressed="#handleTextChangedNode23TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime23TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime23TextField" onKeyPressed="#handleTextChangedDepartureTime23TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="train24TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain24TextField" onKeyPressed="#handleTextChangedTrain24TextField" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="node24TextField" maxWidth="90.0" minWidth="90.0" onAction="#handleNode24TextField" onKeyPressed="#handleTextChangedNode24TextField" prefWidth="90.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="9.0" />
+               </GridPane.margin></TextField>
+            <TextField fx:id="departureTime24TextField" maxWidth="70.0" minWidth="70.0" onAction="#handleDepartureTime24TextField" onKeyPressed="#handleTextChangedDepartureTime24TextField" prefWidth="70.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets right="12.0" />
+               </GridPane.margin>
+            </TextField>
             <Button fx:id="updateEntriesButton" mnemonicParsing="false" onAction="#handleUpdateEntriesButton" text="Update Entries" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" />
