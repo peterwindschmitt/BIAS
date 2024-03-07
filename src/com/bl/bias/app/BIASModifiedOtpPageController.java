@@ -10,6 +10,7 @@ import com.bl.bias.analyze.ModifiedOtpAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadModifiedOtpFiles;
 import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteModifiedOtpFiles2;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -305,7 +306,7 @@ public class BIASModifiedOtpPageController
 
 				setProgressIndicator(0.20);
 				
-				if (readData.getTrainsForModifiedOtp().size() > 0)
+				if (ReadModifiedOtpFiles.getTrainsForModifiedOtp().size() > 0)
 				{
 					// Analyze trains' modified OTP
 					ModifiedOtpAnalysis analyze = new ModifiedOtpAnalysis();
@@ -314,13 +315,12 @@ public class BIASModifiedOtpPageController
 
 					setProgressIndicator(0.80);
 					
-					/*
 					// Write results to spreadsheet
-					WriteRecoveryRateFiles6 writeFiles = new WriteRecoveryRateFiles6(textArea.getText().toString(), fullyQualifiedPath);
-					message = writeFiles.getResultsWriteMessage6();
+					WriteModifiedOtpFiles2 writeFiles = new WriteModifiedOtpFiles2(analyze.getTrainsAnalyzedForModifiedOtp(), textArea.getText().toString(), fileAsString);
+					message = WriteModifiedOtpFiles2.getResultsMessage2();
 					displayMessage(message);
 
-					if (!WriteRecoveryRateFiles6.getErrorFound())
+					if (!WriteModifiedOtpFiles2.getErrorFound())
 					{
 						setProgressIndicator(1.0);
 						displayMessage("\n*** PROCESSING COMPLETE ***");
@@ -329,7 +329,7 @@ public class BIASModifiedOtpPageController
 					{
 						displayMessage("\nError in writing files");
 						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-					}*/
+					}
 				}
 				else
 				{

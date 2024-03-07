@@ -29,6 +29,8 @@ public class ReadModifiedOtpFiles
 	{
 		runTimeTrainsInRouteFile.clear();
 		trainSymbolsFromConfigFile.clear();
+		trainSymbolsToAnalyze.clear();
+		modifiedOtpEntries.clear();
 
 		resultsMessage = "\nStarted parsing Modified OTP Analysis files at "+ConvertDateTime.getTimeStamp()+"\n";
 

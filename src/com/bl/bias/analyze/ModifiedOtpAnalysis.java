@@ -15,13 +15,13 @@ public class ModifiedOtpAnalysis
 	private static ArrayList<String> trainSymbolsFromConfigFile = new ArrayList<String>();
 	private static String gracePeriodFromConfigFileAsString; 
 	private static Double gracePeriodFromConfigFileAsSerial; 
-	private Integer modificationsToOtp;
+	private Integer exceptionsToOtp;
 
 	public ModifiedOtpAnalysis() 
 	{
 		resultsMessage = "Started analyzing trains at "+ConvertDateTime.getTimeStamp()+"\n";
 		
-		modificationsToOtp = 0;
+		exceptionsToOtp = 0;
 		
 		// Get permissible minutes of deviation permitted
 		gracePeriodFromConfigFileAsString = BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayAsString();
@@ -38,10 +38,10 @@ public class ModifiedOtpAnalysis
 			trainSymbolsFromConfigFile.add(BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",")[i]);
 		}
 
-		// For each train
+		// For each train to test
 		for (int i = 0; i < trainsToTestForModifiedOtp.size(); i++)
 		{
-			// Match to train from config
+			// Match to train specified in config file
 			for (int j = 0; j < trainSymbolsFromConfigFile.size(); j+=3)
 			{
 				if (trainsToTestForModifiedOtp.get(i).getSymbol().contains(trainSymbolsFromConfigFile.get(j)))
@@ -53,22 +53,30 @@ public class ModifiedOtpAnalysis
 						{
 							// Convert values to serial
 							// Now check times
-							Double scheduledArrivalTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).getScheduledArrivalTimeAsString());
+							Double scheduledArrivalTimeAsDouble =  ConvertDateTime.convertDDHHMMSSStringToSerial(trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).getScheduledArrivalTimeAsString());
 							Double scheduledDepartureTimeAsDouble =  ConvertDateTime.convertDDHHMMSSStringToSerial(trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).getScheduledDepartureTimeAsString());
 							Double simulatedArrivalTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).getSimulatedArrivalTimeAsString());
 							Double simulatedDepartureTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).getSimulatedDepartureTimeAsString());
-							System.out.print("Checking train "+trainsToTestForModifiedOtp.get(i).getSymbol());
-							System.out.print(" at node "+trainSymbolsFromConfigFile.get(j+1));
-							System.out.print(" which OSd at "+ConvertDateTime.convertSerialToDDHHMMSSString(simulatedArrivalTimeAsDouble)+"/"+ConvertDateTime.convertSerialToDDHHMMSSString(simulatedDepartureTimeAsDouble));
-							System.out.println(" and was scheduled for "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledArrivalTimeAsDouble)+"/"+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDepartureTimeAsDouble));
+							
+							// Determine if it was over the threshold
+							if (Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble) > (Math.max((scheduledDepartureTimeAsDouble + gracePeriodFromConfigFileAsSerial), (scheduledArrivalTimeAsDouble + gracePeriodFromConfigFileAsSerial))))
+							{
+								trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).setNotCompliant();
+								exceptionsToOtp++;
+							}
 						}
 					}
 				}
 			}
 		}
 
-		resultsMessage += "Found "+modificationsToOtp+" modifications to OTP\n";
+		resultsMessage += "Found "+exceptionsToOtp+" exceptions to OTP\n";
 		resultsMessage += "Finished analyzing trains at "+ConvertDateTime.getTimeStamp()+("\n");
+	}
+	
+	public ArrayList<ModifiedOtpTrainObject> getTrainsAnalyzedForModifiedOtp()
+	{
+		return trainsToTestForModifiedOtp;
 	}
 
 	public String getResultsMessage()

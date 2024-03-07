@@ -7,6 +7,7 @@ public class RouteEntryForModifiedOtp
 	private String scheduledArrivalTimeAsString;
 	private String simulatedDepartureTimeAsString;
 	private String simulatedArrivalTimeAsString;
+	private Boolean compliant;
 		
 	public RouteEntryForModifiedOtp(String node, String scheduledDepartureTimeAsString, String scheduledArrivalTimeAsString, String simulatedDepartureTimeAsString, 
 			String simulatedArrivalTimeAsString)
@@ -16,6 +17,7 @@ public class RouteEntryForModifiedOtp
 		this.scheduledArrivalTimeAsString = scheduledArrivalTimeAsString;
 		this.simulatedDepartureTimeAsString = simulatedDepartureTimeAsString;
 		this.simulatedArrivalTimeAsString = simulatedArrivalTimeAsString;
+		compliant = true;
 	}
 	
 	public String getNode() 
@@ -41,5 +43,15 @@ public class RouteEntryForModifiedOtp
 	public String getSimulatedArrivalTimeAsString() 
 	{
 		return simulatedArrivalTimeAsString;
+	}
+	
+	public void setNotCompliant() 
+	{
+		compliant = false;
+	}
+	
+	public boolean getIsCompliant() 
+	{
+		return compliant;
 	}
 }
