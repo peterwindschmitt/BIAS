@@ -54,7 +54,7 @@ public class BIASPreprocessTrainCategoriesForRTCResultsAnalysis
 						}
 						else if (openingSequence)
 						{ 
-							availableTypes.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim().toUpperCase()); 
+							availableTypes.add(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()); 
 						}
 					}
 				}

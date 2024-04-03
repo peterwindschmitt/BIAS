@@ -1,6 +1,7 @@
 package com.bl.bias.app;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.controlsfx.control.CheckComboBox;
@@ -55,17 +56,39 @@ public final class BIASCustomAssignmentsWindowController
 		customCategoryTextField1.setText(customCategory1Name);
 		customCategoryTextField2.setText(customCategory2Name);
 
-		// Set up checkComboBoxes
 		if (getPrelimData.returnAvailableTypes().size() > 0)
-		{
-			customCategoryCheckComboBox1.getItems().addAll((getPrelimData.returnAvailableTypes()));
-			customCategoryCheckComboBox2.getItems().addAll((getPrelimData.returnAvailableTypes()));
-		}
-		else
-		{
-			customCategoryCheckComboBox1.setDisable(true);
-			customCategoryCheckComboBox2.setDisable(true);
-		}
+        {
+        	customCategoryCheckComboBox1.getItems().addAll((getPrelimData.returnAvailableTypes()));
+        	customCategoryCheckComboBox2.getItems().addAll((getPrelimData.returnAvailableTypes()));
+
+        	// For each entry in custom assignments 1
+        	Iterator<String> itr1 = customCategory1Types.iterator();
+        	while (itr1.hasNext())
+        	{
+        		String currentListItem = itr1.next();
+        		if (customCategoryCheckComboBox1.getItems().contains(currentListItem))
+        		{
+        			customCategoryCheckComboBox1.getCheckModel().check(currentListItem);
+        		}
+        	}
+
+        	// For each entry in custom assignments 2
+        	Iterator<String> itr2 = customCategory2Types.iterator();
+        	while (itr2.hasNext())
+        	{
+        		String currentListItem = itr2.next();
+        		if (customCategoryCheckComboBox2.getItems().contains(currentListItem))
+        		{
+        			customCategoryCheckComboBox2.getCheckModel().check(currentListItem);
+        		}
+        	}
+        }
+        else
+        {
+        	customCategoryCheckComboBox1.setDisable(true);
+        	customCategoryCheckComboBox2.setDisable(true);
+        }
+
 
 		customCategoryCheckComboBox1.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
 			public void onChanged(ListChangeListener.Change<? extends String> c) 
