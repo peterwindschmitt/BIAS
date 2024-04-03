@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.bl.bias.app.BIASModifiedOtpConfigPageController;
 import com.bl.bias.objects.ModifiedOtpTrainObject;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -27,6 +28,8 @@ public class WriteModifiedOtpFiles1
 	private static LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	protected static String resultsMessage1 = "\nStarted writing output file at "+startWriteFileTime;
 	protected static Boolean error = false;
+
+	private static Boolean showColumnsForGraphs = BIASModifiedOtpConfigPageController.getGenerateSerialTimes();
 
 	ArrayList<ModifiedOtpTrainObject> trains = new ArrayList<ModifiedOtpTrainObject>();
 
@@ -140,7 +143,10 @@ public class WriteModifiedOtpFiles1
 
 		// Header rows
 		// Case name
-		modifiedOtpSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+		if (showColumnsForGraphs)
+			modifiedOtpSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+		else
+			modifiedOtpSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
 
 		Row row;
 		Cell cell;
@@ -148,7 +154,7 @@ public class WriteModifiedOtpFiles1
 		row = modifiedOtpSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue("Modified OTP Analysis for "+fileAsString);
+		cell.setCellValue("Modified OTP Analysis for "+fileAsString.replace(".OPTION", ""));
 
 		// Data headers
 		rowCounter++;
@@ -165,15 +171,30 @@ public class WriteModifiedOtpFiles1
 
 		cell = row.createCell(2);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Scheduled Time");
+		cell.setCellValue("Scheduled Time (HH:MM:SS)");
 
 		cell = row.createCell(3);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Observed Time");
+		cell.setCellValue("Observed Time (HH:MM:SS)");
 
 		cell = row.createCell(4);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Violation");
+		cell.setCellValue("Violation*");
+
+		if (showColumnsForGraphs)
+		{
+			cell = row.createCell(5);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Scheduled Time as Serial");
+
+			cell = row.createCell(6);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Observed Time as Serial");
+
+			cell = row.createCell(7);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Difference as Serial");
+		}
 
 		// Trains
 		rowCounter++;
@@ -202,16 +223,20 @@ public class WriteModifiedOtpFiles1
 
 				// Scheduled time 
 				String scheduledTime = ConvertDateTime.convertSerialToHHMMSSString(Math.max(scheduledDepartureTimeAsDouble, scheduledArrivalTimeAsDouble));
-				if (scheduledTime.equals("0"))
+				if (scheduledTime.equals("00:00:00")) 
+				{
 					scheduledTime = "MIDNIGHT";
+				}
 				cell = row.createCell(2);
 				cell.setCellStyle(style1);
 				cell.setCellValue(scheduledTime);
 
 				// Observed time
 				String observedTime = ConvertDateTime.convertSerialToHHMMSSString(Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble));
-				if (observedTime.equals("0"))
+				if (observedTime.equals("00:00:00")) 
+				{
 					observedTime = "MIDNIGHT";
+				}
 				cell = row.createCell(3);
 				cell.setCellStyle(style1);
 				cell.setCellValue(observedTime);
@@ -229,10 +254,33 @@ public class WriteModifiedOtpFiles1
 					cell.setCellStyle(style8);
 					cell.setCellValue("Y");
 				}
+				
+				if (showColumnsForGraphs)
+				{
+					// Scheduled time as serial
+					cell = row.createCell(5);
+					cell.setCellStyle(style1);
+					cell.setCellValue(Math.max(scheduledDepartureTimeAsDouble, scheduledArrivalTimeAsDouble));
+					
+					// Observed time as serial
+					cell = row.createCell(6);
+					cell.setCellStyle(style1);
+					cell.setCellValue(Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble));
+					
+					// Difference as serial
+					cell = row.createCell(7);
+					cell.setCellStyle(style1);
+					cell.setCellValue(Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble) - Math.max(scheduledDepartureTimeAsDouble, scheduledArrivalTimeAsDouble));
+				}
 
 				rowCounter++;
 			}
 		}
+		rowCounter++;
+		row = modifiedOtpSheet.createRow(rowCounter);
+		cell = row.createCell(0);
+		cell.setCellStyle(style2);
+		cell.setCellValue("* A violation is defined as a train more than "+BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayAsString()+" minutes late relative to its scheduled time." );
 
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
@@ -245,13 +293,13 @@ public class WriteModifiedOtpFiles1
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 
 		// Resize all columns to fit the content size
-		for (int i = 0; i <= 5; i++) 
+		for (int i = 0; i <= 7; i++) 
 		{
 			if (i == 0) 
 			{
 				modifiedOtpSheet.setColumnWidth(i, 6000);
 			}
-			else if ((i == 1) || (i == 2) || (i == 3) || (i == 4))
+			else if ((i == 1) || (i == 2) || (i == 3) || (i == 4) || (i == 5) || (i == 6) || (i == 7))
 			{
 				modifiedOtpSheet.setColumnWidth(i, 5000);
 			}

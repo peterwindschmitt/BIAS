@@ -3576,7 +3576,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("r_scheduledArrivalTime", null) == null)
 		{
 			// Write value for subsequent runs
-			r_scheduledArrivalTime = "406,414";
+			r_scheduledArrivalTime = "403,414";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("r_scheduledArrivalTime", r_scheduledArrivalTime);
 		}
@@ -3585,7 +3585,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("r_scheduledDepartureTime", null) == null)
 		{
 			// Write value for subsequent runs
-			r_scheduledDepartureTime = "420,428";
+			r_scheduledDepartureTime = "417,428";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("r_scheduledDepartureTime", r_scheduledDepartureTime);
 		}

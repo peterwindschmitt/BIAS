@@ -5,8 +5,14 @@ import java.util.prefs.Preferences;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 public class BIASRTCResultsAnalysisConfigPageController 
 {
@@ -53,6 +59,19 @@ public class BIASRTCResultsAnalysisConfigPageController
 	@FXML private CheckBox outputAsStringCheckBox;
 	@FXML private CheckBox outputAsSecondsCheckBox;
 	@FXML private CheckBox outputAsSerialCheckBox;
+
+	@FXML private TextArea userCategory1NameTextArea;
+	@FXML private TextArea userCategory1TypesTextArea;
+	@FXML private TextArea userCategory2NameTextArea;
+	@FXML private TextArea userCategory2TypesTextArea;
+
+	@FXML private Button updateUserCategory1Button;
+	@FXML private Button updateUserCategory2Button;
+
+	private static String userCategory1Name = "";
+	private static String userCategory1Types = "";
+	private static String userCategory2Name = "";
+	private static String userCategory2Types = "";
 
 	@FXML private void initialize()
 	{
@@ -219,6 +238,24 @@ public class BIASRTCResultsAnalysisConfigPageController
 		{
 			outputAsSerial = false;
 			outputAsSerialCheckBox.setSelected(false);
+		}
+
+		// See if preferences are stored for User-defined Category 1
+		if ((prefs.get("ra_userCategory1Name", "") != null) && (prefs.get("ra_userCategory1Name", "") != "") && (prefs.get("ra_userCategory1Types", "") != null) && (prefs.get("ra_userCategory1Types", "") != ""))
+		{
+			userCategory1Name = prefs.get("ra_userCategory1Name", "");
+			userCategory1NameTextArea.setText(userCategory1Name);
+			userCategory1Types = prefs.get("ra_userCategory1Types", "");
+			userCategory1TypesTextArea.setText(userCategory1Types);
+		}
+
+		// See if preferences are stored for User-defined Category 2
+		if ((prefs.get("ra_userCategory2Name", "") != null) && (prefs.get("ra_userCategory2Name", "") != "") && (prefs.get("ra_userCategory2Types", "") != null) && (prefs.get("ra_userCategory2Types", "") != ""))
+		{
+			userCategory2Name = prefs.get("ra_userCategory2Name", "");
+			userCategory2NameTextArea.setText(userCategory2Name);
+			userCategory2Types = prefs.get("ra_userCategory2Types", "");
+			userCategory2TypesTextArea.setText(userCategory2Types);
 		}
 
 		// Set up Boolean Bindings
@@ -418,6 +455,158 @@ public class BIASRTCResultsAnalysisConfigPageController
 		}
 	}
 
+	@FXML private void handleUpdateUserCategory1Button(ActionEvent event)
+	{
+		String userCategory1NameInput = userCategory1NameTextArea.getText().trim().toUpperCase();
+		String userCategory1TypesInput = userCategory1TypesTextArea.getText().trim().toUpperCase();
+
+		// Validate category name
+		if ((userCategory1NameInput.equals("")) && (userCategory1TypesInput.equals("")))
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("ra_userCategory1Name", "");
+				prefs.put("ra_userCategory1Types", "");
+			}
+
+			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			userCategory1TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			updateUserCategory1Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (userCategory1NameInput.equals(userCategory2Name))
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+    		alert.setTitle("Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Category names are the same.  Rename at least one.");	
+    		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+            alert.show();
+		}
+		else if ((userCategory1NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
+				&& (userCategory1TypesInput.matches("^[a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*$")) 
+				&& (!userCategory1NameInput.equals(""))
+				&& (!userCategory1TypesInput.equals(""))
+				&& (!userCategory1TypesInput.substring(0).equals(",")))
+		{
+			userCategory1Name = userCategory1NameInput;
+			userCategory1NameTextArea.setText(userCategory1Name);
+			userCategory1Types = userCategory1TypesInput.replace(", ", ",");
+			userCategory1TypesTextArea.setText(userCategory1Types);
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("ra_userCategory1Name", userCategory1Name);
+				prefs.put("ra_userCategory1Types", userCategory1Types);
+			}
+
+			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			userCategory1TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			updateUserCategory1Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Only A-Z, 0-9, hyphen, underscore and blank spaces are permitted.  Separate multiple Train Types by ','.  Please try again.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
+
+			userCategory1NameTextArea.setText(userCategory1NameInput);
+			userCategory1TypesTextArea.setText(userCategory1TypesInput);
+		}
+	}
+
+	@FXML private void handleUpdateUserCategory2Button(ActionEvent event)
+	{
+		String userCategory2NameInput = userCategory2NameTextArea.getText().trim().toUpperCase();
+		String userCategory2TypesInput = userCategory2TypesTextArea.getText().trim().toUpperCase();
+
+		// Validate category name
+		if ((userCategory2NameInput.equals("")) && (userCategory2TypesInput.equals("")))
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("ra_userCategory2Name", "");
+				prefs.put("ra_userCategory2Types", "");
+			}
+
+			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			userCategory2TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			updateUserCategory2Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (userCategory2NameInput.equals(userCategory1Name))
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+    		alert.setTitle("Error");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Category names are the same.  Rename at least one.");	
+    		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+            alert.show();
+		}
+		else if ((userCategory2NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
+				&& (userCategory2TypesInput.matches("^[a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*$"))  
+				&& (!userCategory2NameInput.equals(""))
+				&& (!userCategory2TypesInput.equals(""))
+				&& (!userCategory2TypesInput.substring(0).equals(",")))
+		{
+			userCategory2Name = userCategory2NameInput;
+			userCategory2NameTextArea.setText(userCategory2Name);
+			userCategory2Types = userCategory2TypesInput.replace(", ", ",");
+			userCategory2TypesTextArea.setText(userCategory2Types);
+
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.put("ra_userCategory2Name", userCategory2NameInput);
+				prefs.put("ra_userCategory2Types", userCategory2Types);
+			}
+
+			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			userCategory2TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			updateUserCategory2Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Only A-Z, 0-9, hyphen, underscore and blank spaces are permitted.  Separate multiple Train Types by ','.  Please try again.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
+
+			userCategory2NameTextArea.setText(userCategory2NameInput);
+			userCategory2TypesTextArea.setText(userCategory2TypesInput);
+		}
+	}
+
+	@FXML private void handleUserCategory1NameTextArea()
+	{
+		userCategory1NameTextArea.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateUserCategory1Button.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleUserCategory1TypesTextArea()
+	{
+		userCategory1TypesTextArea.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateUserCategory1Button.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleUserCategory2NameTextArea()
+	{
+		userCategory2NameTextArea.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateUserCategory2Button.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleUserCategory2TypesTextArea()
+	{
+		userCategory2TypesTextArea.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateUserCategory2Button.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
 	public static Boolean getMoveFailedFiles()
 	{
 		return moveFailedFiles;
@@ -471,5 +660,25 @@ public class BIASRTCResultsAnalysisConfigPageController
 	public static Boolean getOutputAsSerial()
 	{
 		return outputAsSerial;
+	}
+	
+	public static String getUserCategory1Name()
+	{
+		return userCategory1Name;
+	}
+	
+	public static String getUserCategory1Types()
+	{
+		return userCategory1Types;
+	}
+	
+	public static String getUserCategory2Name()
+	{
+		return userCategory2Name;
+	}
+	
+	public static String getUserCategory2Types()
+	{
+		return userCategory2Types;
 	}
 }

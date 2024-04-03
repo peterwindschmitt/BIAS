@@ -59,7 +59,7 @@ public class ModifiedOtpAnalysis
 							Double simulatedDepartureTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).getSimulatedDepartureTimeAsString());
 							
 							// Determine if it was over the threshold
-							if (Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble) > (Math.max((scheduledDepartureTimeAsDouble + gracePeriodFromConfigFileAsSerial), (scheduledArrivalTimeAsDouble + gracePeriodFromConfigFileAsSerial))))
+							if ((Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble)) > (Math.max((scheduledDepartureTimeAsDouble + gracePeriodFromConfigFileAsSerial), (scheduledArrivalTimeAsDouble + gracePeriodFromConfigFileAsSerial))))
 							{
 								trainsToTestForModifiedOtp.get(i).getRouteEntries().get(k).setNotCompliant();
 								exceptionsToOtp++;

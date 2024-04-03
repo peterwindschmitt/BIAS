@@ -21,10 +21,12 @@ public class BIASModifiedOtpConfigPageController
 	private static Boolean checkTrainsForLateness; 
 	private static Boolean generateReport;
 	private static Boolean excludeTrains;
+	private static Boolean generateSerialTimes;
 	private static String permissibleMinutesOfDelayAsString; 
 
 	private static Boolean defaultCheckSeedTrainsForLateness = true; 
 	private static Boolean defaultGenerateReport = true;
+	private static Boolean defaultGenerateSerialTimes = true;
 	private static String defaultPermissibleMinutesOfDelay = "5"; 
 
 	private static String schedulePointEntries = ""; 
@@ -49,6 +51,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private ComboBox<String> permissibleMinutesOfDelayCombobox;
 
 	@FXML private CheckBox checkTrainsCheckBox;
+	@FXML private CheckBox serialTimesCheckBox;
 
 	@FXML private RadioButton generateReportRadioButton;
 	@FXML private RadioButton excludeTrainsRadioButton;
@@ -212,6 +215,20 @@ public class BIASModifiedOtpConfigPageController
 			excludeTrainsRadioButton.setSelected(true);
 		}
 
+		// See if preference is stored for generating serial times in spreadsheet
+		if (prefs.getBoolean("mo_generateSerialTimes", defaultGenerateSerialTimes))
+		{
+			generateSerialTimes = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_generateSerialTimes", true);
+			serialTimesCheckBox.setSelected(true);
+		}
+		else
+		{
+			generateSerialTimes = false;
+			serialTimesCheckBox.setSelected(false);
+		}
+		
 		// See if entries are stored
 		if ((prefs.get("mo_schedulePointEntries", "") != null) && (prefs.get("mo_schedulePointEntries", "") != ""))
 		{
@@ -391,6 +408,22 @@ public class BIASModifiedOtpConfigPageController
 			enableAllControls();
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_checkTrainsForLateness", true);
+		}
+	}
+
+	@FXML private void handleSerialTimesCheckBox(ActionEvent e)
+	{
+		if (generateSerialTimes)
+		{
+			generateSerialTimes = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_generateSerialTimes", false);
+		}
+		else
+		{
+			generateSerialTimes = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_generateSerialTimes", true);
 		}
 	}
 
@@ -1189,7 +1222,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime16TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime16TextField()
 	{
 		String origText = departureTime16TextField.getText().trim();
@@ -1238,7 +1271,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime17TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime17TextField()
 	{
 		String origText = departureTime17TextField.getText().trim();
@@ -1346,7 +1379,7 @@ public class BIASModifiedOtpConfigPageController
 		else
 			departureTime19TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	// Entry 20
 	@FXML private void handleTextChangedTrain20TextField()
 	{
@@ -1385,7 +1418,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime20TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime20TextField()
 	{
 		String origText = departureTime20TextField.getText().trim();
@@ -1434,7 +1467,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime21TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime21TextField()
 	{
 		String origText = departureTime21TextField.getText().trim();
@@ -1483,7 +1516,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime22TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime22TextField()
 	{
 		String origText = departureTime22TextField.getText().trim();
@@ -1532,7 +1565,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime23TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime23TextField()
 	{
 		String origText = departureTime23TextField.getText().trim();
@@ -1581,7 +1614,7 @@ public class BIASModifiedOtpConfigPageController
 		departureTime24TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleDepartureTime24TextField()
 	{
 		String origText = departureTime24TextField.getText().trim();
@@ -1610,7 +1643,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (node1TextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
 		{
 			String origText = node1TextField.getText().trim();
@@ -2410,7 +2443,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (node21TextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
 		{
 			String origText = node21TextField.getText().trim();
@@ -2423,7 +2456,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (departureTime21TextField.getText().trim().toUpperCase().matches(timePattern.toString()))
 		{
 			String origText = departureTime21TextField.getText().trim();
@@ -2436,7 +2469,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		// Entry 22
 		if (train22TextField.getText().trim().toUpperCase().matches(trainSymbolPattern.toString()))
 		{
@@ -2450,7 +2483,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (node22TextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
 		{
 			String origText = node22TextField.getText().trim();
@@ -2463,7 +2496,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (departureTime22TextField.getText().trim().toUpperCase().matches(timePattern.toString()))
 		{
 			String origText = departureTime22TextField.getText().trim();
@@ -2476,7 +2509,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		// Entry 23
 		if (train23TextField.getText().trim().toUpperCase().matches(trainSymbolPattern.toString()))
 		{
@@ -2490,7 +2523,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (node23TextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
 		{
 			String origText = node23TextField.getText().trim();
@@ -2503,7 +2536,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (departureTime23TextField.getText().trim().toUpperCase().matches(timePattern.toString()))
 		{
 			String origText = departureTime23TextField.getText().trim();
@@ -2516,7 +2549,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		// Entry 24
 		if (train24TextField.getText().trim().toUpperCase().matches(trainSymbolPattern.toString()))
 		{
@@ -2530,7 +2563,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (node24TextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
 		{
 			String origText = node24TextField.getText().trim();
@@ -2543,7 +2576,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (departureTime24TextField.getText().trim().toUpperCase().matches(timePattern.toString()))
 		{
 			String origText = departureTime24TextField.getText().trim();
@@ -2556,7 +2589,7 @@ public class BIASModifiedOtpConfigPageController
 		}
 		else
 			inputsConform = false;
-		
+
 		if (inputsConform)
 		{
 			String entriesToWriteToRegistry = "";
@@ -2999,7 +3032,7 @@ public class BIASModifiedOtpConfigPageController
 		train24TextField.setDisable(true);
 		node24TextField.setDisable(true);
 		departureTime24TextField.setDisable(true);
-		
+
 		updateEntriesButton.setDisable(true);
 	}
 
@@ -3092,7 +3125,7 @@ public class BIASModifiedOtpConfigPageController
 
 		updateEntriesButton.setDisable(false);
 	}
-	
+
 	public static String getPermissibleMinutesOfDelayAsString()
 	{
 		return permissibleMinutesOfDelayAsString;
@@ -3101,5 +3134,10 @@ public class BIASModifiedOtpConfigPageController
 	public static String getSchedulePointEntries()
 	{
 		return schedulePointEntries;
+	}
+	
+	public static Boolean getGenerateSerialTimes()
+	{
+		return generateSerialTimes;
 	}
 }

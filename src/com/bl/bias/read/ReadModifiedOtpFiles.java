@@ -34,22 +34,28 @@ public class ReadModifiedOtpFiles
 
 		resultsMessage = "\nStarted parsing Modified OTP Analysis files at "+ConvertDateTime.getTimeStamp()+"\n";
 
-		// Read in .ROUTE file with BufferedReader then pass to Scanner
-		File routeFile = new File(file.replace("OPTION","ROUTE"));
-		BufferedReader bufferedReaderRouteFile = new BufferedReader(new FileReader(routeFile));
-		String line = null;
-		
 		// Load in trains from config file
 		for (int i = 0; i < BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length; i+=3)
 		{
 			trainSymbolsFromConfigFile.add(BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",")[i]);
 		}
 
+		// Read in .ROUTE file with BufferedReader to get train symbols and find first/last line of run-time trains
+		File routeFile = new File(file.replace("OPTION","ROUTE"));
+		BufferedReader bufferedReaderRouteFile = new BufferedReader(new FileReader(routeFile));
+		String line = null;
+		Integer firstLineOfRunTimeTrains = Integer.MAX_VALUE;
+		Integer rowCounter = -1;
+		
 		// Get hashset of run-time train symbols
 		while ((line = bufferedReaderRouteFile.readLine()) != null) 
 		{
+			rowCounter++;
 			if (line.contains("Run-time train: "))
 			{
+				if (rowCounter < firstLineOfRunTimeTrains)
+					firstLineOfRunTimeTrains = rowCounter;
+
 				String trainSymbolPattern = Pattern.quote("Run-time train:") + "(.*?)" + Pattern.quote("Type:");
 				Pattern pattern = Pattern.compile(trainSymbolPattern);
 				Matcher matcher = pattern.matcher(line);
@@ -76,6 +82,7 @@ public class ReadModifiedOtpFiles
 
 		trainSymbolsToAnalyze.addAll(runTimeTrainsInRouteFile);
 
+		train:
 		for (int i = 0; i < trainSymbolsToAnalyze.size(); i++)
 		{
 			// Read in .ROUTE file with Scanner
@@ -86,12 +93,17 @@ public class ReadModifiedOtpFiles
 
 			ModifiedOtpTrainObject newEntry = new ModifiedOtpTrainObject(); 
 			String trainSymbol = null;
+			
+			rowCounter = -1;
 
 			while (scannerRouteFile.hasNextLine()) 
 			{
 				String lineFromFile = scannerRouteFile.nextLine();
 				Matcher matcher = pattern.matcher(lineFromFile);
-				if ((matcher.find()) && (inRunTimeTrainRoute == false))
+				rowCounter++;
+				if (rowCounter < firstLineOfRunTimeTrains)
+					continue;
+				else if ((matcher.find()) && (inRunTimeTrainRoute == false))
 				{
 					// Found a train runtime train symbol
 					// See if it's a valid symbol
@@ -114,7 +126,7 @@ public class ReadModifiedOtpFiles
 					// End this runtime train
 					inRunTimeTrainRoute = false;
 					modifiedOtpEntries.add(newEntry);
-					
+					continue train;
 				}
 				else if (inRunTimeTrainRoute)
 				{
@@ -144,9 +156,10 @@ public class ReadModifiedOtpFiles
 			}
 		}
 
-		resultsMessage +="Extracted data for "+runTimeTrainsInRouteFile.size()+" run-time trains from the .ROUTE file\n\n";
+		resultsMessage +="Extracted data for "+runTimeTrainsInRouteFile.size()+" run-time trains from the .ROUTE file\n";
+		resultsMessage += "Finished parsing Modified OTP Analysis files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 	}
-	
+
 	public static ArrayList<ModifiedOtpTrainObject> getTrainsForModifiedOtp()
 	{
 		return modifiedOtpEntries;

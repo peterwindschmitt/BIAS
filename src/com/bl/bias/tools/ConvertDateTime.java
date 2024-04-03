@@ -197,8 +197,7 @@ public class ConvertDateTime
 		secondsLeft = secondsLeft - hours * 3600;
 		int minutes = Math.abs(secondsLeft / 60);
 		secondsLeft = secondsLeft - minutes * 60;
-		int seconds = Math.abs(secondsLeft);
-
+		
 		String formattedTime;
 		if (totalSeconds >= 0)
 			formattedTime = "";
@@ -226,26 +225,26 @@ public class ConvertDateTime
 		else
 			formattedTime +=days+":";
 
-		if ((hours < 10) && (days > 0))
+		if (hours == 0)
+			formattedTime += "00:";
+		else if (hours < 10)
 			formattedTime += "0"+hours+":";
-		else if (hours > 0)
+		else
 			formattedTime += hours + ":";
 
-		if ((minutes < 10) && ((hours > 0) || (days>0)))
-			formattedTime += "0"+minutes+":";
-		else if (minutes > 0)
-			formattedTime += minutes + ":";
+		if (minutes == 0)
+			formattedTime += "00";
+		else if (minutes < 10) 
+			formattedTime += "0"+minutes;
+		else
+			formattedTime += minutes;
 
-		if ((seconds < 10) && ((minutes > 0) || (hours > 0) || (days > 0)))
-			formattedTime += "0"+seconds;
-		else if ((seconds > 0) && ((minutes > 0) || (hours > 0) || (days > 0)))
-			formattedTime += seconds ;
-		else if ((seconds > 0) && (seconds < 10))
-			formattedTime += "0:0"+seconds;
-		else if (seconds > 0)
-			formattedTime += "0:"+seconds;
+		if (secondsLeft == 0)
+			formattedTime += "00";
+		else if (secondsLeft < 10)
+			formattedTime += "0"+secondsLeft;
 		else 
-			formattedTime = "0";
+			formattedTime += secondsLeft;
 
 		return formattedTime;
 	}
@@ -283,14 +282,18 @@ public class ConvertDateTime
 		else if (days == 7)
 			formattedTime +="Sat ";
 
-		if ((hours < 10) && (days > 0))
+		if (hours == 0)
+			formattedTime += "00:";
+		else if (hours < 10)
 			formattedTime += "0"+hours+":";
-		else if (hours > 0)
+		else
 			formattedTime += hours + ":";
 
-		if ((minutes < 10) && ((hours > 0) || (days>0)))
+		if (minutes == 0)
+			formattedTime += "00";
+		else if (minutes < 10) 
 			formattedTime += "0"+minutes;
-		else if (minutes > 0)
+		else
 			formattedTime += minutes;
 
 		return formattedTime;
@@ -358,8 +361,7 @@ public class ConvertDateTime
 		secondsLeft = secondsLeft - hours * 3600;
 		int minutes = Math.abs(secondsLeft / 60);
 		secondsLeft = secondsLeft - minutes * 60;
-		int seconds = Math.abs(secondsLeft);
-
+		
 		String formattedTime;
 		if (totalSeconds >= 0)
 			formattedTime = "";
@@ -369,26 +371,26 @@ public class ConvertDateTime
 		if (days > 0)
 			formattedTime +=days +":";
 
-		if ((hours < 10) && (days > 0))
+		if (hours == 0)
+			formattedTime += "00:";
+		else if (hours < 10)
 			formattedTime += "0"+hours+":";
-		else if (hours > 0)
+		else
 			formattedTime += hours + ":";
 
-		if ((minutes < 10) && ((hours > 0) || (days>0)))
+		if (minutes == 0)
+			formattedTime += "00:";
+		else if (minutes < 10) 
 			formattedTime += "0"+minutes+":";
-		else if (minutes > 0)
+		else
 			formattedTime += minutes + ":";
 
-		if ((seconds < 10) && ((minutes > 0) || (hours > 0) || (days > 0)))
-			formattedTime += "0"+seconds;
-		else if ((seconds > 0) && ((minutes > 0) || (hours > 0) || (days > 0)))
-			formattedTime += seconds ;
-		else if ((seconds > 0) && (seconds < 10))
-			formattedTime += "0:0"+seconds;
-		else if (seconds > 0)
-			formattedTime += "0:"+seconds;
+		if (secondsLeft == 0)
+			formattedTime += "00";
+		else if (secondsLeft < 10)
+			formattedTime += "0"+secondsLeft;
 		else 
-			formattedTime = "0";
+			formattedTime += secondsLeft;
 
 		return formattedTime;
 	}
@@ -402,8 +404,7 @@ public class ConvertDateTime
 		secondsLeft = secondsLeft - hours * 3600;
 		int minutes = Math.abs(secondsLeft / 60);
 		secondsLeft = secondsLeft - minutes * 60;
-		int seconds = Math.abs(secondsLeft);
-
+		
 		String formattedTime;
 		if (totalSeconds >= 0)
 			formattedTime = "";
@@ -413,26 +414,26 @@ public class ConvertDateTime
 		if (days > 0)
 			formattedTime +=days +":";
 
-		if ((hours < 10) && (days > 0))
+		if (hours == 0)
+			formattedTime += "00:";
+		else if (hours < 10)
 			formattedTime += "0"+hours+":";
-		else if (hours > 0)
+		else
 			formattedTime += hours + ":";
 
-		if ((minutes < 10) && ((hours > 0) || (days>0)))
+		if (minutes == 0)
+			formattedTime += "00:";
+		else if (minutes < 10) 
 			formattedTime += "0"+minutes+":";
-		else if (minutes > 0)
+		else
 			formattedTime += minutes + ":";
 
-		if ((seconds < 10) && ((minutes > 0) || (hours > 0) || (days > 0)))
-			formattedTime += "0"+seconds;
-		else if ((seconds > 0) && ((minutes > 0) || (hours > 0) || (days > 0)))
-			formattedTime += seconds ;
-		else if ((seconds > 0) && (seconds < 10))
-			formattedTime += "0:0"+seconds;
-		else if (seconds > 0)
-			formattedTime += "0:"+seconds;
+		if (secondsLeft == 0)
+			formattedTime += "00";
+		else if (secondsLeft < 10)
+			formattedTime += "0"+secondsLeft;
 		else 
-			formattedTime = "0";
+			formattedTime += secondsLeft;
 
 		return formattedTime;
 	}
@@ -450,14 +451,18 @@ public class ConvertDateTime
 		else
 			formattedTime = "-";
 
-		if (hours < 10)
+		if (hours == 0)
+			formattedTime += "00:";
+		else if (hours < 10)
 			formattedTime += "0"+hours+":";
-		else if (hours > 0)
+		else
 			formattedTime += hours + ":";
 
-		if ((minutes < 10) && (hours >= 0))
+		if (minutes == 0)
+			formattedTime += "00";
+		else if (minutes < 10) 
 			formattedTime += "0"+minutes;
-		else if (minutes > 0)
+		else
 			formattedTime += minutes;
 
 		return formattedTime;
@@ -477,26 +482,26 @@ public class ConvertDateTime
 		else
 			formattedTime = "-";
 
-		if (hours < 10)
+		if (hours == 0)
+			formattedTime += "00:";
+		else if (hours < 10)
 			formattedTime += "0"+hours+":";
-		else if (hours > 0)
+		else
 			formattedTime += hours + ":";
 
-		if ((minutes < 10) && ((hours > 0)))
+		if (minutes == 0)
+			formattedTime += "00:";
+		else if (minutes < 10) 
 			formattedTime += "0"+minutes+":";
-		else if (minutes > 0)
+		else
 			formattedTime += minutes + ":";
 
-		if ((secondsLeft < 10) && ((minutes > 0) || (hours > 0)))
+		if (secondsLeft == 0)
+			formattedTime += "00";
+		else if (secondsLeft < 10)
 			formattedTime += "0"+secondsLeft;
-		else if ((secondsLeft > 0) && ((minutes > 0) || (hours > 0)))
-			formattedTime += secondsLeft;
-		else if ((secondsLeft > 0) && (secondsLeft < 10))
-			formattedTime += "0:0"+secondsLeft;
-		else if (secondsLeft > 0)
-			formattedTime += "0:"+secondsLeft;
 		else 
-			formattedTime = "0";
+			formattedTime += secondsLeft;
 
 		return formattedTime;
 	}

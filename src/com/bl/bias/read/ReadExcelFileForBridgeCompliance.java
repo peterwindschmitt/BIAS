@@ -52,14 +52,14 @@ public class ReadExcelFileForBridgeCompliance
 			for (int i = firstRowOfClosures - 1; i <= lastRowOfClosures - 1; i++)
 			{
 				Integer rowNumber = sheet.getRow(i).getRowNum();
-				String day = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(dayColumn)).getStringCellValue();
+				String day = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(dayColumn)).getStringCellValue().trim();
 				Double lowerTime = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(lowerColumn)).getNumericCellValue();
 				Double raiseTime = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(raiseColumn)).getNumericCellValue();
 				Integer closureNumber = (int) sheet.getRow(i).getCell(CellReference.convertColStringToIndex(closureNumberColumn)).getNumericCellValue();
 				Integer date = (int) sheet.getRow(i).getCell(CellReference.convertColStringToIndex(dateColumn)).getNumericCellValue();
-				String tender = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(tenderColumn)).getStringCellValue();
-				String trainType = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(trainTypeColumn)).getStringCellValue();
-				String closureNotes = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(notesColumn)).getStringCellValue();
+				String tender = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(tenderColumn)).getStringCellValue().trim();
+				String trainType = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(trainTypeColumn)).getStringCellValue().trim();
+				String closureNotes = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(notesColumn)).getStringCellValue().trim();
 				
 				if ((lowerTime < 0) || (lowerTime > 1))
 				{

@@ -466,6 +466,16 @@ public class WriteJuaComplianceFiles3 extends WriteJuaComplianceFiles2
 				}
 
 				// Compliance determination
+				if ( (AnalyzeJuaComplianceFiles.getTier2HighRank() < AnalyzeJuaComplianceFiles.getTier1LowRank()) 
+						&& (AnalyzeJuaComplianceFiles.getTier3HighRank() < AnalyzeJuaComplianceFiles.getTier2LowRank())
+						&& (AnalyzeJuaComplianceFiles.getTier4HighRank() < AnalyzeJuaComplianceFiles.getTier3LowRank()))
+				{
+					prioritiesAndRanksCompliantWithJua = true;
+				}
+				else 
+				{
+					prioritiesAndRanksCompliantWithJua = false;
+				}
 				rowCounter++;
 				rowCounter++;
 				juaCompliancePriorities.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 1));
