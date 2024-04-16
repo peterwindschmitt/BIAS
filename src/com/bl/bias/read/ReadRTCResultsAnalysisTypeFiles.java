@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import com.bl.bias.app.BIASCustomAssignmentsWindowController;
 import com.bl.bias.app.BIASRTCResultsAnalysisOptionsWindowController;
+import com.bl.bias.app.BIASRTCResultsAnalysisPageController;
 import com.bl.bias.app.BIASTtestConfigPageController;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
@@ -136,8 +136,9 @@ public class ReadRTCResultsAnalysisTypeFiles
 											resultsMessage +="Extracted type data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
 											
 											// Final Custom Category 1 tally for this file
-											if ((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
-											{
+											if ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions())
+													|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().size() > 0) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
+												{
 												String otpResult;
 												
 												// Handle OTP == '-----'
@@ -148,7 +149,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 												
 												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),								// File name
 													newLineName1.trim(), 																										// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory1(), 																// Train type
+													BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Name(),													// Train type
 													customCategory1TrainCountEntireNetwork,																						// Train count, sum
 													Double.parseDouble(formatter1.format(customCategory1VelocityEntireNetwork/customCategory1TrainCountEntireNetwork)),			// Velocity, avg
 													Double.parseDouble(formatter2.format(customCategory1TrainMilesEntireNetwork)),												// Train miles, sum
@@ -157,11 +158,12 @@ public class ReadRTCResultsAnalysisTypeFiles
 													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 												
-												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory1()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
+												resultsMessage +="Extracted user-defined category ("+BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Name()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
 											}
 											
 											// Final Custom Category 2 tally for this file
-											if ((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
+											if ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions())
+													|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().size() > 0) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{
 												String otpResult;
 												
@@ -173,7 +175,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 												
 												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),								// File name
 													newLineName1.trim(), 																										// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory2(), 																// Train type
+													BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Name(), 													// Train type
 													customCategory2TrainCountEntireNetwork,																						// Train count, sum
 													Double.parseDouble(formatter1.format(customCategory2VelocityEntireNetwork/customCategory2TrainCountEntireNetwork)),			// Velocity, avg
 													Double.parseDouble(formatter2.format(customCategory2TrainMilesEntireNetwork)),												// Train miles, sum
@@ -182,7 +184,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 
-												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory2()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
+												resultsMessage +="Extracted user-defined category ("+BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Name()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
 											}
 											
 											break;
@@ -201,9 +203,9 @@ public class ReadRTCResultsAnalysisTypeFiles
 											
 											// Do not execute below if this is part of a custom category and custom categories are enabled
 											if ((BIASTtestConfigPageController.getSuppressTypeResultsWhenAssignedToCustomAssignment() == true) && 
-													((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim())) || 
-													(BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()))) && 
-													(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments() == true))
+													((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim())) || 
+													(BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()))) && 
+													(((BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue() == true) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions())) || (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{	
 												resultsMessage +="Will suppress writing "+lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()+ " type since it has a user-defined assignment applicable to "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName1.trim()+"\n";
 											}
@@ -211,7 +213,8 @@ public class ReadRTCResultsAnalysisTypeFiles
 												parsedTypeFiles.add(dataToInsert);
 											
 											// Check for Custom Assignment matches for Custom Category 1
-											if (BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().contains(dataToInsert.returnTrainType()) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
+											if (((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions()))
+												|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{
 												customCategory1TrainCountEntireNetwork += dataToInsert.returnTrainCount();
 												customCategory1VelocityEntireNetwork += (dataToInsert.returnAvgSpeed() * dataToInsert.returnTrainCount());
@@ -230,7 +233,8 @@ public class ReadRTCResultsAnalysisTypeFiles
 											}
 											
 											// Check for Custom Assignment matches for Custom Category 2
-											if (BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().contains(dataToInsert.returnTrainType()) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
+											if (((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions()))
+												|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{
 												customCategory2TrainCountEntireNetwork += dataToInsert.returnTrainCount();
 												customCategory2VelocityEntireNetwork += (dataToInsert.returnAvgSpeed() * dataToInsert.returnTrainCount());
@@ -277,7 +281,8 @@ public class ReadRTCResultsAnalysisTypeFiles
 											resultsMessage +="Extracted type data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
 											
 											// Final Custom Category 1 tally for this file
-											if ((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
+											if ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions())
+													|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().size() > 0) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{
 												String otpResult;
 												
@@ -289,7 +294,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 												
 												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),								// File name
 													newLineName2[0].trim(), 																									// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory1(), 																// Train type
+													BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Name(), 													// Train type
 													customCategory1TrainCount,																									// Train count, sum
 													Double.parseDouble(formatter1.format(customCategory1Velocity/customCategory1TrainCount)),									// Velocity, avg
 													Double.parseDouble(formatter2.format(customCategory1TrainMiles)),															// Train miles, sum
@@ -298,11 +303,12 @@ public class ReadRTCResultsAnalysisTypeFiles
 													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 												
-												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory1()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
+												resultsMessage +="Extracted user-defined category ("+BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Name()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
 											}
 											
 											// Final Custom Category 2 tally for this file
-											if ((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
+											if ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().size() > 0) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions())
+													|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().size() > 0) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{
 												String otpResult;
 												
@@ -314,7 +320,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 												
 												RTCResultsAnalysisTypeDataRow dataToInsert = new RTCResultsAnalysisTypeDataRow(returnFileName(),																											// File name
 													newLineName2[0].trim(), 																									// Line name
-													BIASCustomAssignmentsWindowController.returnCustomCategory2(), 																// Train type
+													BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Name(), 													// Train type
 													customCategory2TrainCount,																									// Train count, sum
 													Double.parseDouble(formatter1.format(customCategory2Velocity/customCategory2TrainCount)),									// Velocity, avg
 													Double.parseDouble(formatter2.format(customCategory2TrainMiles)),															// Train miles, sum
@@ -323,7 +329,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 													otpResult);																													// OTP, avg
 												parsedTypeFiles.add(dataToInsert);
 												
-												resultsMessage +="Extracted user-defined category ("+BIASCustomAssignmentsWindowController.returnCustomCategory2()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
+												resultsMessage +="Extracted user-defined category ("+BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Name()+") data from file: "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
 											}
 											
 											break;
@@ -342,9 +348,9 @@ public class ReadRTCResultsAnalysisTypeFiles
 											
 											// Do not execute below if this is part of a custom category and custom categories are enabled
 											if ((BIASTtestConfigPageController.getSuppressTypeResultsWhenAssignedToCustomAssignment() == true) && 
-													((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim())) || 
-													(BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()))) && 
-													(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments() == true))
+													((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim())) || 
+													(BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().contains(lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()))) && 
+													(((BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue() == true) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions())) || (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
 											{	
 												resultsMessage +="Will Suppress writing "+lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[0]), Integer.valueOf(BIASParseConfigPageController.x_getTrainCat()[1])).trim()+ " type since it has a user-defined assignment applicable to "+fileToWorkWith.getName().replace(".SUMMARY", "")+", line/subdivision:  "+newLineName2[0].trim()+"\n";
 											}
@@ -352,8 +358,9 @@ public class ReadRTCResultsAnalysisTypeFiles
 												parsedTypeFiles.add(dataToInsert);
 											
 											// Check for Custom Assignment matches for Custom Category 1
-											if (BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().contains(dataToInsert.returnTrainType()) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
-											{
+											if (((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions()))
+													|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory1Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
+												{
 												customCategory1TrainCount += dataToInsert.returnTrainCount();
 												customCategory1Velocity += (dataToInsert.returnAvgSpeed() * dataToInsert.returnTrainCount());
 												customCategory1TrainMiles += (dataToInsert.returnTrainMiles());
@@ -371,8 +378,9 @@ public class ReadRTCResultsAnalysisTypeFiles
 											}
 											
 											// Check for Custom Assignment matches for Custom Category 2
-											if (BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().contains(dataToInsert.returnTrainType()) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments()))
-											{
+											if (((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().getValue()) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromOptions()))
+													|| ((BIASRTCResultsAnalysisPageController.getCustomAssignmentsCategory2Types().contains(dataToInsert.returnTrainType())) && (BIASRTCResultsAnalysisPageController.getUseCustomAssignmentsFromModuleConfig())))
+												{
 												customCategory2TrainCount += dataToInsert.returnTrainCount();
 												customCategory2Velocity += (dataToInsert.returnAvgSpeed() * dataToInsert.returnTrainCount());
 												customCategory2TrainMiles += (dataToInsert.returnTrainMiles());

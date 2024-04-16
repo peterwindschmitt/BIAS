@@ -3,6 +3,7 @@ package com.bl.bias.app;
 import java.util.prefs.Preferences;
 
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -68,19 +69,43 @@ public class BIASRTCResultsAnalysisConfigPageController
 	@FXML private Button updateUserCategory1Button;
 	@FXML private Button updateUserCategory2Button;
 
-	private static String userCategory1Name = "";
-	private static String userCategory1Types = "";
-	private static String userCategory2Name = "";
-	private static String userCategory2Types = "";
+	private static SimpleStringProperty userCategory1Name = new SimpleStringProperty();
+	private static SimpleStringProperty userCategory1Types = new SimpleStringProperty();;
+	private static SimpleStringProperty userCategory2Name = new SimpleStringProperty();;
+	private static SimpleStringProperty userCategory2Types = new SimpleStringProperty();;
+
+	public BIASRTCResultsAnalysisConfigPageController()
+	{
+		prefs = Preferences.userRoot().node("BIAS");
+		userCategory1Name.setValue("");
+		userCategory1Types.setValue("");
+		userCategory2Name.setValue("");
+		userCategory2Types.setValue("");
+	}
 
 	@FXML private void initialize()
 	{
+
+		userCategory1Name.addListener((observable, oldValue, newValue) -> {
+			notifyResultsAnalysisPageControllerOfChanges();
+		});
+
+		userCategory1Types.addListener((observable, oldValue, newValue) -> {
+			notifyResultsAnalysisPageControllerOfChanges();
+		});
+
+		userCategory2Name.addListener((observable, oldValue, newValue) -> {
+			notifyResultsAnalysisPageControllerOfChanges();
+		});
+
+		userCategory2Types.addListener((observable, oldValue, newValue) -> {
+			notifyResultsAnalysisPageControllerOfChanges();
+		});
+
 		// DO NOT CHANGE THE ORDER OF THESE ITEMS
 		cleanFileCombobox.getItems().add("Move the file to a 'Failed Dispatches' folder");	// Item index 0
 		cleanFileCombobox.getItems().add("Prepend 'FAILED' to the name of the file");		// Item index 1
 		cleanFileCombobox.getItems().add("Purge the file");									// Item index 2
-
-		prefs = Preferences.userRoot().node("BIAS");
 
 		// See if preference is stored for failed file handling
 		if (prefs.getBoolean("ra_moveFailedFiles", defaultMoveFailedFiles))
@@ -243,19 +268,19 @@ public class BIASRTCResultsAnalysisConfigPageController
 		// See if preferences are stored for User-defined Category 1
 		if ((prefs.get("ra_userCategory1Name", "") != null) && (prefs.get("ra_userCategory1Name", "") != "") && (prefs.get("ra_userCategory1Types", "") != null) && (prefs.get("ra_userCategory1Types", "") != ""))
 		{
-			userCategory1Name = prefs.get("ra_userCategory1Name", "");
-			userCategory1NameTextArea.setText(userCategory1Name);
-			userCategory1Types = prefs.get("ra_userCategory1Types", "");
-			userCategory1TypesTextArea.setText(userCategory1Types);
+			userCategory1Name.setValue(prefs.get("ra_userCategory1Name", ""));
+			userCategory1NameTextArea.setText(userCategory1Name.getValue());
+			userCategory1Types.setValue(prefs.get("ra_userCategory1Types", ""));
+			userCategory1TypesTextArea.setText(userCategory1Types.getValue());
 		}
 
 		// See if preferences are stored for User-defined Category 2
 		if ((prefs.get("ra_userCategory2Name", "") != null) && (prefs.get("ra_userCategory2Name", "") != "") && (prefs.get("ra_userCategory2Types", "") != null) && (prefs.get("ra_userCategory2Types", "") != ""))
 		{
-			userCategory2Name = prefs.get("ra_userCategory2Name", "");
-			userCategory2NameTextArea.setText(userCategory2Name);
-			userCategory2Types = prefs.get("ra_userCategory2Types", "");
-			userCategory2TypesTextArea.setText(userCategory2Types);
+			userCategory2Name.setValue(prefs.get("ra_userCategory2Name", ""));
+			userCategory2NameTextArea.setText(userCategory2Name.getValue());
+			userCategory2Types.setValue(prefs.get("ra_userCategory2Types", ""));
+			userCategory2TypesTextArea.setText(userCategory2Types.getValue());
 		}
 
 		// Set up Boolean Bindings
@@ -457,8 +482,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 
 	@FXML private void handleUpdateUserCategory1Button(ActionEvent event)
 	{
-		String userCategory1NameInput = userCategory1NameTextArea.getText().trim().toUpperCase();
-		String userCategory1TypesInput = userCategory1TypesTextArea.getText().trim().toUpperCase();
+		String userCategory1NameInput = userCategory1NameTextArea.getText().trim();
+		String userCategory1TypesInput = userCategory1TypesTextArea.getText().trim();
 
 		// Validate category name
 		if ((userCategory1NameInput.equals("")) && (userCategory1TypesInput.equals("")))
@@ -476,12 +501,12 @@ public class BIASRTCResultsAnalysisConfigPageController
 		else if (userCategory1NameInput.equals(userCategory2Name))
 		{
 			Alert alert = new Alert(AlertType.ERROR);
-    		alert.setTitle("Error");
-    		alert.setHeaderText(null);
-    		alert.setContentText("Category names are the same.  Rename at least one.");	
-    		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
-            alert.show();
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Category names are the same.  Rename at least one.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
 		}
 		else if ((userCategory1NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
 				&& (userCategory1TypesInput.matches("^[a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*$")) 
@@ -489,15 +514,15 @@ public class BIASRTCResultsAnalysisConfigPageController
 				&& (!userCategory1TypesInput.equals(""))
 				&& (!userCategory1TypesInput.substring(0).equals(",")))
 		{
-			userCategory1Name = userCategory1NameInput;
-			userCategory1NameTextArea.setText(userCategory1Name);
-			userCategory1Types = userCategory1TypesInput.replace(", ", ",");
-			userCategory1TypesTextArea.setText(userCategory1Types);
+			userCategory1Name.setValue(userCategory1NameInput);
+			userCategory1NameTextArea.setText(userCategory1Name.getValue());
+			userCategory1Types.setValue(userCategory1TypesInput.replace(", ", ","));
+			userCategory1TypesTextArea.setText(userCategory1Types.getValue());
 
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.put("ra_userCategory1Name", userCategory1Name);
-				prefs.put("ra_userCategory1Types", userCategory1Types);
+				prefs.put("ra_userCategory1Name", userCategory1Name.getValue());
+				prefs.put("ra_userCategory1Types", userCategory1Types.getValue());
 			}
 
 			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
@@ -521,8 +546,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 
 	@FXML private void handleUpdateUserCategory2Button(ActionEvent event)
 	{
-		String userCategory2NameInput = userCategory2NameTextArea.getText().trim().toUpperCase();
-		String userCategory2TypesInput = userCategory2TypesTextArea.getText().trim().toUpperCase();
+		String userCategory2NameInput = userCategory2NameTextArea.getText().trim();
+		String userCategory2TypesInput = userCategory2TypesTextArea.getText().trim();
 
 		// Validate category name
 		if ((userCategory2NameInput.equals("")) && (userCategory2TypesInput.equals("")))
@@ -540,12 +565,12 @@ public class BIASRTCResultsAnalysisConfigPageController
 		else if (userCategory2NameInput.equals(userCategory1Name))
 		{
 			Alert alert = new Alert(AlertType.ERROR);
-    		alert.setTitle("Error");
-    		alert.setHeaderText(null);
-    		alert.setContentText("Category names are the same.  Rename at least one.");	
-    		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
-            alert.show();
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Category names are the same.  Rename at least one.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
+			alert.show();
 		}
 		else if ((userCategory2NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
 				&& (userCategory2TypesInput.matches("^[a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*$"))  
@@ -553,15 +578,15 @@ public class BIASRTCResultsAnalysisConfigPageController
 				&& (!userCategory2TypesInput.equals(""))
 				&& (!userCategory2TypesInput.substring(0).equals(",")))
 		{
-			userCategory2Name = userCategory2NameInput;
-			userCategory2NameTextArea.setText(userCategory2Name);
-			userCategory2Types = userCategory2TypesInput.replace(", ", ",");
-			userCategory2TypesTextArea.setText(userCategory2Types);
+			userCategory2Name.setValue(userCategory2NameInput);
+			userCategory2NameTextArea.setText(userCategory2Name.getValue());
+			userCategory2Types.setValue(userCategory2TypesInput.replace(", ", ","));
+			userCategory2TypesTextArea.setText(userCategory2Types.getValue());
 
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
 				prefs.put("ra_userCategory2Name", userCategory2NameInput);
-				prefs.put("ra_userCategory2Types", userCategory2Types);
+				prefs.put("ra_userCategory2Types", userCategory2Types.getValue());
 			}
 
 			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
@@ -661,24 +686,29 @@ public class BIASRTCResultsAnalysisConfigPageController
 	{
 		return outputAsSerial;
 	}
-	
-	public static String getUserCategory1Name()
+
+	public static SimpleStringProperty getUserCategory1Name()
 	{
 		return userCategory1Name;
 	}
-	
-	public static String getUserCategory1Types()
+
+	public static SimpleStringProperty getUserCategory1Types()
 	{
 		return userCategory1Types;
 	}
-	
-	public static String getUserCategory2Name()
+
+	public static SimpleStringProperty getUserCategory2Name()
 	{
 		return userCategory2Name;
 	}
-	
-	public static String getUserCategory2Types()
+
+	public static SimpleStringProperty getUserCategory2Types()
 	{
 		return userCategory2Types;
+	}
+
+	void notifyResultsAnalysisPageControllerOfChanges()
+	{
+		BIASRTCResultsAnalysisPageController.changeMadeToCustomTypesInConfig();
 	}
 }

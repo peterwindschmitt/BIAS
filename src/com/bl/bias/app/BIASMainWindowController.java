@@ -85,31 +85,31 @@ public class BIASMainWindowController
 		headerBackground.setImage(image);
 
 		// Load all modules' FXML and Controllers
-		nodeRTCResultsAnalysis = FXMLLoader.load(getClass().getResource("BIASRTCResultsAnalysisPage.fxml"));
-		nodeTTest = FXMLLoader.load(getClass().getResource("BIASTtestPage.fxml"));
 		nodeVersioningAndPermissions = FXMLLoader.load(getClass().getResource("BIASVersioningAndPermissionsPage.fxml"));
 		nodeGeneralConfig = FXMLLoader.load(getClass().getResource("BIASGeneralConfigPage.fxml"));
-		nodeTTestConfig = FXMLLoader.load(getClass().getResource("BIASTtestConfigPage.fxml"));
-		nodeRTCResultsAnalysisConfig = FXMLLoader.load(getClass().getResource("BIASRTCResultsAnalysisConfigPage.fxml"));
 		nodeMaintenanceWindowAnalysisConfig = FXMLLoader.load(getClass().getResource("BIASMaintenanceWindowAnalysisConfigPage.fxml"));
-		nodeBridgeClosureAnalysis = FXMLLoader.load(getClass().getResource("BIASBridgeClosureAnalysisPage.fxml"));
-		nodeBridgeClosureAnalysisConfig = FXMLLoader.load(getClass().getResource("BIASBridgeClosureAnalysisConfigPage.fxml"));
+		nodeRadixxResSsimConversionIATAExcelConfig = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimConversionConfigPageIATAExcel.fxml"));
 		nodeRadixxResSsimConversionIATAExcel = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimConversionPageIATAExcel.fxml"));
 		nodeRadixxResSsimConversionS3Excel = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimConversionPageS3Excel.fxml"));
-		nodeRadixxResSsimComparison = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimComparisonPage.fxml"));
-		nodeRadixxResSsimConversionIATAExcelConfig = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimConversionConfigPageIATAExcel.fxml"));
 		nodeRadixxResSsimComparisonConfig = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimComparisonConfigPage.fxml"));
-		nodeGradeXingSpeeds = FXMLLoader.load(getClass().getResource("BIASGradeXingSpeedsPage.fxml"));
+		nodeRadixxResSsimComparison = FXMLLoader.load(getClass().getResource("BIASRadixxResSsimComparisonPage.fxml"));
+		nodeRTCResultsAnalysisConfig = FXMLLoader.load(getClass().getResource("BIASRTCResultsAnalysisConfigPage.fxml"));
+		nodeRTCResultsAnalysis = FXMLLoader.load(getClass().getResource("BIASRTCResultsAnalysisPage.fxml"));
+		nodeTTestConfig = FXMLLoader.load(getClass().getResource("BIASTtestConfigPage.fxml"));
+		nodeTTest = FXMLLoader.load(getClass().getResource("BIASTtestPage.fxml"));
+		nodeBridgeClosureAnalysisConfig = FXMLLoader.load(getClass().getResource("BIASBridgeClosureAnalysisConfigPage.fxml"));
+		nodeBridgeClosureAnalysis = FXMLLoader.load(getClass().getResource("BIASBridgeClosureAnalysisPage.fxml"));
 		nodeGradeXingSpeedsConfig = FXMLLoader.load(getClass().getResource("BIASGradeXingSpeedsConfigPage.fxml"));
-		nodeUscgBridgeCompliance = FXMLLoader.load(getClass().getResource("BIASUscgBridgeComplianceAnalysisPage.fxml"));
+		nodeGradeXingSpeeds = FXMLLoader.load(getClass().getResource("BIASGradeXingSpeedsPage.fxml"));
 		nodeUscgBridgeComplianceConfig = FXMLLoader.load(getClass().getResource("BIASUscgBridgeComplianceAnalysisConfigPage.fxml"));
-		nodeRecoveryRate = FXMLLoader.load(getClass().getResource("BIASRecoveryRateAnalysisPage.fxml"));
+		nodeUscgBridgeCompliance = FXMLLoader.load(getClass().getResource("BIASUscgBridgeComplianceAnalysisPage.fxml"));
 		nodeRecoveryRateConfig = FXMLLoader.load(getClass().getResource("BIASRecoveryRateAnalysisConfigPage.fxml"));
-		nodeJuaCompliance = FXMLLoader.load(getClass().getResource("BIASJuaCompliancePage.fxml"));
+		nodeRecoveryRate = FXMLLoader.load(getClass().getResource("BIASRecoveryRateAnalysisPage.fxml"));
 		nodeJuaComplianceConfig = FXMLLoader.load(getClass().getResource("BIASJuaComplianceConfigPage.fxml"));
-		nodeModifiedOtp = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
+		nodeJuaCompliance = FXMLLoader.load(getClass().getResource("BIASJuaCompliancePage.fxml"));
 		nodeModifiedOtpConfig = FXMLLoader.load(getClass().getResource("BIASModifiedOtpConfigPage.fxml"));
-
+		nodeModifiedOtp = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
+		
 		// LOADING BELOW nodes will throw exception if trying to launch as JAR
 		nodeMaintenanceWindowAnalysis = FXMLLoader.load(getClass().getResource("BIASMaintenanceWindowAnalysisPage.fxml"));
 		nodeParseConfig = FXMLLoader.load(getClass().getResource("BIASParseConfigPage.fxml"));

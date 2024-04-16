@@ -162,12 +162,18 @@ public final class BIASCustomAssignmentsWindowController
 
 	public static String returnCustomCategory1()
 	{
-		return customCategory1Name;
+		if (customCategory1Name == null)
+			return "";
+		else
+			return customCategory1Name;
 	}
 
 	public static String returnCustomCategory2()
 	{
-		return customCategory2Name;
+		if (customCategory2Name == null)
+			return "";
+		else
+			return customCategory2Name;
 	}
 
 	public static List<String> returnCustomCategoryTypes1()

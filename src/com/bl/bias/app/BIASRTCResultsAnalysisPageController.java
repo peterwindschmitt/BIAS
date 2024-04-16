@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
@@ -16,7 +18,9 @@ import com.bl.bias.analyze.RTCResultsAnalysisCleanFiles;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -42,21 +47,40 @@ public class BIASRTCResultsAnalysisPageController
 	private static File lastDirectory;
 	private static File saveFileLocation;
 	private static String message = "";
-
+	
 	private static Stage extractConfigWindow;
 
 	private static Preferences prefs;
-
+	
 	private static BooleanBinding filesToExecuteForBB;
 	private static BooleanBinding disableExecuteButton;
 	private static BooleanBinding disableAssignOptionsButton;
+	private static SimpleBooleanProperty forceSelectionOfDoNotUseCustomAssignments = new SimpleBooleanProperty();
+	private static SimpleBooleanProperty executionInProgress = new SimpleBooleanProperty();
 
+	private static Boolean doNotUseCustomAssignments = true;
+	private static Boolean useCustomAssignmentsFromModuleConfig = false;
+	private static Boolean useCustomAssignmentsFromOptions = false;
+
+	private static Boolean validCustomAssignmentsInConfigFile = false;
+	
 	private static IntegerProperty validFilesAvailable;
+	
+	private static String customAssignmentsFromConfigCategory1Name;
+	private static String customAssignmentsFromConfigCategory1Types;
+	private static String customAssignmentsFromConfigCategory2Name;
+	private static String customAssignmentsFromConfigCategory2Types;
+	
+	private static SimpleStringProperty typesAffectedConfig = new SimpleStringProperty();
 
 	@FXML private Button assignOptionsButton;
 	@FXML private Button selectFolderButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
+
+	@FXML private RadioButton doNotUseCustomAssignmentsRadioButton;
+	@FXML private RadioButton useModuleConfigCustomAssignmentsRadioButton;
+	@FXML private RadioButton useOptionsCustomAssignmentsRadioButton;
 
 	@FXML private ProgressBar progressBar;
 
@@ -64,26 +88,86 @@ public class BIASRTCResultsAnalysisPageController
 	@FXML private Label folderNameLabel;
 	@FXML private Label assignOptionsLabel;
 	@FXML private Label messageLabel;
-
+	@FXML private Label typesAffected1Label;
+	@FXML private Label showTheTypes1Label;
+	
 	@FXML private TextArea textArea;
+
+	public BIASRTCResultsAnalysisPageController()
+	{
+		forceSelectionOfDoNotUseCustomAssignments.set(false);
+		
+		prefs = Preferences.userRoot().node("BIAS");
+	}
 
 	@FXML private void initialize()
 	{
+		executionInProgress.setValue(false);
+		
+		typesAffectedConfig.addListener((observable, oldValue, newValue) -> {
+			showTheTypes1Label.setText(newValue);
+        });
+		
+		changeMadeToCustomTypesInConfig();
+
+		// Establish Boolean Bindings
 		validFilesAvailable = new SimpleIntegerProperty();
 		filesToExecuteForBB = validFilesAvailable.greaterThan(0);
-
 		disableAssignOptionsButton = filesToExecuteForBB.not();
 		assignOptionsButton.disableProperty().bind(disableAssignOptionsButton);
 		assignOptionsLabel.disableProperty().bind(disableAssignOptionsButton);
-
+		doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+		
+		if (validCustomAssignmentsInConfigFile)
+		{
+			useModuleConfigCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+			typesAffected1Label.disableProperty().bind(disableAssignOptionsButton);
+			showTheTypes1Label.disableProperty().bind(disableAssignOptionsButton);
+			
+		}
+		else 
+		{
+			useModuleConfigCustomAssignmentsRadioButton.setDisable(true);
+			typesAffected1Label.setDisable(true);
+			showTheTypes1Label.setDisable(true);
+		}
+		
+		useOptionsCustomAssignmentsRadioButton.disableProperty().bind(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().not());
+		useOptionsCustomAssignmentsRadioButton.disableProperty().addListener((obs, wasDisabled, isNowDisabled) -> {
+		    if ((wasDisabled == false) && (isNowDisabled == true) && (executionInProgress.get() == false) && (useOptionsCustomAssignmentsRadioButton.isSelected()))
+		    {
+		    	doNotUseCustomAssignmentsRadioButton.setSelected(true);
+		    }
+		});
+		
 		disableExecuteButton = filesToExecuteForBB.not();  // disable execute button if there are no eligible files        
 		executeButton.disableProperty().bind(disableExecuteButton);
+	}
 
-		prefs = Preferences.userRoot().node("BIAS");
+	@FXML private void handleDoNotUseCustomAssignmentsRadioButton(ActionEvent event)
+	{
+		doNotUseCustomAssignments = true;
+		useCustomAssignmentsFromModuleConfig = false;
+		useCustomAssignmentsFromOptions = false;
+	}
+
+	@FXML private void handleUseModuleConfigCustomAssignmentsRadioButton(ActionEvent event)
+	{
+		doNotUseCustomAssignments = false;
+		useCustomAssignmentsFromModuleConfig = true;
+		useCustomAssignmentsFromOptions = false;
+	}
+
+	@FXML private void handleUseOptionsCustomAssignmentsRadioButton(ActionEvent event)
+	{
+		doNotUseCustomAssignments = false;
+		useCustomAssignmentsFromModuleConfig = false;
+		useCustomAssignmentsFromOptions = true;
 	}
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
 	{
+		executionInProgress.setValue(true);
 		validFilesAvailable.set(0);
 		selectProjectFolderLabel.disableProperty().unbind();
 		selectProjectFolderLabel.setDisable(true);
@@ -92,6 +176,16 @@ public class BIASRTCResultsAnalysisPageController
 		assignOptionsButton.disableProperty().unbind();
 		assignOptionsButton.setDisable(true);
 		selectFolderButton.setDisable(true);
+		
+		// Unbind radio buttons
+		doNotUseCustomAssignmentsRadioButton.disableProperty().unbind();
+		doNotUseCustomAssignmentsRadioButton.selectedProperty().unbind();
+		doNotUseCustomAssignmentsRadioButton.setDisable(true);
+		
+		// Below lines are forcing early selection of do not use custom assignments radio button
+		useOptionsCustomAssignmentsRadioButton.disableProperty().unbind();
+		useOptionsCustomAssignmentsRadioButton.setDisable(true);
+			
 		progressBar.setVisible(true);
 
 		// Get location to save file to if not using system time as file name
@@ -158,6 +252,7 @@ public class BIASRTCResultsAnalysisPageController
 		files.clear();
 		ReadRTCResultsAnalysisGroupFiles.clearGroupFiles();
 		ReadRTCResultsAnalysisTypeFiles.clearTypeFiles();
+		BIASRTCResultsAnalysisOptionsWindowController.setGetCustomAssignmentsToFalse();
 
 		resetMessage();
 
@@ -169,6 +264,17 @@ public class BIASRTCResultsAnalysisPageController
 		selectFolderButton.setDisable(false);
 		selectProjectFolderLabel.setDisable(false);
 		folderNameLabel.setText("");
+		
+		// Rebind radio buttons
+		doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+		useOptionsCustomAssignmentsRadioButton.disableProperty().bind(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().not());
+		
+		doNotUseCustomAssignments = true;
+		useCustomAssignmentsFromModuleConfig = false;
+		useCustomAssignmentsFromOptions = false;
+		doNotUseCustomAssignmentsRadioButton.setSelected(true);
+		
+		executionInProgress.setValue(false);
 	}
 
 	@FXML private void handleAssignOptionsButton(ActionEvent event) throws IOException 
@@ -261,7 +367,7 @@ public class BIASRTCResultsAnalysisPageController
 			directory = lastDirectory;
 		}
 	}
-
+	
 	private void chooseExtractOptions() throws IOException
 	{
 		Parent root2 = FXMLLoader.load(getClass().getResource("BIASRTCResultsAnalysisOptionsWindow.fxml"));
@@ -276,12 +382,11 @@ public class BIASRTCResultsAnalysisPageController
 		extractConfigWindow.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
 			if (KeyCode.ESCAPE == event.getCode()) 
 			{
-				BIASRTCResultsAnalysisOptionsWindowController.revertToLastParseSettings();
 				extractConfigWindow.close();
 			}
 		});
 	}
-
+	
 	public static int getEligibleFileCount()
 	{
 		return files.size();
@@ -361,7 +466,7 @@ public class BIASRTCResultsAnalysisPageController
 		try
 		{
 			message = "\n";
-			
+
 			// Check that .TRAIN files shows all trains PTC-equipped/ATC-equipped if specified in module config file
 			BIASValidateOptionsAndINIFileSchemeA.bIASCheckTrainFile(directory);
 			if ((BIASValidateOptionsAndINIFileSchemeA.getTrainsEquippedCorrectly()) && ((BIASRTCResultsAnalysisConfigPageController.getCheckForPtcEquipped()) || (BIASRTCResultsAnalysisConfigPageController.getCheckForAtcEquipped()))) 
@@ -373,7 +478,7 @@ public class BIASRTCResultsAnalysisPageController
 				message += "Invalid PTC/ATC compliance in .TRAIN file and/or invalid count of .TRAIN files\n";
 				formattedCorrectly = false;
 			}
-				
+
 			// Check that .OPTION file has time formatted as DD:HH:MM:SS, no CSV delimiters in .ROUTE file and ENGLISH input units
 			BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(directory);
 			if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
@@ -397,9 +502,9 @@ public class BIASRTCResultsAnalysisPageController
 				message += "Invalid DOW output format in .INI file and/or invalid count of .INI files\n";
 				formattedCorrectly = false;
 			}
-			
+
 			displayMessage(message);
-			
+
 
 			if ((getEligibleFileCount() > 0) && (formattedCorrectly))
 			{
@@ -465,7 +570,7 @@ public class BIASRTCResultsAnalysisPageController
 		{
 			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
-		}      
+		}
 
 		//  Now reset for next case
 		executeButton.setVisible(false);
@@ -500,5 +605,109 @@ public class BIASRTCResultsAnalysisPageController
 		}
 
 		return saveFileLocation;
+	}
+	
+	public static String getCustomAssignmentsCategory1Name()
+	{
+		String category1NameToReturn = "";
+		if (useCustomAssignmentsFromModuleConfig)
+		{
+			category1NameToReturn = customAssignmentsFromConfigCategory1Name;
+		}
+		else if (useCustomAssignmentsFromOptions)
+		{
+			category1NameToReturn = BIASCustomAssignmentsWindowController.returnCustomCategory1();
+		}
+		return category1NameToReturn;
+	}
+	
+	public static List<String> getCustomAssignmentsCategory1Types()
+	{
+		List <String> customAssignmentsCategory1TypesAsArrayList = new ArrayList<>();
+		
+		if (useCustomAssignmentsFromModuleConfig)
+		{
+			String[] customAssignmentsFromConfigCategory1TypesAsArray = customAssignmentsFromConfigCategory1Types.split(",");
+			customAssignmentsCategory1TypesAsArrayList = Arrays.asList(customAssignmentsFromConfigCategory1TypesAsArray);
+		}
+		else if (useCustomAssignmentsFromOptions)
+		{
+			customAssignmentsCategory1TypesAsArrayList =  BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1();
+		}
+		
+		return customAssignmentsCategory1TypesAsArrayList;
+	}
+	
+	public static String getCustomAssignmentsCategory2Name()
+	{
+		String category2NameToReturn = "";
+		if (useCustomAssignmentsFromModuleConfig)
+		{
+			category2NameToReturn = customAssignmentsFromConfigCategory2Name;
+		}
+		else if (useCustomAssignmentsFromOptions)
+		{
+			category2NameToReturn = BIASCustomAssignmentsWindowController.returnCustomCategory2();
+		}
+		return category2NameToReturn;
+	}
+	
+	public static List<String> getCustomAssignmentsCategory2Types()
+	{
+		List <String> customAssignmentsCategory2TypesAsArrayList = new ArrayList<>();
+		
+		if (useCustomAssignmentsFromModuleConfig)
+		{
+			String[] customAssignmentsFromConfigCategory2TypesAsArray = customAssignmentsFromConfigCategory2Types.split(",");
+			customAssignmentsCategory2TypesAsArrayList = Arrays.asList(customAssignmentsFromConfigCategory2TypesAsArray);
+		}
+		else if (useCustomAssignmentsFromOptions)
+		{
+			customAssignmentsCategory2TypesAsArrayList =  BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2();
+		}
+			
+		return customAssignmentsCategory2TypesAsArrayList;
+	}
+	
+	public static void changeMadeToCustomTypesInConfig()
+	{
+		customAssignmentsFromConfigCategory1Name = BIASRTCResultsAnalysisConfigPageController.getUserCategory1Name().getValue();
+		customAssignmentsFromConfigCategory1Types = BIASRTCResultsAnalysisConfigPageController.getUserCategory1Types().getValue();
+		customAssignmentsFromConfigCategory2Name = BIASRTCResultsAnalysisConfigPageController.getUserCategory2Name().getValue();
+		customAssignmentsFromConfigCategory2Types = BIASRTCResultsAnalysisConfigPageController.getUserCategory2Types().getValue();
+
+		// Check to see if there's any Custom Assignments in Config
+		typesAffectedConfig.setValue("");
+		if ((!customAssignmentsFromConfigCategory1Types.equals("")) && (!customAssignmentsFromConfigCategory1Name.equals("")))
+		{
+			validCustomAssignmentsInConfigFile = true;
+			typesAffectedConfig.setValue(customAssignmentsFromConfigCategory1Name.trim() +": "+customAssignmentsFromConfigCategory1Types.trim()+"\n"); 
+		}
+		
+		if ((!customAssignmentsFromConfigCategory2Types.equals("")) && (!customAssignmentsFromConfigCategory2Name.equals("")))
+		{
+			validCustomAssignmentsInConfigFile = true;
+			typesAffectedConfig.setValue(typesAffectedConfig.getValue().concat(customAssignmentsFromConfigCategory2Name.trim() + ": " + customAssignmentsFromConfigCategory2Types.trim())); 
+		}
+
+		if (typesAffectedConfig.getValue().equals(""))
+		{
+			typesAffectedConfig.setValue("N/A");
+		}
+	}
+	
+	public static Boolean getUseCustomAssignmentsFromModuleConfig()
+	{
+		return useCustomAssignmentsFromModuleConfig;
+	}
+	
+	public static Boolean getUseCustomAssignmentsFromOptions()
+	{
+		return useCustomAssignmentsFromOptions;
+	}
+	
+	public static Boolean getDoNotUseCustomAssignments()
+	{
+		return doNotUseCustomAssignments;
 	}
 }

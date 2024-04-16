@@ -1,6 +1,7 @@
 package com.bl.bias.app;
 
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -53,27 +54,9 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 	private static Boolean selectedSubdivisions = false;
 	private static Boolean considerAllFiles = true;
 	private static Boolean considerFirstXFiles = false;
-	private static Boolean customAssignments = false;
-
-	private static Boolean otpQ = true;
-	private static Boolean velocityQ = true;
-	private static Boolean trainMilesQ = true;
-	private static Boolean delayMinutesPer100TrainMilesQ = true;
-	private static Boolean trainCountQ = true;
-	private static Boolean entireNetworkQ = true;
-	private static Boolean elapsedRunTimeQ = true;
-	private static Boolean elapsedRunTimePerTrainQ = true;
-	private static Boolean idealRunTimeQ = true;
-	private static Boolean trueDelayQ = true;
-	private static Boolean byGroupQ = true;
-	private static Boolean byTypeQ = true;
-	private static Boolean delayMinutesPerTrainQ = true;
-	private static Boolean selectedLinesQ = false;
-	private static Boolean selectedSubdivisionsQ = false;
-	private static Boolean considerAllFilesQ = true;
-	private static Boolean considerFirstXFilesQ = false;
-	private static Boolean customAssignmentsQ = false;
-
+	
+	private static SimpleBooleanProperty customAssignments = new SimpleBooleanProperty();
+		
 	private static BooleanBinding disableReturnToMainButton1;
 	private static BooleanBinding disableReturnToMainButton2;
 	private static BooleanBinding disableReturnToMainButton3;
@@ -82,10 +65,6 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 	private static List<String> listOfLines = new ArrayList<String>();
 	private static List<String> listOfSubdivisions= new ArrayList<String>();
 	
-	private static List<String> listOfLinesQ = new ArrayList<String>();
-	private static List<String> listOfSubdivisionsQ = new ArrayList<String>();
-	
-	private static Integer filesToConsiderCountQ;
 	private static Integer filesToConsiderCount;
 	
 	private static Stage customAssignmentWindow;
@@ -128,7 +107,7 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 		// Initially set checkboxes disabled
 		selectedLinesCheckbox.setDisable(true);
         selectedSubdivisionsCheckbox.setDisable(true);
-        
+         
         // Check files to determine if checkComboBoxes should be enabled
      	BIASPreprocessLinesAndSubsForRTCResultsAnalysis getPrelimData = new BIASPreprocessLinesAndSubsForRTCResultsAnalysis(BIASRTCResultsAnalysisPageController.getFiles());
         int fileCount = getPrelimData.returnTotalFiles();
@@ -173,12 +152,12 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
         linesCheckComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) 
             {
-            	listOfLinesQ = linesCheckComboBox.getCheckModel().getCheckedItems();
-            	if (listOfLinesQ.size() == 0)
+            	listOfLines = linesCheckComboBox.getCheckModel().getCheckedItems();
+            	if (listOfLines.size() == 0)
             	{
             		selectedLinesCheckbox.setDisable(true);
             		selectedLinesCheckbox.setSelected(false);
-            		selectedLinesQ = false;
+            		selectedLines = false;
             	}
             	else
             	{
@@ -190,12 +169,12 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
         subdivisionsCheckComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) 
             {
-            	listOfSubdivisionsQ = subdivisionsCheckComboBox.getCheckModel().getCheckedItems();
-            	if (listOfSubdivisionsQ.size() == 0)
+            	listOfSubdivisions = subdivisionsCheckComboBox.getCheckModel().getCheckedItems();
+            	if (listOfSubdivisions.size() == 0)
             	{
             		selectedSubdivisionsCheckbox.setDisable(true);
             		selectedSubdivisionsCheckbox.setSelected(false);
-            		selectedSubdivisionsQ = false;
+            		selectedSubdivisions = false;
             	}
             	else
             	{
@@ -207,13 +186,13 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
         // Set up spinner for file count
         if (fileCount > 1)
         {
-	        filesToConsiderCountQ = fileCount - 1;
+	        filesToConsiderCount = fileCount - 1;
 	        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, fileCount - 1, fileCount - 1);
 	        filesToProcessSpinner.setValueFactory(valueFactory);
 	        filesToProcessSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 	        	@Override
 				public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
-					filesToConsiderCountQ = newValue;	
+					filesToConsiderCount = newValue;	
 				}
 			});
         }
@@ -308,7 +287,7 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 		else
 			selectedSubdivisionsCheckbox.setSelected(false);
 		
-		if (getCustomAssignments())
+		if (getCustomAssignments().getValue())
 			customAssignmentCheckbox.setSelected(true);
 		else
 			customAssignmentCheckbox.setSelected(false);
@@ -370,175 +349,147 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 
 	@FXML private void handleApplyAndReturnToMainButton(ActionEvent event) 
 	{
-		otp = otpQ;
-		velocity = velocityQ;
-		trainMiles = trainMilesQ;
-		delayMinutesPer100TrainMiles = delayMinutesPer100TrainMilesQ;
-		trainCount = trainCountQ;
-		entireNetwork = entireNetworkQ;
-		elapsedRunTime = elapsedRunTimeQ;
-		elapsedRunTimePerTrain = elapsedRunTimePerTrainQ;
-		idealRunTime = idealRunTimeQ;
-		trueDelay = trueDelayQ;
-		byGroup = byGroupQ;
-		byType = byTypeQ;
-		delayMinutesPerTrain = delayMinutesPerTrainQ;
-		selectedLines = selectedLinesQ;
-		listOfLines = listOfLinesQ;
-		listOfSubdivisions = listOfSubdivisionsQ;
-		selectedSubdivisions = selectedSubdivisionsQ;
-		considerAllFiles = considerAllFilesQ;
-		considerFirstXFiles = considerFirstXFilesQ;
-		filesToConsiderCount = filesToConsiderCountQ;
-		customAssignments = customAssignmentsQ;
-		
 		BIASRTCResultsAnalysisPageController.closeTheExtractConfigWindow();
 	}
 
 	@FXML private void handleOtpCheckbox(ActionEvent event) 
 	{
-		if (otpQ == true)
-			otpQ = false;
+		if (otp == true)
+			otp = false;
 		else
-			otpQ = true;
+			otp = true;
 	}
 
 	@FXML private void handleVelocityCheckbox(ActionEvent event) 
 	{
-		if (velocityQ == true)
-			velocityQ = false;
+		if (velocity == true)
+			velocity = false;
 		else
-			velocityQ = true;
+			velocity = true;
 	}
 
 	@FXML private void handleTrainMilesCheckbox(ActionEvent event) 
 	{
-		if (trainMilesQ == true)
-			trainMilesQ = false;
+		if (trainMiles == true)
+			trainMiles = false;
 		else
-			trainMilesQ = true;
+			trainMiles = true;
 	}
 
 	@FXML private void handleDelayMinutesPer100TrainMilesCheckbox(ActionEvent event) 
 	{
-		if (delayMinutesPer100TrainMilesQ == true)
-			delayMinutesPer100TrainMilesQ = false;
+		if (delayMinutesPer100TrainMiles == true)
+			delayMinutesPer100TrainMiles = false;
 		else
-			delayMinutesPer100TrainMilesQ = true;
+			delayMinutesPer100TrainMiles = true;
 	}
 
 	@FXML private void handleTrainCountCheckbox(ActionEvent event) 
 	{
-		if (trainCountQ == true)
-			trainCountQ = false;
+		if (trainCount == true)
+			trainCount = false;
 		else
-			trainCountQ = true;
+			trainCount = true;
 	}
 
 	@FXML private void handleEntireNetworkCheckbox(ActionEvent event) 
 	{
-		if (entireNetworkQ == true)
-			entireNetworkQ = false;
+		if (entireNetwork == true)
+			entireNetwork = false;
 		else
-			entireNetworkQ = true;
+			entireNetwork = true;
 	}
 
 	@FXML private void handleElapsedRunTimeCheckbox(ActionEvent event) 
 	{
-		if (elapsedRunTimeQ == true)
-			elapsedRunTimeQ = false;
+		if (elapsedRunTime == true)
+			elapsedRunTime = false;
 		else
-			elapsedRunTimeQ = true;
+			elapsedRunTime = true;
 	}
 	
 	@FXML private void handleElapsedRunTimePerTrainCheckbox(ActionEvent event) 
 	{
-		if (elapsedRunTimePerTrainQ == true)
-			elapsedRunTimePerTrainQ = false;
+		if (elapsedRunTimePerTrain == true)
+			elapsedRunTimePerTrain = false;
 		else
-			elapsedRunTimePerTrainQ = true;
+			elapsedRunTimePerTrain = true;
 	}
 	
 	@FXML private void handleIdealRunTimeCheckbox(ActionEvent event) 
 	{
-		if (idealRunTimeQ == true)
-			idealRunTimeQ = false;
+		if (idealRunTime == true)
+			idealRunTime = false;
 		else
-			idealRunTimeQ = true;
+			idealRunTime = true;
 	}
 
 	@FXML private void handleTrueDelayCheckbox(ActionEvent event) 
 	{
-		if (trueDelayQ == true)
-			trueDelayQ = false;
+		if (trueDelay == true)
+			trueDelay = false;
 		else
-			trueDelayQ = true;
+			trueDelay = true;
 	}
 
 	@FXML private void handleTrainGroupCheckbox(ActionEvent event) 
 	{
-		if (byGroupQ == true)
-			byGroupQ = false;
+		if (byGroup == true)
+			byGroup = false;
 		else
-			byGroupQ = true;
+			byGroup = true;
 	}
 
 	@FXML private void handleTrainTypeCheckbox(ActionEvent event) 
 	{
-		if (byTypeQ == true)
-			byTypeQ = false;
+		if (byType == true)
+			byType = false;
 		else
-			byTypeQ = true;
+			byType = true;
 	}
 
 	@FXML private void handleCustomAssignmentCheckbox(ActionEvent event) 
 	{
-		if (customAssignmentsQ == true)
-			customAssignmentsQ = false;
+		if (customAssignments.get() == true)
+			customAssignments.set(false);
 		else
-			customAssignmentsQ = true;
+			customAssignments.set(true);
 	}
 
 	@FXML private void handleDelayMinutesPerTrainCheckbox(ActionEvent event) 
 	{
-		if (delayMinutesPerTrainQ == true)
-			delayMinutesPerTrainQ = false;
+		if (delayMinutesPerTrain == true)
+			delayMinutesPerTrain = false;
 		else
-			delayMinutesPerTrainQ = true;
+			delayMinutesPerTrain = true;
 	}
 
 	@FXML private void handleSelectedLinesCheckbox(ActionEvent event)  
 	{
-		if (selectedLinesQ == true)
-			selectedLinesQ = false;
+		if (selectedLines == true)
+			selectedLines = false;
 		else
-			selectedLinesQ = true;
+			selectedLines = true;
 	}
 	
 	@FXML private void handleSelectedSubdivisionsCheckbox(ActionEvent event)  
 	{
-		if (selectedSubdivisionsQ == true)
-			selectedSubdivisionsQ = false;
+		if (selectedSubdivisions == true)
+			selectedSubdivisions = false;
 		else
-			selectedSubdivisionsQ = true;
+			selectedSubdivisions = true;
 	}
 
-	@FXML private void handleCancelAndReturnToMainButton(ActionEvent event) 
-	{
-		revertToLastParseSettings();
-		BIASRTCResultsAnalysisPageController.closeTheExtractConfigWindow();
-	}
-	
 	@FXML private void handleConsiderAllFilesRadioButton(ActionEvent event) 
 	{
-		considerAllFilesQ = true;
-		considerFirstXFilesQ = false;
+		considerAllFiles = true;
+		considerFirstXFiles = false;
 	}
 
 	@FXML private void handleConsiderFirstXFilesRadioButton(ActionEvent event) 
 	{
-		considerAllFilesQ = false;
-		considerFirstXFilesQ = true;
+		considerAllFiles = false;
+		considerFirstXFiles = true;
 	}
 
 	@FXML private void setCustomAssignmentCheckboxEnabled()
@@ -626,9 +577,14 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 		return selectedSubdivisions;
 	}
 	
-	public static Boolean getCustomAssignments() 
+	public static SimpleBooleanProperty getCustomAssignments() 
 	{
 		return customAssignments;
+	}
+	
+	public static void setGetCustomAssignmentsToFalse() 
+	{
+		customAssignments.set(false);
 	}
 	
 	public static List<String> getListOfLines()
@@ -681,62 +637,11 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 		selectedSubdivisions = false;
 		considerAllFiles = true;
 		considerFirstXFiles = false;
-		customAssignments = false;
+		customAssignments.set(false);
 		listOfLines = new ArrayList<String>();
 		listOfSubdivisions = new ArrayList<String>();
+	}
 		
-		filesToConsiderCountQ = null;
-		selectedSubdivisionsQ = false;
-		selectedLinesQ = false;
-		considerAllFilesQ = true;
-		considerFirstXFilesQ = false;
-		otpQ = true;
-		velocityQ = true;
-		trainMilesQ = true;
-		delayMinutesPer100TrainMilesQ = true;
-		trainCountQ = true;
-		entireNetworkQ = true;
-		elapsedRunTimeQ = true;
-		elapsedRunTimePerTrainQ = true;
-		idealRunTimeQ = true;
-		trueDelayQ = true;
-		byGroupQ = true;
-		byTypeQ = true;
-		delayMinutesPerTrainQ = true;
-		selectedLinesQ = false;
-		selectedSubdivisionsQ = false;
-		considerAllFilesQ = true;
-		considerFirstXFilesQ = false;
-		customAssignmentsQ = false;
-		listOfLinesQ = new ArrayList<String>();
-		listOfSubdivisionsQ = new ArrayList<String>();
-	}
-	
-	static void revertToLastParseSettings()
-	{
-		otpQ = otp;
-		velocityQ = velocity;
-		trainMilesQ = trainMiles;
-		delayMinutesPer100TrainMilesQ = delayMinutesPer100TrainMiles;
-		trainCountQ = trainCount;
-		entireNetworkQ = entireNetwork;
-		elapsedRunTimeQ = elapsedRunTime;
-		elapsedRunTimePerTrainQ = elapsedRunTimePerTrain;
-		idealRunTimeQ = idealRunTime;
-		trueDelayQ = trueDelay;
-		byGroupQ = byGroup;
-		byTypeQ = byType;
-		delayMinutesPerTrainQ = delayMinutesPerTrain;
-		selectedLinesQ = selectedLines;
-		selectedSubdivisionsQ = selectedSubdivisions;
-		listOfLinesQ = listOfLines;
-		listOfSubdivisionsQ = listOfSubdivisions;
-		customAssignmentsQ = customAssignments;
-		considerAllFilesQ = considerAllFiles;
-		considerFirstXFilesQ = considerFirstXFiles;
-		filesToConsiderCountQ  = filesToConsiderCount;
-	}
-	
 	private void workWithCustomAssignments() throws IOException
 	{
 
@@ -780,13 +685,14 @@ public final class BIASRTCResultsAnalysisOptionsWindowController
 		if ((BIASCustomAssignmentsWindowController.returnCustomCategoryTypes1().size() > 0)  || (BIASCustomAssignmentsWindowController.returnCustomCategoryTypes2().size() > 0))
 		{
 			setCustomAssignmentCheckboxEnabled();
+			customAssignmentCheckbox.setSelected(true);
+			customAssignments.set(true);
 		}
 		else
 		{
 			setCustomAssignmentCheckboxDisabled();
 			customAssignmentCheckbox.setSelected(false);
-			customAssignmentsQ = false;
-			customAssignments = false;
+			customAssignments.set(false);
 		}
 	}
 }
