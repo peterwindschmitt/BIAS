@@ -483,7 +483,7 @@ public class BIASRTCResultsAnalysisConfigPageController
 	@FXML private void handleUpdateUserCategory1Button(ActionEvent event)
 	{
 		String userCategory1NameInput = userCategory1NameTextArea.getText().trim();
-		String userCategory1TypesInput = userCategory1TypesTextArea.getText().trim();
+		String userCategory1TypesInput = userCategory1TypesTextArea.getText().trim().replaceAll(",{2,}", ",");
 
 		// Validate category name
 		if ((userCategory1NameInput.equals("")) && (userCategory1TypesInput.equals("")))
@@ -509,7 +509,7 @@ public class BIASRTCResultsAnalysisConfigPageController
 			alert.show();
 		}
 		else if ((userCategory1NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
-				&& (userCategory1TypesInput.matches("^[a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*$")) 
+				&& (userCategory1TypesInput.matches("^[^,][a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*[^,]$")) 
 				&& (!userCategory1NameInput.equals(""))
 				&& (!userCategory1TypesInput.equals(""))
 				&& (!userCategory1TypesInput.substring(0).equals(",")))
@@ -547,7 +547,7 @@ public class BIASRTCResultsAnalysisConfigPageController
 	@FXML private void handleUpdateUserCategory2Button(ActionEvent event)
 	{
 		String userCategory2NameInput = userCategory2NameTextArea.getText().trim();
-		String userCategory2TypesInput = userCategory2TypesTextArea.getText().trim();
+		String userCategory2TypesInput = userCategory2TypesTextArea.getText().trim().replaceAll(",{2,}", ",");
 
 		// Validate category name
 		if ((userCategory2NameInput.equals("")) && (userCategory2TypesInput.equals("")))
@@ -573,7 +573,7 @@ public class BIASRTCResultsAnalysisConfigPageController
 			alert.show();
 		}
 		else if ((userCategory2NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
-				&& (userCategory2TypesInput.matches("^[a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*$"))  
+				&& (userCategory2TypesInput.matches("^[^,][a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*[^,]$")) 
 				&& (!userCategory2NameInput.equals(""))
 				&& (!userCategory2TypesInput.equals(""))
 				&& (!userCategory2TypesInput.substring(0).equals(",")))

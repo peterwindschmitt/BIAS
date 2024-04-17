@@ -127,14 +127,14 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="consisting of types (3 characters separated by comma)" GridPane.halignment="LEFT" GridPane.rowIndex="11">
+            <Label maxWidth="300.0" minHeight="35.0" prefWidth="300.0" text="consisting of types (case sensitive and separated by comma):" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="11">
                <GridPane.margin>
-                  <Insets left="25.0" />
+                  <Insets left="25.0" top="-10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="consisting of types (3 characters separated by comma)" GridPane.rowIndex="14">
+            <Label maxWidth="300.0" minHeight="35.0" prefWidth="300.0" text="consisting of types (case sensitive and separated by comma):" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="14">
                <GridPane.margin>
-                  <Insets left="25.0" />
+                  <Insets left="25.0" top="-10.0" />
                </GridPane.margin>
             </Label>
             <Label text="6.  Prepopulate and enable User-defined Assignment Category 2 (if valid types are found) with name" GridPane.columnSpan="2" GridPane.rowIndex="13">
@@ -157,14 +157,14 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </Button>
-            <TextArea fx:id="userCategory1TypesTextArea" maxHeight="25.0" minHeight="25.0" onKeyTyped="#handleUserCategory1TypesTextArea" prefHeight="25.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="11">
+            <TextArea fx:id="userCategory1TypesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleUserCategory1TypesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="11">
                <GridPane.margin>
-                  <Insets left="330.0" right="10.0" />
+                  <Insets left="305.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </TextArea>
-            <TextArea fx:id="userCategory2TypesTextArea" maxHeight="25.0" minHeight="25.0" onKeyTyped="#handleUserCategory2TypesTextArea" prefHeight="25.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="14">
+            <TextArea fx:id="userCategory2TypesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleUserCategory2TypesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="14">
                <GridPane.margin>
-                  <Insets left="330.0" right="10.0" />
+                  <Insets left="305.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </TextArea>
             <Button fx:id="updateUserCategory2Button" mnemonicParsing="false" onAction="#handleUpdateUserCategory2Button" text="Update Category 2" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="13">
