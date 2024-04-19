@@ -3,6 +3,7 @@ package com.bl.bias.app;
 import java.util.prefs.Preferences;
 
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -70,9 +71,11 @@ public class BIASRTCResultsAnalysisConfigPageController
 	@FXML private Button updateUserCategory2Button;
 
 	private static SimpleStringProperty userCategory1Name = new SimpleStringProperty();
-	private static SimpleStringProperty userCategory1Types = new SimpleStringProperty();;
-	private static SimpleStringProperty userCategory2Name = new SimpleStringProperty();;
-	private static SimpleStringProperty userCategory2Types = new SimpleStringProperty();;
+	private static SimpleStringProperty userCategory1Types = new SimpleStringProperty();
+	private static SimpleStringProperty userCategory2Name = new SimpleStringProperty();
+	private static SimpleStringProperty userCategory2Types = new SimpleStringProperty();
+	private static SimpleBooleanProperty validCustomAssignment1Exists = new SimpleBooleanProperty();
+	private static SimpleBooleanProperty validCustomAssignment2Exists = new SimpleBooleanProperty();
 
 	public BIASRTCResultsAnalysisConfigPageController()
 	{
@@ -81,6 +84,9 @@ public class BIASRTCResultsAnalysisConfigPageController
 		userCategory1Types.setValue("");
 		userCategory2Name.setValue("");
 		userCategory2Types.setValue("");
+		
+		validCustomAssignment1Exists.setValue(false);
+		validCustomAssignment2Exists.setValue(false);
 	}
 
 	@FXML private void initialize()
@@ -272,6 +278,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 			userCategory1NameTextArea.setText(userCategory1Name.getValue());
 			userCategory1Types.setValue(prefs.get("ra_userCategory1Types", ""));
 			userCategory1TypesTextArea.setText(userCategory1Types.getValue());
+			
+			validCustomAssignment1Exists.setValue(true);
 		}
 
 		// See if preferences are stored for User-defined Category 2
@@ -281,6 +289,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 			userCategory2NameTextArea.setText(userCategory2Name.getValue());
 			userCategory2Types.setValue(prefs.get("ra_userCategory2Types", ""));
 			userCategory2TypesTextArea.setText(userCategory2Types.getValue());
+			
+			validCustomAssignment2Exists.setValue(true);
 		}
 
 		// Set up Boolean Bindings
@@ -486,7 +496,7 @@ public class BIASRTCResultsAnalysisConfigPageController
 		String userCategory1TypesInput = userCategory1TypesTextArea.getText().trim().replaceAll(",{2,}", ",");
 
 		// Validate category name
-		if ((userCategory1NameInput.equals("")) && (userCategory1TypesInput.equals("")))
+		if ((userCategory1NameInput.isBlank()) && (userCategory1TypesInput.isBlank()))
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
@@ -494,11 +504,16 @@ public class BIASRTCResultsAnalysisConfigPageController
 				prefs.put("ra_userCategory1Types", "");
 			}
 
+			userCategory1Types.setValue("");
+			userCategory1Name.setValue("");
+			
 			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory1TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory1Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			
+			validCustomAssignment1Exists.setValue(false);
 		}
-		else if (userCategory1NameInput.equals(userCategory2Name))
+		else if (userCategory1NameInput.equals(userCategory2Name.getValue()))
 		{
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
@@ -528,6 +543,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory1TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory1Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			
+			validCustomAssignment1Exists.setValue(true);
 		}
 		else
 		{
@@ -550,19 +567,24 @@ public class BIASRTCResultsAnalysisConfigPageController
 		String userCategory2TypesInput = userCategory2TypesTextArea.getText().trim().replaceAll(",{2,}", ",");
 
 		// Validate category name
-		if ((userCategory2NameInput.equals("")) && (userCategory2TypesInput.equals("")))
+		if ((userCategory2NameInput.isBlank()) && (userCategory2TypesInput.isBlank()))
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
 				prefs.put("ra_userCategory2Name", "");
 				prefs.put("ra_userCategory2Types", "");
 			}
-
+			
+			userCategory2Types.setValue("");
+			userCategory2Name.setValue("");
+			
 			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory2TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory2Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			
+			validCustomAssignment2Exists.setValue(false);
 		}
-		else if (userCategory2NameInput.equals(userCategory1Name))
+		else if (userCategory2NameInput.equals(userCategory1Name.getValue()))
 		{
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
@@ -592,6 +614,8 @@ public class BIASRTCResultsAnalysisConfigPageController
 			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory2TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory2Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+			
+			validCustomAssignment2Exists.setValue(true);
 		}
 		else
 		{
@@ -705,6 +729,16 @@ public class BIASRTCResultsAnalysisConfigPageController
 	public static SimpleStringProperty getUserCategory2Types()
 	{
 		return userCategory2Types;
+	}
+	
+	public static SimpleBooleanProperty getValidCustomAssignment1Exists()
+	{
+		return validCustomAssignment1Exists;
+	}
+	
+	public static SimpleBooleanProperty getValidCustomAssignment2Exists()
+	{
+		return validCustomAssignment2Exists;
 	}
 
 	void notifyResultsAnalysisPageControllerOfChanges()
