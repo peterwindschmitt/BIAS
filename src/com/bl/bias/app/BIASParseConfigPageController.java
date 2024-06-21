@@ -123,6 +123,7 @@ public class BIASParseConfigPageController
 	private static String o_initialDelayCost;
 	private static String o_maximumDelayCost;
 	private static String o_conflictRank;
+	private static String o_otpThreshold;
 
 	// Data from .LINE file
 	private static String w_lineName;
@@ -253,6 +254,14 @@ public class BIASParseConfigPageController
 	private static String p_designSpeed;
 	private static String p_currentSpeed;
 
+	// Data from .PERFORMANCE file
+	private static String f_trainSymbol;
+	private static String f_scheduleNode;
+	private static String f_scheduledArrivalTime;
+	private static String f_scheduledDepartureTime;
+	private static String f_actualArrivalTime;
+	private static String f_actualDepartureTime;
+
 	private static Integer curPage;
 
 	private ObservableList<ParseLocationFormatA> parseData1 = FXCollections.observableArrayList();
@@ -269,6 +278,7 @@ public class BIASParseConfigPageController
 	private ObservableList<ParseLocationFormatC> parseData12 = FXCollections.observableArrayList();
 	private ObservableList<ParseLocationFormatB> parseData13 = FXCollections.observableArrayList();
 	private ObservableList<ParseLocationFormatB> parseData14 = FXCollections.observableArrayList();
+	private ObservableList<ParseLocationFormatB> parseData15 = FXCollections.observableArrayList();
 
 	@FXML TableView<ParseLocationFormatA> parseLocationsTable1;  // Summary type/group
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable2;  // Summary other
@@ -284,6 +294,7 @@ public class BIASParseConfigPageController
 	@FXML TableView<ParseLocationFormatC> parseLocationsTable12; // Radixx Res SSIM (S3) data
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable13; // TPC data
 	@FXML TableView<ParseLocationFormatB> parseLocationsTable14; // Permit data
+	@FXML TableView<ParseLocationFormatB> parseLocationsTable15; // Performance data
 
 	@FXML private TableColumn<ParseLocationFormatA, String> parameterName1;
 	@FXML private TableColumn<ParseLocationFormatA, String> registryKey1;
@@ -359,6 +370,12 @@ public class BIASParseConfigPageController
 	@FXML private TableColumn<ParseLocationFormatB, Integer> startColumn14;
 	@FXML private TableColumn<ParseLocationFormatB, Integer> endColumn14;
 
+
+	@FXML private TableColumn<ParseLocationFormatB, String> parameterName15;
+	@FXML private TableColumn<ParseLocationFormatB, String> registryKey15;
+	@FXML private TableColumn<ParseLocationFormatB, Integer> startColumn15;
+	@FXML private TableColumn<ParseLocationFormatB, Integer> endColumn15;
+
 	@FXML private Label parseRangeLabel;
 
 	@FXML private RadioButton viewEntriesOnlyRadioButton;
@@ -396,6 +413,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable12.setVisible(false);
 		parseLocationsTable13.setVisible(false);
 		parseLocationsTable14.setVisible(false);
+		parseLocationsTable15.setVisible(false);
 
 		// Table 1 - Extract
 		parameterName1.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatA, String>("parameterName"));
@@ -673,7 +691,8 @@ public class BIASParseConfigPageController
 				new ParseLocationFormatB("Minimum Delay Cost", "o_minimumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[1])),
 				new ParseLocationFormatB("Initial Delay Cost", "o_initialDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[1])),
 				new ParseLocationFormatB("Maximum Delay Cost", "o_maximumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[1])),
-				new ParseLocationFormatB("Conflict Rank", "o_conflictRank", Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1]))
+				new ParseLocationFormatB("Conflict Rank", "o_conflictRank", Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1])),
+				new ParseLocationFormatB("OTP Threshold", "o_otpThreshold", Integer.valueOf(BIASParseConfigPageController.o_getOtpThreshold()[0]), Integer.valueOf(BIASParseConfigPageController.o_getOtpThreshold()[1]))
 				);
 
 		parseLocationsTable8.setItems(parseData8);
@@ -941,6 +960,37 @@ public class BIASParseConfigPageController
 		registryKey14.setReorderable(false);
 		startColumn14.setReorderable(false);
 		endColumn14.setReorderable(false);
+
+		// Table 15 - Performance
+		parameterName15.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("parameterName"));
+		registryKey15.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, String>("registryKey"));
+		startColumn15.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("startColumn"));
+		endColumn15.setCellValueFactory(new PropertyValueFactory<ParseLocationFormatB, Integer>("endColumn"));
+
+		parameterName15.setSortable(false);
+		registryKey15.setSortable(false);
+		startColumn15.setSortable(false);
+		endColumn15.setSortable(false);
+
+		parameterName15.getStyleClass().add("header-style");
+		registryKey15.getStyleClass().add("header-style");
+		startColumn15.setStyle( "-fx-alignment: CENTER;");
+		endColumn15.setStyle( "-fx-alignment: CENTER;");
+
+		parseData15.addAll(new ParseLocationFormatB("Train Symbol", "f_trainSymbol", Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])),
+				new ParseLocationFormatB("Schedule Node", "f_scheduleNode", Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[1])),
+				new ParseLocationFormatB("Scheduled Arrival Time", "f_scheduledArrivalTime", Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[1])),
+				new ParseLocationFormatB("Scheduled Departure Time", "f_scheduledDepartureTime", Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[1])),
+				new ParseLocationFormatB("Actual Arrival Time", "f_actualArrivalTime", Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[1])),
+				new ParseLocationFormatB("Actual Departure Time", "f_actualDepartureTime", Integer.valueOf(BIASParseConfigPageController.f_getActualDepartureTime()[0]), Integer.valueOf(f_getActualDepartureTime()[1]))
+				);
+
+		parseLocationsTable15.setItems(parseData15);
+
+		parameterName15.setReorderable(false);
+		registryKey15.setReorderable(false);
+		startColumn15.setReorderable(false);
+		endColumn15.setReorderable(false);
 	}
 
 	@FXML private void handleRestoreDefaultsButton(ActionEvent event) 
@@ -1050,6 +1100,7 @@ public class BIASParseConfigPageController
 			prefs.remove("o_initialDelayCost");
 			prefs.remove("o_maximumDelayCost");
 			prefs.remove("o_conflictRank");
+			prefs.remove("o_otpThreshold");
 
 			// Table 9
 			prefs.remove("w_lineName");
@@ -1168,6 +1219,14 @@ public class BIASParseConfigPageController
 			prefs.remove("b_endTime");
 			prefs.remove("b_enabled");
 
+			// Table 15
+			prefs.remove("f_trainSymbol");
+			prefs.remove("f_scheduleNode");
+			prefs.remove("f_scheduledArrivalTime");
+			prefs.remove("f_scheduledDepartureTime");
+			prefs.remove("f_actualArrivalTime");
+			prefs.remove("f_actualDepartureTime");
+
 			// Add parameters
 			getParseParameters();
 
@@ -1187,6 +1246,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setEditable(false);
 			parseLocationsTable13.setEditable(false);
 			parseLocationsTable14.setEditable(false);
+			parseLocationsTable15.setEditable(false);
 
 			// Refresh parseData from registry for table 1 values
 			parseData1.clear();
@@ -1318,7 +1378,8 @@ public class BIASParseConfigPageController
 					new ParseLocationFormatB("Minimum Delay Cost", "o_minimumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMinimumDelayCost()[1])),
 					new ParseLocationFormatB("Initial Delay Cost", "o_initialDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getInitialDelayCost()[1])),
 					new ParseLocationFormatB("Maximum Delay Cost", "o_maximumDelayCost", Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[0]), Integer.valueOf(BIASParseConfigPageController.o_getMaximumDelayCost()[1])),
-					new ParseLocationFormatB("Conflict Rank", "o_conflictRank", Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1]))
+					new ParseLocationFormatB("Conflict Rank", "o_conflictRank", Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[0]), Integer.valueOf(BIASParseConfigPageController.o_getConflictRank()[1])),
+					new ParseLocationFormatB("OTP Threshold", "o_otpThreshold", Integer.valueOf(BIASParseConfigPageController.o_getOtpThreshold()[0]), Integer.valueOf(BIASParseConfigPageController.o_getOtpThreshold()[1]))
 					);
 
 			startColumn8.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1465,6 +1526,19 @@ public class BIASParseConfigPageController
 					);
 			startColumn14.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 			endColumn14.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+			
+
+			// Refresh parseData from registry for table 15 values
+			parseData15.clear();
+			parseData15.addAll(new ParseLocationFormatB("Train Symbol", "f_trainSymbol", Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])),
+					new ParseLocationFormatB("Schedule Node", "f_scheduleNode", Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[1])),
+					new ParseLocationFormatB("Scheduled Arrival Time", "f_scheduledArrivalTime", Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[1])),
+					new ParseLocationFormatB("Scheduled Departure Time", "f_scheduledDepartureTime", Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[1])),
+					new ParseLocationFormatB("Actual Arrival Time", "f_actualArrivalTime", Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[1])),
+					new ParseLocationFormatB("Actual Departure Time", "f_actualDepartureTime", Integer.valueOf(BIASParseConfigPageController.f_getActualDepartureTime()[0]), Integer.valueOf(f_getActualDepartureTime()[1]))
+					);
+			startColumn15.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+			endColumn15.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		} 
 	}
 
@@ -1486,6 +1560,7 @@ public class BIASParseConfigPageController
 		parseLocationsTable12.setEditable(false);
 		parseLocationsTable13.setEditable(false);
 		parseLocationsTable14.setEditable(false);
+		parseLocationsTable15.setEditable(false);
 
 		typeStartColumn1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		typeEndColumn1.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -1530,6 +1605,9 @@ public class BIASParseConfigPageController
 
 		startColumn14.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 		endColumn14.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		
+		startColumn15.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		endColumn15.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 	}
 
 	@FXML private void handleViewAndEditEntriesRadioButton(ActionEvent event) 
@@ -1550,6 +1628,8 @@ public class BIASParseConfigPageController
 		parseLocationsTable12.setEditable(true);
 		parseLocationsTable13.setEditable(true);
 		parseLocationsTable14.setEditable(true);
+		parseLocationsTable15.setEditable(true);
+
 
 		// Table 1 - typeStartColumn
 		typeStartColumn1.setEditable(true);
@@ -2450,6 +2530,66 @@ public class BIASParseConfigPageController
 				}
 			}
 		});
+		
+		// Table 15 - startColumn
+		startColumn15.setEditable(true);
+		startColumn15.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
+		startColumn15.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+			@Override
+			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+				if (t.getNewValue() != -1)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					String key = parseLocationsTable15.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String[] oldValues = prefs.get(key, null).split(",");
+					String newValue = t.getNewValue()+","+oldValues[1];
+
+					// Update in registry
+					prefs.put(key, newValue);
+
+					// Update value in startColumn which will then update GUI (as it is observable)
+					parseData15.get(row).setStartColumn(t.getNewValue());
+				}
+				else
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+
+					parseData15.get(row).setStartColumn(t.getOldValue());
+					parseLocationsTable15.getColumns().get(row).setVisible(false);
+					parseLocationsTable15.getColumns().get(row).setVisible(true);
+				}
+			}
+		});
+
+		// Table 15 - endColumn
+		endColumn15.setEditable(true);
+		endColumn15.setCellFactory(TextFieldTableCell.forTableColumn(new CustomIntegerStringConverter()));
+		endColumn15.setOnEditCommit(new EventHandler<CellEditEvent<ParseLocationFormatB, Integer>>() {      
+			@Override
+			public void handle(CellEditEvent<ParseLocationFormatB, Integer> t) {
+				if (t.getNewValue() != -1)
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+					String key = parseLocationsTable15.getColumns().get(1).getCellObservableValue(row).getValue().toString(); 
+					String[] oldValues = prefs.get(key, null).split(",");
+					String newValue = oldValues[0]+","+t.getNewValue();
+
+					// Update in registry
+					prefs.put(key, newValue);
+
+					// Update value in endColumn which will then update GUI (as it is observable)
+					parseData15.get(row).setEndColumn(t.getNewValue());
+				}
+				else
+				{
+					int row = t.getTableView().getEditingCell().getRow();
+
+					parseData15.get(row).setEndColumn(t.getOldValue());
+					parseLocationsTable15.getColumns().get(row).setVisible(false);
+					parseLocationsTable15.getColumns().get(row).setVisible(true);
+				}
+			}
+		});
 	}
 
 	@FXML private void handlePreviousPageButton(ActionEvent event) 
@@ -2479,6 +2619,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable1.requestFocus();
 		}
@@ -2503,6 +2644,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable3.requestFocus();
 		}
@@ -2527,6 +2669,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable4.requestFocus();
 		}
@@ -2551,6 +2694,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable5.requestFocus();
 		}
@@ -2575,6 +2719,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable6.requestFocus();
 		}
@@ -2599,6 +2744,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable7.requestFocus();
 		}
@@ -2623,6 +2769,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable8.requestFocus();
 		}
@@ -2647,6 +2794,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable9.requestFocus();
 		}
@@ -2671,6 +2819,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable10.requestFocus();
 		}
@@ -2695,6 +2844,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable11.requestFocus();
 		}
@@ -2719,6 +2869,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(true);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable12.requestFocus();
 		}
@@ -2743,8 +2894,34 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(true);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable13.requestFocus();
+		}
+		else if (curPage == 14) // Going to TPC (p 13)
+		{
+			curPage--;
+			previousPageButton.setDisable(false);
+			nextPageButton.setDisable(false);
+
+			parseRangeLabel.setText("Parameters parsed from .PERMIT file:");
+			parseLocationsTable1.setVisible(false);
+			parseLocationsTable2.setVisible(false);
+			parseLocationsTable3.setVisible(false);
+			parseLocationsTable4.setVisible(false);
+			parseLocationsTable5.setVisible(false);
+			parseLocationsTable6.setVisible(false);
+			parseLocationsTable7.setVisible(false);
+			parseLocationsTable8.setVisible(false);
+			parseLocationsTable9.setVisible(false);
+			parseLocationsTable10.setVisible(false);
+			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
+			parseLocationsTable14.setVisible(true);
+			parseLocationsTable15.setVisible(false);
+
+			parseLocationsTable14.requestFocus();
 		}
 		else
 		{
@@ -2755,7 +2932,7 @@ public class BIASParseConfigPageController
 
 	@FXML private void handleNextPageButton(ActionEvent event) 
 	{
-		if (curPage == 13)  // Highest possible page # here
+		if (curPage == 14)  // Highest possible page # here
 		{
 			// do nothing
 		}
@@ -2780,6 +2957,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable3.requestFocus();
 		}
@@ -2804,6 +2982,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable4.requestFocus();
 		}
@@ -2828,6 +3007,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable5.requestFocus();
 		}
@@ -2852,6 +3032,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable6.requestFocus();
 		}
@@ -2876,6 +3057,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable7.requestFocus();
 		}
@@ -2900,6 +3082,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable8.requestFocus();
 		}
@@ -2924,6 +3107,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable9.requestFocus();
 		}
@@ -2948,6 +3132,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable10.requestFocus();
 		}
@@ -2972,6 +3157,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable11.requestFocus();
 		}
@@ -2996,6 +3182,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(true);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable12.requestFocus();
 		}
@@ -3020,6 +3207,7 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(true);
 			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable13.requestFocus();
 		}
@@ -3027,7 +3215,7 @@ public class BIASParseConfigPageController
 		{
 			curPage++;
 			previousPageButton.setDisable(false);
-			nextPageButton.setDisable(true);
+			nextPageButton.setDisable(false);
 
 			parseRangeLabel.setText("Parameters parsed from .PERMIT file:");
 			parseLocationsTable1.setVisible(false);
@@ -3044,8 +3232,35 @@ public class BIASParseConfigPageController
 			parseLocationsTable12.setVisible(false);
 			parseLocationsTable13.setVisible(false);
 			parseLocationsTable14.setVisible(true);
+			parseLocationsTable15.setVisible(false);
 
 			parseLocationsTable14.requestFocus();
+		}
+		
+		else if (curPage == 13)  // Going to Permits (p 14)
+		{
+			curPage++;
+			previousPageButton.setDisable(false);
+			nextPageButton.setDisable(true);
+
+			parseRangeLabel.setText("Parameters parsed from .PERFORMANCE file:");
+			parseLocationsTable1.setVisible(false);
+			parseLocationsTable2.setVisible(false);
+			parseLocationsTable3.setVisible(false);
+			parseLocationsTable4.setVisible(false);
+			parseLocationsTable5.setVisible(false);
+			parseLocationsTable6.setVisible(false);
+			parseLocationsTable7.setVisible(false);
+			parseLocationsTable8.setVisible(false);
+			parseLocationsTable9.setVisible(false);
+			parseLocationsTable10.setVisible(false);
+			parseLocationsTable11.setVisible(false);
+			parseLocationsTable12.setVisible(false);
+			parseLocationsTable13.setVisible(false);
+			parseLocationsTable14.setVisible(false);
+			parseLocationsTable15.setVisible(true);
+
+			parseLocationsTable15.requestFocus();
 		}
 	}
 
@@ -3435,7 +3650,7 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("t_minimumDwellTime", t_minimumDwellTime);
 		}
-		
+
 		// Minimum delay cost
 		if (prefs.get("t_minimumDelayCost", null) == null)
 		{
@@ -3444,7 +3659,7 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("t_minimumDelayCost", t_minimumDelayCost);
 		}
-		
+
 		// Initial delay cost
 		if (prefs.get("t_initialDelayCost", null) == null)
 		{
@@ -3743,7 +3958,7 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("o_minimumDelayCost", o_minimumDelayCost);
 		}
-		
+
 		// Initial delay cost
 		if (prefs.get("o_initialDelayCost", null) == null)
 		{
@@ -3769,6 +3984,15 @@ public class BIASParseConfigPageController
 			o_conflictRank = "75,76";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("o_conflictRank", o_conflictRank);
+		}
+
+		// OTP threshold
+		if (prefs.get("o_otpThreshold", null) == null)
+		{
+			// Write value for subsequent runs
+			o_otpThreshold = "748,756";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("o_otpThreshold", o_otpThreshold);
 		}
 
 		// Table 9
@@ -4355,7 +4579,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("y_all_recordSerialNumber", null) == null)
 		{
 			// Write value for subsequent runs
-			y_all_recordSerialNumber = "208,216";
+			y_all_recordSerialNumber = "208,215";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("y_all_recordSerialNumber", y_all_recordSerialNumber);
 		}
@@ -4721,6 +4945,61 @@ public class BIASParseConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("b_enabled", b_enabled);
 		}
+		
+		// Table 15
+		// Train symbol
+		if (prefs.get("f_trainSymbol", null) == null)
+		{
+			// Write value for subsequent runs
+			f_trainSymbol = "185,205";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("f_trainSymbol", f_trainSymbol);
+		}
+		
+		// Schedule node
+		if (prefs.get("f_scheduleNode", null) == null)
+		{
+			// Write value for subsequent runs
+			f_scheduleNode = "7,18";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("f_scheduleNode", f_scheduleNode);
+		}
+		
+		// Scheduled arrival time
+		if (prefs.get("f_scheduledArrivalTime", null) == null)
+		{
+			// Write value for subsequent runs
+			f_scheduledArrivalTime = "48,59";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("f_scheduledArrivalTime", f_scheduledArrivalTime);
+		}
+		
+		// Scheduled departure time
+		if (prefs.get("f_scheduledDepartureTime", null) == null)
+		{
+			// Write value for subsequent runs
+			f_scheduledDepartureTime = "61,72";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("f_scheduledDepartureTime", f_scheduledDepartureTime);
+		}
+		
+		// Actual arrival time
+		if (prefs.get("f_actualArrivalTime", null) == null)
+		{
+			// Write value for subsequent runs
+			f_actualArrivalTime = "74,85";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("f_actualArrivalTime", f_actualArrivalTime);
+		}
+		
+		// Actual departure time
+		if (prefs.get("f_actualDepartureTime", null) == null)
+		{
+			// Write value for subsequent runs
+			f_actualDepartureTime = "87,98";
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("f_actualDepartureTime", f_actualDepartureTime);
+		}
 	}
 
 	public static String[] x_getTrainCat()
@@ -4980,19 +5259,19 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("t_minimumDelayCost", t_minimumDelayCost).split(",");
 		return values;
 	}
-	
+
 	public static String[] t_getInitialDelayCost()
 	{
 		String[] values = prefs.get("t_initialDelayCost", t_initialDelayCost).split(",");
 		return values;
 	}
-	
+
 	public static String[] t_getMaximumDelayCost()
 	{
 		String[] values = prefs.get("t_maximumDelayCost", t_maximumDelayCost).split(",");
 		return values;
 	}
-	
+
 	public static String[] r_getTrainSymbol()
 	{
 		String[] values = prefs.get("r_trainSymbol", r_trainSymbol).split(",");
@@ -5172,28 +5451,34 @@ public class BIASParseConfigPageController
 		String[] values = prefs.get("o_trainTypeGroup", o_trainTypeGroup).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getMinimumDelayCost()
 	{
 		String[] values = prefs.get("o_minimumDelayCost", o_minimumDelayCost).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getInitialDelayCost()
 	{
 		String[] values = prefs.get("o_initialDelayCost", o_initialDelayCost).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getMaximumDelayCost()
 	{
 		String[] values = prefs.get("o_maximumDelayCost", o_maximumDelayCost).split(",");
 		return values;
 	}
-	
+
 	public static String[] o_getConflictRank()
 	{
 		String[] values = prefs.get("o_conflictRank", o_conflictRank).split(",");
+		return values;
+	}
+
+	public static String[] o_getOtpThreshold()
+	{
+		String[] values = prefs.get("o_otpThreshold", o_otpThreshold).split(",");
 		return values;
 	}
 
@@ -5824,6 +6109,42 @@ public class BIASParseConfigPageController
 	public static String[] b_getEnabled()
 	{
 		String[] values = prefs.get("b_enabled", "b_enabled").split(",");
+		return values;
+	}
+	
+	public static String[] f_getTrainSymbol()
+	{
+		String[] values = prefs.get("f_trainSymbol", "f_trainSymbol").split(",");
+		return values;
+	}
+	
+	public static String[] f_getScheduleNode()
+	{
+		String[] values = prefs.get("f_scheduleNode", "f_scheduleNode").split(",");
+		return values;
+	}
+	
+	public static String[] f_getScheduledArrivalTime()
+	{
+		String[] values = prefs.get("f_scheduledArrivalTime", "f_scheduledArrivalTime").split(",");
+		return values;
+	}
+	
+	public static String[] f_getScheduledDepartureTime()
+	{
+		String[] values = prefs.get("f_scheduledDepartureTime", "f_scheduledDepartureTime").split(",");
+		return values;
+	}
+	
+	public static String[] f_getActualArrivalTime()
+	{
+		String[] values = prefs.get("f_actualArrivalTime", "f_actualArrivalTime").split(",");
+		return values;
+	}
+	
+	public static String[] f_getActualDepartureTime()
+	{
+		String[] values = prefs.get("f_actualDepartureTime", "f_actualDepartureTime").split(",");
 		return values;
 	}
 

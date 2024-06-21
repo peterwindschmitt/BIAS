@@ -204,9 +204,8 @@ public class BIASModifiedOtpPageController
 		if (file != null)
 		{
 			Boolean trainFileFound = false;
-			Boolean routeFileFound = false;
-			Boolean reportFileFound = false;
-
+			Boolean performanceFileFound = false;
+			
 			executeButton.setDisable(true);
 
 			// Write message
@@ -227,21 +226,15 @@ public class BIASModifiedOtpPageController
 			else
 				message += "\n.TRAIN file is missing!";
 
-			// Check that .ROUTE file exists
-			File routeFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".ROUTE"));
-			if (routeFile.exists())
-				routeFileFound = true;
+			// Check that .PERFORMANCE file exists
+			File performanceFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".PERFORMANCE"));
+			if (performanceFile.exists())
+				performanceFileFound = true;
 			else
-				message += "\n.ROUTE file is missing!";
+				message += "\n.PERFORMANCE file is missing!";
 
-			// Check that .REPORT file exists
-			File reportFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".REPORT"));
-			if (reportFile.exists())
-				reportFileFound = true;
-			else
-				message += "\n.REPORT file is missing!";
-
-			if ((routeFileFound) && (trainFileFound) && (reportFileFound))
+		
+			if ((performanceFileFound) && (trainFileFound))
 			{
 				executeButton.setDisable(false);
 			}
@@ -285,11 +278,11 @@ public class BIASModifiedOtpPageController
 		BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
 		if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
 		{
-			message = "\nValidated date/time format, verbose .ROUTE file, output format and speed/distance \nunits from .OPTION file\n";
+			message = "\nValidated date/time format, output format and speed/distance \nunits from .OPTION file\n";
 		}
 		else
 		{
-			message = "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance \nunits, invalid .OPTION file and/or invalid count of .OPTION files\n";
+			message = "\nInvalid date/time format, output format, speed/distance \nunits, invalid .OPTION file and/or invalid count of .OPTION files\n";
 			continueAnalysis = false;
 		}
 		displayMessage(message);
@@ -306,7 +299,7 @@ public class BIASModifiedOtpPageController
 
 				setProgressIndicator(0.20);
 				
-				if (ReadModifiedOtpFiles.getTrainsForModifiedOtp().size() > 0)
+				if (ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile().size() > 0)
 				{
 					// Analyze trains' modified OTP
 					ModifiedOtpAnalysis analyze = new ModifiedOtpAnalysis();

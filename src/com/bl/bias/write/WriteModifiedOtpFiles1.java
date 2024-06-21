@@ -20,7 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.app.BIASModifiedOtpConfigPageController;
-import com.bl.bias.objects.ModifiedOtpTrainObject;
+import com.bl.bias.objects.ModifiedOtpTrainObjectA;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteModifiedOtpFiles1 
@@ -31,14 +31,14 @@ public class WriteModifiedOtpFiles1
 
 	private static Boolean showColumnsForGraphs = BIASModifiedOtpConfigPageController.getGenerateSerialTimes();
 
-	ArrayList<ModifiedOtpTrainObject> trains = new ArrayList<ModifiedOtpTrainObject>();
+	ArrayList<ModifiedOtpTrainObjectA> trains = new ArrayList<ModifiedOtpTrainObjectA>();
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
 	XSSFSheet modifiedOtpSheet;
 
 	Integer rowCounter = 0;
 
-	public WriteModifiedOtpFiles1 (ArrayList<ModifiedOtpTrainObject> trains, String textArea, String fileAsString)
+	public WriteModifiedOtpFiles1 (ArrayList<ModifiedOtpTrainObjectA> trains, String textArea, String fileAsString)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -308,10 +308,10 @@ public class WriteModifiedOtpFiles1
 		}
 	}
 
-	class sortBySymbol implements Comparator<ModifiedOtpTrainObject> 
+	class sortBySymbol implements Comparator<ModifiedOtpTrainObjectA> 
 	{ 
 		@Override
-		public int compare(ModifiedOtpTrainObject o1, ModifiedOtpTrainObject o2) 
+		public int compare(ModifiedOtpTrainObjectA o1, ModifiedOtpTrainObjectA o2) 
 		{	    
 			String x1 = o1.getSymbol();
 			String x2 = o2.getSymbol();

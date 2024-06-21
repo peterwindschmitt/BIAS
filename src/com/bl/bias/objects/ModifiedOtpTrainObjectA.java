@@ -2,7 +2,7 @@ package com.bl.bias.objects;
 
 import java.util.ArrayList;
 
-public class ModifiedOtpTrainObject 
+public class ModifiedOtpTrainObjectA 
 {
 	private String symbol;
 	

@@ -1,168 +1,236 @@
 package com.bl.bias.read;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.bl.bias.app.BIASModifiedOtpConfigPageController;
 import com.bl.bias.app.BIASParseConfigPageController;
-import com.bl.bias.objects.ModifiedOtpTrainObject;
+import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.objects.ModifiedOtpTrainObjectB;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadModifiedOtpFiles 
 {
-	private static HashSet<String> runTimeTrainsInRouteFile = new HashSet<String>();
-	private static HashSet<String> trainSymbolsFromConfigFile = new HashSet<String>();
-	private static ArrayList<String> trainSymbolsToAnalyze = new ArrayList<String>();
-	private static ArrayList<ModifiedOtpTrainObject> modifiedOtpEntries = new ArrayList<ModifiedOtpTrainObject>();
+	private static HashSet<String> trainOriginDataFromConfigFile = new HashSet<String>();
+	private static HashMap<String, String> enabledTrainsFromTrainFile = new HashMap<String, String>();
+	private static HashMap<String, String> otpThresholdsFromOptionFile = new HashMap<String, String>();
+	private static ArrayList<ModifiedOtpTrainObjectB> performanceFileEntries = new ArrayList<ModifiedOtpTrainObjectB>();
 
 	private static String resultsMessage;
 
 	public ReadModifiedOtpFiles(String file) throws IOException
 	{
-		runTimeTrainsInRouteFile.clear();
-		trainSymbolsFromConfigFile.clear();
-		trainSymbolsToAnalyze.clear();
-		modifiedOtpEntries.clear();
+		trainOriginDataFromConfigFile.clear();
+		enabledTrainsFromTrainFile.clear();
+		otpThresholdsFromOptionFile.clear();
+		performanceFileEntries.clear();
 
 		resultsMessage = "\nStarted parsing Modified OTP Analysis files at "+ConvertDateTime.getTimeStamp()+"\n";
 
-		// Load in trains from config file
+		// Load in train data from config file
 		for (int i = 0; i < BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length; i+=3)
 		{
-			trainSymbolsFromConfigFile.add(BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",")[i]);
+			trainOriginDataFromConfigFile.add(BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",")[i]);
 		}
+		resultsMessage +="Extracted origin data for "+trainOriginDataFromConfigFile.size()+" trains from this module's config file\n";
 
-		// Read in .ROUTE file with BufferedReader to get train symbols and find first/last line of run-time trains
-		File routeFile = new File(file.replace("OPTION","ROUTE"));
-		BufferedReader bufferedReaderRouteFile = new BufferedReader(new FileReader(routeFile));
-		String line = null;
-		Integer firstLineOfRunTimeTrains = Integer.MAX_VALUE;
-		Integer rowCounter = -1;
-		
-		// Get hashset of run-time train symbols
-		while ((line = bufferedReaderRouteFile.readLine()) != null) 
+		// Read in enabled train symbols from .TRAIN file
+		Scanner scanner = null;
+
+		try 
 		{
-			rowCounter++;
-			if (line.contains("Run-time train: "))
+			File trainFile = new File(file.replace("OPTION","TRAIN"));
+			scanner = new Scanner(trainFile);
+
+			Boolean openingSequence = false;
+
+			String targetSequence0 = "=======";
+			String targetSequence1 = "Train symbol:";
+			String targetSequence2 = "Train type:";
+			String targetSequence3 = "Enabled:";
+			String targetSequence4 = "-------";
+
+			String trainSymbol = "";
+			String trainType = "";
+			Boolean trainEnabled = false;
+
+			while (scanner.hasNextLine()) 
 			{
-				if (rowCounter < firstLineOfRunTimeTrains)
-					firstLineOfRunTimeTrains = rowCounter;
-
-				String trainSymbolPattern = Pattern.quote("Run-time train:") + "(.*?)" + Pattern.quote("Type:");
-				Pattern pattern = Pattern.compile(trainSymbolPattern);
-				Matcher matcher = pattern.matcher(line);
-
-				while (matcher.find()) 
+				String lineFromFile = scanner.nextLine();
+				if (lineFromFile.contains(targetSequence0))
+				{ 
+					openingSequence = true;
+					trainSymbol = "";
+					trainType = "";
+					trainEnabled = false;
+				}
+				else if ((openingSequence) && (lineFromFile.contains(targetSequence1)))
 				{
-					String trainSymbol = matcher.group(1).trim();
-
-					Iterator<String> it = trainSymbolsFromConfigFile.iterator(); 
-					while (it.hasNext()) 
-					{ 
-						String symbolFromConfigFile = it.next();
-						if (trainSymbol.startsWith(symbolFromConfigFile))
-							runTimeTrainsInRouteFile.add(trainSymbol);
+					trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainSymbol()[1])).trim();
+				}
+				else if ((openingSequence) && (lineFromFile.contains(targetSequence2)))
+				{
+					trainType = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainType()[1])).trim();
+				}
+				else if ((openingSequence) && (lineFromFile.contains(targetSequence3)))
+				{
+					if (lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[0]), Integer.valueOf(BIASParseConfigPageController.t_getTrainEnabled()[1])).trim().toLowerCase().equals("yes"))
+					{
+						trainEnabled = true;
 					}
 				}
+				else if ((openingSequence) && (lineFromFile.contains(targetSequence4)))
+				{
+					if (trainEnabled)
+						enabledTrainsFromTrainFile.put(trainSymbol, trainType);
+					openingSequence = false;
+				}
 			}
+			resultsMessage +="Extracted "+enabledTrainsFromTrainFile.size()+" enabled trains from the .TRAIN file\n";
 		}
-		bufferedReaderRouteFile.close();
-
-		// Create ArrayList from Hashset and step through the arraylist of symbols to find scheduling nodes
-		String trainSymbolPattern = Pattern.quote("Run-time train:") + "(.*?)" + Pattern.quote("Type:");
-		Pattern pattern = Pattern.compile(trainSymbolPattern);
-
-		trainSymbolsToAnalyze.addAll(runTimeTrainsInRouteFile);
-
-		train:
-		for (int i = 0; i < trainSymbolsToAnalyze.size(); i++)
+		catch (Exception e) 
 		{
-			// Read in .ROUTE file with Scanner
-			routeFile = new File(file.replace("OPTION","ROUTE"));
-			Scanner scannerRouteFile = new Scanner(new FileReader(routeFile));
+			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+		}
+		finally
+		{
+			scanner.close();
+		}
 
-			Boolean inRunTimeTrainRoute = false;
+		// Read in OTP thresholds from .OPTION file
+		try 
+		{
+			File optionFile = new File(file);
+			scanner = new Scanner(optionFile);
 
-			ModifiedOtpTrainObject newEntry = new ModifiedOtpTrainObject(); 
-			String trainSymbol = null;
+			Boolean targetSequence0Found = false;
+
+			String targetSequence0 = "[Train types]";
+			String targetSequence1 = "-------";
+
+			String trainType = "";
+			String otpThreshold = "";
+
+			while (scanner.hasNextLine()) 
+			{
+				String lineFromFile = scanner.nextLine();
+				if (lineFromFile.contains(targetSequence0))
+				{ 
+					trainType = "";
+					otpThreshold = "";
+					targetSequence0Found = true;
+					for (int i = 0; i < 5; i++)
+						scanner.nextLine();
+				}
+				else if ((targetSequence0Found) && (lineFromFile.contains(targetSequence1)))
+				{
+					targetSequence0Found = false;
+					break;
+				}
+				else if (targetSequence0Found)
+				{
+					trainType = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[0]), Integer.valueOf(BIASParseConfigPageController.o_getTrainTypeName()[1])).trim();
+					if (!trainType.isBlank())
+					{
+						otpThreshold = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.o_getOtpThreshold()[0]), Integer.valueOf(BIASParseConfigPageController.o_getOtpThreshold()[1])).trim();
+						otpThresholdsFromOptionFile.put(trainType, otpThreshold);
+					}
+				}							
+			}
+			resultsMessage +="Extracted "+otpThresholdsFromOptionFile.size()+" OTP thresholds from the .OPTION file\n";
+		}
+		catch (Exception e) 
+		{
+			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+		}
+		finally
+		{
+			scanner.close();
+		}
+
+		// Read in .PERFORMANCE file to get train symbols, nodes, scheduled and actual times
+		try 
+		{
+			File performanceFile = new File(file.replace("OPTION","PERFORMANCE"));
+			scanner = new Scanner(performanceFile);
 			
-			rowCounter = -1;
+			Boolean targetSequence0Found = false;
 
-			while (scannerRouteFile.hasNextLine()) 
+			String targetSequence0 = "Train:";
+			String targetSequence1 = "-------";
+
+			while (scanner.hasNextLine()) 
 			{
-				String lineFromFile = scannerRouteFile.nextLine();
-				Matcher matcher = pattern.matcher(lineFromFile);
-				rowCounter++;
-				if (rowCounter < firstLineOfRunTimeTrains)
-					continue;
-				else if ((matcher.find()) && (inRunTimeTrainRoute == false))
-				{
-					// Found a train runtime train symbol
-					// See if it's a valid symbol
-					trainSymbol = matcher.group(1).trim();
-					if (trainSymbolsToAnalyze.get(i).equals(trainSymbol))
-					{
-						// Valid symbol found
-						// Create a new ModifiedOtpTrainObject
-						newEntry.setSymbol(trainSymbol);
-						inRunTimeTrainRoute = true;
-						scannerRouteFile.nextLine();
-						scannerRouteFile.nextLine();
-						scannerRouteFile.nextLine();
-						scannerRouteFile.nextLine();
-						scannerRouteFile.nextLine();	
-					}
+				String lineFromFile = scanner.nextLine();
+				
+				if (lineFromFile.contains(targetSequence0)) 
+				{ 
+					targetSequence0Found = true;
+					for (int i = 0; i < 5; i++)
+						scanner.nextLine();
 				}
-				else if ((inRunTimeTrainRoute) && (lineFromFile.contains("----------")))
+				else if ((targetSequence0Found) && (lineFromFile.contains(targetSequence1)))
 				{
-					// End this runtime train
-					inRunTimeTrainRoute = false;
-					modifiedOtpEntries.add(newEntry);
-					continue train;
+					targetSequence0Found = false;
 				}
-				else if (inRunTimeTrainRoute)
+				else if (targetSequence0Found)
 				{
-					// Capture this entry if has a scheduled and observed time
-					if ((lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[1])).trim() != "")		
-							|| (lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])).trim() != ""))				
-
+					String scheduledArrivalTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[1])).trim();
+					String scheduledDepartureTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[1])).trim();
+					
+					if ((!scheduledArrivalTimeAsString.isBlank()) || (!scheduledDepartureTimeAsString.isBlank()))
 					{
-						String node = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getNode()[0]), Integer.valueOf(BIASParseConfigPageController.r_getNode()[1])).trim();
+						String trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])).trim();
+						String scheduleNode = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[1])).trim();
+						String actualArrivalTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[1])).trim();
+						String actualDepartureTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getActualDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getActualDepartureTime()[1])).trim();
 
-						for (int j = 0; j < BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length; j+=3)
-						{
-							String eligibleNodeFromConfig = BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",")[j + 1].trim();
-							String trainFromConfig = BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",")[j].trim();
-							// Only collect trains that have an eligible node -- the comparison between the times is handled in the Analyze logic
-							if ((trainSymbol.contains(trainFromConfig)) && (node.equals(eligibleNodeFromConfig)))
-							{
-								String scheduledDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledDepartureTime()[1])).trim();
-								String scheduledArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getScheduledArrivalTime()[1])).trim();
-								String simulatedDepartureTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndDepartureTime()[1])).trim();
-								String simulatedArrivalTime = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.r_getHeadEndArrivalTime()[1])).trim();
-								newEntry.addRouteEntry(node, scheduledDepartureTime, scheduledArrivalTime, simulatedDepartureTime, simulatedArrivalTime);
-							}
-						}
+						Double scheduledArrivalTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(scheduledArrivalTimeAsString);
+						Double scheduledDepartureTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(scheduledDepartureTimeAsString);
+						Double actualArrivalTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(actualArrivalTimeAsString);
+						Double actualDepartureTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(actualDepartureTimeAsString);
+						
+						ModifiedOtpTrainObjectB performanceEntry = new ModifiedOtpTrainObjectB(trainSymbol, scheduleNode, scheduledArrivalTimeAsDouble, scheduledDepartureTimeAsDouble, actualArrivalTimeAsDouble, actualDepartureTimeAsDouble);
+						performanceFileEntries.add(performanceEntry);
 					}
 				}
 			}
+			resultsMessage +="Extracted "+performanceFileEntries.size()+" route entries from the .PERFORMANCE file\n";
 		}
-
-		resultsMessage +="Extracted data for "+runTimeTrainsInRouteFile.size()+" run-time trains from the .ROUTE file\n";
+		catch (Exception e) 
+		{
+			ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+		}
+		finally
+		{
+			scanner.close();
+		}
+		
 		resultsMessage += "Finished parsing Modified OTP Analysis files at "+ConvertDateTime.getTimeStamp()+"\n\n";
 	}
 
-	public static ArrayList<ModifiedOtpTrainObject> getTrainsForModifiedOtp()
+	public static HashSet<String> getTrainOriginDataFromConfigFile()
 	{
-		return modifiedOtpEntries;
+		return trainOriginDataFromConfigFile;
+	}
+
+	public static HashMap<String, String> getEnabledTrainsFromTrainFile()
+	{
+		return enabledTrainsFromTrainFile;
+	}
+
+	public static HashMap<String, String> getOtpThresholdsFromOptionFile()
+	{
+		return otpThresholdsFromOptionFile;
+	}
+	
+	public static ArrayList<ModifiedOtpTrainObjectB> getPerformanceFileEntries()
+	{
+		return performanceFileEntries;
 	}
 
 	public String getResultsMessage()

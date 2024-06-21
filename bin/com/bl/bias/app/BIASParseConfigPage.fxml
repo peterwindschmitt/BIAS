@@ -181,6 +181,17 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </TableView>
+       <TableView fx:id="parseLocationsTable15" maxHeight="218.0" maxWidth="535.0" minHeight="218.0" minWidth="535.0" prefHeight="218.0" prefWidth="535.0" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+         <columns>
+            <TableColumn fx:id="parameterName15" editable="false" maxWidth="178.0" minWidth="138.0" prefWidth="178.0" resizable="false" sortable="false" text="Parameter" />
+            <TableColumn fx:id="registryKey15" editable="false" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" resizable="false" sortable="false" text="Registry Entry" />
+            <TableColumn fx:id="startColumn15" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" sortable="false" text="Start Column" />
+            <TableColumn fx:id="endColumn15" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" sortable="false" text="End Column" />
+         </columns>
+          <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </TableView>
       <Label fx:id="parseRangeLabel" alignment="CENTER" focusTraversable="false" prefHeight="17.0" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="LEFT">
          <GridPane.margin>
             <Insets left="10.0" />

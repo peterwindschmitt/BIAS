@@ -9,7 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.bl.bias.app.BIASGeneralConfigController;
 import com.bl.bias.app.BIASModifiedOtpPageController;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.objects.ModifiedOtpTrainObject;
+import com.bl.bias.objects.ModifiedOtpTrainObjectA;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteModifiedOtpFiles2 extends WriteModifiedOtpFiles1
@@ -18,7 +18,7 @@ public class WriteModifiedOtpFiles2 extends WriteModifiedOtpFiles1
 	
 	static Boolean error = false;
 	
-	public WriteModifiedOtpFiles2(ArrayList<ModifiedOtpTrainObject> trains, String textArea, String fileAsString)
+	public WriteModifiedOtpFiles2(ArrayList<ModifiedOtpTrainObjectA> trains, String textArea, String fileAsString)
 	{
 		super(trains, textArea, fileAsString);
 		

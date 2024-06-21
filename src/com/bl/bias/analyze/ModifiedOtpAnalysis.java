@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.app.BIASModifiedOtpConfigPageController;
-import com.bl.bias.objects.ModifiedOtpTrainObject;
+import com.bl.bias.objects.ModifiedOtpTrainObjectA;
 import com.bl.bias.read.ReadModifiedOtpFiles;
 
 public class ModifiedOtpAnalysis 
 {
 	private static String resultsMessage;
 
-	private static ArrayList<ModifiedOtpTrainObject> trainsToTestForModifiedOtp = new ArrayList<ModifiedOtpTrainObject>();
+	private static ArrayList<ModifiedOtpTrainObjectA> trainsToTestForModifiedOtp = new ArrayList<ModifiedOtpTrainObjectA>();
 	private static ArrayList<String> trainSymbolsFromConfigFile = new ArrayList<String>();
 	private static String gracePeriodFromConfigFileAsString; 
 	private static Double gracePeriodFromConfigFileAsSerial; 
@@ -29,7 +29,7 @@ public class ModifiedOtpAnalysis
 
 		// Assign all trains from Read class
 		trainsToTestForModifiedOtp.clear();
-		trainsToTestForModifiedOtp.addAll(ReadModifiedOtpFiles.getTrainsForModifiedOtp());
+		//trainsToTestForModifiedOtp.addAll(ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile());
 		trainSymbolsFromConfigFile.clear();
 
 		// Load in trains from config file
@@ -74,7 +74,7 @@ public class ModifiedOtpAnalysis
 		resultsMessage += "Finished analyzing trains at "+ConvertDateTime.getTimeStamp()+("\n");
 	}
 	
-	public ArrayList<ModifiedOtpTrainObject> getTrainsAnalyzedForModifiedOtp()
+	public ArrayList<ModifiedOtpTrainObjectA> getTrainsAnalyzedForModifiedOtp()
 	{
 		return trainsToTestForModifiedOtp;
 	}
