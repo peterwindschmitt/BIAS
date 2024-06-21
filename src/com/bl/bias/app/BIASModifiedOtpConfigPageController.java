@@ -21,7 +21,6 @@ public class BIASModifiedOtpConfigPageController
 	private static Boolean checkTrainsForLateness; 
 	private static Boolean generateReport;
 	private static Boolean excludeTrains;
-	private static Boolean generateSerialTimes;
 	private static String permissibleMinutesOfDelayAsString; 
 
 	private static Boolean defaultCheckSeedTrainsForLateness = true; 
@@ -214,20 +213,6 @@ public class BIASModifiedOtpConfigPageController
 			}
 			excludeTrainsRadioButton.setSelected(true);
 		}
-
-		// See if preference is stored for generating serial times in spreadsheet
-		if (prefs.getBoolean("mo_generateSerialTimes", defaultGenerateSerialTimes))
-		{
-			generateSerialTimes = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_generateSerialTimes", true);
-			serialTimesCheckBox.setSelected(true);
-		}
-		else
-		{
-			generateSerialTimes = false;
-			serialTimesCheckBox.setSelected(false);
-		}
 		
 		// See if entries are stored
 		if ((prefs.get("mo_schedulePointEntries", "") != null) && (prefs.get("mo_schedulePointEntries", "") != ""))
@@ -408,22 +393,6 @@ public class BIASModifiedOtpConfigPageController
 			enableAllControls();
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_checkTrainsForLateness", true);
-		}
-	}
-
-	@FXML private void handleSerialTimesCheckBox(ActionEvent e)
-	{
-		if (generateSerialTimes)
-		{
-			generateSerialTimes = false;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_generateSerialTimes", false);
-		}
-		else
-		{
-			generateSerialTimes = true;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_generateSerialTimes", true);
 		}
 	}
 
@@ -3134,10 +3103,5 @@ public class BIASModifiedOtpConfigPageController
 	public static String getSchedulePointEntries()
 	{
 		return schedulePointEntries;
-	}
-	
-	public static Boolean getGenerateSerialTimes()
-	{
-		return generateSerialTimes;
 	}
 }

@@ -29,8 +29,6 @@ public class WriteModifiedOtpFiles1
 	protected static String resultsMessage1 = "\nStarted writing output file at "+startWriteFileTime;
 	protected static Boolean error = false;
 
-	private static Boolean showColumnsForGraphs = BIASModifiedOtpConfigPageController.getGenerateSerialTimes();
-
 	ArrayList<ModifiedOtpTrainObjectA> trains = new ArrayList<ModifiedOtpTrainObjectA>();
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
@@ -143,10 +141,7 @@ public class WriteModifiedOtpFiles1
 
 		// Header rows
 		// Case name
-		if (showColumnsForGraphs)
-			modifiedOtpSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
-		else
-			modifiedOtpSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+		modifiedOtpSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
 
 		Row row;
 		Cell cell;
@@ -180,21 +175,6 @@ public class WriteModifiedOtpFiles1
 		cell = row.createCell(4);
 		cell.setCellStyle(style7);
 		cell.setCellValue("Violation*");
-
-		if (showColumnsForGraphs)
-		{
-			cell = row.createCell(5);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Scheduled Time as Serial");
-
-			cell = row.createCell(6);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Observed Time as Serial");
-
-			cell = row.createCell(7);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Difference as Serial");
-		}
 
 		// Trains
 		rowCounter++;
@@ -255,24 +235,6 @@ public class WriteModifiedOtpFiles1
 					cell.setCellValue("Y");
 				}
 				
-				if (showColumnsForGraphs)
-				{
-					// Scheduled time as serial
-					cell = row.createCell(5);
-					cell.setCellStyle(style1);
-					cell.setCellValue(Math.max(scheduledDepartureTimeAsDouble, scheduledArrivalTimeAsDouble));
-					
-					// Observed time as serial
-					cell = row.createCell(6);
-					cell.setCellStyle(style1);
-					cell.setCellValue(Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble));
-					
-					// Difference as serial
-					cell = row.createCell(7);
-					cell.setCellStyle(style1);
-					cell.setCellValue(Math.max(simulatedDepartureTimeAsDouble, simulatedArrivalTimeAsDouble) - Math.max(scheduledDepartureTimeAsDouble, scheduledArrivalTimeAsDouble));
-				}
-
 				rowCounter++;
 			}
 		}
