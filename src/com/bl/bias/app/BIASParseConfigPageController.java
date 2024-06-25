@@ -4951,7 +4951,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("f_trainSymbol", null) == null)
 		{
 			// Write value for subsequent runs
-			f_trainSymbol = "185,205";
+			f_trainSymbol = "8,18";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("f_trainSymbol", f_trainSymbol);
 		}

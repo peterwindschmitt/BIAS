@@ -1,52 +1,64 @@
 package com.bl.bias.objects;
 
+import java.util.ArrayList;
+
 public class ModifiedOtpTrainObjectB 
 {
 	private String trainSymbol;
-	private String scheduleNode;
+	private String trainType = "?";
 	
-	private Double scheduledArrivalTime;
-	private Double scheduledDepartureTime;
-	private Double actualArrivalTime;
-	private Double actualDepartureTime;
+	private Double otpThresholdAsDouble = 0.0;
 	
-	public ModifiedOtpTrainObjectB(String trainSymbol, String scheduleNode, Double scheduledArrivalTime, Double scheduledDepartureTime, Double actualArrivalTime, Double actualDepartureTime) 
-    {
-        this.trainSymbol = trainSymbol;
-        this.scheduleNode = scheduleNode;
-        this.scheduledArrivalTime = scheduledArrivalTime;
-        this.scheduledDepartureTime = scheduledDepartureTime;
-        this.actualArrivalTime = actualArrivalTime;
-        this.actualDepartureTime = actualDepartureTime;
-    }
-		
+	ArrayList<SchedulePointForTrainObjectB> schedulePoints = new ArrayList<SchedulePointForTrainObjectB>();
+	ArrayList<ReportingPointForTrainObjectB> reportingPoints = new ArrayList<ReportingPointForTrainObjectB>();
+
+	public ModifiedOtpTrainObjectB(String trainSymbol) 
+	{
+		this.trainSymbol = trainSymbol;
+	}
+
 	public String getTrainSymbol()
 	{
 		return trainSymbol;
 	}
-	
-	public String getScheduledNode()
+
+	public void setOtpThresholdAsDouble(Double otpThresholdAsDouble)
 	{
-		return scheduleNode;
+		this.otpThresholdAsDouble = otpThresholdAsDouble;
+	}
+
+	public Double getOtpThresholdAsDouble()
+	{
+		return otpThresholdAsDouble;
+	}
+
+	public void setTrainType(String trainType)
+	{
+		this.trainType = trainType;
+	}
+
+	public String getTrainType()
+	{
+		return trainType;
 	}
 	
-	public Double getScheduledArrivalTime()
+	public void addSchedulePoint(SchedulePointForTrainObjectB point)
 	{
-		return scheduledArrivalTime;
+		schedulePoints.add(point);
 	}
 	
-	public Double getScheduledDepartureTime()
+	public ArrayList<SchedulePointForTrainObjectB> getSchedulePoints()
 	{
-		return scheduledDepartureTime;
+		return schedulePoints;
 	}
 	
-	public Double getActualArrivalTime()
+	public void addReportingPoint(ReportingPointForTrainObjectB point)
 	{
-		return actualArrivalTime;
+		reportingPoints.add(point);
 	}
 	
-	public Double getActualDepartureTime()
+	public ArrayList<ReportingPointForTrainObjectB> getReportingPoints()
 	{
-		return actualDepartureTime;
+		return reportingPoints;
 	}
 }

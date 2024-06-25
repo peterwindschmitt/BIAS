@@ -18,17 +18,19 @@ public class BIASModifiedOtpConfigPageController
 {
 	private static ObservableList<String> permissibleMintuesOfDelayValues =  FXCollections.observableArrayList("0", "1", "5", "10", "15");
 
-	private static Boolean checkTrainsForLateness; 
-	private static Boolean generateReport;
-	private static Boolean excludeTrains;
+	private static Boolean checkSeedTrainsForLatenessToExternalSchedule; 
+	private static Boolean checkScheduledVsActualTraversalTimes;
+	private static Boolean generateReportOfTrainsLateAtOriginPerConfig; // as opposed to excluding
+	private static Boolean excludeTrainsLateAtOriginPerConfig;  // as opposed to the above (just producing a report)
 	private static String permissibleMinutesOfDelayAsString; 
 
 	private static Boolean defaultCheckSeedTrainsForLateness = true; 
+	private static Boolean defaultCheckScheduledVsActualTraversalTimes = true;
 	private static Boolean defaultGenerateReport = true;
-	private static Boolean defaultGenerateSerialTimes = true;
 	private static String defaultPermissibleMinutesOfDelay = "5"; 
 
 	private static String schedulePointEntries = ""; 
+	private static String actualPointEntries = "";
 
 	final Pattern trainSymbolPattern = Pattern.compile("^[a-z-_A-Z0-9]+$");
 	final Pattern timePattern = Pattern.compile("^(?:\\d|[01]\\d|2[0-3]):[0-5]\\d$");
@@ -49,8 +51,8 @@ public class BIASModifiedOtpConfigPageController
 
 	@FXML private ComboBox<String> permissibleMinutesOfDelayCombobox;
 
-	@FXML private CheckBox checkTrainsCheckBox;
-	@FXML private CheckBox serialTimesCheckBox;
+	@FXML private CheckBox checkTrainsScheduleVsExternalCheckBox;
+	@FXML private CheckBox checkTrainsScheduleVsActualCheckBox;
 
 	@FXML private RadioButton generateReportRadioButton;
 	@FXML private RadioButton excludeTrainsRadioButton;
@@ -151,7 +153,44 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private TextField node24TextField;
 	@FXML private TextField departureTime24TextField;
 
-	@FXML private Button updateEntriesButton;
+	@FXML private TextField originNode1ActualTextField;
+	@FXML private TextField destinationNode1ActualTextField;
+
+	@FXML private TextField originNode2ActualTextField;
+	@FXML private TextField destinationNode2ActualTextField;
+
+	@FXML private TextField originNode3ActualTextField;
+	@FXML private TextField destinationNode3ActualTextField;
+
+	@FXML private TextField originNode4ActualTextField;
+	@FXML private TextField destinationNode4ActualTextField;
+
+	@FXML private TextField originNode5ActualTextField;
+	@FXML private TextField destinationNode5ActualTextField;
+
+	@FXML private TextField originNode6ActualTextField;
+	@FXML private TextField destinationNode6ActualTextField;
+
+	@FXML private TextField originNode7ActualTextField;
+	@FXML private TextField destinationNode7ActualTextField;
+
+	@FXML private TextField originNode8ActualTextField;
+	@FXML private TextField destinationNode8ActualTextField;
+
+	@FXML private TextField originNode9ActualTextField;
+	@FXML private TextField destinationNode9ActualTextField;
+
+	@FXML private TextField originNode10ActualTextField;
+	@FXML private TextField destinationNode10ActualTextField;
+
+	@FXML private TextField originNode11ActualTextField;
+	@FXML private TextField destinationNode11ActualTextField;
+
+	@FXML private TextField originNode12ActualTextField;
+	@FXML private TextField destinationNode12ActualTextField;
+
+	@FXML private Button updateEntriesForScheduledButton;
+	@FXML private Button updateEntriesForActualButton;
 
 	@FXML private void initialize()
 	{
@@ -159,19 +198,19 @@ public class BIASModifiedOtpConfigPageController
 		prefs = Preferences.userRoot().node("BIAS");	
 
 		// See if preference is stored for checking seed trains lateness
-		if (prefs.getBoolean("mo_checkTrainsForLateness", defaultCheckSeedTrainsForLateness))
+		if (prefs.getBoolean("mo_checkTrainsForLatenessToExternalSchedule", defaultCheckSeedTrainsForLateness))
 		{
-			checkTrainsForLateness = true;
+			checkSeedTrainsForLatenessToExternalSchedule = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLateness", true);
-			checkTrainsCheckBox.setSelected(true);
-			enableAllControls();
+				prefs.putBoolean("mo_checkTrainsForLatenessToExternalSchedule", true);
+			checkTrainsScheduleVsExternalCheckBox.setSelected(true);
+			enableAllControlsForLatenessToExternalSchedule();
 		}
 		else
 		{
-			checkTrainsForLateness = false;
-			checkTrainsCheckBox.setSelected(false);
-			disableAllControls();
+			checkSeedTrainsForLatenessToExternalSchedule = false;
+			checkTrainsScheduleVsExternalCheckBox.setSelected(false);
+			disableAllControlsForExternalSchedule();
 		}
 
 		// See if permissible minutes of delay is stored
@@ -191,30 +230,30 @@ public class BIASModifiedOtpConfigPageController
 		permissibleMinutesOfDelayAsString = prefs.get("mo_permissibleMinutesOfDelay", defaultPermissibleMinutesOfDelay);
 
 		// See if preference is stored for generating report vs excluding train from OTP
-		if (prefs.getBoolean("mo_generateReport", defaultGenerateReport))
+		if (prefs.getBoolean("mo_generateReportDueToExternalScheduleLateness", defaultGenerateReport))
 		{
-			generateReport = true;
-			excludeTrains = false;
+			generateReportOfTrainsLateAtOriginPerConfig = true;
+			excludeTrainsLateAtOriginPerConfig = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.putBoolean("mo_generateReport", true);
-				prefs.putBoolean("mo_excludeTrains", false);
+				prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", true);
+				prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", false);
 			}
 			generateReportRadioButton.setSelected(true);
 		}
 		else
 		{
-			generateReport = false;
-			excludeTrains = true;
+			generateReportOfTrainsLateAtOriginPerConfig = false;
+			excludeTrainsLateAtOriginPerConfig = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			{
-				prefs.putBoolean("mo_generateReport", false);
-				prefs.putBoolean("mo_excludeTrains", true);
+				prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", false);
+				prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", true);
 			}
 			excludeTrainsRadioButton.setSelected(true);
 		}
-		
-		// See if entries are stored
+
+		// See if scheduled entries are stored
 		if ((prefs.get("mo_schedulePointEntries", "") != null) && (prefs.get("mo_schedulePointEntries", "") != ""))
 		{
 			schedulePointEntries = prefs.get("mo_schedulePointEntries", "");
@@ -369,6 +408,93 @@ public class BIASModifiedOtpConfigPageController
 				}
 			}
 		}
+
+		// See if preference is stored for checking seed trains lateness to actual
+		if (prefs.getBoolean("mo_checkTrainsForLatenessToActualSchedule", defaultCheckScheduledVsActualTraversalTimes))
+		{
+			checkScheduledVsActualTraversalTimes = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_checkTrainsForLatenessToActualSchedule", true);
+			checkTrainsScheduleVsActualCheckBox.setSelected(true);
+			enableAllControlsForActualSchedule();
+		}
+		else
+		{
+			checkScheduledVsActualTraversalTimes = false;
+			checkTrainsScheduleVsActualCheckBox.setSelected(false);
+			disableAllControlsForActualSchedule();
+		}
+
+		// See if actual comparison entries are stored
+		if ((prefs.get("mo_actualPointEntries", "") != null) && (prefs.get("mo_actualPointEntries", "") != ""))
+		{
+			actualPointEntries = prefs.get("mo_actualPointEntries", "");
+			String actualScheduleEntry[] = actualPointEntries.split(",");
+
+			for (int i = 0; i < actualScheduleEntry.length / 2; i++)
+			{
+				if (i == 0)
+				{
+					originNode1ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode1ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 1)
+				{
+					originNode2ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode2ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 2)
+				{
+					originNode3ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode3ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 3)
+				{
+					originNode4ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode4ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 4)
+				{
+					originNode5ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode5ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 5)
+				{
+					originNode6ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode6ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 6)
+				{
+					originNode7ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode7ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 7)
+				{
+					originNode8ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode8ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 8)
+				{
+					originNode9ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode9ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 9)
+				{
+					originNode10ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode10ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 10)
+				{
+					originNode11ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode11ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 11)
+				{
+					originNode12ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode12ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+			}
+		}
 	}
 
 	@FXML private void handlePermissibleMinutesOfDelayComboBox(ActionEvent e)
@@ -378,21 +504,39 @@ public class BIASModifiedOtpConfigPageController
 			prefs.put("mo_permissibleMinutesOfDelay", permissibleMinutesOfDelayCombobox.getValue());
 	}
 
-	@FXML private void handleCheckTrainsCheckBox(ActionEvent e)
+	@FXML private void handleCheckTrainsScheduleVsExternalCheckBox(ActionEvent e)
 	{
-		if (checkTrainsForLateness)
+		if (checkSeedTrainsForLatenessToExternalSchedule)
 		{
-			checkTrainsForLateness = false;
-			disableAllControls();
+			checkSeedTrainsForLatenessToExternalSchedule = false;
+			disableAllControlsForExternalSchedule();
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLateness", false);
+				prefs.putBoolean("mo_checkTrainsForLatenessToExternalSchedule", false);
 		}
 		else
 		{
-			checkTrainsForLateness = true;
-			enableAllControls();
+			checkSeedTrainsForLatenessToExternalSchedule = true;
+			enableAllControlsForLatenessToExternalSchedule();
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLateness", true);
+				prefs.putBoolean("mo_checkTrainsForLatenessToExternalSchedule", true);
+		}
+	}
+
+	@FXML private void handleCheckTrainsScheduleVsActualCheckBox(ActionEvent e)
+	{
+		if (checkScheduledVsActualTraversalTimes)
+		{
+			checkScheduledVsActualTraversalTimes = false;
+			disableAllControlsForActualSchedule();
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_checkTrainsForLatenessToActualSchedule", false);
+		}
+		else
+		{
+			checkScheduledVsActualTraversalTimes = true;
+			enableAllControlsForActualSchedule();
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_checkTrainsForLatenessToActualSchedule", true);
 		}
 	}
 
@@ -400,29 +544,29 @@ public class BIASModifiedOtpConfigPageController
 	{
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
-			prefs.putBoolean("mo_generateReport", true);
-			prefs.putBoolean("mo_excludeTrains", false);
+			prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", true);
+			prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", false);
 		}
-		generateReport = true;
-		excludeTrains = false;
+		generateReportOfTrainsLateAtOriginPerConfig = true;
+		excludeTrainsLateAtOriginPerConfig = false;
 	}
 
 	@FXML private void handleExcludeTrainsRadioButton(ActionEvent e)
 	{
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
-			prefs.putBoolean("mo_generateReport", false);
-			prefs.putBoolean("mo_excludeTrains", true);
+			prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", false);
+			prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", true);
 		}
-		generateReport = false;
-		excludeTrains = true;
+		generateReportOfTrainsLateAtOriginPerConfig = false;
+		excludeTrainsLateAtOriginPerConfig = true;
 	}
 
-	// Entry 1
+	// Schedule Entry 1
 	@FXML private void handleTextChangedTrain1TextField()
 	{
 		train1TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain1TextField()
@@ -438,7 +582,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode1TextField()
 	{
 		node1TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode1TextField()
@@ -454,7 +598,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime1TextField()
 	{
 		departureTime1TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime1TextField()
@@ -467,11 +611,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime1TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 2
+	// Schedule Entry 2
 	@FXML private void handleTextChangedTrain2TextField()
 	{
 		train2TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain2TextField()
@@ -487,7 +631,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode2TextField()
 	{
 		node2TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode2TextField()
@@ -503,7 +647,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime2TextField()
 	{
 		departureTime2TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime2TextField()
@@ -516,11 +660,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime2TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 3
+	// Schedule Entry 3
 	@FXML private void handleTextChangedTrain3TextField()
 	{
 		train3TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain3TextField()
@@ -536,7 +680,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode3TextField()
 	{
 		node3TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode3TextField()
@@ -552,7 +696,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime3TextField()
 	{
 		departureTime3TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime3TextField()
@@ -565,11 +709,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime3TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 4
+	// Schedule Entry 4
 	@FXML private void handleTextChangedTrain4TextField()
 	{
 		train4TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain4TextField()
@@ -585,7 +729,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode4TextField()
 	{
 		node4TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode4TextField()
@@ -601,7 +745,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime4TextField()
 	{
 		departureTime4TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime4TextField()
@@ -614,11 +758,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime4TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 5
+	// Schedule Entry 5
 	@FXML private void handleTextChangedTrain5TextField()
 	{
 		train5TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain5TextField()
@@ -634,7 +778,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode5TextField()
 	{
 		node5TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode5TextField()
@@ -650,7 +794,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime5TextField()
 	{
 		departureTime5TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime5TextField()
@@ -663,11 +807,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime5TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 6
+	// Schedule Entry 6
 	@FXML private void handleTextChangedTrain6TextField()
 	{
 		train6TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain6TextField()
@@ -683,7 +827,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode6TextField()
 	{
 		node6TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode6TextField()
@@ -699,7 +843,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime6TextField()
 	{
 		departureTime6TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime6TextField()
@@ -712,11 +856,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime6TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 7
+	// Schedule Entry 7
 	@FXML private void handleTextChangedTrain7TextField()
 	{
 		train7TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain7TextField()
@@ -732,7 +876,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode7TextField()
 	{
 		node7TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode7TextField()
@@ -748,7 +892,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime7TextField()
 	{
 		departureTime7TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime7TextField()
@@ -761,11 +905,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime7TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 8
+	// Schedule Entry 8
 	@FXML private void handleTextChangedTrain8TextField()
 	{
 		train8TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain8TextField()
@@ -781,7 +925,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode8TextField()
 	{
 		node8TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode8TextField()
@@ -797,7 +941,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime8TextField()
 	{
 		departureTime8TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime8TextField()
@@ -810,11 +954,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime8TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 9
+	// Schedule Entry 9
 	@FXML private void handleTextChangedTrain9TextField()
 	{
 		train9TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain9TextField()
@@ -830,7 +974,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode9TextField()
 	{
 		node9TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode9TextField()
@@ -846,7 +990,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime9TextField()
 	{
 		departureTime9TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime9TextField()
@@ -859,11 +1003,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime9TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 10
+	// Schedule Entry 10
 	@FXML private void handleTextChangedTrain10TextField()
 	{
 		train10TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain10TextField()
@@ -879,7 +1023,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode10TextField()
 	{
 		node10TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode10TextField()
@@ -895,7 +1039,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime10TextField()
 	{
 		departureTime10TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime10TextField()
@@ -908,11 +1052,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime10TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 11
+	// Schedule Entry 11
 	@FXML private void handleTextChangedTrain11TextField()
 	{
 		train11TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain11TextField()
@@ -928,7 +1072,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode11TextField()
 	{
 		node11TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode11TextField()
@@ -944,7 +1088,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime11TextField()
 	{
 		departureTime11TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime11TextField()
@@ -957,11 +1101,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime11TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 12
+	// Schedule Entry 12
 	@FXML private void handleTextChangedTrain12TextField()
 	{
 		train12TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain12TextField()
@@ -977,7 +1121,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode12TextField()
 	{
 		node12TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode12TextField()
@@ -993,7 +1137,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime12TextField()
 	{
 		departureTime12TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime12TextField()
@@ -1006,11 +1150,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime12TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 13
+	// Schedule Entry 13
 	@FXML private void handleTextChangedTrain13TextField()
 	{
 		train13TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain13TextField()
@@ -1026,7 +1170,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode13TextField()
 	{
 		node13TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode13TextField()
@@ -1042,7 +1186,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime13TextField()
 	{
 		departureTime13TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime13TextField()
@@ -1055,11 +1199,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime13TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 14
+	// Schedule Entry 14
 	@FXML private void handleTextChangedTrain14TextField()
 	{
 		train14TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain14TextField()
@@ -1075,7 +1219,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode14TextField()
 	{
 		node14TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode14TextField()
@@ -1091,7 +1235,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime14TextField()
 	{
 		departureTime14TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime14TextField()
@@ -1104,11 +1248,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime14TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 15
+	// Schedule Entry 15
 	@FXML private void handleTextChangedTrain15TextField()
 	{
 		train15TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain15TextField()
@@ -1124,7 +1268,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode15TextField()
 	{
 		node15TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode15TextField()
@@ -1140,7 +1284,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime15TextField()
 	{
 		departureTime15TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime15TextField()
@@ -1153,11 +1297,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime15TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 16
+	// Schedule Entry 16
 	@FXML private void handleTextChangedTrain16TextField()
 	{
 		train16TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain16TextField()
@@ -1173,7 +1317,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode16TextField()
 	{
 		node16TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode16TextField()
@@ -1189,7 +1333,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime16TextField()
 	{
 		departureTime16TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime16TextField()
@@ -1202,11 +1346,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime16TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 17
+	// Schedule Entry 17
 	@FXML private void handleTextChangedTrain17TextField()
 	{
 		train17TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain17TextField()
@@ -1222,7 +1366,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode17TextField()
 	{
 		node17TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode17TextField()
@@ -1238,7 +1382,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime17TextField()
 	{
 		departureTime17TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime17TextField()
@@ -1251,11 +1395,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime17TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 18
+	// Schedule Entry 18
 	@FXML private void handleTextChangedTrain18TextField()
 	{
 		train18TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain18TextField()
@@ -1271,7 +1415,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode18TextField()
 	{
 		node18TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode18TextField()
@@ -1287,7 +1431,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime18TextField()
 	{
 		departureTime18TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime18TextField()
@@ -1300,11 +1444,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime18TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 19
+	// Schedule Entry 19
 	@FXML private void handleTextChangedTrain19TextField()
 	{
 		train19TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain19TextField()
@@ -1320,7 +1464,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode19TextField()
 	{
 		node19TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode19TextField()
@@ -1336,7 +1480,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime19TextField()
 	{
 		departureTime19TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime19TextField()
@@ -1349,11 +1493,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime19TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 20
+	// Schedule Entry 20
 	@FXML private void handleTextChangedTrain20TextField()
 	{
 		train20TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain20TextField()
@@ -1369,7 +1513,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode20TextField()
 	{
 		node20TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode20TextField()
@@ -1385,7 +1529,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime20TextField()
 	{
 		departureTime20TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime20TextField()
@@ -1398,11 +1542,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime20TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 21
+	// Schedule Entry 21
 	@FXML private void handleTextChangedTrain21TextField()
 	{
 		train21TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain21TextField()
@@ -1418,7 +1562,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode21TextField()
 	{
 		node21TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode21TextField()
@@ -1434,7 +1578,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime21TextField()
 	{
 		departureTime21TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime21TextField()
@@ -1447,11 +1591,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime21TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 22
+	// Schedule Entry 22
 	@FXML private void handleTextChangedTrain22TextField()
 	{
 		train22TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain22TextField()
@@ -1467,7 +1611,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode22TextField()
 	{
 		node22TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode22TextField()
@@ -1483,7 +1627,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime22TextField()
 	{
 		departureTime22TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime22TextField()
@@ -1496,11 +1640,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime22TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 23
+	// Schedule Entry 23
 	@FXML private void handleTextChangedTrain23TextField()
 	{
 		train23TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain23TextField()
@@ -1516,7 +1660,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode23TextField()
 	{
 		node23TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode23TextField()
@@ -1532,7 +1676,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime23TextField()
 	{
 		departureTime23TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime23TextField()
@@ -1545,11 +1689,11 @@ public class BIASModifiedOtpConfigPageController
 			departureTime23TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Entry 24
+	// Schedule Entry 24
 	@FXML private void handleTextChangedTrain24TextField()
 	{
 		train24TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTrain24TextField()
@@ -1565,7 +1709,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedNode24TextField()
 	{
 		node24TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleNode24TextField()
@@ -1581,7 +1725,7 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private void handleTextChangedDepartureTime24TextField()
 	{
 		departureTime24TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
-		updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleDepartureTime24TextField()
@@ -1594,8 +1738,8 @@ public class BIASModifiedOtpConfigPageController
 			departureTime24TextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	// Update entries button
-	@FXML private void handleUpdateEntriesButton(ActionEvent e)
+	// Update entries button for scheduled analysis
+	@FXML private void handleUpdateEntriesForScheduledButton(ActionEvent e)
 	{
 		Boolean inputsConform = true;
 
@@ -2901,7 +3045,7 @@ public class BIASModifiedOtpConfigPageController
 
 			if (inputsConform)
 			{
-				updateEntriesButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+				updateEntriesForScheduledButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 					prefs.put("mo_schedulePointEntries", entriesToWriteToRegistry);
@@ -2909,13 +3053,925 @@ public class BIASModifiedOtpConfigPageController
 				schedulePointEntries = entriesToWriteToRegistry;
 			}
 			else
-				updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+				updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 		}
 		else
-			updateEntriesButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+			updateEntriesForScheduledButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	private void disableAllControls()
+	// Update entries button
+	@FXML private void handleUpdateEntriesForActualButton(ActionEvent e)
+	{
+		Boolean inputsConform = true;
+
+		// Actual Schedule Entry 1
+		if (originNode1ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode1ActualTextField.getText().trim();
+			originNode1ActualTextField.setText(origText.toUpperCase());
+			originNode1ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode1ActualTextField.getText().trim().equals(""))
+		{
+			originNode1ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode1ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode1ActualTextField.getText().trim();
+			destinationNode1ActualTextField.setText(origText.toUpperCase());
+			destinationNode1ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode1ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode1ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 2
+		if (originNode2ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode2ActualTextField.getText().trim();
+			originNode2ActualTextField.setText(origText.toUpperCase());
+			originNode2ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode2ActualTextField.getText().trim().equals(""))
+		{
+			originNode2ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode2ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode2ActualTextField.getText().trim();
+			destinationNode2ActualTextField.setText(origText.toUpperCase());
+			destinationNode2ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode2ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode2ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 3
+		if (originNode3ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode3ActualTextField.getText().trim();
+			originNode3ActualTextField.setText(origText.toUpperCase());
+			originNode3ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode3ActualTextField.getText().trim().equals(""))
+		{
+			originNode3ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode3ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode3ActualTextField.getText().trim();
+			destinationNode3ActualTextField.setText(origText.toUpperCase());
+			destinationNode3ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode3ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode3ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 4
+		if (originNode4ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode4ActualTextField.getText().trim();
+			originNode4ActualTextField.setText(origText.toUpperCase());
+			originNode4ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode4ActualTextField.getText().trim().equals(""))
+		{
+			originNode4ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode4ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode4ActualTextField.getText().trim();
+			destinationNode4ActualTextField.setText(origText.toUpperCase());
+			destinationNode4ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode4ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode4ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 5
+		if (originNode5ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode5ActualTextField.getText().trim();
+			originNode5ActualTextField.setText(origText.toUpperCase());
+			originNode5ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode5ActualTextField.getText().trim().equals(""))
+		{
+			originNode5ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode5ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode5ActualTextField.getText().trim();
+			destinationNode5ActualTextField.setText(origText.toUpperCase());
+			destinationNode5ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode5ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode5ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 6
+		if (originNode6ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode6ActualTextField.getText().trim();
+			originNode6ActualTextField.setText(origText.toUpperCase());
+			originNode6ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode6ActualTextField.getText().trim().equals(""))
+		{
+			originNode6ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode6ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode6ActualTextField.getText().trim();
+			destinationNode6ActualTextField.setText(origText.toUpperCase());
+			destinationNode6ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode6ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode6ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 7
+		if (originNode7ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode7ActualTextField.getText().trim();
+			originNode7ActualTextField.setText(origText.toUpperCase());
+			originNode7ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode7ActualTextField.getText().trim().equals(""))
+		{
+			originNode7ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode7ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode7ActualTextField.getText().trim();
+			destinationNode7ActualTextField.setText(origText.toUpperCase());
+			destinationNode7ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode7ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode7ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 8
+		if (originNode8ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode8ActualTextField.getText().trim();
+			originNode8ActualTextField.setText(origText.toUpperCase());
+			originNode8ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode8ActualTextField.getText().trim().equals(""))
+		{
+			originNode8ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode8ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode8ActualTextField.getText().trim();
+			destinationNode8ActualTextField.setText(origText.toUpperCase());
+			destinationNode8ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode8ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode8ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 9
+		if (originNode9ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode9ActualTextField.getText().trim();
+			originNode9ActualTextField.setText(origText.toUpperCase());
+			originNode9ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode9ActualTextField.getText().trim().equals(""))
+		{
+			originNode9ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode9ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode9ActualTextField.getText().trim();
+			destinationNode9ActualTextField.setText(origText.toUpperCase());
+			destinationNode9ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode9ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode9ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 10
+		if (originNode10ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode10ActualTextField.getText().trim();
+			originNode10ActualTextField.setText(origText.toUpperCase());
+			originNode10ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode10ActualTextField.getText().trim().equals(""))
+		{
+			originNode10ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode10ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode10ActualTextField.getText().trim();
+			destinationNode10ActualTextField.setText(origText.toUpperCase());
+			destinationNode10ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode10ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode10ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 11
+		if (originNode11ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode11ActualTextField.getText().trim();
+			originNode11ActualTextField.setText(origText.toUpperCase());
+			originNode11ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode11ActualTextField.getText().trim().equals(""))
+		{
+			originNode11ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode11ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode11ActualTextField.getText().trim();
+			destinationNode11ActualTextField.setText(origText.toUpperCase());
+			destinationNode11ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode11ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode11ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 12
+		if (originNode12ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode12ActualTextField.getText().trim();
+			originNode12ActualTextField.setText(origText.toUpperCase());
+			originNode12ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode12ActualTextField.getText().trim().equals(""))
+		{
+			originNode12ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode12ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode12ActualTextField.getText().trim();
+			destinationNode12ActualTextField.setText(origText.toUpperCase());
+			destinationNode12ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode12ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode12ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (inputsConform)
+		{
+			String entriesToWriteToRegistry = "";
+			if ((!originNode1ActualTextField.getText().equals("")) && (!destinationNode1ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode1ActualTextField.getText()+","+destinationNode1ActualTextField.getText()+",";
+			}
+			else if ((originNode1ActualTextField.getText().trim().equals("")) && (destinationNode1ActualTextField.getText().trim().equals("")))
+			{
+				originNode1ActualTextField.clear();
+				destinationNode1ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode2ActualTextField.getText().equals("")) && (!destinationNode2ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode2ActualTextField.getText()+","+destinationNode2ActualTextField.getText()+",";
+			}
+			else if ((originNode2ActualTextField.getText().trim().equals("")) && (destinationNode2ActualTextField.getText().trim().equals("")))
+			{
+				originNode2ActualTextField.clear();
+				destinationNode2ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode3ActualTextField.getText().equals("")) && (!destinationNode3ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode3ActualTextField.getText()+","+destinationNode3ActualTextField.getText()+",";
+			}
+			else if ((originNode3ActualTextField.getText().trim().equals("")) && (destinationNode3ActualTextField.getText().trim().equals("")))
+			{
+				originNode3ActualTextField.clear();
+				destinationNode3ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode4ActualTextField.getText().equals("")) && (!destinationNode4ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode4ActualTextField.getText()+","+destinationNode4ActualTextField.getText()+",";
+			}
+			else if ((originNode4ActualTextField.getText().trim().equals("")) && (destinationNode4ActualTextField.getText().trim().equals("")))
+			{
+				originNode4ActualTextField.clear();
+				destinationNode4ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode5ActualTextField.getText().equals("")) && (!destinationNode5ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode5ActualTextField.getText()+","+destinationNode5ActualTextField.getText()+",";
+			}
+			else if ((originNode5ActualTextField.getText().trim().equals("")) && (destinationNode5ActualTextField.getText().trim().equals("")))
+			{
+				originNode5ActualTextField.clear();
+				destinationNode5ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode6ActualTextField.getText().equals("")) && (!destinationNode6ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode6ActualTextField.getText()+","+destinationNode6ActualTextField.getText()+",";
+			}
+			else if ((originNode6ActualTextField.getText().trim().equals("")) && (destinationNode6ActualTextField.getText().trim().equals("")))
+			{
+				originNode6ActualTextField.clear();
+				destinationNode6ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode7ActualTextField.getText().equals("")) && (!destinationNode7ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode7ActualTextField.getText()+","+destinationNode7ActualTextField.getText()+",";
+			}
+			else if ((originNode7ActualTextField.getText().trim().equals("")) && (destinationNode7ActualTextField.getText().trim().equals("")))
+			{
+				originNode7ActualTextField.clear();
+				destinationNode7ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode8ActualTextField.getText().equals("")) && (!destinationNode8ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode8ActualTextField.getText()+","+destinationNode8ActualTextField.getText()+",";
+			}
+			else if ((originNode8ActualTextField.getText().trim().equals("")) && (destinationNode8ActualTextField.getText().trim().equals("")))
+			{
+				originNode8ActualTextField.clear();
+				destinationNode8ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode9ActualTextField.getText().equals("")) && (!destinationNode9ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode9ActualTextField.getText()+","+destinationNode9ActualTextField.getText()+",";
+			}
+			else if ((originNode9ActualTextField.getText().trim().equals("")) && (destinationNode9ActualTextField.getText().trim().equals("")))
+			{
+				originNode9ActualTextField.clear();
+				destinationNode9ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode10ActualTextField.getText().equals("")) && (!destinationNode10ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode10ActualTextField.getText()+","+destinationNode10ActualTextField.getText()+",";
+			}
+			else if ((originNode10ActualTextField.getText().trim().equals("")) && (destinationNode10ActualTextField.getText().trim().equals("")))
+			{
+				originNode10ActualTextField.clear();
+				destinationNode10ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode11ActualTextField.getText().equals("")) && (!destinationNode11ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode11ActualTextField.getText()+","+destinationNode11ActualTextField.getText()+",";
+			}
+			else if ((originNode11ActualTextField.getText().trim().equals("")) && (destinationNode11ActualTextField.getText().trim().equals("")))
+			{
+				originNode11ActualTextField.clear();
+				destinationNode11ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode12ActualTextField.getText().equals("")) && (!destinationNode12ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode12ActualTextField.getText()+","+destinationNode12ActualTextField.getText()+",";
+			}
+			else if ((originNode12ActualTextField.getText().trim().equals("")) && (destinationNode12ActualTextField.getText().trim().equals("")))
+			{
+				originNode12ActualTextField.clear();
+				destinationNode12ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if (inputsConform)
+			{
+				updateEntriesForActualButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+					prefs.put("mo_actualPointEntries", entriesToWriteToRegistry);
+
+				actualPointEntries = entriesToWriteToRegistry;
+			}
+			else
+				updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		}
+		else
+			updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 1 Actual
+	@FXML private void handleTextChangedOrigin1ActualTextField()
+	{
+		originNode1ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode1ActualTextField()
+	{
+		String origText = originNode1ActualTextField.getText().trim();
+		originNode1ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode1ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode1ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination1ActualTextField()
+	{
+		destinationNode1ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode1ActualTextField()
+	{
+		String origText = destinationNode1ActualTextField.getText().trim();
+		destinationNode1ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode1ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode1ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 2 Actual
+	@FXML private void handleTextChangedOrigin2ActualTextField()
+	{
+		originNode2ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode2ActualTextField()
+	{
+		String origText = originNode2ActualTextField.getText().trim();
+		originNode2ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode2ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode2ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination2ActualTextField()
+	{
+		destinationNode2ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode2ActualTextField()
+	{
+		String origText = destinationNode2ActualTextField.getText().trim();
+		destinationNode2ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode2ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode2ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 3 Actual
+	@FXML private void handleTextChangedOrigin3ActualTextField()
+	{
+		originNode3ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode3ActualTextField()
+	{
+		String origText = originNode3ActualTextField.getText().trim();
+		originNode3ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode3ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode3ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination3ActualTextField()
+	{
+		destinationNode3ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode3ActualTextField()
+	{
+		String origText = destinationNode3ActualTextField.getText().trim();
+		destinationNode3ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode3ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode3ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 4 Actual
+	@FXML private void handleTextChangedOrigin4ActualTextField()
+	{
+		originNode4ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode4ActualTextField()
+	{
+		String origText = originNode4ActualTextField.getText().trim();
+		originNode4ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode4ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode4ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination4ActualTextField()
+	{
+		destinationNode4ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode4ActualTextField()
+	{
+		String origText = destinationNode4ActualTextField.getText().trim();
+		destinationNode4ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode4ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode4ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 5 Actual
+	@FXML private void handleTextChangedOrigin5ActualTextField()
+	{
+		originNode5ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode5ActualTextField()
+	{
+		String origText = originNode5ActualTextField.getText().trim();
+		originNode5ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode5ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode5ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination5ActualTextField()
+	{
+		destinationNode5ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode5ActualTextField()
+	{
+		String origText = destinationNode5ActualTextField.getText().trim();
+		destinationNode5ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode5ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode5ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 6 Actual
+	@FXML private void handleTextChangedOrigin6ActualTextField()
+	{
+		originNode6ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode6ActualTextField()
+	{
+		String origText = originNode6ActualTextField.getText().trim();
+		originNode6ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode6ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode6ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination6ActualTextField()
+	{
+		destinationNode6ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode6ActualTextField()
+	{
+		String origText = destinationNode6ActualTextField.getText().trim();
+		destinationNode6ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode6ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode6ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 7 Actual
+	@FXML private void handleTextChangedOrigin7ActualTextField()
+	{
+		originNode7ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode7ActualTextField()
+	{
+		String origText = originNode7ActualTextField.getText().trim();
+		originNode7ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode7ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode7ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination7ActualTextField()
+	{
+		destinationNode7ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode7ActualTextField()
+	{
+		String origText = destinationNode7ActualTextField.getText().trim();
+		destinationNode7ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode7ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode7ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 8 Actual
+	@FXML private void handleTextChangedOrigin8ActualTextField()
+	{
+		originNode8ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode8ActualTextField()
+	{
+		String origText = originNode8ActualTextField.getText().trim();
+		originNode8ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode8ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode8ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination8ActualTextField()
+	{
+		destinationNode8ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode8ActualTextField()
+	{
+		String origText = destinationNode8ActualTextField.getText().trim();
+		destinationNode8ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode8ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode8ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 9 Actual
+	@FXML private void handleTextChangedOrigin9ActualTextField()
+	{
+		originNode9ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode9ActualTextField()
+	{
+		String origText = originNode9ActualTextField.getText().trim();
+		originNode9ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode9ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode9ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination9ActualTextField()
+	{
+		destinationNode9ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode9ActualTextField()
+	{
+		String origText = destinationNode9ActualTextField.getText().trim();
+		destinationNode9ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode9ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode9ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 10 Actual
+	@FXML private void handleTextChangedOrigin10ActualTextField()
+	{
+		originNode10ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode10ActualTextField()
+	{
+		String origText = originNode10ActualTextField.getText().trim();
+		originNode10ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode10ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode10ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination10ActualTextField()
+	{
+		destinationNode10ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode10ActualTextField()
+	{
+		String origText = destinationNode10ActualTextField.getText().trim();
+		destinationNode10ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode10ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode10ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 11 Actual
+	@FXML private void handleTextChangedOrigin11ActualTextField()
+	{
+		originNode11ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode11ActualTextField()
+	{
+		String origText = originNode11ActualTextField.getText().trim();
+		originNode11ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode11ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode11ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination11ActualTextField()
+	{
+		destinationNode11ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode11ActualTextField()
+	{
+		String origText = destinationNode11ActualTextField.getText().trim();
+		destinationNode11ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode11ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode11ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 12 Actual
+	@FXML private void handleTextChangedOrigin12ActualTextField()
+	{
+		originNode12ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode12ActualTextField()
+	{
+		String origText = originNode12ActualTextField.getText().trim();
+		originNode12ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode12ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode12ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination12ActualTextField()
+	{
+		destinationNode12ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode12ActualTextField()
+	{
+		String origText = destinationNode12ActualTextField.getText().trim();
+		destinationNode12ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode12ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode12ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	private void disableAllControlsForExternalSchedule()
 	{
 		ifNotLabel.setDisable(true);
 		generateReportRadioButton.setDisable(true);
@@ -3002,10 +4058,40 @@ public class BIASModifiedOtpConfigPageController
 		node24TextField.setDisable(true);
 		departureTime24TextField.setDisable(true);
 
-		updateEntriesButton.setDisable(true);
+		updateEntriesForScheduledButton.setDisable(true);
 	}
 
-	private void enableAllControls()
+	private void disableAllControlsForActualSchedule()
+	{
+		originNode1ActualTextField.setDisable(true);
+		destinationNode1ActualTextField.setDisable(true);
+		originNode2ActualTextField.setDisable(true);
+		destinationNode2ActualTextField.setDisable(true);
+		originNode3ActualTextField.setDisable(true);
+		destinationNode3ActualTextField.setDisable(true);
+		originNode4ActualTextField.setDisable(true);
+		destinationNode4ActualTextField.setDisable(true);
+		originNode5ActualTextField.setDisable(true);
+		destinationNode5ActualTextField.setDisable(true);
+		originNode6ActualTextField.setDisable(true);
+		destinationNode6ActualTextField.setDisable(true);
+		originNode7ActualTextField.setDisable(true);
+		destinationNode7ActualTextField.setDisable(true);
+		originNode8ActualTextField.setDisable(true);
+		destinationNode8ActualTextField.setDisable(true);
+		originNode9ActualTextField.setDisable(true);
+		destinationNode9ActualTextField.setDisable(true);
+		originNode10ActualTextField.setDisable(true);
+		destinationNode10ActualTextField.setDisable(true);
+		originNode11ActualTextField.setDisable(true);
+		destinationNode11ActualTextField.setDisable(true);
+		originNode12ActualTextField.setDisable(true);
+		destinationNode12ActualTextField.setDisable(true);
+
+		updateEntriesForActualButton.setDisable(true);
+	}
+
+	private void enableAllControlsForLatenessToExternalSchedule()
 	{
 		ifNotLabel.setDisable(false);
 		generateReportRadioButton.setDisable(false);
@@ -3092,7 +4178,37 @@ public class BIASModifiedOtpConfigPageController
 		node24TextField.setDisable(false);
 		departureTime24TextField.setDisable(false);
 
-		updateEntriesButton.setDisable(false);
+		updateEntriesForScheduledButton.setDisable(false);
+	}
+
+	private void enableAllControlsForActualSchedule()
+	{
+		originNode1ActualTextField.setDisable(false);
+		destinationNode1ActualTextField.setDisable(false);
+		originNode2ActualTextField.setDisable(false);
+		destinationNode2ActualTextField.setDisable(false);
+		originNode3ActualTextField.setDisable(false);
+		destinationNode3ActualTextField.setDisable(false);
+		originNode4ActualTextField.setDisable(false);
+		destinationNode4ActualTextField.setDisable(false);
+		originNode5ActualTextField.setDisable(false);
+		destinationNode5ActualTextField.setDisable(false);
+		originNode6ActualTextField.setDisable(false);
+		destinationNode6ActualTextField.setDisable(false);
+		originNode7ActualTextField.setDisable(false);
+		destinationNode7ActualTextField.setDisable(false);
+		originNode8ActualTextField.setDisable(false);
+		destinationNode8ActualTextField.setDisable(false);
+		originNode9ActualTextField.setDisable(false);
+		destinationNode9ActualTextField.setDisable(false);
+		originNode10ActualTextField.setDisable(false);
+		destinationNode10ActualTextField.setDisable(false);
+		originNode11ActualTextField.setDisable(false);
+		destinationNode11ActualTextField.setDisable(false);
+		originNode12ActualTextField.setDisable(false);
+		destinationNode12ActualTextField.setDisable(false);
+
+		updateEntriesForActualButton.setDisable(false);
 	}
 
 	public static String getPermissibleMinutesOfDelayAsString()
@@ -3103,5 +4219,20 @@ public class BIASModifiedOtpConfigPageController
 	public static String getSchedulePointEntries()
 	{
 		return schedulePointEntries;
+	}
+
+	public static String getActualPointEntries()
+	{
+		return actualPointEntries;
+	}
+
+	public static Boolean getPerformLatenessToExternalScheduleAnalysis()
+	{
+		return checkSeedTrainsForLatenessToExternalSchedule;
+	}
+
+	public static Boolean getPerformLatenessToActualAnalysis()
+	{
+		return checkScheduledVsActualTraversalTimes;
 	}
 }

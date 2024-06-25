@@ -11,13 +11,14 @@ import com.bl.bias.app.BIASModifiedOtpConfigPageController;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.ModifiedOtpTrainObjectB;
+import com.bl.bias.objects.SchedulePointForTrainObjectB;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadModifiedOtpFiles 
 {
 	private static HashSet<String> trainOriginDataFromConfigFile = new HashSet<String>();
-	private static HashMap<String, String> enabledTrainsFromTrainFile = new HashMap<String, String>();
-	private static HashMap<String, String> otpThresholdsFromOptionFile = new HashMap<String, String>();
+	private static HashMap<String, String> enabledTrainsFromTrainFile = new HashMap<String, String>();  // Symbol, type
+	private static HashMap<String, String> otpThresholdsFromOptionFile = new HashMap<String, String>();  // Type, threshold
 	private static ArrayList<ModifiedOtpTrainObjectB> performanceFileEntries = new ArrayList<ModifiedOtpTrainObjectB>();
 
 	private static String resultsMessage;
@@ -158,34 +159,52 @@ public class ReadModifiedOtpFiles
 			File performanceFile = new File(file.replace("OPTION","PERFORMANCE"));
 			scanner = new Scanner(performanceFile);
 			
+			String trainSymbol = null;
 			Boolean targetSequence0Found = false;
+			ModifiedOtpTrainObjectB performanceEntry = null;
 
 			String targetSequence0 = "Train:";
 			String targetSequence1 = "-------";
+			String targetSequence2 = "*****";  // Used to indicate that parsing should stop at this line in the file
 
 			while (scanner.hasNextLine()) 
 			{
 				String lineFromFile = scanner.nextLine();
 				
-				if (lineFromFile.contains(targetSequence0)) 
+				if (lineFromFile.contains(targetSequence2)) 
+				{ 
+					break;
+				}
+				else if (lineFromFile.contains(targetSequence0)) 
 				{ 
 					targetSequence0Found = true;
+					
+					trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])).trim();
+					performanceEntry = new ModifiedOtpTrainObjectB(trainSymbol);
+					
 					for (int i = 0; i < 5; i++)
 						scanner.nextLine();
 				}
 				else if ((targetSequence0Found) && (lineFromFile.contains(targetSequence1)))
 				{
 					targetSequence0Found = false;
+					performanceFileEntries.add(performanceEntry);
 				}
 				else if (targetSequence0Found)
 				{
 					String scheduledArrivalTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[1])).trim();
 					String scheduledDepartureTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[1])).trim();
 					
+					if (scheduledDepartureTimeAsString.isBlank())
+						scheduledDepartureTimeAsString = scheduledArrivalTimeAsString;
+					
+					if (scheduledArrivalTimeAsString.isBlank())
+						scheduledArrivalTimeAsString = scheduledDepartureTimeAsString;
+				
 					if ((!scheduledArrivalTimeAsString.isBlank()) || (!scheduledDepartureTimeAsString.isBlank()))
 					{
-						String trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])).trim();
 						String scheduleNode = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduleNode()[1])).trim();
+						
 						String actualArrivalTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getActualArrivalTime()[1])).trim();
 						String actualDepartureTimeAsString = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getActualDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getActualDepartureTime()[1])).trim();
 
@@ -194,12 +213,12 @@ public class ReadModifiedOtpFiles
 						Double actualArrivalTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(actualArrivalTimeAsString);
 						Double actualDepartureTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(actualDepartureTimeAsString);
 						
-						ModifiedOtpTrainObjectB performanceEntry = new ModifiedOtpTrainObjectB(trainSymbol, scheduleNode, scheduledArrivalTimeAsDouble, scheduledDepartureTimeAsDouble, actualArrivalTimeAsDouble, actualDepartureTimeAsDouble);
-						performanceFileEntries.add(performanceEntry);
+						SchedulePointForTrainObjectB point = new SchedulePointForTrainObjectB(scheduleNode, scheduledArrivalTimeAsDouble, scheduledDepartureTimeAsDouble, actualArrivalTimeAsDouble, actualDepartureTimeAsDouble);
+						performanceEntry.addSchedulePoint(point);
 					}
 				}
 			}
-			resultsMessage +="Extracted "+performanceFileEntries.size()+" route entries from the .PERFORMANCE file\n";
+			resultsMessage +="Extracted "+performanceFileEntries.size()+" trains from the .PERFORMANCE file\n";
 		}
 		catch (Exception e) 
 		{
@@ -228,13 +247,13 @@ public class ReadModifiedOtpFiles
 		return otpThresholdsFromOptionFile;
 	}
 	
-	public static ArrayList<ModifiedOtpTrainObjectB> getPerformanceFileEntries()
-	{
-		return performanceFileEntries;
-	}
-
 	public String getResultsMessage()
 	{
 		return resultsMessage;
+	}
+
+	public static ArrayList<ModifiedOtpTrainObjectB> getPerformanceFileEntries() 
+	{
+		return performanceFileEntries;
 	}
 }

@@ -52,12 +52,12 @@
             <RowConstraints fillHeight="false" valignment="BOTTOM" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
-            <CheckBox fx:id="checkTrainsCheckBox" mnemonicParsing="false" onAction="#handleCheckTrainsCheckBox" text="1. Check that run-time trains depart within">
+            <CheckBox fx:id="checkTrainsScheduleVsExternalCheckBox" disable="true" mnemonicParsing="false" onAction="#handleCheckTrainsScheduleVsExternalCheckBox" text="1. Check that run-time trains depart within">
                <GridPane.margin>
                   <Insets left="10.0" top="5.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="permissibleMinutesOfDelayCombobox" maxWidth="70.0" minWidth="70.0" onAction="#handlePermissibleMinutesOfDelayComboBox" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="1">
+            <ComboBox fx:id="permissibleMinutesOfDelayCombobox" disable="true" maxWidth="70.0" minWidth="70.0" onAction="#handlePermissibleMinutesOfDelayComboBox" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets top="3.0" />
                </GridPane.margin>
@@ -463,7 +463,7 @@
                   <Insets right="12.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="updateEntriesButton" mnemonicParsing="false" onAction="#handleUpdateEntriesButton" text="Update Entries" GridPane.rowIndex="11" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+            <Button fx:id="updateEntriesForScheduledButton" mnemonicParsing="false" onAction="#handleUpdateEntriesForScheduledButton" text="Update Entries" GridPane.rowIndex="11" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                <GridPane.margin>
                   <Insets left="10.0" top="2.0" />
                </GridPane.margin>
@@ -480,26 +480,182 @@
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="266.0" minWidth="266.0" prefWidth="266.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints maxHeight="28.0" minHeight="28.0" prefHeight="28.0" />
+                        <RowConstraints maxHeight="58.0" minHeight="58.0" prefHeight="58.0" />
                         <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints />
                         <RowConstraints fillHeight="false" valignment="BOTTOM" />
                      </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" text="Update Entries" GridPane.rowIndex="11" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+                        <CheckBox fx:id="checkTrainsScheduleVsActualCheckBox" mnemonicParsing="false" onAction="#handleCheckTrainsScheduleVsActualCheckBox" text="1.  Check that enabled trains' actual arrival time at destination node is no later than the scheduled origin departure time (or actual arrival time at origin, if later) + scheduled traversal time + the type-specific OTP threshold.  Trains not scheduled on at least one pair of nodes specified below will be ignored in OTP computation." wrapText="true" GridPane.columnSpan="3" GridPane.valignment="TOP">
+                           <GridPane.margin>
+                              <Insets left="10.0" top="5.0" />
+                           </GridPane.margin>
+                        </CheckBox>
+                        <Button fx:id="updateEntriesForActualButton" mnemonicParsing="false" onAction="#handleUpdateEntriesForActualButton" text="Update Entries" GridPane.rowIndex="10" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                            <GridPane.margin>
                               <Insets left="10.0" top="2.0" />
                            </GridPane.margin>
                         </Button>
+                        <Label text="Origin Node" underline="true" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="28.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="Destination Node" underline="true" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="28.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="to" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="28.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="originNode1ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode1ActualTextField" onKeyPressed="#handleTextChangedOrigin1ActualTextField" prefWidth="90.0" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode1ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode1ActualTextField" onKeyPressed="#handleTextChangedDestination1ActualTextField" prefWidth="90.0" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode2ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode2ActualTextField" onKeyPressed="#handleTextChangedOrigin2ActualTextField" prefWidth="90.0" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode2ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode2ActualTextField" onKeyPressed="#handleTextChangedDestination2ActualTextField" prefWidth="90.0" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode3ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode3ActualTextField" onKeyPressed="#handleTextChangedOrigin3ActualTextField" prefWidth="90.0" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode3ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode3ActualTextField" onKeyPressed="#handleTextChangedDestination3ActualTextField" prefWidth="90.0" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode4ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode4ActualTextField" onKeyPressed="#handleTextChangedOrigin4ActualTextField" prefWidth="90.0" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode4ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode4ActualTextField" onKeyPressed="#handleTextChangedDestination4ActualTextField" prefWidth="90.0" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode5ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode5ActualTextField" onKeyPressed="#handleTextChangedOrigin5ActualTextField" prefWidth="90.0" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode5ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode5ActualTextField" onKeyPressed="#handleTextChangedDestination5ActualTextField" prefWidth="90.0" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode6ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode6ActualTextField" onKeyPressed="#handleTextChangedOrigin6ActualTextField" prefWidth="90.0" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode6ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode6ActualTextField" onKeyPressed="#handleTextChangedDestination6ActualTextField" prefWidth="90.0" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Label text="Origin Node" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="28.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="to" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="28.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="Destination Node" underline="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="28.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="originNode7ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode7ActualTextField" onKeyPressed="#handleTextChangedOrigin7ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode7ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode7ActualTextField" onKeyPressed="#handleTextChangedDestination7ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode8ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode8ActualTextField" onKeyPressed="#handleTextChangedOrigin8ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode8ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode8ActualTextField" onKeyPressed="#handleTextChangedDestination8ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                         <TextField fx:id="originNode9ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode9ActualTextField" onKeyPressed="#handleTextChangedOrigin9ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode9ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode9ActualTextField" onKeyPressed="#handleTextChangedDestination9ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode10ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode10ActualTextField" onKeyPressed="#handleTextChangedOrigin10ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode10ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode10ActualTextField" onKeyPressed="#handleTextChangedDestination10ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>  
+                        <TextField fx:id="originNode11ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode11ActualTextField" onKeyPressed="#handleTextChangedOrigin11ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode11ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode11ActualTextField" onKeyPressed="#handleTextChangedDestination11ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="originNode12ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleOriginNode12ActualTextField" onKeyPressed="#handleTextChangedOrigin12ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets left="15.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="destinationNode12ActualTextField" maxWidth="90.0" minWidth="90.0" onAction="#handleDestinationNode12ActualTextField" onKeyPressed="#handleTextChangedDestination12ActualTextField" prefWidth="90.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets right="29.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        
+                        
                      </children>
                   </GridPane>
                </content>
