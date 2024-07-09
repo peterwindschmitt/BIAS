@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class ModifiedOtpTrainObjectB 
 {
+	private String performanceFileName;
 	private String trainSymbol;
 	private String trainType = "?";
 	
@@ -12,11 +13,17 @@ public class ModifiedOtpTrainObjectB
 	ArrayList<SchedulePointForTrainObjectB> schedulePoints = new ArrayList<SchedulePointForTrainObjectB>();
 	ArrayList<ReportingPointForTrainObjectB> reportingPoints = new ArrayList<ReportingPointForTrainObjectB>();
 
-	public ModifiedOtpTrainObjectB(String trainSymbol) 
+	public ModifiedOtpTrainObjectB(String performanceFileName, String trainSymbol) 
 	{
+		this.performanceFileName = performanceFileName;
 		this.trainSymbol = trainSymbol;
 	}
 
+	public String getPerformanceFileName()
+	{
+		return performanceFileName;
+	}
+	
 	public String getTrainSymbol()
 	{
 		return trainSymbol;

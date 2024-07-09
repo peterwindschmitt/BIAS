@@ -1,6 +1,7 @@
 package com.bl.bias.app;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,7 +11,7 @@ import com.bl.bias.analyze.ModifiedOtpAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadModifiedOtpFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteModifiedOtpFiles3;
+import com.bl.bias.write.WriteModifiedOtpFiles2;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -57,18 +58,7 @@ public class BIASModifiedOtpPageController
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
 	{
-		if ((!BIASModifiedOtpConfigPageController.getPerformLatenessToExternalScheduleAnalysis()) && (!BIASModifiedOtpConfigPageController.getPerformLatenessToActualAnalysis()))
-		{
-			displayMessage("\nAn analysis option was not specified!!!\n");
-			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-			
-			//  Now reset for next case
-			executeButton.setVisible(false);
-			resetButton.setVisible(true);
-			resetButton.setDisable(false);
-		}
-		else
-		{
+
 		// Get location to save file to if not using system time as file name
 		if (!BIASGeneralConfigController.getUseSerialTimeAsFileName())
 		{
@@ -175,225 +165,231 @@ public class BIASModifiedOtpPageController
 			}	
 		}
 	}
-}
 
-@FXML private void handleResetButton(ActionEvent event) 
-{
-	resetMessage();
-
-	progressBar.setVisible(false);
-	setProgressIndicator(0.00);
-
-	executeButton.setVisible(true);
-	resetButton.setVisible(false);
-	selectFileButton.setDisable(false);
-	fileNameLabel.setText("");
-}
-
-private void chooseFile()
-{
-	FileChooser fileChooser = new FileChooser();
-	fileChooser.setTitle("Select File");
-	FileChooser.ExtensionFilter fileExtensions = 
-			new FileChooser.ExtensionFilter(
-					"RTC Option Files", "*.OPTION");
-
-	fileChooser.getExtensionFilters().add(fileExtensions);		
-
-	// See if last directory is stored
-	if ((prefs.get("mo_lastDirectoryForModifiedOtp", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+	@FXML private void handleResetButton(ActionEvent event) 
 	{
-		Path path = Paths.get(prefs.get("mo_lastDirectoryForModifiedOtp", null));
+		resetMessage();
 
-		if ((path.toFile().exists()) && (path !=null))
-			fileChooser.setInitialDirectory(path.toFile());
+		progressBar.setVisible(false);
+		setProgressIndicator(0.00);
+
+		executeButton.setVisible(true);
+		resetButton.setVisible(false);
+		selectFileButton.setDisable(false);
+		fileNameLabel.setText("");
 	}
 
-	// Show the chooser and get the file
-	Stage stageForFileChooser = (Stage) selectFileButton.getScene().getWindow();
-	File file = fileChooser.showOpenDialog(stageForFileChooser);
-
-	// Valid .OPTION file found
-	if (file != null)
+	private void chooseFile()
 	{
-		Boolean trainFileFound = false;
-		Boolean performanceFileFound = false;
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select File");
+		FileChooser.ExtensionFilter fileExtensions = 
+				new FileChooser.ExtensionFilter(
+						"RTC Option Files", "*.OPTION");
 
-		executeButton.setDisable(true);
+		fileChooser.getExtensionFilters().add(fileExtensions);		
 
-		// Write message
-		clearMessage();
-		message = "BIAS Modified OTP Module - "+BIASLaunch.getSoftwareVersion()+"\n";
-
-		// Store path for subsequent runs and set labels
-		fileAsString = file.getName().toString();
-		fullyQualifiedPath = file.toString();
-		fileNameLabel.setText(fullyQualifiedPath);
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("mo_lastDirectoryForModifiedOtp", file.getParent());
-
-		// Check that .TRAIN file exists
-		File trainFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".TRAIN"));
-		if (trainFile.exists())
-			trainFileFound = true;
-		else
-			message += "\n.TRAIN file is missing!";
-
-		// Check that .PERFORMANCE file exists
-		File performanceFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".PERFORMANCE"));
-		if (performanceFile.exists())
-			performanceFileFound = true;
-		else
-			message += "\n.PERFORMANCE file is missing!";
-
-
-		if ((performanceFileFound) && (trainFileFound))
+		// See if last directory is stored
+		if ((prefs.get("mo_lastDirectoryForModifiedOtp", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
 		{
-			executeButton.setDisable(false);
+			Path path = Paths.get(prefs.get("mo_lastDirectoryForModifiedOtp", null));
+
+			if ((path.toFile().exists()) && (path !=null))
+				fileChooser.setInitialDirectory(path.toFile());
 		}
-		else
-			message += "\n\nUnable to perform analysis due to missing file(s)";
 
-		displayMessage(message);
-	}
-}                     
+		// Show the chooser and get the file
+		Stage stageForFileChooser = (Stage) selectFileButton.getScene().getWindow();
+		File file = fileChooser.showOpenDialog(stageForFileChooser);
 
-private void startTask()
-{
-	progressBar.setVisible(true);
-
-	Runnable task = new Runnable()
-	{
-		@Override
-		public void run() 
+		// Valid .OPTION file found
+		if (file != null)
 		{
-			try
+			Boolean trainFileFound = false;
+			Boolean performanceFileFound = false;
+
+			executeButton.setDisable(true);
+
+			// Write message
+			clearMessage();
+			message = "BIAS Modified OTP Module - "+BIASLaunch.getSoftwareVersion()+"\n";
+
+			// Store path for subsequent runs and set labels
+			fileAsString = file.getName().toString();
+			fullyQualifiedPath = file.toString();
+			fileNameLabel.setText(fullyQualifiedPath);
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("mo_lastDirectoryForModifiedOtp", file.getParent());
+
+			// Check that .TRAIN file exists
+			File trainFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".TRAIN"));
+			if (trainFile.exists())
+				trainFileFound = true;
+			else
+				message += "\n.TRAIN file is missing!";
+
+			// Check that .PERFORMANCE file(s) exists
+			// Determine if there is at least one .PERFORMANCE file to review
+			File directoryPathForFile = file.getParentFile();
+			Integer countOfPerformanceFiles = directoryPathForFile.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File directory, String name) {
+					return name.endsWith(".PERFORMANCE");
+				}
+			}).length;
+
+			if (countOfPerformanceFiles > 0)
+				performanceFileFound = true;
+			else
+				message += "\n.PERFORMANCE file(s) missing!";
+
+			if ((performanceFileFound) && (trainFileFound))
 			{
-				runTask();
+				executeButton.setDisable(false);
 			}
-			catch (Exception e) 
-			{
-				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
-			}
-		}
-	};
+			else
+				message += "\n\nUnable to perform analysis due to missing file(s)";
 
-	Thread backgroundThread = new Thread(task);
-	backgroundThread.setDaemon(true);
-	backgroundThread.start();
-}
-
-private void runTask() throws InterruptedException, IOException
-{
-	// Check date/time format, verbose .ROUTE file, output format and ENGLISH input units
-	File optionFile = new File(fullyQualifiedPath);
-	File optionFileFolder = new File(optionFile.getParent());
-	BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
-	if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
-	{
-		message = "\nValidated date/time format, output format and speed/distance \nunits from .OPTION file\n";
-	}
-	else
-	{
-		message = "\nInvalid date/time format, output format, speed/distance \nunits, invalid .OPTION file and/or invalid count of .OPTION files\n";
-		continueAnalysis = false;
-	}
-	displayMessage(message);
-
-	if (continueAnalysis)
-	{
-		// Ensure that there is at least one valid entry from config
-		if (BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length > 0) 
-		{
-			// Read all objects that are required for the modified OTP analysis
-			ReadModifiedOtpFiles readData = new ReadModifiedOtpFiles(fullyQualifiedPath);
-			message = readData.getResultsMessage();
 			displayMessage(message);
+		}
+	}                     
 
-			setProgressIndicator(0.20);
+	private void startTask()
+	{
+		progressBar.setVisible(true);
 
-			if (ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile().size() > 0)
+		Runnable task = new Runnable()
+		{
+			@Override
+			public void run() 
 			{
-				// Analyze trains' modified OTP
-				ModifiedOtpAnalysis analyze = new ModifiedOtpAnalysis();
-				message = analyze.getResultsMessage();
-				displayMessage(message);
-
-				setProgressIndicator(0.80);
-
-				// Write results to spreadsheet
-				WriteModifiedOtpFiles3 writeFiles = new WriteModifiedOtpFiles3(textArea.getText().toString(), fileAsString);
-				message = WriteModifiedOtpFiles3.getResultsMessage3();
-				displayMessage(message);
-
-				if (!WriteModifiedOtpFiles3.getErrorFound())
+				try
 				{
-					setProgressIndicator(1.0);
-					displayMessage("\n*** PROCESSING COMPLETE ***");
+					runTask();
+				}
+				catch (Exception e) 
+				{
+					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				}
+			}
+		};
+
+		Thread backgroundThread = new Thread(task);
+		backgroundThread.setDaemon(true);
+		backgroundThread.start();
+	}
+
+	private void runTask() throws InterruptedException, IOException
+	{
+		// Check date/time format, verbose .ROUTE file, output format and ENGLISH input units
+		File optionFile = new File(fullyQualifiedPath);
+		File optionFileFolder = new File(optionFile.getParent());
+		BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
+		if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
+		{
+			message = "\nValidated date/time format, output format and speed/distance \nunits from .OPTION file\n";
+		}
+		else
+		{
+			message = "\nInvalid date/time format, output format, speed/distance \nunits, invalid .OPTION file and/or invalid count of .OPTION files\n";
+			continueAnalysis = false;
+		}
+		displayMessage(message);
+
+		if (continueAnalysis)
+		{
+			// Ensure that there is at least one valid entry from config
+			if (BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length > 0) 
+			{
+				// Read all objects that are required for the modified OTP analysis
+				ReadModifiedOtpFiles readData = new ReadModifiedOtpFiles(fullyQualifiedPath);
+				message = readData.getResultsMessage();
+				displayMessage(message);
+
+				setProgressIndicator(0.20);
+
+				if (ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile().size() > 0)
+				{
+					// Analyze trains' modified OTP
+					ModifiedOtpAnalysis analyze = new ModifiedOtpAnalysis();
+					message = analyze.getResultsMessage();
+					displayMessage(message);
+
+					setProgressIndicator(0.80);
+
+					// Write results to spreadsheet
+					WriteModifiedOtpFiles2 writeFiles = new WriteModifiedOtpFiles2(textArea.getText().toString(), fileAsString);
+					message = WriteModifiedOtpFiles2.getResultsMessage2();
+					displayMessage(message);
+
+					if (!WriteModifiedOtpFiles2.getErrorFound())
+					{
+						setProgressIndicator(1.0);
+						displayMessage("\n*** PROCESSING COMPLETE ***");
+					}
+					else
+					{
+						displayMessage("\nError in writing files");
+						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+					}
 				}
 				else
 				{
-					displayMessage("\nError in writing files");
+					displayMessage("\nNo qualifying run-time trains were found to compare schedule points against.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
 			else
 			{
-				displayMessage("\nNo qualifying run-time trains were found to compare schedule points against.");
+				displayMessage("\nMust select at least one train, node and departure time to run analysis");
 				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 			}
 		}
 		else
 		{
-			displayMessage("\nMust select at least one train, node and departure time to run analysis");
 			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 		}
+
+		//  Now reset for next case
+		executeButton.setVisible(false);
+		resetButton.setVisible(true);
+		resetButton.setDisable(false);
 	}
-	else
+
+	private void resetMessage()
 	{
-		displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+		message="";
+		textArea.setText("Select processing options...");
 	}
 
-	//  Now reset for next case
-	executeButton.setVisible(false);
-	resetButton.setVisible(true);
-	resetButton.setDisable(false);
-}
-
-private void resetMessage()
-{
-	message="";
-	textArea.setText("Select processing options...");
-}
-
-private void clearMessage()
-{
-	message="";
-	textArea.setText("");
-}
-
-private void displayMessage(String message)
-{
-	textArea.appendText(message);
-}
-
-private void setProgressIndicator(double value)
-{
-	progressBar.setProgress(value);
-}
-
-public static String getSaveFileLocationForUserSpecifiedFileName()
-{
-	if (!saveFileLocationForUserSpecifiedFileName.toLowerCase().endsWith(".xlsx"))
+	private void clearMessage()
 	{
-		saveFileLocationForUserSpecifiedFileName += ".xlsx";
+		message="";
+		textArea.setText("");
 	}
 
-	return saveFileLocationForUserSpecifiedFileName;
-}
+	private void displayMessage(String message)
+	{
+		textArea.appendText(message);
+	}
 
-public static String getSaveFileFolderForSerialFileName()
-{
-	return saveFileFolderForSerialFileName;
-}
+	private void setProgressIndicator(double value)
+	{
+		progressBar.setProgress(value);
+	}
+
+	public static String getSaveFileLocationForUserSpecifiedFileName()
+	{
+		if (!saveFileLocationForUserSpecifiedFileName.toLowerCase().endsWith(".xlsx"))
+		{
+			saveFileLocationForUserSpecifiedFileName += ".xlsx";
+		}
+
+		return saveFileLocationForUserSpecifiedFileName;
+	}
+
+	public static String getSaveFileFolderForSerialFileName()
+	{
+		return saveFileFolderForSerialFileName;
+	}
 }

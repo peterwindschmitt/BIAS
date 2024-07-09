@@ -14,20 +14,27 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 
-public class BIASModifiedOtpConfigPageController 
+public class BIASModifiedOtpConfigPageController
 {
 	private static ObservableList<String> permissibleMintuesOfDelayValues =  FXCollections.observableArrayList("0", "1", "5", "10", "15");
 
-	private static Boolean checkSeedTrainsForLatenessToExternalSchedule; 
-	private static Boolean checkScheduledVsActualTraversalTimes;
-	private static Boolean generateReportOfTrainsLateAtOriginPerConfig; // as opposed to excluding
-	private static Boolean excludeTrainsLateAtOriginPerConfig;  // as opposed to the above (just producing a report)
-	private static String permissibleMinutesOfDelayAsString; 
+	private static Boolean a_exceptTrainsBasedOnExternalSchedule; 
+	private static Boolean b_exceptTrainsBasedOnRunTimeStatus; 
+	private static Boolean c_exceptTrainsBasedOnExternalAndRunTimeStatus;
+	private static Boolean d_doNotExceptTrains; 
 
-	private static Boolean defaultCheckSeedTrainsForLateness = true; 
-	private static Boolean defaultCheckScheduledVsActualTraversalTimes = true;
-	private static Boolean defaultGenerateReport = true;
-	private static String defaultPermissibleMinutesOfDelay = "5"; 
+	private static Boolean suppressTrainsAndResultsWithNoEligibleReportings;
+	private static String permissibleMinutesOfDelayOptionA; 
+	private static String permissibleMinutesOfDelayOptionB; 
+
+	private static Boolean a_defaultExceptTrainsBasedOnExternalSchedule = false; 
+	private static Boolean b_defaultExceptTrainsBasedOnRunTimeStatus = false; 
+	private static Boolean c_defaultExceptTrainsBasedOnExternalAndRunTimeStatus = false;
+	private static Boolean d_defaultDoNotExceptTrains = true; 
+
+	private static Boolean defaultSuppressTrainsAndResultsWithNoEligibleReportings = true;
+	private static String defaultPermissibleMinutesOfDelayOptionA = "10"; 
+	private static String defaultPermissibleMinutesOfDelayOptionB = "10"; 
 
 	private static String schedulePointEntries = ""; 
 	private static String actualPointEntries = "";
@@ -38,7 +45,6 @@ public class BIASModifiedOtpConfigPageController
 
 	private static Preferences prefs;
 
-	@FXML private Label ifNotLabel;
 	@FXML private Label train1Label;
 	@FXML private Label node1Label;
 	@FXML private Label departureTime1Label;
@@ -49,13 +55,15 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private Label node3Label;
 	@FXML private Label departureTime3Label;
 
-	@FXML private ComboBox<String> permissibleMinutesOfDelayCombobox;
+	@FXML private ComboBox<String> exceptTrainsOptionACombobox;
+	@FXML private ComboBox<String> exceptTrainsOptionBCombobox;
 
-	@FXML private CheckBox checkTrainsScheduleVsExternalCheckBox;
-	@FXML private CheckBox checkTrainsScheduleVsActualCheckBox;
+	@FXML private RadioButton a_exceptTrainsBasedOnExternalTimesRadioButton;
+	@FXML private RadioButton b_exceptTrainsBasedOnScheduledLatenessRadioButton;
+	@FXML private RadioButton c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton;
+	@FXML private RadioButton d_doNotExceptTrainsRadioButton;
 
-	@FXML private RadioButton generateReportRadioButton;
-	@FXML private RadioButton excludeTrainsRadioButton;
+	@FXML private CheckBox suppressZeroEntryTrainsResultsCheckBox;
 
 	@FXML private TextField train1TextField;
 	@FXML private TextField node1TextField;
@@ -189,6 +197,42 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private TextField originNode12ActualTextField;
 	@FXML private TextField destinationNode12ActualTextField;
 
+	@FXML private TextField originNode13ActualTextField;
+	@FXML private TextField destinationNode13ActualTextField;
+
+	@FXML private TextField originNode14ActualTextField;
+	@FXML private TextField destinationNode14ActualTextField;
+
+	@FXML private TextField originNode15ActualTextField;
+	@FXML private TextField destinationNode15ActualTextField;
+
+	@FXML private TextField originNode16ActualTextField;
+	@FXML private TextField destinationNode16ActualTextField;
+
+	@FXML private TextField originNode17ActualTextField;
+	@FXML private TextField destinationNode17ActualTextField;
+
+	@FXML private TextField originNode18ActualTextField;
+	@FXML private TextField destinationNode18ActualTextField;
+
+	@FXML private TextField originNode19ActualTextField;
+	@FXML private TextField destinationNode19ActualTextField;
+
+	@FXML private TextField originNode20ActualTextField;
+	@FXML private TextField destinationNode20ActualTextField;
+
+	@FXML private TextField originNode21ActualTextField;
+	@FXML private TextField destinationNode21ActualTextField;
+
+	@FXML private TextField originNode22ActualTextField;
+	@FXML private TextField destinationNode22ActualTextField;
+
+	@FXML private TextField originNode23ActualTextField;
+	@FXML private TextField destinationNode23ActualTextField;
+
+	@FXML private TextField originNode24ActualTextField;
+	@FXML private TextField destinationNode24ActualTextField;
+
 	@FXML private Button updateEntriesForScheduledButton;
 	@FXML private Button updateEntriesForActualButton;
 
@@ -197,61 +241,101 @@ public class BIASModifiedOtpConfigPageController
 		// Check for prefs
 		prefs = Preferences.userRoot().node("BIAS");	
 
-		// See if preference is stored for checking seed trains lateness
-		if (prefs.getBoolean("mo_checkTrainsForLatenessToExternalSchedule", defaultCheckSeedTrainsForLateness))
+		// See if preference is stored for checking seed trains vs external times (option A)
+		if (prefs.getBoolean("mo_exceptionsOptionA", a_defaultExceptTrainsBasedOnExternalSchedule))
 		{
-			checkSeedTrainsForLatenessToExternalSchedule = true;
+			a_exceptTrainsBasedOnExternalSchedule = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLatenessToExternalSchedule", true);
-			checkTrainsScheduleVsExternalCheckBox.setSelected(true);
+				prefs.putBoolean("mo_exceptionsOptionA", true);
 			enableAllControlsForLatenessToExternalSchedule();
+			a_exceptTrainsBasedOnExternalTimesRadioButton.setSelected(true);
 		}
 		else
 		{
-			checkSeedTrainsForLatenessToExternalSchedule = false;
-			checkTrainsScheduleVsExternalCheckBox.setSelected(false);
-			disableAllControlsForExternalSchedule();
+			a_exceptTrainsBasedOnExternalSchedule = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionA", false);
 		}
 
-		// See if permissible minutes of delay is stored
-		permissibleMinutesOfDelayCombobox.setItems(permissibleMintuesOfDelayValues);
-
-		boolean permissibleMintuesOfDelayValuesExists = prefs.get("mo_permissibleMinutesOfDelay", null) != null;
-		if (permissibleMintuesOfDelayValuesExists)
+		// See if preference is stored for checking seed trains vs time at scheduled origin (option B)
+		if (prefs.getBoolean("mo_exceptionsOptionB", b_defaultExceptTrainsBasedOnRunTimeStatus))
 		{
-			permissibleMinutesOfDelayCombobox.getSelectionModel().select(prefs.get("mo_permissibleMinutesOfDelay", defaultPermissibleMinutesOfDelay));
+			b_exceptTrainsBasedOnRunTimeStatus = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionB", true);
+			disableAllControlsForLatenessToExternalSchedule();
+			b_exceptTrainsBasedOnScheduledLatenessRadioButton.setSelected(true);
+		}
+		else
+		{
+			b_exceptTrainsBasedOnRunTimeStatus = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionB", false);
+		}
+
+		// See if preference is stored for checking seed trains vs time at scheduled origin and external time (option C)
+		if (prefs.getBoolean("mo_exceptionsOptionC", c_defaultExceptTrainsBasedOnExternalAndRunTimeStatus))
+		{
+			c_exceptTrainsBasedOnExternalAndRunTimeStatus = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionC", true);
+			enableAllControlsForLatenessToExternalSchedule();
+			c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton.setSelected(true);
+		}
+		else
+		{
+			c_exceptTrainsBasedOnExternalAndRunTimeStatus = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionC", false);
+		}
+
+		// See if preference is stored for NOT excepting trains (option D)
+		if (prefs.getBoolean("mo_exceptionsOptionD", d_defaultDoNotExceptTrains))
+		{
+			d_doNotExceptTrains = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionD", true);
+			disableAllControlsForLatenessToExternalSchedule();
+			d_doNotExceptTrainsRadioButton.setSelected(true);
+		}
+		else
+		{
+			d_doNotExceptTrains = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_exceptionsOptionD", false);
+		}
+
+		// See if permissible minutes of delay is stored -- option A
+		exceptTrainsOptionACombobox.setItems(permissibleMintuesOfDelayValues);
+
+		boolean permissibleMintuesOfDelayValuesExistsA = prefs.get("mo_permissibleMinutesOfDelayA", null) != null;
+		if (permissibleMintuesOfDelayValuesExistsA)
+		{
+			exceptTrainsOptionACombobox.getSelectionModel().select(prefs.get("mo_permissibleMinutesOfDelayA", defaultPermissibleMinutesOfDelayOptionA));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("mo_permissibleMinutesOfDelay", defaultPermissibleMinutesOfDelay);
-			permissibleMinutesOfDelayCombobox.getSelectionModel().select(defaultPermissibleMinutesOfDelay);
+				prefs.put("mo_permissibleMinutesOfDelayA", defaultPermissibleMinutesOfDelayOptionA);
+			exceptTrainsOptionACombobox.getSelectionModel().select(defaultPermissibleMinutesOfDelayOptionA);
 		}
-		permissibleMinutesOfDelayAsString = prefs.get("mo_permissibleMinutesOfDelay", defaultPermissibleMinutesOfDelay);
+		permissibleMinutesOfDelayOptionA = prefs.get("mo_permissibleMinutesOfDelayA", defaultPermissibleMinutesOfDelayOptionA);
 
-		// See if preference is stored for generating report vs excluding train from OTP
-		if (prefs.getBoolean("mo_generateReportDueToExternalScheduleLateness", defaultGenerateReport))
+		// See if permissible minutes of delay is stored -- option B
+		exceptTrainsOptionBCombobox.setItems(permissibleMintuesOfDelayValues);
+
+		boolean permissibleMintuesOfDelayValuesExistsB = prefs.get("mo_permissibleMinutesOfDelayB", null) != null;
+		if (permissibleMintuesOfDelayValuesExistsB)
 		{
-			generateReportOfTrainsLateAtOriginPerConfig = true;
-			excludeTrainsLateAtOriginPerConfig = false;
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			{
-				prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", true);
-				prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", false);
-			}
-			generateReportRadioButton.setSelected(true);
+			exceptTrainsOptionBCombobox.getSelectionModel().select(prefs.get("mo_permissibleMinutesOfDelayB", defaultPermissibleMinutesOfDelayOptionB));
 		}
 		else
 		{
-			generateReportOfTrainsLateAtOriginPerConfig = false;
-			excludeTrainsLateAtOriginPerConfig = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			{
-				prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", false);
-				prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", true);
-			}
-			excludeTrainsRadioButton.setSelected(true);
+				prefs.put("mo_permissibleMinutesOfDelayB", defaultPermissibleMinutesOfDelayOptionB);
+			exceptTrainsOptionBCombobox.getSelectionModel().select(defaultPermissibleMinutesOfDelayOptionB);
 		}
+		permissibleMinutesOfDelayOptionB = prefs.get("mo_permissibleMinutesOfDelayB", defaultPermissibleMinutesOfDelayOptionB);
 
 		// See if scheduled entries are stored
 		if ((prefs.get("mo_schedulePointEntries", "") != null) && (prefs.get("mo_schedulePointEntries", "") != ""))
@@ -409,20 +493,18 @@ public class BIASModifiedOtpConfigPageController
 			}
 		}
 
-		// See if preference is stored for checking seed trains lateness to actual
-		if (prefs.getBoolean("mo_checkTrainsForLatenessToActualSchedule", defaultCheckScheduledVsActualTraversalTimes))
+		// See if preference is stored for suppressing showing results and trains when no eligible reportings found
+		if ((prefs.getBoolean("mo_suppressTrainsAndResultsWithNoEligibleReportings", defaultSuppressTrainsAndResultsWithNoEligibleReportings)))
 		{
-			checkScheduledVsActualTraversalTimes = true;
+			suppressTrainsAndResultsWithNoEligibleReportings = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLatenessToActualSchedule", true);
-			checkTrainsScheduleVsActualCheckBox.setSelected(true);
-			enableAllControlsForActualSchedule();
+				prefs.putBoolean("mo_suppressTrainsAndResultsWithNoEligibleReportings", true);
+			suppressZeroEntryTrainsResultsCheckBox.setSelected(true);
 		}
 		else
 		{
-			checkScheduledVsActualTraversalTimes = false;
-			checkTrainsScheduleVsActualCheckBox.setSelected(false);
-			disableAllControlsForActualSchedule();
+			suppressTrainsAndResultsWithNoEligibleReportings = false;
+			suppressZeroEntryTrainsResultsCheckBox.setSelected(false);
 		}
 
 		// See if actual comparison entries are stored
@@ -493,73 +575,171 @@ public class BIASModifiedOtpConfigPageController
 					originNode12ActualTextField.setText(actualScheduleEntry[i*2]);
 					destinationNode12ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
 				}
+				else if (i == 12)
+				{
+					originNode13ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode13ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 13)
+				{
+					originNode14ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode14ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 14)
+				{
+					originNode15ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode15ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 15)
+				{
+					originNode16ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode16ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 16)
+				{
+					originNode17ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode17ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 17)
+				{
+					originNode18ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode18ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 18)
+				{
+					originNode19ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode19ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 19)
+				{
+					originNode20ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode20ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 20)
+				{
+					originNode21ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode21ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 21)
+				{
+					originNode22ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode22ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 22)
+				{
+					originNode23ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode23ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
+				else if (i == 23)
+				{
+					originNode24ActualTextField.setText(actualScheduleEntry[i*2]);
+					destinationNode24ActualTextField.setText(actualScheduleEntry[(i*2) + 1]);
+				}
 			}
 		}
 	}
 
-	@FXML private void handlePermissibleMinutesOfDelayComboBox(ActionEvent e)
+	@FXML private void handleExceptTrainsOptionACombobox(ActionEvent e)
 	{
-		permissibleMinutesOfDelayAsString = permissibleMinutesOfDelayCombobox.getValue();
+		permissibleMinutesOfDelayOptionA = exceptTrainsOptionACombobox.getValue();
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-			prefs.put("mo_permissibleMinutesOfDelay", permissibleMinutesOfDelayCombobox.getValue());
+			prefs.put("mo_permissibleMinutesOfDelayA", exceptTrainsOptionACombobox.getValue());
 	}
 
-	@FXML private void handleCheckTrainsScheduleVsExternalCheckBox(ActionEvent e)
+	@FXML private void handleExceptTrainsOptionBCombobox(ActionEvent e)
 	{
-		if (checkSeedTrainsForLatenessToExternalSchedule)
+		permissibleMinutesOfDelayOptionB = exceptTrainsOptionBCombobox.getValue();
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("mo_permissibleMinutesOfDelayB", exceptTrainsOptionBCombobox.getValue());
+	}
+
+	@FXML private void handleA_exceptTrainsBasedOnExternalTimesRadioButton(ActionEvent e)
+	{
+		a_exceptTrainsBasedOnExternalSchedule = true;
+		b_exceptTrainsBasedOnRunTimeStatus = false;
+		c_exceptTrainsBasedOnExternalAndRunTimeStatus = false;
+		d_doNotExceptTrains = false;
+
+		enableAllControlsForLatenessToExternalSchedule();
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
-			checkSeedTrainsForLatenessToExternalSchedule = false;
-			disableAllControlsForExternalSchedule();
+			prefs.putBoolean("mo_exceptionsOptionA", true);
+			prefs.putBoolean("mo_exceptionsOptionB", false);
+			prefs.putBoolean("mo_exceptionsOptionC", false);
+			prefs.putBoolean("mo_exceptionsOptionD", false);
+		}
+	}
+
+	@FXML private void handleB_exceptTrainsBasedOnScheduledLatenessRadioButton(ActionEvent e)
+	{
+		a_exceptTrainsBasedOnExternalSchedule = false;
+		b_exceptTrainsBasedOnRunTimeStatus = true;
+		c_exceptTrainsBasedOnExternalAndRunTimeStatus = false;
+		d_doNotExceptTrains = false;
+
+		disableAllControlsForLatenessToExternalSchedule();
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_exceptionsOptionA", false);
+			prefs.putBoolean("mo_exceptionsOptionB", true);
+			prefs.putBoolean("mo_exceptionsOptionC", false);
+			prefs.putBoolean("mo_exceptionsOptionD", false);
+		}
+	}
+
+	@FXML private void handleC_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton(ActionEvent e)
+	{
+		a_exceptTrainsBasedOnExternalSchedule = false;
+		b_exceptTrainsBasedOnRunTimeStatus = false;
+		c_exceptTrainsBasedOnExternalAndRunTimeStatus = true;
+		d_doNotExceptTrains = false;
+
+		enableAllControlsForLatenessToExternalSchedule();
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_exceptionsOptionA", false);
+			prefs.putBoolean("mo_exceptionsOptionB", false);
+			prefs.putBoolean("mo_exceptionsOptionC", true);
+			prefs.putBoolean("mo_exceptionsOptionD", false);
+		}
+	}
+
+	@FXML private void handleD_doNotExceptTrainsRadioButton(ActionEvent e)
+	{
+		a_exceptTrainsBasedOnExternalSchedule = false;
+		b_exceptTrainsBasedOnRunTimeStatus = false;
+		c_exceptTrainsBasedOnExternalAndRunTimeStatus = false;
+		d_doNotExceptTrains = true;
+
+		disableAllControlsForLatenessToExternalSchedule();
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_exceptionsOptionA", false);
+			prefs.putBoolean("mo_exceptionsOptionB", false);
+			prefs.putBoolean("mo_exceptionsOptionC", false);
+			prefs.putBoolean("mo_exceptionsOptionD", true);
+		}
+	}
+
+	@FXML private void handleSuppressZeroEntryTrainsResultsCheckBox(ActionEvent e)
+	{
+		// See if preference is stored for suppressing showing results and trains when no eligible reportings found
+		if (suppressTrainsAndResultsWithNoEligibleReportings)
+		{
+			suppressTrainsAndResultsWithNoEligibleReportings = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLatenessToExternalSchedule", false);
+				prefs.putBoolean("mo_suppressTrainsAndResultsWithNoEligibleReportings", false);
 		}
 		else
 		{
-			checkSeedTrainsForLatenessToExternalSchedule = true;
-			enableAllControlsForLatenessToExternalSchedule();
+			suppressTrainsAndResultsWithNoEligibleReportings = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLatenessToExternalSchedule", true);
+				prefs.putBoolean("mo_suppressTrainsAndResultsWithNoEligibleReportings", true);
 		}
-	}
-
-	@FXML private void handleCheckTrainsScheduleVsActualCheckBox(ActionEvent e)
-	{
-		if (checkScheduledVsActualTraversalTimes)
-		{
-			checkScheduledVsActualTraversalTimes = false;
-			disableAllControlsForActualSchedule();
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLatenessToActualSchedule", false);
-		}
-		else
-		{
-			checkScheduledVsActualTraversalTimes = true;
-			enableAllControlsForActualSchedule();
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.putBoolean("mo_checkTrainsForLatenessToActualSchedule", true);
-		}
-	}
-
-	@FXML private void handleGenerateReportRadioButton(ActionEvent e)
-	{
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-		{
-			prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", true);
-			prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", false);
-		}
-		generateReportOfTrainsLateAtOriginPerConfig = true;
-		excludeTrainsLateAtOriginPerConfig = false;
-	}
-
-	@FXML private void handleExcludeTrainsRadioButton(ActionEvent e)
-	{
-		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-		{
-			prefs.putBoolean("mo_generateReportDueToExternalScheduleLateness", false);
-			prefs.putBoolean("mo_excludeTrainsDueToExternalScheduleLateness", true);
-		}
-		generateReportOfTrainsLateAtOriginPerConfig = false;
-		excludeTrainsLateAtOriginPerConfig = true;
 	}
 
 	// Schedule Entry 1
@@ -3388,6 +3568,168 @@ public class BIASModifiedOtpConfigPageController
 		else
 			inputsConform = false;
 
+		// Actual Schedule Entry 13
+		if (originNode13ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode13ActualTextField.getText().trim();
+			originNode13ActualTextField.setText(origText.toUpperCase());
+			originNode13ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode13ActualTextField.getText().trim().equals(""))
+		{
+			originNode13ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode13ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode13ActualTextField.getText().trim();
+			destinationNode13ActualTextField.setText(origText.toUpperCase());
+			destinationNode13ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode13ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode13ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 14
+		if (originNode14ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode14ActualTextField.getText().trim();
+			originNode14ActualTextField.setText(origText.toUpperCase());
+			originNode14ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode14ActualTextField.getText().trim().equals(""))
+		{
+			originNode14ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode14ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode14ActualTextField.getText().trim();
+			destinationNode14ActualTextField.setText(origText.toUpperCase());
+			destinationNode14ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode14ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode14ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 15
+		if (originNode15ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode15ActualTextField.getText().trim();
+			originNode15ActualTextField.setText(origText.toUpperCase());
+			originNode15ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode15ActualTextField.getText().trim().equals(""))
+		{
+			originNode15ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode15ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode15ActualTextField.getText().trim();
+			destinationNode15ActualTextField.setText(origText.toUpperCase());
+			destinationNode15ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode15ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode15ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 16
+		if (originNode16ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode16ActualTextField.getText().trim();
+			originNode16ActualTextField.setText(origText.toUpperCase());
+			originNode16ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode16ActualTextField.getText().trim().equals(""))
+		{
+			originNode16ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode16ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode16ActualTextField.getText().trim();
+			destinationNode16ActualTextField.setText(origText.toUpperCase());
+			destinationNode16ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode16ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode16ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 17
+		if (originNode17ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode17ActualTextField.getText().trim();
+			originNode17ActualTextField.setText(origText.toUpperCase());
+			originNode17ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode17ActualTextField.getText().trim().equals(""))
+		{
+			originNode17ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode17ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode17ActualTextField.getText().trim();
+			destinationNode17ActualTextField.setText(origText.toUpperCase());
+			destinationNode17ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode17ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode17ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 18
+		if (originNode18ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode18ActualTextField.getText().trim();
+			originNode18ActualTextField.setText(origText.toUpperCase());
+			originNode18ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode18ActualTextField.getText().trim().equals(""))
+		{
+			originNode18ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode18ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode18ActualTextField.getText().trim();
+			destinationNode18ActualTextField.setText(origText.toUpperCase());
+			destinationNode18ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode18ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode18ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
 		if (inputsConform)
 		{
 			String entriesToWriteToRegistry = "";
@@ -3553,6 +3895,174 @@ public class BIASModifiedOtpConfigPageController
 			{
 				originNode12ActualTextField.clear();
 				destinationNode12ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode13ActualTextField.getText().equals("")) && (!destinationNode13ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode13ActualTextField.getText()+","+destinationNode13ActualTextField.getText()+",";
+			}
+			else if ((originNode13ActualTextField.getText().trim().equals("")) && (destinationNode13ActualTextField.getText().trim().equals("")))
+			{
+				originNode13ActualTextField.clear();
+				destinationNode13ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode14ActualTextField.getText().equals("")) && (!destinationNode14ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode14ActualTextField.getText()+","+destinationNode14ActualTextField.getText()+",";
+			}
+			else if ((originNode14ActualTextField.getText().trim().equals("")) && (destinationNode14ActualTextField.getText().trim().equals("")))
+			{
+				originNode14ActualTextField.clear();
+				destinationNode14ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode15ActualTextField.getText().equals("")) && (!destinationNode15ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode15ActualTextField.getText()+","+destinationNode15ActualTextField.getText()+",";
+			}
+			else if ((originNode15ActualTextField.getText().trim().equals("")) && (destinationNode15ActualTextField.getText().trim().equals("")))
+			{
+				originNode15ActualTextField.clear();
+				destinationNode15ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode16ActualTextField.getText().equals("")) && (!destinationNode16ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode16ActualTextField.getText()+","+destinationNode16ActualTextField.getText()+",";
+			}
+			else if ((originNode16ActualTextField.getText().trim().equals("")) && (destinationNode16ActualTextField.getText().trim().equals("")))
+			{
+				originNode16ActualTextField.clear();
+				destinationNode16ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode17ActualTextField.getText().equals("")) && (!destinationNode17ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode17ActualTextField.getText()+","+destinationNode17ActualTextField.getText()+",";
+			}
+			else if ((originNode17ActualTextField.getText().trim().equals("")) && (destinationNode17ActualTextField.getText().trim().equals("")))
+			{
+				originNode17ActualTextField.clear();
+				destinationNode17ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode18ActualTextField.getText().equals("")) && (!destinationNode18ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode18ActualTextField.getText()+","+destinationNode18ActualTextField.getText()+",";
+			}
+			else if ((originNode18ActualTextField.getText().trim().equals("")) && (destinationNode18ActualTextField.getText().trim().equals("")))
+			{
+				originNode18ActualTextField.clear();
+				destinationNode18ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode19ActualTextField.getText().equals("")) && (!destinationNode19ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode19ActualTextField.getText()+","+destinationNode19ActualTextField.getText()+",";
+			}
+			else if ((originNode19ActualTextField.getText().trim().equals("")) && (destinationNode19ActualTextField.getText().trim().equals("")))
+			{
+				originNode19ActualTextField.clear();
+				destinationNode19ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode20ActualTextField.getText().equals("")) && (!destinationNode20ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode20ActualTextField.getText()+","+destinationNode20ActualTextField.getText()+",";
+			}
+			else if ((originNode20ActualTextField.getText().trim().equals("")) && (destinationNode20ActualTextField.getText().trim().equals("")))
+			{
+				originNode20ActualTextField.clear();
+				destinationNode20ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode21ActualTextField.getText().equals("")) && (!destinationNode21ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode21ActualTextField.getText()+","+destinationNode21ActualTextField.getText()+",";
+			}
+			else if ((originNode21ActualTextField.getText().trim().equals("")) && (destinationNode21ActualTextField.getText().trim().equals("")))
+			{
+				originNode21ActualTextField.clear();
+				destinationNode21ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode22ActualTextField.getText().equals("")) && (!destinationNode22ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode22ActualTextField.getText()+","+destinationNode22ActualTextField.getText()+",";
+			}
+			else if ((originNode22ActualTextField.getText().trim().equals("")) && (destinationNode22ActualTextField.getText().trim().equals("")))
+			{
+				originNode22ActualTextField.clear();
+				destinationNode22ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode23ActualTextField.getText().equals("")) && (!destinationNode23ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode23ActualTextField.getText()+","+destinationNode23ActualTextField.getText()+",";
+			}
+			else if ((originNode23ActualTextField.getText().trim().equals("")) && (destinationNode23ActualTextField.getText().trim().equals("")))
+			{
+				originNode23ActualTextField.clear();
+				destinationNode23ActualTextField.clear();
+			}
+			else
+			{
+				inputsConform = false;	
+			}
+
+			if ((!originNode24ActualTextField.getText().equals("")) && (!destinationNode24ActualTextField.getText().equals("")))
+			{
+				entriesToWriteToRegistry+= originNode24ActualTextField.getText()+","+destinationNode24ActualTextField.getText()+",";
+			}
+			else if ((originNode24ActualTextField.getText().trim().equals("")) && (destinationNode24ActualTextField.getText().trim().equals("")))
+			{
+				originNode24ActualTextField.clear();
+				destinationNode24ActualTextField.clear();
 			}
 			else
 			{
@@ -3971,11 +4481,404 @@ public class BIASModifiedOtpConfigPageController
 			destinationNode12ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	private void disableAllControlsForExternalSchedule()
+	// Node set 13 Actual
+	@FXML private void handleTextChangedOrigin13ActualTextField()
 	{
-		ifNotLabel.setDisable(true);
-		generateReportRadioButton.setDisable(true);
-		excludeTrainsRadioButton.setDisable(true);
+		originNode13ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode13ActualTextField()
+	{
+		String origText = originNode13ActualTextField.getText().trim();
+		originNode13ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode13ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode13ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination13ActualTextField()
+	{
+		destinationNode13ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode13ActualTextField()
+	{
+		String origText = destinationNode13ActualTextField.getText().trim();
+		destinationNode13ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode13ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode13ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 14 Actual
+	@FXML private void handleTextChangedOrigin14ActualTextField()
+	{
+		originNode14ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode14ActualTextField()
+	{
+		String origText = originNode14ActualTextField.getText().trim();
+		originNode14ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode14ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode14ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination14ActualTextField()
+	{
+		destinationNode14ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode14ActualTextField()
+	{
+		String origText = destinationNode14ActualTextField.getText().trim();
+		destinationNode14ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode14ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode14ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 15 Actual
+	@FXML private void handleTextChangedOrigin15ActualTextField()
+	{
+		originNode15ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode15ActualTextField()
+	{
+		String origText = originNode15ActualTextField.getText().trim();
+		originNode15ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode15ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode15ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination15ActualTextField()
+	{
+		destinationNode15ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode15ActualTextField()
+	{
+		String origText = destinationNode15ActualTextField.getText().trim();
+		destinationNode15ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode15ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode15ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 16 Actual
+	@FXML private void handleTextChangedOrigin16ActualTextField()
+	{
+		originNode16ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode16ActualTextField()
+	{
+		String origText = originNode16ActualTextField.getText().trim();
+		originNode16ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode16ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode16ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination16ActualTextField()
+	{
+		destinationNode16ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode16ActualTextField()
+	{
+		String origText = destinationNode16ActualTextField.getText().trim();
+		destinationNode16ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode16ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode16ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 17 Actual
+	@FXML private void handleTextChangedOrigin17ActualTextField()
+	{
+		originNode17ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode17ActualTextField()
+	{
+		String origText = originNode17ActualTextField.getText().trim();
+		originNode17ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode17ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode17ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination17ActualTextField()
+	{
+		destinationNode17ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode17ActualTextField()
+	{
+		String origText = destinationNode17ActualTextField.getText().trim();
+		destinationNode17ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode17ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode17ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 18 Actual
+	@FXML private void handleTextChangedOrigin18ActualTextField()
+	{
+		originNode18ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode18ActualTextField()
+	{
+		String origText = originNode18ActualTextField.getText().trim();
+		originNode18ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode18ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode18ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination18ActualTextField()
+	{
+		destinationNode18ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode18ActualTextField()
+	{
+		String origText = destinationNode18ActualTextField.getText().trim();
+		destinationNode18ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode18ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode18ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 19 Actual
+	@FXML private void handleTextChangedOrigin19ActualTextField()
+	{
+		originNode19ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode19ActualTextField()
+	{
+		String origText = originNode19ActualTextField.getText().trim();
+		originNode19ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode19ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode19ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination19ActualTextField()
+	{
+		destinationNode19ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode19ActualTextField()
+	{
+		String origText = destinationNode19ActualTextField.getText().trim();
+		destinationNode19ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode19ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode19ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 20 Actual
+	@FXML private void handleTextChangedOrigin20ActualTextField()
+	{
+		originNode20ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode20ActualTextField()
+	{
+		String origText = originNode20ActualTextField.getText().trim();
+		originNode20ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode20ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode20ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination20ActualTextField()
+	{
+		destinationNode20ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode20ActualTextField()
+	{
+		String origText = destinationNode20ActualTextField.getText().trim();
+		destinationNode20ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode20ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode20ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 21 Actual
+	@FXML private void handleTextChangedOrigin21ActualTextField()
+	{
+		originNode21ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode21ActualTextField()
+	{
+		String origText = originNode21ActualTextField.getText().trim();
+		originNode21ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode21ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode21ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination21ActualTextField()
+	{
+		destinationNode21ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode21ActualTextField()
+	{
+		String origText = destinationNode21ActualTextField.getText().trim();
+		destinationNode21ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode21ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode21ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 22 Actual
+	@FXML private void handleTextChangedOrigin22ActualTextField()
+	{
+		originNode22ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode22ActualTextField()
+	{
+		String origText = originNode22ActualTextField.getText().trim();
+		originNode22ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode22ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode22ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination22ActualTextField()
+	{
+		destinationNode22ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode22ActualTextField()
+	{
+		String origText = destinationNode22ActualTextField.getText().trim();
+		destinationNode22ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode22ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode22ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 23 Actual
+	@FXML private void handleTextChangedOrigin23ActualTextField()
+	{
+		originNode23ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode23ActualTextField()
+	{
+		String origText = originNode23ActualTextField.getText().trim();
+		originNode23ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode23ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode23ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination23ActualTextField()
+	{
+		destinationNode23ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode23ActualTextField()
+	{
+		String origText = destinationNode23ActualTextField.getText().trim();
+		destinationNode23ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode23ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode23ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	// Node set 24 Actual
+	@FXML private void handleTextChangedOrigin24ActualTextField()
+	{
+		originNode24ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleOriginNode24ActualTextField()
+	{
+		String origText = originNode24ActualTextField.getText().trim();
+		originNode24ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			originNode24ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			originNode24ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedDestination24ActualTextField()
+	{
+		destinationNode24ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateEntriesForActualButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleDestinationNode24ActualTextField()
+	{
+		String origText = destinationNode24ActualTextField.getText().trim();
+		destinationNode24ActualTextField.setText(origText.toUpperCase());
+		if (origText.toUpperCase().matches(nodePattern.toString()))
+			destinationNode24ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		else
+			destinationNode24ActualTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	private void disableAllControlsForLatenessToExternalSchedule()
+	{
 		train1Label.setDisable(true);
 		node1Label.setDisable(true);
 		departureTime1Label.setDisable(true);
@@ -4087,15 +4990,39 @@ public class BIASModifiedOtpConfigPageController
 		destinationNode11ActualTextField.setDisable(true);
 		originNode12ActualTextField.setDisable(true);
 		destinationNode12ActualTextField.setDisable(true);
-
+		originNode13ActualTextField.setDisable(true);
+		destinationNode13ActualTextField.setDisable(true);
+		originNode14ActualTextField.setDisable(true);
+		destinationNode14ActualTextField.setDisable(true);
+		originNode15ActualTextField.setDisable(true);
+		destinationNode15ActualTextField.setDisable(true);
+		originNode16ActualTextField.setDisable(true);
+		destinationNode16ActualTextField.setDisable(true);
+		originNode17ActualTextField.setDisable(true);
+		destinationNode17ActualTextField.setDisable(true);
+		originNode18ActualTextField.setDisable(true);
+		destinationNode18ActualTextField.setDisable(true);
+		originNode19ActualTextField.setDisable(true);
+		destinationNode19ActualTextField.setDisable(true);
+		originNode20ActualTextField.setDisable(true);
+		destinationNode20ActualTextField.setDisable(true);
+		originNode21ActualTextField.setDisable(true);
+		destinationNode21ActualTextField.setDisable(true);
+		originNode22ActualTextField.setDisable(true);
+		destinationNode22ActualTextField.setDisable(true);
+		originNode23ActualTextField.setDisable(true);
+		destinationNode23ActualTextField.setDisable(true);
+		originNode24ActualTextField.setDisable(true);
+		destinationNode24ActualTextField.setDisable(true);
+		
 		updateEntriesForActualButton.setDisable(true);
+		suppressZeroEntryTrainsResultsCheckBox.setDisable(true);
+		suppressZeroEntryTrainsResultsCheckBox.setSelected(false);
+		suppressTrainsAndResultsWithNoEligibleReportings = false;
 	}
 
 	private void enableAllControlsForLatenessToExternalSchedule()
 	{
-		ifNotLabel.setDisable(false);
-		generateReportRadioButton.setDisable(false);
-		//excludeTrainsRadioButton.setDisable(false);
 		train1Label.setDisable(false);
 		node1Label.setDisable(false);
 		departureTime1Label.setDisable(false);
@@ -4207,13 +5134,38 @@ public class BIASModifiedOtpConfigPageController
 		destinationNode11ActualTextField.setDisable(false);
 		originNode12ActualTextField.setDisable(false);
 		destinationNode12ActualTextField.setDisable(false);
-
+		originNode13ActualTextField.setDisable(false);
+		destinationNode13ActualTextField.setDisable(false);
+		originNode14ActualTextField.setDisable(false);
+		destinationNode14ActualTextField.setDisable(false);
+		originNode15ActualTextField.setDisable(false);
+		destinationNode15ActualTextField.setDisable(false);
+		originNode16ActualTextField.setDisable(false);
+		destinationNode16ActualTextField.setDisable(false);
+		originNode17ActualTextField.setDisable(false);
+		destinationNode17ActualTextField.setDisable(false);
+		originNode18ActualTextField.setDisable(false);
+		destinationNode18ActualTextField.setDisable(false);
+		originNode19ActualTextField.setDisable(false);
+		destinationNode19ActualTextField.setDisable(false);
+		originNode20ActualTextField.setDisable(false);
+		destinationNode20ActualTextField.setDisable(false);
+		originNode21ActualTextField.setDisable(false);
+		destinationNode21ActualTextField.setDisable(false);
+		originNode22ActualTextField.setDisable(false);
+		destinationNode22ActualTextField.setDisable(false);
+		originNode23ActualTextField.setDisable(false);
+		destinationNode23ActualTextField.setDisable(false);
+		originNode24ActualTextField.setDisable(false);
+		destinationNode24ActualTextField.setDisable(false);
+		
 		updateEntriesForActualButton.setDisable(false);
+		suppressZeroEntryTrainsResultsCheckBox.setDisable(false);
 	}
 
 	public static String getPermissibleMinutesOfDelayAsString()
 	{
-		return permissibleMinutesOfDelayAsString;
+		return permissibleMinutesOfDelayOptionA;
 	}
 
 	public static String getSchedulePointEntries()
@@ -4226,13 +5178,18 @@ public class BIASModifiedOtpConfigPageController
 		return actualPointEntries;
 	}
 
-	public static Boolean getPerformLatenessToExternalScheduleAnalysis()
+	public static Boolean getA_exceptTrainsBasedOnExternalSchedule()
 	{
-		return checkSeedTrainsForLatenessToExternalSchedule;
+		return a_exceptTrainsBasedOnExternalSchedule;
 	}
 
-	public static Boolean getPerformLatenessToActualAnalysis()
+	public static Boolean getD_doNotExceptTrains()
 	{
-		return checkScheduledVsActualTraversalTimes;
+		return d_doNotExceptTrains;
+	}
+
+	public static Boolean getSuppressTrainsAndResultsWithNoEligibleReportings()
+	{
+		return suppressTrainsAndResultsWithNoEligibleReportings;
 	}
 }

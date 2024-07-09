@@ -31,7 +31,7 @@ public class ModifiedOtpAnalysis
 		resultsMessage = "Started analyzing trains at "+ConvertDateTime.getTimeStamp()+"\n";
 
 		// Schedule vs Config
-		if (BIASModifiedOtpConfigPageController.getPerformLatenessToExternalScheduleAnalysis())
+		if (BIASModifiedOtpConfigPageController.getA_exceptTrainsBasedOnExternalSchedule())
 		{
 			exceptionsToOtpBasedOnScheduledVsConfig = 0;
 
@@ -80,138 +80,138 @@ public class ModifiedOtpAnalysis
 		}
 
 		// Schedule vs Actual
-		if (BIASModifiedOtpConfigPageController.getPerformLatenessToActualAnalysis())
+		// Load in actual points (O/D pair) from config file
+		for (int i = 0; i < BIASModifiedOtpConfigPageController.getActualPointEntries().split(",").length; i+=2)
 		{
-			// Load in actual points (o/D pair) from config file
-			for (int i = 0; i < BIASModifiedOtpConfigPageController.getActualPointEntries().split(",").length; i+=2)
+			odTuple<String, String> odTuple = new odTuple<>(BIASModifiedOtpConfigPageController.getActualPointEntries().split(",")[i], BIASModifiedOtpConfigPageController.getActualPointEntries().split(",")[i+1]);
+			odPairsFromConfig.add(odTuple);
+		}
+
+		exceptionsToOtpBasedOnScheduledVsActual = 0;
+
+		// Load in relevant data from other READ class
+		HashMap<String, String> enabledTrainsFromTrainFile = new HashMap<String, String>();
+		HashMap<String, String> otpThresholdsFromOptionFile = new HashMap<String, String>();
+		ArrayList<ModifiedOtpTrainObjectB> performanceFileEntries = new ArrayList<ModifiedOtpTrainObjectB>();			
+
+		enabledTrainsFromTrainFile = ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile(); // Use to get type
+		otpThresholdsFromOptionFile = ReadModifiedOtpFiles.getOtpThresholdsFromOptionFile(); // Gets thresholds
+		performanceFileEntries.addAll(ReadModifiedOtpFiles.getPerformanceFileEntries());
+
+		for (int i = 0; i < performanceFileEntries.size(); i++) // For each symbol
+		{
+			String runtimeSymbol = performanceFileEntries.get(i).getTrainSymbol();
+			String scheduledSymbol = performanceFileEntries.get(i).getTrainSymbol().substring(0, performanceFileEntries.get(i).getTrainSymbol().lastIndexOf("-"));
+			String trainType = enabledTrainsFromTrainFile.get(scheduledSymbol);
+			String otpThresholdAsString = otpThresholdsFromOptionFile.get(trainType);
+			Double otpThresholdAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(otpThresholdAsString);
+
+			int[] numDenom = new int[2];
+			typeHashmapOfMakes.putIfAbsent(trainType, numDenom);
+
+			performanceFileEntries.get(i).setTrainType(trainType);
+			performanceFileEntries.get(i).setOtpThresholdAsDouble(otpThresholdAsDouble);
+
+			for (int j = 0; j < odPairsFromConfig.size(); j++)  // For each OD pair from config
 			{
-				odTuple<String, String> odTuple = new odTuple<>(BIASModifiedOtpConfigPageController.getActualPointEntries().split(",")[i], BIASModifiedOtpConfigPageController.getActualPointEntries().split(",")[i+1]);
-				odPairsFromConfig.add(odTuple);
-			}
+				String originNodeInConfigFile = odPairsFromConfig.get(j).origin;
+				String destinationNodeInConfigFile = odPairsFromConfig.get(j).destination;
 
-			exceptionsToOtpBasedOnScheduledVsActual = 0;
-
-			// Load in relevant data from other READ class
-			HashMap<String, String> enabledTrainsFromTrainFile = new HashMap<String, String>();
-			HashMap<String, String> otpThresholdsFromOptionFile = new HashMap<String, String>();
-			ArrayList<ModifiedOtpTrainObjectB> performanceFileEntries = new ArrayList<ModifiedOtpTrainObjectB>();			
-
-			enabledTrainsFromTrainFile = ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile(); // Use to get type
-			otpThresholdsFromOptionFile = ReadModifiedOtpFiles.getOtpThresholdsFromOptionFile(); // Gets thresholds
-			performanceFileEntries.addAll(ReadModifiedOtpFiles.getPerformanceFileEntries());
-
-			for (int i = 0; i < performanceFileEntries.size(); i++) // For each symbol
-			{
-				String runtimeSymbol = performanceFileEntries.get(i).getTrainSymbol();
-				String scheduledSymbol = performanceFileEntries.get(i).getTrainSymbol().substring(0, performanceFileEntries.get(i).getTrainSymbol().lastIndexOf("-"));
-				String trainType = enabledTrainsFromTrainFile.get(scheduledSymbol);
-				String otpThresholdAsString = otpThresholdsFromOptionFile.get(trainType);
-				Double otpThresholdAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(otpThresholdAsString);
-
-				int[] numDenom = new int[2];
-				typeHashmapOfMakes.putIfAbsent(trainType, numDenom);
-
-				performanceFileEntries.get(i).setTrainType(trainType);
-				performanceFileEntries.get(i).setOtpThresholdAsDouble(otpThresholdAsDouble);
-
-				for (int j = 0; j < odPairsFromConfig.size(); j++)  // For each OD pair from config
+				for (int k = 0; k < performanceFileEntries.get(i).getSchedulePoints().size(); k++)  // For each performanceFileEntry
 				{
-					String originNodeInConfigFile = odPairsFromConfig.get(j).origin;
-					String destinationNodeInConfigFile = odPairsFromConfig.get(j).destination;
+					String originNode = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledNode();
 
-					for (int k = 0; k < performanceFileEntries.get(i).getSchedulePoints().size(); k++)  // For each performanceFileEntry
+					Double scheduledOriginArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledArrivalTime();
+					Double actualOriginArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getActualArrivalTime();
+					Double scheduledOriginDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledDepartureTime();
+					Double actualOriginDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getActualDepartureTime();
+
+					if (originNode.contains(originNodeInConfigFile))
 					{
-						String originNode = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledNode();
-
-						Double scheduledOriginArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledArrivalTime();
-						Double actualOriginArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getActualArrivalTime();
-						Double scheduledOriginDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledDepartureTime();
-						Double actualOriginDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getActualDepartureTime();
-
-						if (originNode.equals(originNodeInConfigFile))
+						for (int l = k; l < performanceFileEntries.get(i).getSchedulePoints().size(); l++)  // For each performanceFileEntry
 						{
-							for (int l = k; l < performanceFileEntries.get(i).getSchedulePoints().size(); l++)  // For each performanceFileEntry
+							String destinationNode = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledNode();
+
+							if (destinationNode.contains(destinationNodeInConfigFile))
 							{
-								String destinationNode = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledNode();
+								Double scheduledDestinationArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledArrivalTime();
+								Double actualDestinationArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getActualArrivalTime();
+								Double scheduledDestinationDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledDepartureTime();
+								Double actualDestinationDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getActualDepartureTime();
 
-								if (destinationNode.equals(destinationNodeInConfigFile))
+								// Determine if it is a make
+								String make = "?";
+
+								Double scheduleOriginTimeToUse = Math.max(scheduledOriginArrivalTimeAsDouble, scheduledOriginDepartureTimeAsDouble);
+								Double scheduleDestinationTimeToUse = Math.min(scheduledDestinationArrivalTimeAsDouble, scheduledDestinationDepartureTimeAsDouble);
+								Double scheduleTransitTime = scheduleDestinationTimeToUse - scheduleOriginTimeToUse;
+
+								Double actualOriginTimeToUse = Math.max(actualOriginArrivalTimeAsDouble, actualOriginDepartureTimeAsDouble);
+								Double actualDestinationTimeToUse = Math.min(actualDestinationArrivalTimeAsDouble, actualDestinationDepartureTimeAsDouble);
+								Double actualTransitTime = actualDestinationTimeToUse - actualOriginTimeToUse;
+
+								Double lateAtOrigin = Math.max(0, actualOriginTimeToUse - scheduleOriginTimeToUse);
+
+								Integer num = 0;
+								Integer denom = 0;
+
+								if (actualDestinationTimeToUse <= (scheduleDestinationTimeToUse + otpThresholdAsDouble))
 								{
-									Double scheduledDestinationArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledArrivalTime();
-									Double actualDestinationArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getActualArrivalTime();
-									Double scheduledDestinationDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledDepartureTime();
-									Double actualDestinationDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getActualDepartureTime();
+									make = "Y";	
+									num = 1;
+									denom = 1;
+								}
+								else if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime + otpThresholdAsDouble))
+								{
+									make = "Y";
+									num = 1;
+									denom = 1;
+								}
+								else
+								{
+									make = "N";
+									num = 0;
+									denom = 1;
+								}
 
-									// Determine if it is a make
-									String make = "?";
+								ReportingPointForTrainObjectB reportingPoint = new ReportingPointForTrainObjectB(originNode, scheduleOriginTimeToUse, actualOriginTimeToUse, lateAtOrigin, destinationNode, scheduleDestinationTimeToUse, actualDestinationTimeToUse, scheduleTransitTime, actualTransitTime, make, num, denom);
+								performanceFileEntries.get(i).addReportingPoint(reportingPoint);
 
-									Double scheduleOriginTimeToUse = Math.max(scheduledOriginArrivalTimeAsDouble, scheduledOriginDepartureTimeAsDouble);
-									Double scheduleDestinationTimeToUse = Math.min(scheduledDestinationArrivalTimeAsDouble, scheduledDestinationDepartureTimeAsDouble);
-									Double scheduleTransitTime = scheduleDestinationTimeToUse - scheduleOriginTimeToUse;
+								int[] currentNumeratorDenominator = typeHashmapOfMakes.get(trainType);
+								int[] updatedNumeratorDenominator = new int[2];
+								updatedNumeratorDenominator[0] = (currentNumeratorDenominator[0] + num);
+								updatedNumeratorDenominator[1] = (currentNumeratorDenominator[1] + denom);
+								currentNumeratorDenominator[0] = updatedNumeratorDenominator[0];
+								currentNumeratorDenominator[1] = updatedNumeratorDenominator[1];
 
-									Double actualOriginTimeToUse = Math.max(actualOriginArrivalTimeAsDouble, actualOriginDepartureTimeAsDouble);
-									Double actualDestinationTimeToUse = Math.min(actualDestinationArrivalTimeAsDouble, actualDestinationDepartureTimeAsDouble);
-									Double actualTransitTime = actualDestinationTimeToUse - actualOriginTimeToUse;
-									Integer num = 0;
-									Integer denom = 0;
+								if (debug)
+								{
+									System.out.println("\nFor train "+runtimeSymbol);				
+									System.out.println(" type is "+trainType);
+									System.out.println(" threshold is "+ConvertDateTime.convertSerialToDDHHMMSSString(otpThresholdAsDouble));
 
-									if (actualDestinationTimeToUse <= (scheduleDestinationTimeToUse + otpThresholdAsDouble))
-									{
-										make = "Y";	
-										num = 1;
-										denom = 1;
-									}
-									else if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime + otpThresholdAsDouble))
-									{
-										make = "Y";
-										num = 1;
-										denom = 1;
-									}
-									else
-									{
-										make = "N";
-										num = 0;
-										denom = 1;
-									}
+									System.out.println(" at origin node: "+originNode);
+									System.out.print(" sched origin arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledOriginArrivalTimeAsDouble));
+									System.out.println(" actual origin arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualOriginArrivalTimeAsDouble));
+									System.out.print(" sched origin dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledOriginDepartureTimeAsDouble));
+									System.out.println(" actual origin dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualOriginDepartureTimeAsDouble));
+									System.out.println(" late at origin: "+ConvertDateTime.convertSerialToHHMMSSString(lateAtOrigin));
 
-									ReportingPointForTrainObjectB reportingPoint = new ReportingPointForTrainObjectB(originNode, scheduleOriginTimeToUse, actualOriginTimeToUse, destinationNode, scheduleDestinationTimeToUse, actualDestinationTimeToUse, scheduleTransitTime, actualTransitTime, make, num, denom);
-									performanceFileEntries.get(i).addReportingPoint(reportingPoint);
+									System.out.println(" at destination node: "+destinationNode);
+									System.out.print(" sched destination arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDestinationArrivalTimeAsDouble));
+									System.out.println(" actual destination arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualDestinationArrivalTimeAsDouble));
+									System.out.print(" sched destination dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDestinationDepartureTimeAsDouble));
+									System.out.println(" actual destination dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualDestinationDepartureTimeAsDouble));
 
-									int[] currentNumeratorDenominator = typeHashmapOfMakes.get(trainType);
-									int[] updatedNumeratorDenominator = new int[2];
-									updatedNumeratorDenominator[0] = (currentNumeratorDenominator[0] + num);
-									updatedNumeratorDenominator[1] = (currentNumeratorDenominator[1] + denom);
-									currentNumeratorDenominator[0] = updatedNumeratorDenominator[0];
-									currentNumeratorDenominator[1] = updatedNumeratorDenominator[1];
-
-									if (debug)
-									{
-										System.out.println("\nFor train "+runtimeSymbol);				
-										System.out.println(" type is "+trainType);
-										System.out.println(" threshold is "+ConvertDateTime.convertSerialToDDHHMMSSString(otpThresholdAsDouble));
-
-										System.out.println(" at origin node: "+originNode);
-										System.out.print(" sched origin arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledOriginArrivalTimeAsDouble));
-										System.out.println(" actual origin arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualOriginArrivalTimeAsDouble));
-										System.out.print(" sched origin dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledOriginDepartureTimeAsDouble));
-										System.out.println(" actual origin dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualOriginDepartureTimeAsDouble));
-
-										System.out.println(" at destination node: "+destinationNode);
-										System.out.print(" sched destination arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDestinationArrivalTimeAsDouble));
-										System.out.println(" actual destination arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualDestinationArrivalTimeAsDouble));
-										System.out.print(" sched destination dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDestinationDepartureTimeAsDouble));
-										System.out.println(" actual destination dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualDestinationDepartureTimeAsDouble));
-
-										System.out.println(" scheduled transit time: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduleTransitTime));
-										System.out.println(" actual transit time: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualTransitTime));
-										System.out.println(" make: "+make);
-									}
+									System.out.println(" scheduled transit time: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduleTransitTime));
+									System.out.println(" actual transit time: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualTransitTime));
+									System.out.println(" make: "+make);
 								}
 							}
 						}
 					}
 				}
 			}
-			resultsMessage += "Computed OTP based on Actual vs Scheduled times between nodes specified in Config\n";
 		}	
 
 		resultsMessage += "Finished analyzing trains at "+ConvertDateTime.getTimeStamp()+("\n");

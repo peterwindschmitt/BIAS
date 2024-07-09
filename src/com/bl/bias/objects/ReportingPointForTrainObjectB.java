@@ -5,6 +5,7 @@ public class ReportingPointForTrainObjectB
 	private String originNode;
 	private Double scheduleOriginTimeToUse;
 	private Double actualOriginTimeToUse;
+	private Double lateAtOrigin;
 	private String destinationNode;
 	private Double scheduleDestinationTimeToUse;
 	private Double actualDestinationTimeToUse;
@@ -14,11 +15,12 @@ public class ReportingPointForTrainObjectB
 	private Integer num;
 	private Integer denom;
 	
-	public ReportingPointForTrainObjectB(String originNode, Double scheduleOriginTimeToUse, Double actualOriginTimeToUse, String destinationNode, Double scheduleDestinationTimeToUse, Double actualDestinationTimeToUse, Double scheduleTransitTime, Double actualTransitTime, String make, Integer num, Integer denom) 
+	public ReportingPointForTrainObjectB(String originNode, Double scheduleOriginTimeToUse, Double actualOriginTimeToUse, Double lateAtOrigin, String destinationNode, Double scheduleDestinationTimeToUse, Double actualDestinationTimeToUse, Double scheduleTransitTime, Double actualTransitTime, String make, Integer num, Integer denom) 
     {
         this.originNode = originNode;
         this.scheduleOriginTimeToUse = scheduleOriginTimeToUse;
         this.actualOriginTimeToUse = actualOriginTimeToUse;
+        this.lateAtOrigin = lateAtOrigin;
         this.destinationNode = destinationNode;
         this.scheduleDestinationTimeToUse = scheduleDestinationTimeToUse;
         this.actualDestinationTimeToUse = actualDestinationTimeToUse;
@@ -42,6 +44,11 @@ public class ReportingPointForTrainObjectB
 	public Double getActualOriginTimeToUseAsDouble()
 	{
 		return actualOriginTimeToUse;
+	}
+	
+	public Double getLateAtOriginAsDouble()
+	{
+		return lateAtOrigin;
 	}
 	
 	public String getDestinationNode()
