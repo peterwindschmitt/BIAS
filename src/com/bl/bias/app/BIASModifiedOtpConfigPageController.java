@@ -23,6 +23,11 @@ public class BIASModifiedOtpConfigPageController
 	private static Boolean c_exceptTrainsBasedOnExternalAndRunTimeStatus;
 	private static Boolean d_doNotExceptTrains; 
 
+	private static Boolean useMethodology1;
+	private static Boolean useMethodology2;
+
+	private static Boolean useOtpThresholds;
+
 	private static Boolean suppressTrainsAndResultsWithNoEligibleReportings;
 	private static String permissibleMinutesOfDelayOptionA; 
 	private static String permissibleMinutesOfDelayOptionB; 
@@ -30,7 +35,12 @@ public class BIASModifiedOtpConfigPageController
 	private static Boolean a_defaultExceptTrainsBasedOnExternalSchedule = false; 
 	private static Boolean b_defaultExceptTrainsBasedOnRunTimeStatus = false; 
 	private static Boolean c_defaultExceptTrainsBasedOnExternalAndRunTimeStatus = false;
-	private static Boolean d_defaultDoNotExceptTrains = true; 
+	private static Boolean d_defaultDoNotExceptTrains = true;
+
+	private static Boolean defaultUseMethodology1 = true;
+	private static Boolean defaultUseMethodology2 = false;
+
+	private static Boolean defaultUseOtpThresholds = true;
 
 	private static Boolean defaultSuppressTrainsAndResultsWithNoEligibleReportings = true;
 	private static String defaultPermissibleMinutesOfDelayOptionA = "10"; 
@@ -62,6 +72,12 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private RadioButton b_exceptTrainsBasedOnScheduledLatenessRadioButton;
 	@FXML private RadioButton c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton;
 	@FXML private RadioButton d_doNotExceptTrainsRadioButton;
+
+	@FXML private RadioButton methodology1RadioButton;
+	@FXML private RadioButton methodology2RadioButton;
+
+	@FXML private RadioButton applyOTPThresholdRadioButton;
+	@FXML private RadioButton doNotApplyOTPThresholdRadioButton;
 
 	@FXML private CheckBox suppressZeroEntryTrainsResultsCheckBox;
 
@@ -303,6 +319,42 @@ public class BIASModifiedOtpConfigPageController
 			d_doNotExceptTrains = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_exceptionsOptionD", false);
+		}
+
+		// See if preference is stored for applying OTP thresholds
+		if (prefs.getBoolean("mo_applyOtpThreshold", defaultUseOtpThresholds))
+		{
+			useOtpThresholds = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_applyOtpThreshold", true);
+			applyOTPThresholdRadioButton.setSelected(true);
+		}
+		else
+		{
+			useOtpThresholds = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_applyOtpThreshold", false);
+			doNotApplyOTPThresholdRadioButton.setSelected(true);
+		}
+
+		// See if preference is stored for applying methodology 1
+		if (prefs.getBoolean("mo_useMethodology1", defaultUseMethodology1))
+		{
+			useMethodology1 = true;
+			useMethodology2 = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_useMethodology1", true);
+			methodology1RadioButton.setSelected(true);
+		}
+		
+		// See if preference is stored for applying methodology 2
+		if (prefs.getBoolean("mo_useMethodology2", defaultUseMethodology2))
+		{
+			useMethodology1 = false;
+			useMethodology2 = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_useMethodology2", true);
+			methodology2RadioButton.setSelected(true);
 		}
 
 		// See if permissible minutes of delay is stored -- option A
@@ -723,6 +775,42 @@ public class BIASModifiedOtpConfigPageController
 			prefs.putBoolean("mo_exceptionsOptionC", false);
 			prefs.putBoolean("mo_exceptionsOptionD", true);
 		}
+	}
+
+	@FXML private void handleMethodology1RadioButton(ActionEvent e)
+	{
+		useMethodology1 = true;
+		useMethodology2 = false;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_useMethodology1", true);
+			prefs.putBoolean("mo_useMethodology2", false);
+		}
+	}
+	
+	@FXML private void handleMethodology2RadioButton(ActionEvent e)
+	{
+		useMethodology2 = false;
+		useMethodology2 = true;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_useMethodology1", false);
+			prefs.putBoolean("mo_useMethodology2", true);
+		}
+	}
+	
+	@FXML private void handleApplyOTPThresholdRadioButton(ActionEvent e)
+	{
+		useOtpThresholds = true;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putBoolean("mo_applyOtpThreshold", true);
+	}
+
+	@FXML private void handleDoNotApplyOTPThresholdRadioButton(ActionEvent e)
+	{
+		useOtpThresholds = false;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.putBoolean("mo_applyOtpThreshold", false);
 	}
 
 	@FXML private void handleSuppressZeroEntryTrainsResultsCheckBox(ActionEvent e)
@@ -3730,6 +3818,168 @@ public class BIASModifiedOtpConfigPageController
 		else
 			inputsConform = false;
 
+		// Actual Schedule Entry 19
+		if (originNode19ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode19ActualTextField.getText().trim();
+			originNode19ActualTextField.setText(origText.toUpperCase());
+			originNode19ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode19ActualTextField.getText().trim().equals(""))
+		{
+			originNode19ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode19ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode19ActualTextField.getText().trim();
+			destinationNode19ActualTextField.setText(origText.toUpperCase());
+			destinationNode19ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode19ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode19ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 20
+		if (originNode20ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode20ActualTextField.getText().trim();
+			originNode20ActualTextField.setText(origText.toUpperCase());
+			originNode20ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode20ActualTextField.getText().trim().equals(""))
+		{
+			originNode20ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode20ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode20ActualTextField.getText().trim();
+			destinationNode20ActualTextField.setText(origText.toUpperCase());
+			destinationNode20ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode20ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode20ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 21
+		if (originNode21ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode21ActualTextField.getText().trim();
+			originNode21ActualTextField.setText(origText.toUpperCase());
+			originNode21ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode21ActualTextField.getText().trim().equals(""))
+		{
+			originNode21ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode21ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode21ActualTextField.getText().trim();
+			destinationNode21ActualTextField.setText(origText.toUpperCase());
+			destinationNode21ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode21ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode21ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 18
+		if (originNode22ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode22ActualTextField.getText().trim();
+			originNode22ActualTextField.setText(origText.toUpperCase());
+			originNode22ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode22ActualTextField.getText().trim().equals(""))
+		{
+			originNode22ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode22ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode22ActualTextField.getText().trim();
+			destinationNode22ActualTextField.setText(origText.toUpperCase());
+			destinationNode22ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode22ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode22ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 23
+		if (originNode23ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode23ActualTextField.getText().trim();
+			originNode23ActualTextField.setText(origText.toUpperCase());
+			originNode23ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode23ActualTextField.getText().trim().equals(""))
+		{
+			originNode23ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode23ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode23ActualTextField.getText().trim();
+			destinationNode23ActualTextField.setText(origText.toUpperCase());
+			destinationNode23ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode23ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode23ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		// Actual Schedule Entry 24
+		if (originNode24ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = originNode24ActualTextField.getText().trim();
+			originNode24ActualTextField.setText(origText.toUpperCase());
+			originNode24ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (originNode24ActualTextField.getText().trim().equals(""))
+		{
+			originNode24ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
+		if (destinationNode24ActualTextField.getText().trim().toUpperCase().matches(nodePattern.toString()))
+		{
+			String origText = destinationNode24ActualTextField.getText().trim();
+			destinationNode24ActualTextField.setText(origText.toUpperCase());
+			destinationNode24ActualTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		}
+		else if (destinationNode24ActualTextField.getText().trim().equals(""))
+		{
+			destinationNode24ActualTextField.clear();
+		}
+		else
+			inputsConform = false;
+
 		if (inputsConform)
 		{
 			String entriesToWriteToRegistry = "";
@@ -5014,7 +5264,7 @@ public class BIASModifiedOtpConfigPageController
 		destinationNode23ActualTextField.setDisable(true);
 		originNode24ActualTextField.setDisable(true);
 		destinationNode24ActualTextField.setDisable(true);
-		
+
 		updateEntriesForActualButton.setDisable(true);
 		suppressZeroEntryTrainsResultsCheckBox.setDisable(true);
 		suppressZeroEntryTrainsResultsCheckBox.setSelected(false);
@@ -5158,14 +5408,19 @@ public class BIASModifiedOtpConfigPageController
 		destinationNode23ActualTextField.setDisable(false);
 		originNode24ActualTextField.setDisable(false);
 		destinationNode24ActualTextField.setDisable(false);
-		
+
 		updateEntriesForActualButton.setDisable(false);
 		suppressZeroEntryTrainsResultsCheckBox.setDisable(false);
 	}
 
-	public static String getPermissibleMinutesOfDelayAsString()
+	public static String getPermissibleMinutesOfDelayOptionAAsString()
 	{
 		return permissibleMinutesOfDelayOptionA;
+	}
+	
+	public static String getPermissibleMinutesOfDelayOptionBAsString()
+	{
+		return permissibleMinutesOfDelayOptionB;
 	}
 
 	public static String getSchedulePointEntries()
@@ -5182,10 +5437,35 @@ public class BIASModifiedOtpConfigPageController
 	{
 		return a_exceptTrainsBasedOnExternalSchedule;
 	}
+	
+	public static Boolean getB_exceptTrainsBasedOnRunTimeStatus()
+	{
+		return b_exceptTrainsBasedOnRunTimeStatus;
+	}
+	
+	public static Boolean getC_exceptTrainsBasedOnExternalAndRunTimeStatus()
+	{
+		return c_exceptTrainsBasedOnExternalAndRunTimeStatus;
+	}
 
 	public static Boolean getD_doNotExceptTrains()
 	{
 		return d_doNotExceptTrains;
+	}
+
+	public static Boolean getUseOtpThresholds()
+	{
+		return useOtpThresholds;
+	}
+	
+	public static Boolean getUseMethodology1()
+	{
+		return useMethodology1;
+	}
+	
+	public static Boolean getUseMethodology2()
+	{
+		return useMethodology2;
 	}
 
 	public static Boolean getSuppressTrainsAndResultsWithNoEligibleReportings()

@@ -36,7 +36,7 @@ public class ModifiedOtpAnalysis
 			exceptionsToOtpBasedOnScheduledVsConfig = 0;
 
 			// Get permissible minutes of deviation permitted
-			gracePeriodFromConfigFileAsString = BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayAsString();
+			gracePeriodFromConfigFileAsString = BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayOptionAAsString();
 			gracePeriodFromConfigFileAsSerial = ConvertDateTime.convertDDHHMMStringToSerial(gracePeriodFromConfigFileAsString);
 
 			// Assign all trains from Read class
