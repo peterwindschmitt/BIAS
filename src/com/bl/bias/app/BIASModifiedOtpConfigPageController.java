@@ -65,6 +65,15 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private Label node3Label;
 	@FXML private Label departureTime3Label;
 
+	@FXML private Label originMeasuringPointCol1;
+	@FXML private Label destMeasuringPointCol1;
+	@FXML private Label originMeasuringPointCol2;
+	@FXML private Label destMeasuringPointCol2;
+	@FXML private Label originMeasuringPointCol3;
+	@FXML private Label destMeasuringPointCol3;
+	
+	@FXML private Label minutesFromExternalOrigin;
+	
 	@FXML private ComboBox<String> exceptTrainsOptionACombobox;
 	@FXML private ComboBox<String> exceptTrainsOptionBCombobox;
 
@@ -713,7 +722,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		enableAllControlsForLatenessToExternalSchedule();
-
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", true);
@@ -731,7 +740,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		disableAllControlsForLatenessToExternalSchedule();
-
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", false);
@@ -749,7 +758,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		enableAllControlsForLatenessToExternalSchedule();
-
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", false);
@@ -767,7 +776,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = true;
 
 		disableAllControlsForLatenessToExternalSchedule();
-
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", false);
@@ -5211,64 +5220,8 @@ public class BIASModifiedOtpConfigPageController
 		node24TextField.setDisable(true);
 		departureTime24TextField.setDisable(true);
 
+		minutesFromExternalOrigin.setDisable(true);
 		updateEntriesForScheduledButton.setDisable(true);
-	}
-
-	private void disableAllControlsForActualSchedule()
-	{
-		originNode1ActualTextField.setDisable(true);
-		destinationNode1ActualTextField.setDisable(true);
-		originNode2ActualTextField.setDisable(true);
-		destinationNode2ActualTextField.setDisable(true);
-		originNode3ActualTextField.setDisable(true);
-		destinationNode3ActualTextField.setDisable(true);
-		originNode4ActualTextField.setDisable(true);
-		destinationNode4ActualTextField.setDisable(true);
-		originNode5ActualTextField.setDisable(true);
-		destinationNode5ActualTextField.setDisable(true);
-		originNode6ActualTextField.setDisable(true);
-		destinationNode6ActualTextField.setDisable(true);
-		originNode7ActualTextField.setDisable(true);
-		destinationNode7ActualTextField.setDisable(true);
-		originNode8ActualTextField.setDisable(true);
-		destinationNode8ActualTextField.setDisable(true);
-		originNode9ActualTextField.setDisable(true);
-		destinationNode9ActualTextField.setDisable(true);
-		originNode10ActualTextField.setDisable(true);
-		destinationNode10ActualTextField.setDisable(true);
-		originNode11ActualTextField.setDisable(true);
-		destinationNode11ActualTextField.setDisable(true);
-		originNode12ActualTextField.setDisable(true);
-		destinationNode12ActualTextField.setDisable(true);
-		originNode13ActualTextField.setDisable(true);
-		destinationNode13ActualTextField.setDisable(true);
-		originNode14ActualTextField.setDisable(true);
-		destinationNode14ActualTextField.setDisable(true);
-		originNode15ActualTextField.setDisable(true);
-		destinationNode15ActualTextField.setDisable(true);
-		originNode16ActualTextField.setDisable(true);
-		destinationNode16ActualTextField.setDisable(true);
-		originNode17ActualTextField.setDisable(true);
-		destinationNode17ActualTextField.setDisable(true);
-		originNode18ActualTextField.setDisable(true);
-		destinationNode18ActualTextField.setDisable(true);
-		originNode19ActualTextField.setDisable(true);
-		destinationNode19ActualTextField.setDisable(true);
-		originNode20ActualTextField.setDisable(true);
-		destinationNode20ActualTextField.setDisable(true);
-		originNode21ActualTextField.setDisable(true);
-		destinationNode21ActualTextField.setDisable(true);
-		originNode22ActualTextField.setDisable(true);
-		destinationNode22ActualTextField.setDisable(true);
-		originNode23ActualTextField.setDisable(true);
-		destinationNode23ActualTextField.setDisable(true);
-		originNode24ActualTextField.setDisable(true);
-		destinationNode24ActualTextField.setDisable(true);
-
-		updateEntriesForActualButton.setDisable(true);
-		suppressZeroEntryTrainsResultsCheckBox.setDisable(true);
-		suppressZeroEntryTrainsResultsCheckBox.setSelected(false);
-		suppressTrainsAndResultsWithNoEligibleReportings = false;
 	}
 
 	private void enableAllControlsForLatenessToExternalSchedule()
@@ -5355,64 +5308,10 @@ public class BIASModifiedOtpConfigPageController
 		node24TextField.setDisable(false);
 		departureTime24TextField.setDisable(false);
 
+		minutesFromExternalOrigin.setDisable(false);
 		updateEntriesForScheduledButton.setDisable(false);
 	}
-
-	private void enableAllControlsForActualSchedule()
-	{
-		originNode1ActualTextField.setDisable(false);
-		destinationNode1ActualTextField.setDisable(false);
-		originNode2ActualTextField.setDisable(false);
-		destinationNode2ActualTextField.setDisable(false);
-		originNode3ActualTextField.setDisable(false);
-		destinationNode3ActualTextField.setDisable(false);
-		originNode4ActualTextField.setDisable(false);
-		destinationNode4ActualTextField.setDisable(false);
-		originNode5ActualTextField.setDisable(false);
-		destinationNode5ActualTextField.setDisable(false);
-		originNode6ActualTextField.setDisable(false);
-		destinationNode6ActualTextField.setDisable(false);
-		originNode7ActualTextField.setDisable(false);
-		destinationNode7ActualTextField.setDisable(false);
-		originNode8ActualTextField.setDisable(false);
-		destinationNode8ActualTextField.setDisable(false);
-		originNode9ActualTextField.setDisable(false);
-		destinationNode9ActualTextField.setDisable(false);
-		originNode10ActualTextField.setDisable(false);
-		destinationNode10ActualTextField.setDisable(false);
-		originNode11ActualTextField.setDisable(false);
-		destinationNode11ActualTextField.setDisable(false);
-		originNode12ActualTextField.setDisable(false);
-		destinationNode12ActualTextField.setDisable(false);
-		originNode13ActualTextField.setDisable(false);
-		destinationNode13ActualTextField.setDisable(false);
-		originNode14ActualTextField.setDisable(false);
-		destinationNode14ActualTextField.setDisable(false);
-		originNode15ActualTextField.setDisable(false);
-		destinationNode15ActualTextField.setDisable(false);
-		originNode16ActualTextField.setDisable(false);
-		destinationNode16ActualTextField.setDisable(false);
-		originNode17ActualTextField.setDisable(false);
-		destinationNode17ActualTextField.setDisable(false);
-		originNode18ActualTextField.setDisable(false);
-		destinationNode18ActualTextField.setDisable(false);
-		originNode19ActualTextField.setDisable(false);
-		destinationNode19ActualTextField.setDisable(false);
-		originNode20ActualTextField.setDisable(false);
-		destinationNode20ActualTextField.setDisable(false);
-		originNode21ActualTextField.setDisable(false);
-		destinationNode21ActualTextField.setDisable(false);
-		originNode22ActualTextField.setDisable(false);
-		destinationNode22ActualTextField.setDisable(false);
-		originNode23ActualTextField.setDisable(false);
-		destinationNode23ActualTextField.setDisable(false);
-		originNode24ActualTextField.setDisable(false);
-		destinationNode24ActualTextField.setDisable(false);
-
-		updateEntriesForActualButton.setDisable(false);
-		suppressZeroEntryTrainsResultsCheckBox.setDisable(false);
-	}
-
+	
 	public static String getPermissibleMinutesOfDelayOptionAAsString()
 	{
 		return permissibleMinutesOfDelayOptionA;
