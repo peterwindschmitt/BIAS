@@ -225,18 +225,21 @@ public class ReadModifiedOtpFiles
 					}
 					else if (lineFromFile.contains(targetSequence0)) 
 					{ 
-						targetSequence0Found = true;
-
 						trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])).trim();
-						performanceEntry = new ModifiedOtpTrainObject(performanceFile.getName(), trainSymbol);
+						if (eligibleTrainsFromTrainFile.containsKey(trainSymbol.split("-")[0]))
+						{
+							targetSequence0Found = true;
+
+							performanceEntry = new ModifiedOtpTrainObject(performanceFile.getName(), trainSymbol);
 
 							for (int i = 0; i < 5; i++)
 								scanner.nextLine();
+						}
 					}
 					else if ((targetSequence0Found) && (lineFromFile.contains(targetSequence1)))
 					{
 						targetSequence0Found = false;
-						
+
 						performanceFileEntries.add(performanceEntry);
 					}
 					else if (targetSequence0Found)
