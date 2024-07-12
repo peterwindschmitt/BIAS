@@ -273,6 +273,7 @@ public class BIASModifiedOtpConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_exceptionsOptionA", true);
 			enableAllControlsForLatenessToExternalSchedule();
+			exceptTrainsOptionBCombobox.setDisable(true);
 			a_exceptTrainsBasedOnExternalTimesRadioButton.setSelected(true);
 		}
 		else
@@ -289,6 +290,7 @@ public class BIASModifiedOtpConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_exceptionsOptionB", true);
 			disableAllControlsForLatenessToExternalSchedule();
+			exceptTrainsOptionBCombobox.setDisable(false);
 			b_exceptTrainsBasedOnScheduledLatenessRadioButton.setSelected(true);
 		}
 		else
@@ -305,6 +307,7 @@ public class BIASModifiedOtpConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_exceptionsOptionC", true);
 			enableAllControlsForLatenessToExternalSchedule();
+			exceptTrainsOptionBCombobox.setDisable(false);
 			c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton.setSelected(true);
 		}
 		else
@@ -321,6 +324,7 @@ public class BIASModifiedOtpConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_exceptionsOptionD", true);
 			disableAllControlsForLatenessToExternalSchedule();
+			exceptTrainsOptionBCombobox.setDisable(true);
 			d_doNotExceptTrainsRadioButton.setSelected(true);
 		}
 		else
@@ -722,6 +726,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		enableAllControlsForLatenessToExternalSchedule();
+		exceptTrainsOptionBCombobox.setDisable(false);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -740,6 +745,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		disableAllControlsForLatenessToExternalSchedule();
+		exceptTrainsOptionBCombobox.setDisable(false);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -758,6 +764,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		enableAllControlsForLatenessToExternalSchedule();
+		exceptTrainsOptionBCombobox.setDisable(false);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -776,6 +783,7 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = true;
 
 		disableAllControlsForLatenessToExternalSchedule();
+		exceptTrainsOptionBCombobox.setDisable(true);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{

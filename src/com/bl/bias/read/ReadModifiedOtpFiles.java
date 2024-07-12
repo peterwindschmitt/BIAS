@@ -12,24 +12,24 @@ import java.util.Scanner;
 import com.bl.bias.app.BIASModifiedOtpConfigPageController;
 import com.bl.bias.app.BIASParseConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.objects.ModifiedOtpTrainObjectB;
-import com.bl.bias.objects.SchedulePointForTrainObjectB;
+import com.bl.bias.objects.ModifiedOtpTrainObject;
+import com.bl.bias.objects.SchedulePointForTrainObject;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class ReadModifiedOtpFiles 
 {
 	private static HashSet<String> trainOriginDataFromConfigFile = new HashSet<String>();
-	private static HashMap<String, String> enabledTrainsFromTrainFile = new HashMap<String, String>();  // Symbol, type
+	private static HashMap<String, String> eligibleTrainsFromTrainFile = new HashMap<String, String>();  // Symbol, type -- train must be enabled and not excluded from OTP stats
 	private static HashMap<String, String> otpThresholdsFromOptionFile = new HashMap<String, String>();  // Type, threshold
 	private static ArrayList<File> performanceFiles = new ArrayList<File>();  // Performance files
-	private static ArrayList<ModifiedOtpTrainObjectB> performanceFileEntries = new ArrayList<ModifiedOtpTrainObjectB>();
+	private static ArrayList<ModifiedOtpTrainObject> performanceFileEntries = new ArrayList<ModifiedOtpTrainObject>();
 
 	private static String resultsMessage;
 
 	public ReadModifiedOtpFiles(String file) throws IOException
 	{
 		trainOriginDataFromConfigFile.clear();
-		enabledTrainsFromTrainFile.clear();
+		eligibleTrainsFromTrainFile.clear();
 		otpThresholdsFromOptionFile.clear();
 		performanceFiles.clear();
 		performanceFileEntries.clear();
@@ -57,11 +57,13 @@ public class ReadModifiedOtpFiles
 			String targetSequence1 = "Train symbol:";
 			String targetSequence2 = "Train type:";
 			String targetSequence3 = "Enabled:";
-			String targetSequence4 = "-------";
+			String targetSequence4 = "Exclude from OTP statistics:";
+			String targetSequence5 = "-------";
 
 			String trainSymbol = "";
 			String trainType = "";
 			Boolean trainEnabled = false;
+			Boolean trainNotExcluded = false;
 
 			while (scanner.hasNextLine()) 
 			{
@@ -72,6 +74,7 @@ public class ReadModifiedOtpFiles
 					trainSymbol = "";
 					trainType = "";
 					trainEnabled = false;
+					trainNotExcluded = false;
 				}
 				else if ((openingSequence) && (lineFromFile.contains(targetSequence1)))
 				{
@@ -90,12 +93,19 @@ public class ReadModifiedOtpFiles
 				}
 				else if ((openingSequence) && (lineFromFile.contains(targetSequence4)))
 				{
-					if (trainEnabled)
-						enabledTrainsFromTrainFile.put(trainSymbol, trainType);
+					if (lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[0]), Integer.valueOf(BIASParseConfigPageController.t_getOtpExcluded()[1])).trim().toLowerCase().equals("no"))
+					{
+						trainNotExcluded = true;
+					}
+				}
+				else if ((openingSequence) && (lineFromFile.contains(targetSequence5)))
+				{
+					if ((trainEnabled) && (trainNotExcluded))
+						eligibleTrainsFromTrainFile.put(trainSymbol, trainType);
 					openingSequence = false;
 				}
 			}
-			resultsMessage +="Extracted "+enabledTrainsFromTrainFile.size()+" enabled trains from the .TRAIN file\n";
+			resultsMessage +="Extracted "+eligibleTrainsFromTrainFile.size()+" eligible trains from the .TRAIN file\n";
 		}
 		catch (Exception e) 
 		{
@@ -199,7 +209,7 @@ public class ReadModifiedOtpFiles
 
 				String trainSymbol = null;
 				Boolean targetSequence0Found = false;
-				ModifiedOtpTrainObjectB performanceEntry = null;
+				ModifiedOtpTrainObject performanceEntry = null;
 
 				String targetSequence0 = "Train:";
 				String targetSequence1 = "-------";
@@ -218,14 +228,15 @@ public class ReadModifiedOtpFiles
 						targetSequence0Found = true;
 
 						trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])).trim();
-						performanceEntry = new ModifiedOtpTrainObjectB(performanceFile.getName(), trainSymbol);
+						performanceEntry = new ModifiedOtpTrainObject(performanceFile.getName(), trainSymbol);
 
-						for (int i = 0; i < 5; i++)
-							scanner.nextLine();
+							for (int i = 0; i < 5; i++)
+								scanner.nextLine();
 					}
 					else if ((targetSequence0Found) && (lineFromFile.contains(targetSequence1)))
 					{
 						targetSequence0Found = false;
+						
 						performanceFileEntries.add(performanceEntry);
 					}
 					else if (targetSequence0Found)
@@ -251,7 +262,7 @@ public class ReadModifiedOtpFiles
 							Double actualArrivalTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(actualArrivalTimeAsString);
 							Double actualDepartureTimeAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(actualDepartureTimeAsString);
 
-							SchedulePointForTrainObjectB point = new SchedulePointForTrainObjectB(scheduleNode, scheduledArrivalTimeAsDouble, scheduledDepartureTimeAsDouble, actualArrivalTimeAsDouble, actualDepartureTimeAsDouble);
+							SchedulePointForTrainObject point = new SchedulePointForTrainObject(scheduleNode, scheduledArrivalTimeAsDouble, scheduledDepartureTimeAsDouble, actualArrivalTimeAsDouble, actualDepartureTimeAsDouble);
 							performanceEntry.addSchedulePoint(point);
 						}
 					}
@@ -278,7 +289,7 @@ public class ReadModifiedOtpFiles
 
 	public static HashMap<String, String> getEnabledTrainsFromTrainFile()
 	{
-		return enabledTrainsFromTrainFile;
+		return eligibleTrainsFromTrainFile;
 	}
 
 	public static HashMap<String, String> getOtpThresholdsFromOptionFile()
@@ -291,7 +302,7 @@ public class ReadModifiedOtpFiles
 		return resultsMessage;
 	}
 
-	public static ArrayList<ModifiedOtpTrainObjectB> getPerformanceFileEntries() 
+	public static ArrayList<ModifiedOtpTrainObject> getPerformanceFileEntries() 
 	{
 		return performanceFileEntries;
 	}

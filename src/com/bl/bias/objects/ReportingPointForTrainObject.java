@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class ReportingPointForTrainObjectB 
+public class ReportingPointForTrainObject 
 {
 	private String originNode;
 	private Double scheduleOriginTimeToUse;
@@ -15,7 +15,7 @@ public class ReportingPointForTrainObjectB
 	private Integer num;
 	private Integer denom;
 	
-	public ReportingPointForTrainObjectB(String originNode, Double scheduleOriginTimeToUse, Double actualOriginTimeToUse, Double lateAtOrigin, String destinationNode, Double scheduleDestinationTimeToUse, Double actualDestinationTimeToUse, Double scheduleTransitTime, Double actualTransitTime, String make, Integer num, Integer denom) 
+	public ReportingPointForTrainObject(String originNode, Double scheduleOriginTimeToUse, Double actualOriginTimeToUse, Double lateAtOrigin, String destinationNode, Double scheduleDestinationTimeToUse, Double actualDestinationTimeToUse, Double scheduleTransitTime, Double actualTransitTime, String make, Integer num, Integer denom) 
     {
         this.originNode = originNode;
         this.scheduleOriginTimeToUse = scheduleOriginTimeToUse;

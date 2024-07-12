@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class SchedulePointForTrainObjectB 
+public class SchedulePointForTrainObject 
 {
 	private String scheduleNode;
 	private Double scheduledArrivalTime;
@@ -8,7 +8,7 @@ public class SchedulePointForTrainObjectB
 	private Double actualArrivalTime;
 	private Double actualDepartureTime;
 	
-	public SchedulePointForTrainObjectB(String scheduleNode, Double scheduledArrivalTime, Double scheduledDepartureTime, Double actualArrivalTime, Double actualDepartureTime) 
+	public SchedulePointForTrainObject(String scheduleNode, Double scheduledArrivalTime, Double scheduledDepartureTime, Double actualArrivalTime, Double actualDepartureTime) 
     {
         this.scheduleNode = scheduleNode;
         this.scheduledArrivalTime = scheduledArrivalTime;

@@ -63,7 +63,7 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <RadioButton fx:id="methodology2RadioButton" disable="true" mnemonicParsing="false" onAction="#handleMethodology2RadioButton" text="Methodology 2" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <RadioButton fx:id="methodology2RadioButton" mnemonicParsing="false" onAction="#handleMethodology2RadioButton" text="Methodology 2" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -114,17 +114,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </RadioButton>
-                        <RadioButton fx:id="b_exceptTrainsBasedOnScheduledLatenessRadioButton" disable="true" mnemonicParsing="false" onAction="#handleB_exceptTrainsBasedOnScheduledLatenessRadioButton" text="B:  Except run-time trains that depart later than" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <RadioButton fx:id="b_exceptTrainsBasedOnScheduledLatenessRadioButton" mnemonicParsing="false" onAction="#handleB_exceptTrainsBasedOnScheduledLatenessRadioButton" text="B:  Except run-time trains that depart later than" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </RadioButton>
-                        <ComboBox fx:id="exceptTrainsOptionBCombobox" disable="true" maxWidth="70.0" minWidth="70.0" onAction="#handleExceptTrainsOptionBCombobox" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <ComboBox fx:id="exceptTrainsOptionBCombobox" maxWidth="70.0" minWidth="70.0" onAction="#handleExceptTrainsOptionBCombobox" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="130.0" />
                            </GridPane.margin>
                         </ComboBox>
-                        <Label fx:id="minutesFromScheduledTime" disable="true" text="minutes from their scheduled time at origin node on 'Measuring Points' page" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <Label fx:id="minutesFromScheduledTime" text="minutes from their scheduled time at origin node on 'Measuring Points' page" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="210.0" />
                            </GridPane.margin>

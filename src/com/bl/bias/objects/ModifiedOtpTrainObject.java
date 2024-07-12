@@ -2,7 +2,7 @@ package com.bl.bias.objects;
 
 import java.util.ArrayList;
 
-public class ModifiedOtpTrainObjectB 
+public class ModifiedOtpTrainObject 
 {
 	private String performanceFileName;
 	private String trainSymbol;
@@ -10,10 +10,10 @@ public class ModifiedOtpTrainObjectB
 	
 	private Double otpThresholdAsDouble = 0.0;
 	
-	ArrayList<SchedulePointForTrainObjectB> schedulePoints = new ArrayList<SchedulePointForTrainObjectB>();
-	ArrayList<ReportingPointForTrainObjectB> reportingPoints = new ArrayList<ReportingPointForTrainObjectB>();
+	ArrayList<SchedulePointForTrainObject> schedulePoints = new ArrayList<SchedulePointForTrainObject>();
+	ArrayList<ReportingPointForTrainObject> reportingPoints = new ArrayList<ReportingPointForTrainObject>();
 
-	public ModifiedOtpTrainObjectB(String performanceFileName, String trainSymbol) 
+	public ModifiedOtpTrainObject(String performanceFileName, String trainSymbol) 
 	{
 		this.performanceFileName = performanceFileName;
 		this.trainSymbol = trainSymbol;
@@ -49,22 +49,22 @@ public class ModifiedOtpTrainObjectB
 		return trainType;
 	}
 	
-	public void addSchedulePoint(SchedulePointForTrainObjectB point)
+	public void addSchedulePoint(SchedulePointForTrainObject point)
 	{
 		schedulePoints.add(point);
 	}
 	
-	public ArrayList<SchedulePointForTrainObjectB> getSchedulePoints()
+	public ArrayList<SchedulePointForTrainObject> getSchedulePoints()
 	{
 		return schedulePoints;
 	}
 	
-	public void addReportingPoint(ReportingPointForTrainObjectB point)
+	public void addReportingPoint(ReportingPointForTrainObject point)
 	{
 		reportingPoints.add(point);
 	}
 	
-	public ArrayList<ReportingPointForTrainObjectB> getReportingPoints()
+	public ArrayList<ReportingPointForTrainObject> getReportingPoints()
 	{
 		return reportingPoints;
 	}

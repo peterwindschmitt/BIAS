@@ -21,7 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.analyze.ModifiedOtpAnalysis;
 import com.bl.bias.app.BIASModifiedOtpConfigPageController;
-import com.bl.bias.objects.ModifiedOtpTrainObjectB;
+import com.bl.bias.objects.ModifiedOtpTrainObject;
 import com.bl.bias.read.ReadModifiedOtpFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -31,7 +31,7 @@ public class WriteModifiedOtpFiles1
 	protected static String resultsMessage1 = "\nStarted writing output file at "+startWriteFileTime;
 	private static Boolean error = false;
 
-	ArrayList<ModifiedOtpTrainObjectB> trainPeformanceFiles = new ArrayList<ModifiedOtpTrainObjectB>();
+	ArrayList<ModifiedOtpTrainObject> trainPeformanceFiles = new ArrayList<ModifiedOtpTrainObject>();
 	HashMap<String, int[]> trainMakeData = new HashMap<String, int[]>();
 
 	XSSFWorkbook workbook = new XSSFWorkbook();
@@ -254,7 +254,11 @@ public class WriteModifiedOtpFiles1
 				cell.setCellValue(trainPeformanceFiles.get(i).getTrainType());
 
 				// Train's OTP Threshold
-				String trainOtpThresholdAsString = ConvertDateTime.convertSerialToHHMMString(trainPeformanceFiles.get(i).getOtpThresholdAsDouble());
+				String trainOtpThresholdAsString;
+				if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
+					trainOtpThresholdAsString = ConvertDateTime.convertSerialToHHMMString(trainPeformanceFiles.get(i).getOtpThresholdAsDouble());
+				else
+					trainOtpThresholdAsString = "N/A";
 				cell = row.createCell(3);
 				cell.setCellStyle(style1);
 				cell.setCellValue(trainOtpThresholdAsString);
@@ -399,20 +403,64 @@ public class WriteModifiedOtpFiles1
 		row = modifiedOtpSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style2);
-		cell.setCellValue("A train, for a given O/D pair, is a 'make':");
+		cell.setCellValue("A train, for a given set of origin/destination measuring points, counts as an OTP 'make' if:");
 
-		rowCounter++;
-		row = modifiedOtpSheet.createRow(rowCounter);
-		cell = row.createCell(0);
-		cell.setCellStyle(style2);
-		cell.setCellValue("1. If (actual destination OS time) <= (scheduled destination time + OTP threshold)");
-
-		rowCounter++;
-		row = modifiedOtpSheet.createRow(rowCounter);
-		cell = row.createCell(0);
-		cell.setCellStyle(style2);
-		cell.setCellValue("2. When actual origin OS time is later than scheduled origin OS time, then a make is recorded if (actual destination time) <= (actual origin time + scheduled traversal time + OTP threshold)");
-
+		
+		
+		
+		if ((BIASModifiedOtpConfigPageController.getUseMethodology1()) && (BIASModifiedOtpConfigPageController.getUseOtpThresholds()))
+		{
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("1. If (actual destination OS time) <= (scheduled destination time + OTP threshold); or");
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("2. When actual origin OS time is later than scheduled origin OS time, then a make is recorded if (actual destination time) <= (actual origin time + scheduled traversal time + OTP threshold)");
+		}
+		else if ((BIASModifiedOtpConfigPageController.getUseMethodology1()) && (!BIASModifiedOtpConfigPageController.getUseOtpThresholds()))
+		{
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("1. If (actual destination OS time) <= (scheduled destination time); or");
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("2. When actual origin OS time is later than scheduled origin OS time, then a make is recorded if (actual destination time) <= (actual origin time + scheduled traversal time)");
+		}
+		else if ((BIASModifiedOtpConfigPageController.getUseMethodology2()) && (BIASModifiedOtpConfigPageController.getUseOtpThresholds()))
+		{
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("1. If (actual destination OS time) <= (scheduled destination time + OTP threshold)");
+		}
+		else if ((BIASModifiedOtpConfigPageController.getUseMethodology2()) && (!BIASModifiedOtpConfigPageController.getUseOtpThresholds()))
+		{
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("1. If (actual destination OS time) <= (scheduled destination time)");
+		}	
+		
+		// Are trains excepted
+		if (BIASModifiedOtpConfigPageController.getD_doNotExceptTrains())
+		{
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style2);
+			cell.setCellValue("No trains are 'excepted' due to lateness at origin");
+		}	
+		
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
