@@ -111,7 +111,9 @@ public class ModifiedOtpAnalysis
 								Integer denom = 0;
 
 								// If late at origin based on train's schedule
-								if (lateAtOrigin > exceptTrainThresholdFromConfigFileAsSerial)
+								if ((lateAtOrigin > exceptTrainThresholdFromConfigFileAsSerial) && 
+										((BIASModifiedOtpConfigPageController.getB_exceptTrainsBasedOnRunTimeStatus() ||
+												BIASModifiedOtpConfigPageController.getC_exceptTrainsBasedOnExternalAndRunTimeStatus())))
 								{
 									make = "EXCEPT";	
 									num = 0;
@@ -119,13 +121,13 @@ public class ModifiedOtpAnalysis
 									exceptedTrainCount++;
 								}
 								// Else if late at origin based on external time provided in config file
-								else if (0 == 1)
-								{
-									make = "EXCEPT";	
-									num = 0;
-									denom = 0;
-									exceptedTrainCount++;
-								}
+								//else if (0 == 1)
+								//{
+								//	make = "EXCEPT";	
+								//	num = 0;
+								//	denom = 0;
+								//	exceptedTrainCount++;
+								//}
 								//  Methodology 1 
 								else if (BIASModifiedOtpConfigPageController.getUseMethodology1())
 								{
