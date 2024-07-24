@@ -3,7 +3,6 @@ package com.bl.bias.read;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -232,7 +231,7 @@ public class ReadModifiedOtpFiles
 
 							performanceEntry = new ModifiedOtpTrainObject(performanceFile.getName(), trainSymbol);
 
-							for (int i = 0; i < 5; i++)
+							for (int i = 0; i < 4; i++)
 								scanner.nextLine();
 						}
 					}

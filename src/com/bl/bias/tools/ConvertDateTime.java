@@ -39,18 +39,18 @@ public class ConvertDateTime
 		}
 
 		// minutes
-		if ((stringLength > 5) && proceed)
+		if ((stringLength > 5) && (proceed))
 		{
 			CharSequence minutes = stringTime.subSequence(stringLength-5, stringLength-3);
 			minutesTotal = Integer.valueOf((String) minutes);
 		}
-		else if (stringLength == 5)
+		else if ((stringLength == 5) && (proceed))
 		{
 			CharSequence minutes = stringTime.subSequence(stringLength-5, stringLength-3);
 			minutesTotal = Integer.valueOf((String) minutes);
 			proceed = false;
 		}
-		else if (stringLength == 4)
+		else if ((stringLength == 4) && (proceed))
 		{
 			CharSequence minutes= stringTime.subSequence(stringLength-4, stringLength-3);
 			minutesTotal = Integer.valueOf((String) minutes);
@@ -67,13 +67,13 @@ public class ConvertDateTime
 			CharSequence hours = stringTime.subSequence(stringLength-8, stringLength-6);
 			hoursTotal = Integer.valueOf((String) hours);
 		}
-		else if (stringLength == 8)
+		else if ((stringLength == 8) && proceed)
 		{
 			CharSequence hours = stringTime.subSequence(stringLength-8, stringLength-6);
 			hoursTotal = Integer.valueOf((String) hours);
 			proceed = false;
 		}
-		else if (stringLength == 7)
+		else if ((stringLength == 7) && proceed)
 		{
 			CharSequence hours = stringTime.subSequence(stringLength-7, stringLength-6);
 			hoursTotal = Integer.valueOf((String) hours);
@@ -129,18 +129,18 @@ public class ConvertDateTime
 		}
 
 		// hours            	
-		if ((stringLength > 5) && proceed)
+		if ((stringLength > 5) && (proceed))
 		{
 			CharSequence hours = stringTime.subSequence(stringLength-5, stringLength-3);
 			hoursTotal = Integer.valueOf((String) hours);
 		}
-		else if (stringLength == 5)
+		else if ((stringLength == 5) && (proceed))
 		{
 			CharSequence hours = stringTime.subSequence(stringLength-5, stringLength-3);
 			hoursTotal = Integer.valueOf((String) hours);
 			proceed = false;
 		}
-		else if (stringLength == 1)
+		else if ((stringLength == 1) && (proceed))
 		{
 			CharSequence hours = stringTime.subSequence(stringLength-4, stringLength-2);
 			hoursTotal = Integer.valueOf((String) hours);
@@ -159,6 +159,61 @@ public class ConvertDateTime
 		}
 
 		int totalElapsedSeconds = (minutesTotal * 60) + (hoursTotal * 60 * 60) + (daysTotal * 60 * 60 * 24);
+		Double totalElapsedSerialTime = (double) totalElapsedSeconds / (double) 86400;
+
+		return totalElapsedSerialTime;
+	}
+	
+	public static double convertHHMMStringToSerial(String stringTime)
+	{
+		// Convert text to seconds
+		Integer stringLength = stringTime.length();
+		Integer minutesTotal = 0;
+		Integer hoursTotal = 0;
+		boolean proceed = true;
+
+		// minutes
+		if ((stringLength > 2) && proceed)
+		{
+			CharSequence minutes = stringTime.subSequence(stringLength-2, stringLength);
+			minutesTotal = Integer.valueOf((String) minutes);
+		}
+		else if (stringLength == 2)
+		{
+			CharSequence minutes = stringTime.subSequence(stringLength-2, stringLength);
+			minutesTotal = Integer.valueOf((String) minutes);
+			proceed = false;
+		}
+		else if (stringLength == 1)
+		{
+			CharSequence minutes= stringTime.subSequence(stringLength-1, stringLength);
+			minutesTotal = Integer.valueOf((String) minutes);
+			proceed = false;
+		}
+		else
+		{
+			proceed = false;
+		}
+		
+		// hours            	
+		if ((stringLength == 5) && (proceed))
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-5, stringLength-3);
+			hoursTotal = Integer.valueOf((String) hours);
+			proceed = false;
+		}
+		else if ((stringLength == 4) && (proceed))
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-4, stringLength-3);
+			hoursTotal = Integer.valueOf((String) hours);
+			proceed = false;
+		}
+		else
+		{
+			proceed = false;
+		}
+		
+		int totalElapsedSeconds = (minutesTotal * 60) + (hoursTotal * 60 * 60);
 		Double totalElapsedSerialTime = (double) totalElapsedSeconds / (double) 86400;
 
 		return totalElapsedSerialTime;
@@ -582,6 +637,84 @@ public class ConvertDateTime
 		int totalElapsedSeconds = secondsTotal + (minutesTotal * 60) + (hoursTotal * 60 * 60);
 
 		return totalElapsedSeconds;
+	}
+	
+	public static double removeDDfromDDHHMMSSStringAndConvertToSerial(String stringTime)
+	{
+		// Convert text to seconds
+		Integer stringLength = stringTime.length();
+		Integer secondsTotal = 0;
+		Integer minutesTotal = 0;
+		Integer hoursTotal = 0;
+		boolean proceed = true;
+
+		// seconds
+		if (stringLength == 0)
+		{
+			secondsTotal = 0;
+			proceed = false;
+		}
+		else if (stringLength > 1)
+		{
+			CharSequence seconds = stringTime.subSequence(stringLength-2, stringLength);
+			secondsTotal = Integer.valueOf((String) seconds);
+		}
+		else
+		{
+			CharSequence seconds= stringTime.subSequence(stringLength-1, stringLength);
+			secondsTotal = Integer.valueOf((String) seconds);
+			proceed = false;
+		}
+
+		// minutes
+		if ((stringLength > 5) && proceed)
+		{
+			CharSequence minutes = stringTime.subSequence(stringLength-5, stringLength-3);
+			minutesTotal = Integer.valueOf((String) minutes);
+		}
+		else if (stringLength == 5)
+		{
+			CharSequence minutes = stringTime.subSequence(stringLength-5, stringLength-3);
+			minutesTotal = Integer.valueOf((String) minutes);
+			proceed = false;
+		}
+		else if (stringLength == 4)
+		{
+			CharSequence minutes= stringTime.subSequence(stringLength-4, stringLength-3);
+			minutesTotal = Integer.valueOf((String) minutes);
+			proceed = false;
+		}
+		else
+		{
+			proceed = false;
+		}
+
+		// hours            	
+		if ((stringLength > 8) && proceed)
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-8, stringLength-6);
+			hoursTotal = Integer.valueOf((String) hours);
+		}
+		else if (stringLength == 8)
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-8, stringLength-6);
+			hoursTotal = Integer.valueOf((String) hours);
+			proceed = false;
+		}
+		else if (stringLength == 7)
+		{
+			CharSequence hours = stringTime.subSequence(stringLength-7, stringLength-6);
+			hoursTotal = Integer.valueOf((String) hours);
+			proceed = false;
+		}
+		else
+		{
+			proceed = false;
+		}
+
+		int totalElapsedSeconds = secondsTotal + (minutesTotal * 60) + (hoursTotal * 60 * 60);
+
+		return ((double) totalElapsedSeconds / (double) 86400);
 	}
 
 	public static Integer convertSecondsToHH(int totalSeconds)

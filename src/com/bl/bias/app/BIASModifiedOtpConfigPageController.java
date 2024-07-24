@@ -72,8 +72,6 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private Label originMeasuringPointCol3;
 	@FXML private Label destMeasuringPointCol3;
 	
-	@FXML private Label minutesFromExternalOrigin;
-	
 	@FXML private ComboBox<String> exceptTrainsOptionACombobox;
 	@FXML private ComboBox<String> exceptTrainsOptionBCombobox;
 
@@ -290,7 +288,7 @@ public class BIASModifiedOtpConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_exceptionsOptionB", true);
 			disableAllControlsForLatenessToExternalSchedule();
-			exceptTrainsOptionBCombobox.setDisable(false);
+			exceptTrainsOptionACombobox.setDisable(false);
 			b_exceptTrainsBasedOnScheduledLatenessRadioButton.setSelected(true);
 		}
 		else
@@ -308,6 +306,7 @@ public class BIASModifiedOtpConfigPageController
 				prefs.putBoolean("mo_exceptionsOptionC", true);
 			enableAllControlsForLatenessToExternalSchedule();
 			exceptTrainsOptionBCombobox.setDisable(false);
+			exceptTrainsOptionACombobox.setDisable(false);
 			c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton.setSelected(true);
 		}
 		else
@@ -325,6 +324,7 @@ public class BIASModifiedOtpConfigPageController
 				prefs.putBoolean("mo_exceptionsOptionD", true);
 			disableAllControlsForLatenessToExternalSchedule();
 			exceptTrainsOptionBCombobox.setDisable(true);
+			exceptTrainsOptionACombobox.setDisable(true);
 			d_doNotExceptTrainsRadioButton.setSelected(true);
 		}
 		else
@@ -726,7 +726,8 @@ public class BIASModifiedOtpConfigPageController
 		d_doNotExceptTrains = false;
 
 		enableAllControlsForLatenessToExternalSchedule();
-		exceptTrainsOptionBCombobox.setDisable(false);
+		exceptTrainsOptionBCombobox.setDisable(true);
+		exceptTrainsOptionACombobox.setDisable(false);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -746,6 +747,7 @@ public class BIASModifiedOtpConfigPageController
 
 		disableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(false);
+		exceptTrainsOptionACombobox.setDisable(true);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -765,6 +767,7 @@ public class BIASModifiedOtpConfigPageController
 
 		enableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(false);
+		exceptTrainsOptionACombobox.setDisable(false);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -784,6 +787,7 @@ public class BIASModifiedOtpConfigPageController
 
 		disableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(true);
+		exceptTrainsOptionACombobox.setDisable(true);
 		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -807,7 +811,7 @@ public class BIASModifiedOtpConfigPageController
 	
 	@FXML private void handleMethodology2RadioButton(ActionEvent e)
 	{
-		useMethodology2 = false;
+		useMethodology1 = false;
 		useMethodology2 = true;
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
@@ -5228,7 +5232,6 @@ public class BIASModifiedOtpConfigPageController
 		node24TextField.setDisable(true);
 		departureTime24TextField.setDisable(true);
 
-		minutesFromExternalOrigin.setDisable(true);
 		updateEntriesForScheduledButton.setDisable(true);
 	}
 
@@ -5316,7 +5319,6 @@ public class BIASModifiedOtpConfigPageController
 		node24TextField.setDisable(false);
 		departureTime24TextField.setDisable(false);
 
-		minutesFromExternalOrigin.setDisable(false);
 		updateEntriesForScheduledButton.setDisable(false);
 	}
 	

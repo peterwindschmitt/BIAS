@@ -15,8 +15,10 @@ public class ModifiedOtpAnalysis
 
 	private static ArrayList<String> trainSymbolsFromConfigFile = new ArrayList<String>();
 	private static ArrayList<odTuple> odPairsFromConfig = new ArrayList<odTuple>();
-	private static String exceptTrainThresholdFromConfigFileAsString; 
-	private static Double exceptTrainThresholdFromConfigFileAsSerial; 
+	private static String exceptTrainThresholdFromConfigFileOptionAAsString; 
+	private static Double exceptTrainThresholdFromConfigFileOptionAAsSerial; 
+	private static String exceptTrainThresholdFromConfigFileOptionBAsString; 
+	private static Double exceptTrainThresholdFromConfigFileOptionBAsSerial; 
 
 	private static HashMap<String, int[]> typeHashmapOfMakes = new HashMap<String, int[]>(); // 0 is num / 1 is denom
 	private Integer exceptedTrainCount;
@@ -31,6 +33,7 @@ public class ModifiedOtpAnalysis
 
 		trainSymbolsFromConfigFile.clear();
 		odPairsFromConfig.clear();
+		typeHashmapOfMakes.clear();
 
 		exceptedTrainCount = 0;
 		makeTrainCount = 0;
@@ -51,8 +54,10 @@ public class ModifiedOtpAnalysis
 		otpThresholdsFromOptionFile = ReadModifiedOtpFiles.getOtpThresholdsFromOptionFile(); // Gets thresholds
 		performanceFileEntries.addAll(ReadModifiedOtpFiles.getPerformanceFileEntries());
 
-		exceptTrainThresholdFromConfigFileAsString = BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayOptionBAsString();
-		exceptTrainThresholdFromConfigFileAsSerial = ConvertDateTime.convertDDHHMMStringToSerial(exceptTrainThresholdFromConfigFileAsString);
+		exceptTrainThresholdFromConfigFileOptionAAsString = BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayOptionAAsString();
+		exceptTrainThresholdFromConfigFileOptionAAsSerial = ConvertDateTime.convertDDHHMMStringToSerial(exceptTrainThresholdFromConfigFileOptionAAsString);
+		exceptTrainThresholdFromConfigFileOptionBAsString = BIASModifiedOtpConfigPageController.getPermissibleMinutesOfDelayOptionBAsString();
+		exceptTrainThresholdFromConfigFileOptionBAsSerial = ConvertDateTime.convertDDHHMMStringToSerial(exceptTrainThresholdFromConfigFileOptionBAsString);
 
 		for (int i = 0; i < performanceFileEntries.size(); i++) // For each symbol
 		{
@@ -61,7 +66,9 @@ public class ModifiedOtpAnalysis
 			String trainType = enabledTrainsFromTrainFile.get(scheduledSymbol);
 			String otpThresholdAsString = otpThresholdsFromOptionFile.get(trainType);
 			Double otpThresholdAsDouble = ConvertDateTime.convertDDHHMMSSStringToSerial(otpThresholdAsString);
-
+			
+			Boolean exceptTrain = false;
+			
 			int[] numDenom = new int[2];
 			typeHashmapOfMakes.putIfAbsent(trainType, numDenom);
 
@@ -75,20 +82,20 @@ public class ModifiedOtpAnalysis
 
 				for (int k = 0; k < performanceFileEntries.get(i).getSchedulePoints().size(); k++)  // For each performanceFileEntry
 				{
-					String originNode = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledNode();
+					String originNodeFromPerformanceFile = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledNode();
 
 					Double scheduledOriginArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledArrivalTime();
 					Double actualOriginArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getActualArrivalTime();
 					Double scheduledOriginDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getScheduledDepartureTime();
 					Double actualOriginDepartureTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(k).getActualDepartureTime();
 
-					if (originNode.contains(originNodeInConfigFile))
+					if (originNodeFromPerformanceFile.contains(originNodeInConfigFile))
 					{
 						for (int l = k; l < performanceFileEntries.get(i).getSchedulePoints().size(); l++)  // For each performanceFileEntry
 						{
-							String destinationNode = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledNode();
+							String destinationNodeInPerformanceFile = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledNode();
 
-							if (destinationNode.contains(destinationNodeInConfigFile))
+							if (destinationNodeInPerformanceFile.contains(destinationNodeInConfigFile))
 							{
 								Double scheduledDestinationArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getScheduledArrivalTime();
 								Double actualDestinationArrivalTimeAsDouble = performanceFileEntries.get(i).getSchedulePoints().get(l).getActualArrivalTime();
@@ -111,7 +118,7 @@ public class ModifiedOtpAnalysis
 								Integer denom = 0;
 
 								// If late at origin based on train's schedule
-								if ((lateAtOrigin > exceptTrainThresholdFromConfigFileAsSerial) && 
+								if ((lateAtOrigin > exceptTrainThresholdFromConfigFileOptionBAsSerial) && 
 										((BIASModifiedOtpConfigPageController.getB_exceptTrainsBasedOnRunTimeStatus() ||
 												BIASModifiedOtpConfigPageController.getC_exceptTrainsBasedOnExternalAndRunTimeStatus())))
 								{
@@ -119,111 +126,132 @@ public class ModifiedOtpAnalysis
 									num = 0;
 									denom = 0;
 									exceptedTrainCount++;
+									exceptTrain = true;
 								}
-								// Else if late at origin based on external time provided in config file
-								//else if (0 == 1)
-								//{
-								//	make = "EXCEPT";	
-								//	num = 0;
-								//	denom = 0;
-								//	exceptedTrainCount++;
-								//}
-								//  Methodology 1 
-								else if (BIASModifiedOtpConfigPageController.getUseMethodology1())
+								
+								// If late at origin based on external time provided in config file
+								if (((BIASModifiedOtpConfigPageController.getA_exceptTrainsBasedOnExternalSchedule() ||
+										BIASModifiedOtpConfigPageController.getC_exceptTrainsBasedOnExternalAndRunTimeStatus())))
 								{
-									// Use OTP Thresholds Methodology 1
-									if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
+									String externalSchedulesFromConfig = BIASModifiedOtpConfigPageController.getSchedulePointEntries();
+									for (int m = 0; m < externalSchedulesFromConfig.split(",").length; m = m + 3)
 									{
-										if (actualDestinationTimeToUse <= (scheduleDestinationTimeToUse + otpThresholdAsDouble))
+										if ((runtimeSymbol.contains(externalSchedulesFromConfig.split(",")[m])) &&  // Symbol
+											(originNodeFromPerformanceFile.contains(externalSchedulesFromConfig.split(",")[m + 1])))  // Node
 										{
-											make = "Y";	
-											num = 1;
-											denom = 1;
-											makeTrainCount++;
-										}
-										else if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime + otpThresholdAsDouble))
-										{
-											make = "Y";
-											num = 1;
-											denom = 1;
-											makeTrainCount++;
-										}
-										else
-										{
-											make = "N";
-											num = 0;
-											denom = 1;
-											missTrainCount++;
-										}
-									}
-									else
-									{
-										// Do not use OTP Thresholds Methodology 1
-										if (actualDestinationTimeToUse <= scheduleDestinationTimeToUse)
-										{
-											make = "Y";	
-											num = 1;
-											denom = 1;
-											makeTrainCount++;
-										}
-										else if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime))
-										{
-											make = "Y";
-											num = 1;
-											denom = 1;
-											makeTrainCount++;
-										}
-										else
-										{
-											make = "N";
-											num = 0;
-											denom = 1;
-											missTrainCount++;
-										}
-									}
-								}
-								// Use Metholodology 2
-								else if (BIASModifiedOtpConfigPageController.getUseMethodology2())
-								{
-									// Use OTP Thresholds Methodology 2
-									if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
-									{
-										if (actualDestinationTimeToUse <= (scheduleDestinationTimeToUse + otpThresholdAsDouble))
-										{
-											make = "Y";	
-											num = 1;
-											denom = 1;
-											makeTrainCount++;
-										}
-										else
-										{
-											make = "N";
-											num = 0;
-											denom = 1;
-											missTrainCount++;
-										}
-									}
-									else
-									{
-										// Do not use OTP Thresholds Methodology 2
-										if (actualDestinationTimeToUse <= scheduleDestinationTimeToUse)
-										{
-											make = "Y";	
-											num = 1;
-											denom = 1;
-											makeTrainCount++;
-										}
-										else
-										{
-											make = "N";
-											num = 0;
-											denom = 1;
-											missTrainCount++;
+											if ((actualOriginTimeToUse - actualOriginTimeToUse.intValue()) > (ConvertDateTime.convertHHMMStringToSerial(externalSchedulesFromConfig.split(",")[m + 2])) + exceptTrainThresholdFromConfigFileOptionAAsSerial)
+											{
+												make = "EXCEPT";	
+												num = 0;
+												denom = 0;
+												exceptedTrainCount++;
+												exceptTrain = true;
+												break;
+											}
 										}
 									}
 								}
 
-								ReportingPointForTrainObject reportingPoint = new ReportingPointForTrainObject(originNode, scheduleOriginTimeToUse, actualOriginTimeToUse, lateAtOrigin, destinationNode, scheduleDestinationTimeToUse, actualDestinationTimeToUse, scheduleTransitTime, actualTransitTime, make, num, denom);
+								// If not an excepted train, then process one of the methodologies
+								if (!exceptTrain)
+								{
+									//  Methodology 1 
+									if (BIASModifiedOtpConfigPageController.getUseMethodology1())
+									{
+										// Use OTP Thresholds Methodology 1
+										if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
+										{
+											if (actualDestinationTimeToUse <= (scheduleDestinationTimeToUse + otpThresholdAsDouble))
+											{
+												make = "Y";	
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime + otpThresholdAsDouble))
+											{
+												make = "Y";
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else
+											{
+												make = "N";
+												num = 0;
+												denom = 1;
+												missTrainCount++;
+											}
+										}
+										else
+										{
+											// Do not use OTP Thresholds Methodology 1
+											if (actualDestinationTimeToUse <= scheduleDestinationTimeToUse)
+											{
+												make = "Y";	
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime))
+											{
+												make = "Y";
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else
+											{
+												make = "N";
+												num = 0;
+												denom = 1;
+												missTrainCount++;
+											}
+										}
+									}
+									// Use Metholodology 2
+									else if (BIASModifiedOtpConfigPageController.getUseMethodology2())
+									{
+										// Use OTP Thresholds Methodology 2
+										if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
+										{
+											if (actualDestinationTimeToUse <= (scheduleDestinationTimeToUse + otpThresholdAsDouble))
+											{
+												make = "Y";	
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else
+											{
+												make = "N";
+												num = 0;
+												denom = 1;
+												missTrainCount++;
+											}
+										}
+										else
+										{
+											// Do not use OTP Thresholds Methodology 2
+											if (actualDestinationTimeToUse <= scheduleDestinationTimeToUse)
+											{
+												make = "Y";	
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else
+											{
+												make = "N";
+												num = 0;
+												denom = 1;
+												missTrainCount++;
+											}
+										}
+									}
+								}
+
+								ReportingPointForTrainObject reportingPoint = new ReportingPointForTrainObject(originNodeFromPerformanceFile, scheduleOriginTimeToUse, actualOriginTimeToUse, lateAtOrigin, destinationNodeInPerformanceFile, scheduleDestinationTimeToUse, actualDestinationTimeToUse, scheduleTransitTime, actualTransitTime, make, num, denom);
 								performanceFileEntries.get(i).addReportingPoint(reportingPoint);
 
 								int[] currentNumeratorDenominator = typeHashmapOfMakes.get(trainType);
@@ -246,14 +274,14 @@ public class ModifiedOtpAnalysis
 										System.out.println(" no OTP threshold");
 									}
 
-									System.out.println(" at origin node: "+originNode);
+									System.out.println(" at origin node: "+originNodeFromPerformanceFile);
 									System.out.print(" sched origin arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledOriginArrivalTimeAsDouble));
 									System.out.println(" actual origin arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualOriginArrivalTimeAsDouble));
 									System.out.print(" sched origin dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledOriginDepartureTimeAsDouble));
 									System.out.println(" actual origin dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualOriginDepartureTimeAsDouble));
 									System.out.println(" late at origin: "+ConvertDateTime.convertSerialToHHMMSSString(lateAtOrigin));
 
-									System.out.println(" at destination node: "+destinationNode);
+									System.out.println(" at destination node: "+destinationNodeInPerformanceFile);
 									System.out.print(" sched destination arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDestinationArrivalTimeAsDouble));
 									System.out.println(" actual destination arvl: "+ConvertDateTime.convertSerialToDDHHMMSSString(actualDestinationArrivalTimeAsDouble));
 									System.out.print(" sched destination dept: "+ConvertDateTime.convertSerialToDDHHMMSSString(scheduledDestinationDepartureTimeAsDouble));
@@ -264,7 +292,6 @@ public class ModifiedOtpAnalysis
 									System.out.println(" make: "+make);
 								}
 							}
-
 						}
 					}
 				}

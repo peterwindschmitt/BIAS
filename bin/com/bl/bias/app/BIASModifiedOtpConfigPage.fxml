@@ -53,42 +53,9 @@
                         <RowConstraints fillHeight="false" minHeight="30.0" prefHeight="30.0" valignment="BOTTOM" vgrow="ALWAYS" />
                      </rowConstraints>
                      <children>
-                        <CheckBox fx:id="suppressZeroEntryTrainsResultsCheckBox" mnemonicParsing="false" onAction="#handleSuppressZeroEntryTrainsResultsCheckBox" text="Do not show trains or OTP results by type for types that have zero eligible reportings" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="TOP">
-                           <GridPane.margin>
-                              <Insets left="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </CheckBox>
                         <Label text="Make Criteria" underline="true" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="10.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <RadioButton fx:id="methodology2RadioButton" mnemonicParsing="false" onAction="#handleMethodology2RadioButton" text="Methodology 2" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                           <toggleGroup>
-                              <ToggleGroup fx:id="methodologyToggleGroup" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="methodology1RadioButton" mnemonicParsing="false" onAction="#handleMethodology1RadioButton" text="Methodology 1" toggleGroup="$methodologyToggleGroup" GridPane.rowIndex="1" GridPane.valignment="TOP">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </RadioButton>
-                        <Label text="Except Trains" underline="true" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <ComboBox fx:id="exceptTrainsOptionACombobox" disable="true" maxWidth="70.0" minWidth="70.0" onAction="#handleExceptTrainsOptionACombobox" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                           <GridPane.margin>
-                              <Insets left="130.0" />
-                           </GridPane.margin>
-                        </ComboBox>
-                        <Label fx:id="minutesFromExternalOrigin" disable="true" text="minutes from their 'External Origin Time' on 'External Origin Times' page" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                           <GridPane.margin>
-                              <Insets left="210.0" />
                            </GridPane.margin>
                         </Label>
                         <Label alignment="TOP_CENTER" maxHeight="28.0" minHeight="28.0" prefHeight="28.0" text="If trains arrive on-time or early at origin..." textAlignment="CENTER" underline="true" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="TOP">
@@ -101,7 +68,33 @@
                               <Insets left="15.0" right="15.0" />
                            </GridPane.margin>
                         </Label>
-                        <RadioButton fx:id="a_exceptTrainsBasedOnExternalTimesRadioButton" disable="true" mnemonicParsing="false" onAction="#handleA_exceptTrainsBasedOnExternalTimesRadioButton" text="A:  Except run-time trains that depart later than" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                        <RadioButton fx:id="methodology1RadioButton" mnemonicParsing="false" onAction="#handleMethodology1RadioButton" text="Methodology 1" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="methodologyToggleGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <Label alignment="TOP_CENTER" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="MAKE if train arrives at destination on/before scheduled arrival time (+OTP threshold, if applicable), otherwise MISS" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                        <Label alignment="TOP_CENTER" maxHeight="43.0" minHeight="51.0" prefHeight="43.0" text="MAKE if train arrives at destination on/before (actual origin time + scheduled traversal time (+OTP threshold, if applicable)), otherwise MISS" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+                        <RadioButton fx:id="methodology2RadioButton" mnemonicParsing="false" onAction="#handleMethodology2RadioButton" text="Methodology 2" toggleGroup="$methodologyToggleGroup" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </RadioButton>
+                        <Label alignment="CENTER" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Same as Methodology 1" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                        <Label alignment="TOP_CENTER" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="MAKE if train arrives at destination on/before scheduled arrival time (+OTP threshold, if applicable), otherwise MISS" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                           <GridPane.margin>
+                              <Insets top="10.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label text="Except Trains" underline="true" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <RadioButton fx:id="a_exceptTrainsBasedOnExternalTimesRadioButton" mnemonicParsing="false" onAction="#handleA_exceptTrainsBasedOnExternalTimesRadioButton" text="A:  Except run-time trains that depart later than" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -109,11 +102,16 @@
                               <ToggleGroup fx:id="exceptTrainsToggleGroup" />
                            </toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="d_doNotExceptTrainsRadioButton" mnemonicParsing="false" onAction="#handleD_doNotExceptTrainsRadioButton" text="D:  Do not except any trains (does not affect disabled trains)" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                        <ComboBox fx:id="exceptTrainsOptionACombobox" maxWidth="70.0" minWidth="70.0" onAction="#handleExceptTrainsOptionACombobox" prefHeight="25.0" prefWidth="70.0" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                            <GridPane.margin>
-                              <Insets left="10.0" />
+                              <Insets left="130.0" />
                            </GridPane.margin>
-                        </RadioButton>
+                        </ComboBox>
+                        <Label text="minutes from their 'External Origin Time' on 'External Origin Times' page" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets left="210.0" />
+                           </GridPane.margin>
+                        </Label>
                         <RadioButton fx:id="b_exceptTrainsBasedOnScheduledLatenessRadioButton" mnemonicParsing="false" onAction="#handleB_exceptTrainsBasedOnScheduledLatenessRadioButton" text="B:  Except run-time trains that depart later than" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="10.0" />
@@ -124,12 +122,17 @@
                               <Insets left="130.0" />
                            </GridPane.margin>
                         </ComboBox>
-                        <Label fx:id="minutesFromScheduledTime" text="minutes from their scheduled time at origin node on 'Measuring Points' page" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                        <Label text="minutes from their scheduled time at origin node on 'Measuring Points' page" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="210.0" />
                            </GridPane.margin>
                         </Label>
-                        <RadioButton fx:id="c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton" disable="true" mnemonicParsing="false" onAction="#handleC_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton" text="C:  Except any trains due to A or B (not exclusive)" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                        <RadioButton fx:id="c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton" mnemonicParsing="false" onAction="#handleC_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton" text="C:  Except any trains due to A or B (not exclusive)" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </RadioButton>
+                        <RadioButton fx:id="d_doNotExceptTrainsRadioButton" mnemonicParsing="false" onAction="#handleD_doNotExceptTrainsRadioButton" text="D:  Do not except any trains (does not affect disabled trains)" toggleGroup="$exceptTrainsToggleGroup" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -148,14 +151,11 @@
                            </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="doNotApplyOTPThresholdRadioButton" mnemonicParsing="false" onAction="#handleDoNotApplyOTPThresholdRadioButton" text="Do not apply OTP threshold" toggleGroup="$otpThresholdToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
-                        <Label alignment="TOP_CENTER" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="MAKE if train arrives at destination on/before scheduled arrival time (+OTP threshold, if applicable), otherwise MISS" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                        <Label alignment="TOP_CENTER" maxHeight="43.0" minHeight="51.0" prefHeight="43.0" text="MAKE if train arrives at destination on/before (actual origin time + scheduled traversal time (+OTP threshold, if applicable)), otherwise MISS" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                        <Label alignment="CENTER" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Same as Methodology 1" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                        <Label alignment="TOP_CENTER" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="MAKE if train arrives at destination on/before scheduled arrival time (+OTP threshold, if applicable), otherwise MISS" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                        <CheckBox fx:id="suppressZeroEntryTrainsResultsCheckBox" mnemonicParsing="false" onAction="#handleSuppressZeroEntryTrainsResultsCheckBox" text="Do not show trains or OTP results by type for types that have zero eligible reportings" wrapText="true" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="TOP">
                            <GridPane.margin>
-                              <Insets top="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </GridPane.margin>
-                        </Label>
+                        </CheckBox>
                      </children>
                   </GridPane>
                </content>
@@ -190,9 +190,9 @@
                <GridPane.margin>
                   <Insets left="5.0" top="-7.0" />
                </GridPane.margin></Label>
-            <Label fx:id="departureTime1Label" text="Departure Time" underline="true" GridPane.halignment="RIGHT">
+            <Label fx:id="departureTime1Label" maxWidth="80.0" minHeight="40.0" text="Departure Time (HH:MM)" textAlignment="CENTER" underline="true" wrapText="true" GridPane.halignment="RIGHT">
                <GridPane.margin>
-                  <Insets right="3.0" top="10.0" />
+                  <Insets right="3.0" top="-7.0" />
                </GridPane.margin>
             </Label>
             <Label fx:id="train2Label" text="Train Starts With" underline="true" GridPane.columnIndex="1" GridPane.halignment="LEFT">
@@ -204,9 +204,9 @@
                <GridPane.margin>
                   <Insets left="5.0" top="-7.0" />
                </GridPane.margin></Label>
-            <Label fx:id="departureTime2Label" text="Departure Time" underline="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+            <Label fx:id="departureTime2Label" maxWidth="80.0" text="Departure Time (HH:MM)" textAlignment="CENTER" underline="true" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
                <GridPane.margin>
-                  <Insets right="5.0" top="10.0" />
+                  <Insets right="5.0" top="-7.0" />
                </GridPane.margin>
             </Label>
             <Label fx:id="train3Label" text="Train Starts With" underline="true" GridPane.columnIndex="2" GridPane.halignment="LEFT">
@@ -218,9 +218,9 @@
                <GridPane.margin>
                   <Insets left="5.0" top="-7.0" />
                </GridPane.margin></Label>
-            <Label fx:id="departureTime3Label" text="Departure Time" underline="true" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+            <Label fx:id="departureTime3Label" maxWidth="80.0" minHeight="40.0" text="Departure Time (HH:MM)" textAlignment="CENTER" underline="true" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
                <GridPane.margin>
-                  <Insets right="10.0" top="10.0" />
+                  <Insets right="10.0" top="-7.0" />
                </GridPane.margin>
             </Label>
             <TextField fx:id="train1TextField" maxWidth="80.0" minWidth="80.0" onAction="#handleTrain1TextField" onKeyPressed="#handleTextChangedTrain1TextField" prefWidth="80.0" GridPane.rowIndex="1">
