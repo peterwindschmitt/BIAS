@@ -5577,6 +5577,8 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		setALabel = setALabelTextField.getText(0, Math.min(setALabelTextField.getText().length(), 10)).trim();
 		setALabelTextField.setText(setALabel);
+		setALabelTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		updateSetALabelButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_setALabel", setALabel);	
@@ -5586,6 +5588,8 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		setBLabel = setBLabelTextField.getText(0, Math.min(setBLabelTextField.getText().length(), 10)).trim();
 		setBLabelTextField.setText(setBLabel);
+		setBLabelTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		updateSetBLabelButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_setBLabel", setBLabel);	
@@ -5595,7 +5599,9 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		setCLabel = setCLabelTextField.getText(0, Math.min(setCLabelTextField.getText().length(), 10)).trim();
 		setCLabelTextField.setText(setCLabel);
-
+		setCLabelTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		updateSetCLabelButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_setCLabel", setCLabel);	
 	}
@@ -5604,9 +5610,36 @@ public class BIASRecoveryRateAnalysisConfigController
 	{
 		setDLabel = setDLabelTextField.getText(0, Math.min(setDLabelTextField.getText().length(), 10)).trim();
 		setDLabelTextField.setText(setCLabel);
-
+		setDLabelTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		updateSetDLabelButton.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.put("rr_setDLabel", setDLabel);	
+	}
+	
+	
+	@FXML private void handleTextChangedSetATextField()
+	{
+		setALabelTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetALabelButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedSetBTextField()
+	{
+		setBLabelTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetBLabelButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedSetCTextField()
+	{
+		setCLabelTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetCLabelButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedSetDTextField()
+	{
+		setDLabelTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		updateSetDLabelButton.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleAnalyzeSetACheckBox()

@@ -122,6 +122,7 @@ public class ModifiedOtpAnalysis
 										((BIASModifiedOtpConfigPageController.getB_exceptTrainsBasedOnRunTimeStatus() ||
 												BIASModifiedOtpConfigPageController.getC_exceptTrainsBasedOnExternalAndRunTimeStatus())))
 								{
+									System.out.println("excepting at 125");
 									make = "EXCEPT";	
 									num = 0;
 									denom = 0;
@@ -141,6 +142,7 @@ public class ModifiedOtpAnalysis
 										{
 											if ((actualOriginTimeToUse - actualOriginTimeToUse.intValue()) > (ConvertDateTime.convertHHMMStringToSerial(externalSchedulesFromConfig.split(",")[m + 2])) + exceptTrainThresholdFromConfigFileOptionAAsSerial)
 											{
+												System.out.println("excepting at 145");
 												make = "EXCEPT";	
 												num = 0;
 												denom = 0;
@@ -236,6 +238,45 @@ public class ModifiedOtpAnalysis
 											if (actualDestinationTimeToUse <= scheduleDestinationTimeToUse)
 											{
 												make = "Y";	
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else
+											{
+												make = "N";
+												num = 0;
+												denom = 1;
+												missTrainCount++;
+											}
+										}
+									}
+									// Use Methodology 3
+									else if (BIASModifiedOtpConfigPageController.getUseMethodology3())
+									{
+										if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
+										{
+											if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime + otpThresholdAsDouble))
+											{
+												make = "Y";
+												num = 1;
+												denom = 1;
+												makeTrainCount++;
+											}
+											else
+											{
+												make = "N";
+												num = 0;
+												denom = 1;
+												missTrainCount++;
+											}
+										}
+										else
+										{
+											// Do not use OTP Thresholds Methodology 3
+											if (actualDestinationTimeToUse <= (actualOriginTimeToUse + scheduleTransitTime))
+											{
+												make = "Y";
 												num = 1;
 												denom = 1;
 												makeTrainCount++;

@@ -1,6 +1,8 @@
 package com.bl.bias.read;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,7 +134,7 @@ public class ReadModifiedOtpFiles
 			while (scanner.hasNextLine()) 
 			{
 				String lineFromFile = scanner.nextLine();
-				if (lineFromFile.contains(targetSequence0))
+				if (lineFromFile.startsWith(targetSequence0))
 				{ 
 					trainType = "";
 					otpThreshold = "";
@@ -202,27 +204,38 @@ public class ReadModifiedOtpFiles
 		try 
 		{
 			// For each .PERFORMANCE file
+			// Read file with BufferedReader
 			for (File performanceFile: performanceFiles)
 			{
-				scanner = new Scanner(performanceFile);
-
+				// Read as BufferedReader then load into Scanner
+				BufferedReader bufferedReaderPerformanceFile = new BufferedReader(new FileReader(performanceFile));
+				StringBuilder contentForScanner = new StringBuilder();
+				String line = null;
+				
+				while ((line = bufferedReaderPerformanceFile.readLine()) != null) 
+				{
+					if (line.length() != 0) //&& ((!line.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledArrivalTime()[1])).isBlank()) || (!line.substring(Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[0]), Integer.valueOf(BIASParseConfigPageController.f_getScheduledDepartureTime()[1])).isBlank())))
+					{
+						contentForScanner.append(line.substring(0, 100));
+						contentForScanner.append(System.lineSeparator());
+					}
+				}
+				bufferedReaderPerformanceFile.close();
+				
+				// Then load into Scanner
+				scanner = new Scanner(contentForScanner.toString());
+				
 				String trainSymbol = null;
 				Boolean targetSequence0Found = false;
 				ModifiedOtpTrainObject performanceEntry = null;
 
 				String targetSequence0 = "Train:";
-				String targetSequence1 = "-------";
-				String targetSequence2 = "*****";  // Used to indicate that parsing should stop at this line in the file
-
+				String targetSequence1 = "-----";
+				
 				while (scanner.hasNextLine()) 
 				{
 					String lineFromFile = scanner.nextLine();
-
-					if (lineFromFile.contains(targetSequence2)) 
-					{ 
-						break;
-					}
-					else if (lineFromFile.contains(targetSequence0)) 
+					if (lineFromFile.startsWith(targetSequence0)) 
 					{ 
 						trainSymbol = lineFromFile.substring(Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[0]), Integer.valueOf(BIASParseConfigPageController.f_getTrainSymbol()[1])).trim();
 						if (eligibleTrainsFromTrainFile.containsKey(trainSymbol.split("-")[0]))
@@ -235,7 +248,7 @@ public class ReadModifiedOtpFiles
 								scanner.nextLine();
 						}
 					}
-					else if ((targetSequence0Found) && (lineFromFile.contains(targetSequence1)))
+					else if ((targetSequence0Found) && (lineFromFile.startsWith(targetSequence1)))
 					{
 						targetSequence0Found = false;
 
@@ -270,6 +283,7 @@ public class ReadModifiedOtpFiles
 					}
 				}
 			}
+			
 			resultsMessage +="Extracted "+performanceFileEntries.size()+" trains from the .PERFORMANCE file(s)\n";
 		}
 		catch (Exception e) 

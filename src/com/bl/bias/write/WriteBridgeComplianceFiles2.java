@@ -26,7 +26,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	private static String notepadComplianceStatistics2;
 
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
-	private final Integer marineAccessPeriodsPerWeek = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekAsInteger();
+	private final Integer marineAccessPeriodsPerWeek = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekBridge1AsInteger();
 
 	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath) 
 	{

@@ -25,6 +25,7 @@ public class BIASModifiedOtpConfigPageController
 
 	private static Boolean useMethodology1;
 	private static Boolean useMethodology2;
+	private static Boolean useMethodology3;
 
 	private static Boolean useOtpThresholds;
 
@@ -39,6 +40,7 @@ public class BIASModifiedOtpConfigPageController
 
 	private static Boolean defaultUseMethodology1 = true;
 	private static Boolean defaultUseMethodology2 = false;
+	private static Boolean defaultUseMethodology3 = false;
 
 	private static Boolean defaultUseOtpThresholds = true;
 
@@ -71,7 +73,16 @@ public class BIASModifiedOtpConfigPageController
 	@FXML private Label destMeasuringPointCol2;
 	@FXML private Label originMeasuringPointCol3;
 	@FXML private Label destMeasuringPointCol3;
+
+	@FXML private Label a_exceptTrainsBasedOnExternalTimesLabel;
+	@FXML private Label b_exceptTrainsBasedOnScheduledLatenessLabel;	
 	
+	@FXML private Label methodology1aLabel;
+	@FXML private Label methodology1bLabel;
+	@FXML private Label methodology2aLabel;
+	@FXML private Label methodology2bLabel;
+	@FXML private Label methodology3Label;
+
 	@FXML private ComboBox<String> exceptTrainsOptionACombobox;
 	@FXML private ComboBox<String> exceptTrainsOptionBCombobox;
 
@@ -82,6 +93,7 @@ public class BIASModifiedOtpConfigPageController
 
 	@FXML private RadioButton methodology1RadioButton;
 	@FXML private RadioButton methodology2RadioButton;
+	@FXML private RadioButton methodology3RadioButton;
 
 	@FXML private RadioButton applyOTPThresholdRadioButton;
 	@FXML private RadioButton doNotApplyOTPThresholdRadioButton;
@@ -351,23 +363,48 @@ public class BIASModifiedOtpConfigPageController
 		}
 
 		// See if preference is stored for applying methodology 1
-		if (prefs.getBoolean("mo_useMethodology1", defaultUseMethodology1))
+		if (prefs.getBoolean("mo_useMethodology1", defaultUseMethodology1)) 
 		{
 			useMethodology1 = true;
 			useMethodology2 = false;
+			useMethodology3 = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_useMethodology1", true);
 			methodology1RadioButton.setSelected(true);
 		}
-		
+
 		// See if preference is stored for applying methodology 2
-		if (prefs.getBoolean("mo_useMethodology2", defaultUseMethodology2))
+		if (prefs.getBoolean("mo_useMethodology2", defaultUseMethodology2)) 
 		{
 			useMethodology1 = false;
 			useMethodology2 = true;
+			useMethodology3 = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("mo_useMethodology2", true);
 			methodology2RadioButton.setSelected(true);
+		}
+
+		// See if preference is stored for applying methodology 3
+		if (prefs.getBoolean("mo_useMethodology3", defaultUseMethodology3))
+		{
+			useMethodology1 = false;
+			useMethodology2 = false;
+			useMethodology3 = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_useMethodology3", true);
+			methodology3RadioButton.setSelected(true);
+
+			d_doNotExceptTrains = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			{
+				prefs.putBoolean("mo_exceptionsOptionA", false);
+				prefs.putBoolean("mo_exceptionsOptionB", false);
+				prefs.putBoolean("mo_exceptionsOptionC", false);
+				prefs.putBoolean("mo_exceptionsOptionD", true);
+			}
+			disableAllControlsForLatenessToExternalSchedule();
+			d_doNotExceptTrainsRadioButton.setSelected(true);
+			disableExceptingTrainsFields();
 		}
 
 		// See if permissible minutes of delay is stored -- option A
@@ -702,6 +739,13 @@ public class BIASModifiedOtpConfigPageController
 				}
 			}
 		}
+		
+		// Draw borders around Methodology labels
+		methodology1aLabel.setStyle("-fx-border-color: black;");
+		methodology1bLabel.setStyle("-fx-border-color: black;");
+		methodology2aLabel.setStyle("-fx-border-color: black;");
+		methodology2bLabel.setStyle("-fx-border-color: black;");
+		methodology3Label.setStyle("-fx-border-color: black;");
 	}
 
 	@FXML private void handleExceptTrainsOptionACombobox(ActionEvent e)
@@ -728,7 +772,7 @@ public class BIASModifiedOtpConfigPageController
 		enableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(true);
 		exceptTrainsOptionACombobox.setDisable(false);
-		
+
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", true);
@@ -748,7 +792,7 @@ public class BIASModifiedOtpConfigPageController
 		disableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(false);
 		exceptTrainsOptionACombobox.setDisable(true);
-		
+
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", false);
@@ -768,7 +812,7 @@ public class BIASModifiedOtpConfigPageController
 		enableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(false);
 		exceptTrainsOptionACombobox.setDisable(false);
-		
+
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", false);
@@ -788,7 +832,7 @@ public class BIASModifiedOtpConfigPageController
 		disableAllControlsForLatenessToExternalSchedule();
 		exceptTrainsOptionBCombobox.setDisable(true);
 		exceptTrainsOptionACombobox.setDisable(true);
-		
+
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_exceptionsOptionA", false);
@@ -802,24 +846,58 @@ public class BIASModifiedOtpConfigPageController
 	{
 		useMethodology1 = true;
 		useMethodology2 = false;
+		useMethodology3 = false;
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_useMethodology1", true);
 			prefs.putBoolean("mo_useMethodology2", false);
+			prefs.putBoolean("mo_useMethodology3", false);
 		}
+
+		enableExceptingTrainsFields();
 	}
-	
+
 	@FXML private void handleMethodology2RadioButton(ActionEvent e)
 	{
 		useMethodology1 = false;
 		useMethodology2 = true;
+		useMethodology3 = false;
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.putBoolean("mo_useMethodology1", false);
 			prefs.putBoolean("mo_useMethodology2", true);
+			prefs.putBoolean("mo_useMethodology3", false);
 		}
+
+		enableExceptingTrainsFields();
 	}
-	
+
+	@FXML private void handleMethodology3RadioButton(ActionEvent e)
+	{
+		useMethodology1 = false;
+		useMethodology2 = false;
+		useMethodology3 = true;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_useMethodology1", false);
+			prefs.putBoolean("mo_useMethodology2", false);
+			prefs.putBoolean("mo_useMethodology3", true);
+		}
+
+		d_doNotExceptTrains = true;
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.putBoolean("mo_exceptionsOptionA", false);
+			prefs.putBoolean("mo_exceptionsOptionB", false);
+			prefs.putBoolean("mo_exceptionsOptionC", false);
+			prefs.putBoolean("mo_exceptionsOptionD", true);
+		}
+		disableAllControlsForLatenessToExternalSchedule();
+		d_doNotExceptTrainsRadioButton.setSelected(true);
+
+		disableExceptingTrainsFields();
+	}
+
 	@FXML private void handleApplyOTPThresholdRadioButton(ActionEvent e)
 	{
 		useOtpThresholds = true;
@@ -5321,12 +5399,36 @@ public class BIASModifiedOtpConfigPageController
 
 		updateEntriesForScheduledButton.setDisable(false);
 	}
-	
+
+	private void enableExceptingTrainsFields()
+	{
+		exceptTrainsOptionBCombobox.setDisable(false);
+		exceptTrainsOptionACombobox.setDisable(false);
+		a_exceptTrainsBasedOnExternalTimesRadioButton.setDisable(false);
+		a_exceptTrainsBasedOnExternalTimesLabel.setDisable(false);
+		b_exceptTrainsBasedOnScheduledLatenessRadioButton.setDisable(false);
+		b_exceptTrainsBasedOnScheduledLatenessLabel.setDisable(false);
+		c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton.setDisable(false);
+		d_doNotExceptTrainsRadioButton.setDisable(false);
+	}
+
+	private void disableExceptingTrainsFields()
+	{
+		exceptTrainsOptionBCombobox.setDisable(true);
+		exceptTrainsOptionACombobox.setDisable(true);
+		a_exceptTrainsBasedOnExternalTimesRadioButton.setDisable(true);
+		a_exceptTrainsBasedOnExternalTimesLabel.setDisable(true);
+		b_exceptTrainsBasedOnScheduledLatenessRadioButton.setDisable(true);
+		b_exceptTrainsBasedOnScheduledLatenessLabel.setDisable(true);
+		c_exceptTrainsBasedOnExternalAndScheduledLatenessRadioButton.setDisable(true);
+		d_doNotExceptTrainsRadioButton.setDisable(true);
+	}
+
 	public static String getPermissibleMinutesOfDelayOptionAAsString()
 	{
 		return permissibleMinutesOfDelayOptionA;
 	}
-	
+
 	public static String getPermissibleMinutesOfDelayOptionBAsString()
 	{
 		return permissibleMinutesOfDelayOptionB;
@@ -5346,12 +5448,12 @@ public class BIASModifiedOtpConfigPageController
 	{
 		return a_exceptTrainsBasedOnExternalSchedule;
 	}
-	
+
 	public static Boolean getB_exceptTrainsBasedOnRunTimeStatus()
 	{
 		return b_exceptTrainsBasedOnRunTimeStatus;
 	}
-	
+
 	public static Boolean getC_exceptTrainsBasedOnExternalAndRunTimeStatus()
 	{
 		return c_exceptTrainsBasedOnExternalAndRunTimeStatus;
@@ -5366,15 +5468,20 @@ public class BIASModifiedOtpConfigPageController
 	{
 		return useOtpThresholds;
 	}
-	
+
 	public static Boolean getUseMethodology1()
 	{
 		return useMethodology1;
 	}
-	
+
 	public static Boolean getUseMethodology2()
 	{
 		return useMethodology2;
+	}
+
+	public static Boolean getUseMethodology3()
+	{
+		return useMethodology3;
 	}
 
 	public static Boolean getSuppressTrainsAndResultsWithNoEligibleReportings()
