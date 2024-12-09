@@ -156,7 +156,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
 
 				// Refresh ComboBox contents
-				bridgeComboBox.setItems(bridgeValuesObservableList);
+				bridgeComboBox.getItems().set(0, bridgeValuesObservableList.get(0));
 			}
 		});
 
@@ -170,7 +170,7 @@ public class BIASUscgBridgeComplianceAnalysisController
 					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
 
 				// Refresh ComboBox contents
-				bridgeComboBox.setItems(bridgeValuesObservableList);
+				bridgeComboBox.getItems().set(1, bridgeValuesObservableList.get(1));
 			}
 		});
 
