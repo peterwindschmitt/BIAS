@@ -1,5 +1,6 @@
 package com.bl.bias.app;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -87,7 +88,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 	private static Double marineAccessPeriodSpanBridge1 = 0.0;
 
-	private static Boolean bridge1Enabled = false;
+	private static SimpleBooleanProperty bridge1Enabled = new SimpleBooleanProperty();
 	private static Boolean validMarinePeriodsBridge1 = false;
 	private static Boolean computeMarineHighUsagePeriodActiveBridge1;
 
@@ -137,7 +138,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 	private static Double marineAccessPeriodSpanBridge2 = 0.0;
 
-	private static Boolean bridge2Enabled = false;
+	private static SimpleBooleanProperty bridge2Enabled = new SimpleBooleanProperty();
 	private static Boolean validMarinePeriodsBridge2 = false;
 	private static Boolean computeMarineHighUsagePeriodActiveBridge2;
 
@@ -192,7 +193,10 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			//bridgeComplianceTabPane.getTabs().add(bridgeTab1); 
 			//bridgeComplianceTabPane.getTabs().add(bridgeTab2); 
 		}
-
+		
+		bridge1Enabled.setValue(false);
+		bridge2Enabled.setValue(false);
+		
 		marinePeriodStartDoubleTable1.setStyle( "-fx-alignment: CENTER;");
 		marinePeriodStartTimeTable1.setStyle( "-fx-alignment: CENTER;");
 		marinePeriodEndDoubleTable1.setStyle( "-fx-alignment: CENTER;");
@@ -309,7 +313,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		// See if bridge 1 enable is stored
 		if (prefs.getBoolean("cg_bridge1Enabled", defaultBridgeEnabled))
 		{
-			bridge1Enabled = true;
+			bridge1Enabled.setValue(true);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge1Enabled", true);
 			enableBridge1CheckBox.setSelected(true);
@@ -318,7 +322,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 		else
 		{
-			bridge1Enabled = false;
+			bridge1Enabled.setValue(false);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge1Enabled", false);
 			enableBridge1CheckBox.setSelected(false);
@@ -329,7 +333,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		// See if bridge 2 enable is stored
 		if (prefs.getBoolean("cg_bridge2Enabled", defaultBridgeEnabled))
 		{
-			bridge2Enabled = true;
+			bridge2Enabled.setValue(true);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge2Enabled", true);
 			enableBridge2CheckBox.setSelected(true);
@@ -338,7 +342,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 		else
 		{
-			bridge2Enabled = false;
+			bridge2Enabled.setValue(false);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge2Enabled", false);
 			enableBridge2CheckBox.setSelected(false);
@@ -1387,9 +1391,9 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 	@FXML private void handleEnableBridge1CheckBox(ActionEvent event) 
 	{
-		if (bridge1Enabled)
+		if (bridge1Enabled.getValue())
 		{
-			bridge1Enabled = false;
+			bridge1Enabled.setValue(false);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge1Enabled", false);
 
@@ -1398,7 +1402,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 		else
 		{
-			bridge1Enabled = true;
+			bridge1Enabled.setValue(true);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge1Enabled", true);
 
@@ -1409,9 +1413,9 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 	@FXML private void handleEnableBridge2CheckBox(ActionEvent event) 
 	{
-		if (bridge2Enabled)
+		if (bridge2Enabled.getValue())
 		{
-			bridge2Enabled = false;
+			bridge2Enabled.setValue(false);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge2Enabled", false);
 
@@ -1420,7 +1424,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		}
 		else
 		{
-			bridge2Enabled = true;
+			bridge2Enabled.setValue(true);
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_bridge2Enabled", true);
 
@@ -1556,12 +1560,12 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		return marineAccessPeriodsBridge2;
 	}
 
-	public static Boolean getBridge1Enabled()
+	public static SimpleBooleanProperty getBridge1Enabled()
 	{
 		return bridge1Enabled;
 	}
 
-	public static Boolean getBridge2Enabled()
+	public static SimpleBooleanProperty getBridge2Enabled()
 	{
 		return bridge2Enabled;
 	}

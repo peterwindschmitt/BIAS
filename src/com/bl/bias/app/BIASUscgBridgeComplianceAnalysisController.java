@@ -13,6 +13,7 @@ import com.bl.bias.read.ReadExcelFileForBridgeCompliance;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteBridgeComplianceFiles3;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -68,6 +69,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 	private static String trainTypeColumn;
 	private static String notesColumn;
 
+	private static SimpleBooleanProperty bridge1Enabled = new SimpleBooleanProperty();
+	private static SimpleBooleanProperty bridge2Enabled = new SimpleBooleanProperty();
+
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
@@ -111,30 +115,63 @@ public class BIASUscgBridgeComplianceAnalysisController
 		bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
 		bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
 
+		bridge1Enabled.bind(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Enabled());
+		bridge2Enabled.bind(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Enabled());
+
+		bridge1Enabled.addListener(new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1,
+					Boolean arg2) {
+				if (bridge1Enabled.getValue())
+					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
+				else
+					bridgeValuesObservableList.remove(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
+				// Refresh ComboBox contents
+				bridgeComboBox.setItems(bridgeValuesObservableList);
+			}
+		});
+
+		bridge2Enabled.addListener(new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1,
+					Boolean arg2) {
+				if (bridge2Enabled.getValue())
+					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
+				else
+					bridgeValuesObservableList.remove(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
+				// Refresh ComboBox contents
+				bridgeComboBox.setItems(bridgeValuesObservableList);
+			}
+		});
+		
 		bridgeValuesObservableList.get(0).addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				bridgeValuesObservableList.clear();
-				bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
-				bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
+				if (bridge1Enabled.getValue())
+					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
+				if (bridge2Enabled.getValue())
+					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
 
 				// Refresh ComboBox contents
 				bridgeComboBox.setItems(bridgeValuesObservableList);
 			}
-
 		});
 
 		bridgeValuesObservableList.get(1).addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				bridgeValuesObservableList.clear();
-				bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
-				bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
+				if (bridge1Enabled.getValue())
+					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge1Name());
+				if (bridge2Enabled.getValue())
+					bridgeValuesObservableList.add(BIASUscgBridgeComplianceAnalysisConfigPageController.getBridge2Name());
 
 				// Refresh ComboBox contents
 				bridgeComboBox.setItems(bridgeValuesObservableList);
 			}
-
 		});
 
 		bridgeComboBox.setCellFactory(param -> new ListCell<SimpleStringProperty>() {
@@ -713,12 +750,12 @@ public class BIASUscgBridgeComplianceAnalysisController
 		{
 			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName());
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName());
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 			else
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName());
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName());
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 
