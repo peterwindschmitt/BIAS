@@ -21,9 +21,10 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 	
 	static Boolean error = false;
 	
-	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath)
+	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
+			Boolean includeConfidentialityDisclosure) 
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure);
 		
 		resultsMessage3 = WriteBridgeComplianceFiles1.getResultsMessageWrite1() + WriteBridgeComplianceFiles2.getResultsMessageWrite2();
 		notepadComplianceStatistics3 = WriteBridgeComplianceFiles1.getNotepadComplianceStatistics1() + WriteBridgeComplianceFiles2.getNotepadComplianceStatistics2();

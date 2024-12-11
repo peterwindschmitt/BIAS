@@ -33,7 +33,8 @@ public class WriteBridgeComplianceFiles1
 
 	private static IndexedColors[] colors = new IndexedColors[2];
 
-	public WriteBridgeComplianceFiles1(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath) 
+	public WriteBridgeComplianceFiles1(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet, 
+			Boolean includeConfidentialityDisclosure) 
 	{
 		resultsMessage1 = "\nStarted writing output file(s) at "+startWriteFileTime;
 		notepadComplianceStatistics1 = "";
@@ -173,9 +174,9 @@ public class WriteBridgeComplianceFiles1
 		style10.setDataFormat(workbook.createDataFormat().getFormat("0.0"));
 
 		// Header rows
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+		if (includeHighUsePeriods)
 		{
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			if (includeViolationsOnClosuresSheet)
 			{
 				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 12));
 			}
@@ -186,7 +187,7 @@ public class WriteBridgeComplianceFiles1
 		}
 		else
 		{
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			if (includeViolationsOnClosuresSheet)
 			{
 				closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 11));
 			}
@@ -206,11 +207,11 @@ public class WriteBridgeComplianceFiles1
 		rowCounter++;
 
 		// Legal disclaimer
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeConfidentialityDisclaimer())
+		if (includeConfidentialityDisclosure)
 		{
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+			if (includeHighUsePeriods)
 			{
-				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				if (includeViolationsOnClosuresSheet)
 				{
 					closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 12));
 				}
@@ -221,7 +222,7 @@ public class WriteBridgeComplianceFiles1
 			}
 			else
 			{
-				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				if (includeViolationsOnClosuresSheet)
 				{
 					closuresSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 11));
 				}
@@ -291,13 +292,13 @@ public class WriteBridgeComplianceFiles1
 		cell.setCellStyle(style1);
 		cell.setCellValue("Duration (hh:mm)");
 
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+		if (includeHighUsePeriods)
 		{
 			cell = row.createCell(10);
 			cell.setCellStyle(style1);
 			cell.setCellValue("Duration during high-use period (hh:mm)");
 
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			if (includeViolationsOnClosuresSheet)
 			{
 				cell = row.createCell(11);
 				cell.setCellStyle(style1);
@@ -310,7 +311,7 @@ public class WriteBridgeComplianceFiles1
 		}
 		else
 		{
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			if (includeViolationsOnClosuresSheet)
 			{
 				cell = row.createCell(10);
 				cell.setCellStyle(style1);
@@ -379,7 +380,7 @@ public class WriteBridgeComplianceFiles1
 			cell.setCellValue(ConvertDateTime.convertSerialToHHMMString(closures.get(i).getClosureDuration()));
 
 			// Duration during marine high-use period
-			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+			if (includeHighUsePeriods)
 			{
 				if (closures.get(i).getClosureDurationOccuringDuringMarineHighUsagePeriod() != null)
 				{
@@ -393,7 +394,7 @@ public class WriteBridgeComplianceFiles1
 					cell.setCellStyle(style1);
 				}
 
-				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				if (includeViolationsOnClosuresSheet)
 				{			
 					// Period "in-circuit" delay/violation
 					cell = row.createCell(11);
@@ -428,7 +429,7 @@ public class WriteBridgeComplianceFiles1
 			}
 			else
 			{
-				if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+				if (includeViolationsOnClosuresSheet)
 				{			
 					// Period "in-circuit" delay/violation
 					cell = row.createCell(10);
@@ -466,7 +467,7 @@ public class WriteBridgeComplianceFiles1
 
 		// Footer rows
 		// Show sum of closure durations (high use period and overall) 
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+		if (includeHighUsePeriods)
 		{
 			rowCounter++;
 			row = closuresSheet.createRow(rowCounter);
@@ -502,7 +503,7 @@ public class WriteBridgeComplianceFiles1
 
 		// Show average of closure durations (high use period and overall) 
 		rowCounter++;
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+		if (includeHighUsePeriods)
 		{
 			rowCounter++;
 			row = closuresSheet.createRow(rowCounter);
@@ -538,7 +539,7 @@ public class WriteBridgeComplianceFiles1
 		
 		// Show % mariner availability (high use period and overall) 
 		rowCounter++;
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+		if (includeHighUsePeriods)
 		{
 			rowCounter++;
 			row = closuresSheet.createRow(rowCounter);
@@ -595,7 +596,7 @@ public class WriteBridgeComplianceFiles1
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 
 		// Resize all columns to fit the content size
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1())
+		if (includeHighUsePeriods)
 		{
 			for (int i = 0; i <= 12 ; i++) 
 			{
@@ -627,7 +628,7 @@ public class WriteBridgeComplianceFiles1
 				{
 					closuresSheet.setColumnWidth(i, 3800);
 				}
-				else if (((i == 11) || (i == 12)) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet()))
+				else if (((i == 11) || (i == 12)) && (includeViolationsOnClosuresSheet))
 				{
 					closuresSheet.setColumnWidth(i, 4500);
 				}
@@ -665,7 +666,7 @@ public class WriteBridgeComplianceFiles1
 				{
 					closuresSheet.setColumnWidth(i, 3800);
 				}
-				else if (((i == 10) || (i == 11)) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet()))
+				else if (((i == 10) || (i == 11)) && (includeViolationsOnClosuresSheet))
 				{
 					closuresSheet.setColumnWidth(i, 4500);
 				}

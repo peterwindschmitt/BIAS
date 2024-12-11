@@ -28,9 +28,10 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
 	private final Integer marineAccessPeriodsPerWeek = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekBridge1AsInteger();
 
-	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath) 
+	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
+			Boolean includeConfidentialityDisclosure)  
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure);
 		
 		resultsMessage2 = "";
 		notepadComplianceStatistics2 = "";

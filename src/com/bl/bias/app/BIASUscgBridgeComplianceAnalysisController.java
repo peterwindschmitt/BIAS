@@ -737,8 +737,20 @@ public class BIASUscgBridgeComplianceAnalysisController
 		// Analyze compliance
 		if (continueAnalysis)
 		{
-			analyzeData = new BridgeComplianceAnalysis(readData.getClosures(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodsBridge1());
-
+			//TODO:  Add getMarineAccessPeriodStartHourBridge1/2, getMarineAccessPeriodEndHourBridge1/2    
+			
+			
+			if (bridgeComboBox.getSelectionModel().getSelectedIndex() == 0)
+			{
+				analyzeData = new BridgeComplianceAnalysis(readData.getClosures(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodsBridge1(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMaxClosureMinutesBridge1(), BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1(), 
+						BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelayBridge1(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHourBridge1(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHourBridge1());
+			}
+			else if(bridgeComboBox.getSelectionModel().getSelectedIndex() == 1)
+			{
+				analyzeData = new BridgeComplianceAnalysis(readData.getClosures(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodsBridge2(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMaxClosureMinutesBridge2(), BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge2(), 
+						BIASUscgBridgeComplianceAnalysisConfigPageController.getInCircuitPermissibleDelayBridge2(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHourBridge2(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHourBridge2());
+			}
+			
 			message = analyzeData.getResultsMessage();
 			displayMessage(message);
 			setProgressIndicator(0.75);
@@ -748,14 +760,36 @@ public class BIASUscgBridgeComplianceAnalysisController
 		// Write results to spreadsheet
 		if (continueAnalysis)
 		{
+			Boolean includeHighUsePeriods = false;
+			if ((bridgeComboBox.getSelectionModel().getSelectedIndex() == 0) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1()))
+			{
+				includeHighUsePeriods = true;
+			}
+			else if ((bridgeComboBox.getSelectionModel().getSelectedIndex() == 1) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge2()))
+			{
+				includeHighUsePeriods = true;
+			}
+			
+			Boolean includeViolationsOnClosureSheets = false;
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeViolationsOnClosuresSheet())
+			{
+				includeViolationsOnClosureSheets = true;
+			}
+			
+			Boolean includeConfidentialityDisclosure = false;
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeConfidentialityDisclaimer())
+			{
+				includeConfidentialityDisclosure = true;
+			}
+							
 			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName());
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName(), includeHighUsePeriods, includeViolationsOnClosureSheets, includeConfidentialityDisclosure);
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 			else
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName());
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName(), includeHighUsePeriods, includeViolationsOnClosureSheets, includeConfidentialityDisclosure);
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 
