@@ -29,9 +29,9 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	private final Integer marineAccessPeriodsPerWeek = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekBridge1AsInteger();
 
 	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
-			Boolean includeConfidentialityDisclosure)  
+			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)  
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, marineAccessPeriodEndHour, marineAccessPeriodEndHour);
 		
 		resultsMessage2 = "";
 		notepadComplianceStatistics2 = "";
@@ -158,7 +158,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 
 
 		// Legal disclaimer
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeConfidentialityDisclaimer())
+		if (includeConfidentialityDisclosure)
 		{
 			complianceSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 7));
 			row = complianceSheet.createRow(rowCounter);
@@ -262,7 +262,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		rowCounter++;
 		rowCounter++;
 
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		if (includeSummaryResultsOnNotepad)
 		{
 			notepadComplianceStatistics2 += "Mandatory opening violation count was "+ closureViolationCount +"\n";
 		}
@@ -304,7 +304,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		rowCounter++;
 
 
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		if (includeSummaryResultsOnNotepad)
 		{
 			notepadComplianceStatistics2 += "Duration violation count was "+ durationViolationCount +"\n";
 		}
@@ -325,7 +325,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		cell.setCellValue("Compliance % is computed as:  1 - (Weekly Marine Access Period Violation Count + Duration Violation Count) / (Weekly Marine Access Periods + Weekly Hours with no Marine Access Period (potential duration violation opportunities))");	
 		rowCounter++;
 
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		if (includeSummaryResultsOnNotepad)
 		{
 			notepadComplianceStatistics2 += "The compliance rate was "+complianceRate+"%";
 			notepadComplianceStatistics2 += "\n\n[Compliance rate is computed as:  1 - (Weekly Marine Access Period Violation Count + Duration Violation Count) / (Weekly Marine Access Periods + Weekly Hours with no Marine Access Period (potential duration violation opportunities))]";
@@ -352,7 +352,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		}	
 
 		// Remove sheet if not requested
-		if (!BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnSpreadsheet())
+		if (!includeSummaryResultsOnNotepad)
 		{
 			workbook.removeSheetAt(1);
 		}

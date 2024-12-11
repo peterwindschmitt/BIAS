@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.bl.bias.app.BIASGeneralConfigController;
-import com.bl.bias.app.BIASUscgBridgeComplianceAnalysisConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.BridgeComplianceClosure;
 import com.bl.bias.tools.ConvertDateTime;
@@ -22,15 +21,15 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 	static Boolean error = false;
 	
 	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
-			Boolean includeConfidentialityDisclosure) 
+			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour) 
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, marineAccessPeriodEndHour, marineAccessPeriodEndHour);
 		
 		resultsMessage3 = WriteBridgeComplianceFiles1.getResultsMessageWrite1() + WriteBridgeComplianceFiles2.getResultsMessageWrite2();
 		notepadComplianceStatistics3 = WriteBridgeComplianceFiles1.getNotepadComplianceStatistics1() + WriteBridgeComplianceFiles2.getNotepadComplianceStatistics2();
 		
 		// Write notepad 
-    	if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+    	if (includeSummaryResultsOnNotepad)
 		{
 	    	try 
 			{

@@ -760,14 +760,20 @@ public class BIASUscgBridgeComplianceAnalysisController
 		// Write results to spreadsheet
 		if (continueAnalysis)
 		{
+			String marineAccessPeriodStartHour = "";
+			String marineAccessPeriodEndHour = "";
 			Boolean includeHighUsePeriods = false;
 			if ((bridgeComboBox.getSelectionModel().getSelectedIndex() == 0) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1()))
 			{
 				includeHighUsePeriods = true;
+				marineAccessPeriodStartHour = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHourBridge1();
+				marineAccessPeriodEndHour = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHourBridge1();
 			}
 			else if ((bridgeComboBox.getSelectionModel().getSelectedIndex() == 1) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge2()))
 			{
 				includeHighUsePeriods = true;
+				marineAccessPeriodStartHour = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodStartHourBridge2();
+				marineAccessPeriodEndHour = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodEndHourBridge2();
 			}
 			
 			Boolean includeViolationsOnClosureSheets = false;
@@ -781,15 +787,23 @@ public class BIASUscgBridgeComplianceAnalysisController
 			{
 				includeConfidentialityDisclosure = true;
 			}
+			
+			Boolean includeSummaryResultsOnNotepad = false;
+			if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+			{
+				includeSummaryResultsOnNotepad = true;
+			}
 							
 			if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName(), includeHighUsePeriods, includeViolationsOnClosureSheets, includeConfidentialityDisclosure);
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileFolderForSerialFileName(), includeHighUsePeriods, includeViolationsOnClosureSheets, 
+						includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, marineAccessPeriodStartHour, marineAccessPeriodEndHour);
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 			else
 			{
-				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName(), includeHighUsePeriods, includeViolationsOnClosureSheets, includeConfidentialityDisclosure);
+				WriteBridgeComplianceFiles3 filesToWrite = new WriteBridgeComplianceFiles3(analyzeData.getClosures(), bridge.getValue() + readData.getDateSpan(), textArea.getText(), getSaveFileLocationForUserSpecifiedFileName(), includeHighUsePeriods, includeViolationsOnClosureSheets, 
+						includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, marineAccessPeriodStartHour, marineAccessPeriodEndHour);
 				message = filesToWrite.getResultsMessageWrite3();
 			}
 
