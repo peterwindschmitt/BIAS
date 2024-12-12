@@ -26,17 +26,16 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	private static String notepadComplianceStatistics2;
 
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
-	private final Integer marineAccessPeriodsPerWeek = BIASUscgBridgeComplianceAnalysisConfigPageController.getMarinePeriodsPerWeekBridge1AsInteger();
-
+	
 	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
-			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)  
+			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek)  
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, marineAccessPeriodEndHour, marineAccessPeriodEndHour);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodEndHour, marineAccessPeriodEndHour, marinePeriodsPerWeek);
 		
 		resultsMessage2 = "";
 		notepadComplianceStatistics2 = "";
 		
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		if (includeSummaryResultsOnNotepad)
 		{
 			notepadComplianceStatistics2 += "\nFor the "+bridgeAndSpan+", the COMPLIANCE RESULTS were:\n";
 		}
@@ -58,7 +57,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		XSSFSheet complianceSheet = workbook.createSheet("Compliance Summary");
 		complianceSheet.setDisplayGridlines(false);
 		
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnSpreadsheet())
+		if (includeSummaryResultsOnSpreadsheet)
 		{
 			resultsMessage2 += "\nWriting compliance summary spreadsheet";
 		}
@@ -174,7 +173,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		row = complianceSheet.createRow(rowCounter);
 		cell = row.createCell(1);
 		cell.setCellStyle(style1);
-		cell.setCellValue("Weekly Periods \n["+marineAccessPeriodsPerWeek+"]");
+		cell.setCellValue("Weekly Periods \n["+marinePeriodsPerWeek+"]");
 
 
 		// High-use period header
@@ -190,7 +189,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 			if (closures.get(i).getInCircuitException())
 				inCircuitDelayCount++;
 		}
-		double inCircuitPeriodPercentageAsDouble = Math.round(1000 * ((double) inCircuitDelayCount / (double) (marineAccessPeriodsPerWeek)))/10.0;
+		double inCircuitPeriodPercentageAsDouble = Math.round(1000 * ((double) inCircuitDelayCount / (double) (marinePeriodsPerWeek)))/10.0;
 		double inCircuitClosurePercentageAsDouble = Math.round(1000 * ((double) inCircuitDelayCount / (double) closures.size()))/10.0;
 
 		row = complianceSheet.createRow(rowCounter);
@@ -218,7 +217,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		rowCounter++;
 		rowCounter++;
 
-		if (BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeSummaryResultsOnNotepad())
+		if (includeSummaryResultsOnNotepad)
 		{
 			notepadComplianceStatistics2 += "In-circuit delayed bridge opening count was "+ inCircuitDelayCount +"\n";
 		}
@@ -234,7 +233,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 				closureViolationCount++;
 			}
 		}
-		double violationPeriodPercentageAsDouble = Math.round(1000 * ((double) periodViolationCount / (double) (marineAccessPeriodsPerWeek)))/10.0;
+		double violationPeriodPercentageAsDouble = Math.round(1000 * ((double) periodViolationCount / (double) (marinePeriodsPerWeek)))/10.0;
 		double violationClosurePercentageAsDouble = Math.round(1000 * ((double) closureViolationCount / (double) closures.size()))/10.0;
 
 		row = complianceSheet.createRow(rowCounter);
@@ -310,7 +309,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 		}
 
 		// Compliance Rate
-		double complianceRate = Math.round(1000 * (1.0 - (((double) periodViolationCount + (double) durationViolationCount) / ((double) marineAccessPeriodsPerWeek + (double) (168.0 - marineAccessPeriodsPerWeek)))))/10.0; 
+		double complianceRate = Math.round(1000 * (1.0 - (((double) periodViolationCount + (double) durationViolationCount) / ((double) marinePeriodsPerWeek + (double) (168.0 - marinePeriodsPerWeek)))))/10.0; 
 		row = complianceSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style9);

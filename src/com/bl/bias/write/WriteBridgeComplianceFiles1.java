@@ -34,7 +34,7 @@ public class WriteBridgeComplianceFiles1
 	private static IndexedColors[] colors = new IndexedColors[2];
 
 	public WriteBridgeComplianceFiles1(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet, 
-			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour) 
+			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek) 
 	{
 		resultsMessage1 = "\nStarted writing output file(s) at "+startWriteFileTime;
 		notepadComplianceStatistics1 = "";
