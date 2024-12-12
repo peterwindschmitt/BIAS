@@ -16,7 +16,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import com.bl.bias.app.BIASUscgBridgeComplianceAnalysisConfigPageController;
 import com.bl.bias.objects.BridgeComplianceClosure;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -28,9 +27,9 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	private final String legalDisclaimer = "*** CONFIDENTIAL AND PREPARED AT THE DIRECTION OF COUNSEL ***";
 	
 	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
-			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek)  
+			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek, Double marineAccessPeriodSpanAsSerial)  
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodStartHour, marineAccessPeriodEndHour, marinePeriodsPerWeek);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodStartHour, marineAccessPeriodEndHour, marinePeriodsPerWeek, marineAccessPeriodSpanAsSerial);
 		
 		resultsMessage2 = "";
 		notepadComplianceStatistics2 = "";

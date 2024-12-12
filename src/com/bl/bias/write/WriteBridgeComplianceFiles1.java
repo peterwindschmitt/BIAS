@@ -18,7 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.analyze.BridgeComplianceAnalysis;
-import com.bl.bias.app.BIASUscgBridgeComplianceAnalysisConfigPageController;
 import com.bl.bias.objects.BridgeComplianceClosure;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -34,7 +33,7 @@ public class WriteBridgeComplianceFiles1
 	private static IndexedColors[] colors = new IndexedColors[2];
 
 	public WriteBridgeComplianceFiles1(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet, 
-			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek) 
+			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek, Double marineAccessPeriodSpanAsSerial) 
 	{
 		resultsMessage1 = "\nStarted writing output file(s) at "+startWriteFileTime;
 		notepadComplianceStatistics1 = "";
@@ -547,7 +546,6 @@ public class WriteBridgeComplianceFiles1
 			cell.setCellStyle(style8);
 			cell.setCellValue("Mariner availability from "+marineAccessPeriodStartHour+" to "+marineAccessPeriodEndHour+" (%):");
 
-			Double marineAccessPeriodSpanAsSerial = (BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodSpanBridge1AsDouble() / 24);
 			Double durationOfClosuresDuringHighUsePeriods = BridgeComplianceAnalysis.getTotalDurationOfClosureDuringHighUsePeriodsAsSerial();
 			Double marinerAvailabilityDuringPeak = Math.round((((marineAccessPeriodSpanAsSerial * 7) - durationOfClosuresDuringHighUsePeriods) / (marineAccessPeriodSpanAsSerial * 7)) * 1000)/10.0;  
 			cell = row.createCell(8);
