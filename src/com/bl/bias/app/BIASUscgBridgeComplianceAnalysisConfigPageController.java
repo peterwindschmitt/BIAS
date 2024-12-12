@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -47,8 +46,6 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Preferences prefs;
 
 	// Common to both bridges
-	private static TabPane bridgeComplianceTabPane;
-
 	private static Boolean includeSummaryResultsOnSpreadsheet;
 	private static Boolean includeViolationsOnClosureSheet;
 	private static Boolean includeSummaryResultsOnNotepad;
@@ -179,19 +176,15 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 	@FXML private void initialize() 
 	{
-		bridgeComplianceTabPane = new TabPane(); 
 		// Set tabs to bridge names found in main controller class
 		if (BIASUscgBridgeComplianceAnalysisController.getBridgeNames().size() == 1)
 		{
 			bridgeTab1.setText(BIASUscgBridgeComplianceAnalysisController.getBridgeNames().get(0).getValue());
-			//bridgeComplianceTabPane.getTabs().add(bridgeTab1); 
 		}
 		else if (BIASUscgBridgeComplianceAnalysisController.getBridgeNames().size() == 2)
 		{
 			bridgeTab1.setText(BIASUscgBridgeComplianceAnalysisController.getBridgeNames().get(0).getValue());
 			bridgeTab2.setText(BIASUscgBridgeComplianceAnalysisController.getBridgeNames().get(1).getValue());
-			//bridgeComplianceTabPane.getTabs().add(bridgeTab1); 
-			//bridgeComplianceTabPane.getTabs().add(bridgeTab2); 
 		}
 		
 		bridge1Enabled.setValue(false);
@@ -423,7 +416,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		{
 			validMarinePeriodsBridge2 = true;
 
-			String[] periods = prefs.get("cg_marineAccessPeriodsBridge2", marineAccessPeriodBridge1).split(":");
+			String[] periods = prefs.get("cg_marineAccessPeriodsBridge2", marineAccessPeriodBridge2).split(":");
 			for (int i = 0; i < periods.length; i++)
 			{
 				String[] values = periods[i].replace("[", "").replace("]", "").split(",");
