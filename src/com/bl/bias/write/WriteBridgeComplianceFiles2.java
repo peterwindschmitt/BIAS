@@ -30,7 +30,7 @@ public class WriteBridgeComplianceFiles2 extends WriteBridgeComplianceFiles1
 	public WriteBridgeComplianceFiles2(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
 			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek)  
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodEndHour, marineAccessPeriodEndHour, marinePeriodsPerWeek);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodStartHour, marineAccessPeriodEndHour, marinePeriodsPerWeek);
 		
 		resultsMessage2 = "";
 		notepadComplianceStatistics2 = "";

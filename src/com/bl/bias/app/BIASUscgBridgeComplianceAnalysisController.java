@@ -737,9 +737,6 @@ public class BIASUscgBridgeComplianceAnalysisController
 		// Analyze compliance
 		if (continueAnalysis)
 		{
-			//TODO:  Add getMarineAccessPeriodStartHourBridge1/2, getMarineAccessPeriodEndHourBridge1/2    
-			
-			
 			if (bridgeComboBox.getSelectionModel().getSelectedIndex() == 0)
 			{
 				analyzeData = new BridgeComplianceAnalysis(readData.getClosures(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMarineAccessPeriodsBridge1(), BIASUscgBridgeComplianceAnalysisConfigPageController.getMaxClosureMinutesBridge1(), BIASUscgBridgeComplianceAnalysisConfigPageController.getIncludeMarineHighUsagePeriodsBridge1(), 

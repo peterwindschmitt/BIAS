@@ -23,7 +23,7 @@ public class WriteBridgeComplianceFiles3 extends WriteBridgeComplianceFiles2
 	public WriteBridgeComplianceFiles3(ArrayList<BridgeComplianceClosure> closures, String bridgeAndSpan, String textArea, String outputSpreadsheetPath, Boolean includeHighUsePeriods, Boolean includeViolationsOnClosuresSheet,
 			Boolean includeConfidentialityDisclosure, Boolean includeSummaryResultsOnNotepad, Boolean includeSummaryResultsOnSpreadsheet, String marineAccessPeriodStartHour, String marineAccessPeriodEndHour, Integer marinePeriodsPerWeek) 
 	{
-		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodEndHour, marineAccessPeriodEndHour, marinePeriodsPerWeek);
+		super(closures, bridgeAndSpan, textArea, outputSpreadsheetPath, includeHighUsePeriods, includeViolationsOnClosuresSheet, includeConfidentialityDisclosure, includeSummaryResultsOnNotepad, includeSummaryResultsOnSpreadsheet, marineAccessPeriodStartHour, marineAccessPeriodEndHour, marinePeriodsPerWeek);
 		
 		resultsMessage3 = WriteBridgeComplianceFiles1.getResultsMessageWrite1() + WriteBridgeComplianceFiles2.getResultsMessageWrite2();
 		notepadComplianceStatistics3 = WriteBridgeComplianceFiles1.getNotepadComplianceStatistics1() + WriteBridgeComplianceFiles2.getNotepadComplianceStatistics2();
