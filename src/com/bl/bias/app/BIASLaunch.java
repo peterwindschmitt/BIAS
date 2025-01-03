@@ -50,13 +50,13 @@ public class BIASLaunch extends Application
 	// Expiration of this version of software
 	private final static Integer softwareExpirationMonth = 12; // January = 1
 	private final static Integer softwareExpirationDay = 31;
-	private final static Integer softwareExpirationYear = 2024;
+	private final static Integer softwareExpirationYear = 2025;
 	//
 	// User permissions
 	private final static String permissions[] = 
 	{
 		// User, machine, logos, month expire, day expire, year expire, write prefs to registry, modules[]
-		"WindschmittPeter, PWINDSCHMITT-P17, FL, 12, 31, 2024, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, "
+		"WindschmittPeter, PWINDSCHMITT-P17, FL, 12, 31, 2025, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, "
 		+ "Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, USCG Bridge Compliance Analysis, Recovery Rate Analysis, "
 		+ "JUA Compliance, Modified OTP, General Config, Parse Config",
 	};

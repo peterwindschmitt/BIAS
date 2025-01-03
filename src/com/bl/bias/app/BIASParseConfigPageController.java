@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
@@ -385,7 +386,7 @@ public class BIASParseConfigPageController
 	@FXML private Button previousPageButton;
 	@FXML private Button nextPageButton;
 
-	@FXML private void initialize() 
+	@FXML private void initialize() throws IOException 
 	{
 		curPage = 1;
 		previousPageButton.setDisable(true);
