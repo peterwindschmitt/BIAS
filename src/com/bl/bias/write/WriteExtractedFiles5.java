@@ -15,14 +15,14 @@ import com.bl.bias.read.ReadRTCResultsAnalysisTypeFiles;
 
 public class WriteExtractedFiles5 extends WriteExtractedFiles4
 {
-	String resultsMessage = getResultsMessageWrite5();
+	String resultsMessage = getResultsMessageWrite4();
 	static Boolean error = false;
 	
-	public WriteExtractedFiles5(File directory, String textAreaContents, Boolean entireNetworkOnly, Boolean allLines, Boolean trainCount,
+	public WriteExtractedFiles5(String textAreaContents, Boolean entireNetworkOnly, Boolean allLines, Boolean trainCount,
 			Boolean velocity, Boolean trainMiles, Boolean elapsedTime, Boolean elapsedTimePerTrain, Boolean idealRunTime, Boolean trueDelay, Boolean trueDelayMinutes100TM, Boolean trueDelayPerTrain, 
 			Boolean otp, Boolean writeRawData, Boolean writeSummaryData, Boolean writeGraphs, Boolean timeAsString, Boolean timeInSeconds, Boolean timeAsSerial)
 	{
-		super(directory, textAreaContents, entireNetworkOnly, allLines, trainCount, velocity, trainMiles, elapsedTime, elapsedTimePerTrain, idealRunTime, trueDelay, 
+		super(textAreaContents, entireNetworkOnly, allLines, trainCount, velocity, trainMiles, elapsedTime, elapsedTimePerTrain, idealRunTime, trueDelay, 
 				trueDelayMinutes100TM, trueDelayPerTrain, otp, writeRawData, writeSummaryData, writeGraphs, timeAsString, timeInSeconds, timeAsSerial);
 		
 		try 
@@ -48,9 +48,9 @@ public class WriteExtractedFiles5 extends WriteExtractedFiles4
 		    }
 		    		    
 			//  Determine whether file name should be system serial time or if it should be user-specified
-	    	if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
+		    if (BIASGeneralConfigController.getUseSerialTimeAsFileName())
 	    	{
-	    		FileOutputStream outputStream = new FileOutputStream(directory+"\\ExtractedResults_"+System.nanoTime()+".xlsx");
+		    	FileOutputStream outputStream = new FileOutputStream(BIASRTCResultsAnalysisPageController.getSaveDirectoryLocation()+"\\ExtractedResults_"+System.nanoTime()+".xlsx");
 	    		workbook.write(outputStream);
 	 	        outputStream.close();
 	 	        workbook.close();
@@ -71,7 +71,7 @@ public class WriteExtractedFiles5 extends WriteExtractedFiles4
 	    }		
 	}
 	
-	public String getResultsWriteMessage7()
+	public String getResultsWriteMessage5()
 	{
 		return resultsMessage;
 	}

@@ -46,6 +46,7 @@ public class BIASRTCResultsAnalysisPageController
 	private static File directory;
 	private static File lastDirectory;
 	private static File saveFileLocation;
+	private static File saveDirectoryLocation;
 	private static String message = "";
 
 	private static Stage extractConfigWindow;
@@ -254,7 +255,57 @@ public class BIASRTCResultsAnalysisPageController
 			}	
 		}
 		else
-			startTask();
+		{
+			DirectoryChooser directoryChooser = new DirectoryChooser();
+			
+			// Check if previous location is available
+			if ((prefs.get("ra_lastDirectorySavedTo", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
+			{
+				Path path = Paths.get(prefs.get("ra_lastDirectorySavedTo", null));
+				if ((path.toFile().exists()) && (path !=null))
+				{
+					directoryChooser.setInitialDirectory(path.toFile());
+				}
+			}
+			
+			directoryChooser.setTitle("Select Folder");
+
+			Stage stageForFolderChooser = (Stage) assignOptionsButton.getScene().getWindow();
+			saveDirectoryLocation = directoryChooser.showDialog(stageForFolderChooser);
+			
+			if (saveDirectoryLocation != null) 
+			{
+				try 
+				{
+					if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+						prefs.put("ra_lastDirectorySavedTo", saveDirectoryLocation.toString());
+				} 
+				catch (Exception e) 
+				{
+					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+				}
+
+				startTask();
+			}
+			else
+			{
+				//  Did not commit file to save so reset
+				files.clear();
+				ReadRTCResultsAnalysisGroupFiles.clearGroupFiles();
+				ReadRTCResultsAnalysisTypeFiles.clearTypeFiles();
+
+				resetMessage();
+
+				validFilesAvailable.set(0);
+
+				executeButton.setVisible(true);
+				resetButton.setVisible(false);
+				progressBar.setVisible(false);
+				selectFolderButton.setDisable(false);
+				selectProjectFolderLabel.setDisable(false);
+				folderNameLabel.setText("");
+			}
+		}
 	}
 
 	@FXML private void handleResetButton(ActionEvent event) 
@@ -426,12 +477,12 @@ public class BIASRTCResultsAnalysisPageController
 
 	private void writeFiles() 
 	{
-		WriteExtractedFiles5 filesToWrite7 = new WriteExtractedFiles5(directory, textArea.getText(), BIASRTCResultsAnalysisOptionsWindowController.getEntireNetwork(), BIASRTCResultsAnalysisOptionsWindowController.getSelectedLines(), BIASRTCResultsAnalysisOptionsWindowController.getTrainCount(),
+		WriteExtractedFiles5 filesToWrite5 = new WriteExtractedFiles5(textArea.getText(), BIASRTCResultsAnalysisOptionsWindowController.getEntireNetwork(), BIASRTCResultsAnalysisOptionsWindowController.getSelectedLines(), BIASRTCResultsAnalysisOptionsWindowController.getTrainCount(),
 				BIASRTCResultsAnalysisOptionsWindowController.getVelocity(), BIASRTCResultsAnalysisOptionsWindowController.getTrainMiles(), BIASRTCResultsAnalysisOptionsWindowController.getElapsedRunTime(), BIASRTCResultsAnalysisOptionsWindowController.getElapsedRunTimePerTrain(), BIASRTCResultsAnalysisOptionsWindowController.getIdealRunTime(), BIASRTCResultsAnalysisOptionsWindowController.getTrueDelay(), 
 				BIASRTCResultsAnalysisOptionsWindowController.getDelayMinutesPer100TrainMiles(), BIASRTCResultsAnalysisOptionsWindowController.getDelayMinutesPerTrain(), BIASRTCResultsAnalysisOptionsWindowController.getOtp(), BIASRTCResultsAnalysisConfigPageController.getGenerateRawData(), BIASRTCResultsAnalysisConfigPageController.getSummaryResults(), 
 				BIASRTCResultsAnalysisConfigPageController.getGenerateGraphs(), BIASRTCResultsAnalysisConfigPageController.getOutputAsString(), BIASRTCResultsAnalysisConfigPageController.getOutputAsSeconds(), BIASRTCResultsAnalysisConfigPageController.getOutputAsSerial());
 
-		displayMessage(filesToWrite7.getResultsWriteMessage7());
+		displayMessage(filesToWrite5.getResultsWriteMessage5());
 	}
 
 	private void startTask()
@@ -605,6 +656,11 @@ public class BIASRTCResultsAnalysisPageController
 		textArea.appendText(message);   
 	}
 
+	public static File getSaveDirectoryLocation()
+	{		
+		return saveDirectoryLocation;
+	}
+	
 	public static File getSaveFileLocation()
 	{
 		if (!saveFileLocation.toString().toLowerCase().endsWith(".xlsx"))

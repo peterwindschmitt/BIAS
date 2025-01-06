@@ -50,11 +50,11 @@ public class WriteExtractedFiles3 extends WriteExtractedFiles2
 	Integer firstColumnForThisGraph = 6;
 	Integer lastColumnForThisGraph = 6;
 		
-	public WriteExtractedFiles3(File directory, String textAreaContents, Boolean writeEntireNetworkOnly, Boolean writeAllLines, Boolean writeTrainCount, Boolean writeVelocity, 
+	public WriteExtractedFiles3(String textAreaContents, Boolean writeEntireNetworkOnly, Boolean writeAllLines, Boolean writeTrainCount, Boolean writeVelocity, 
 			Boolean writeTrainMiles, Boolean writeElapsedTime, Boolean writeElapsedRunTimePerTrain, Boolean writeIdealRunTime, Boolean writeTrueDelay, Boolean writeTrueDelayMinutes100TM, Boolean writeTrueDelayPerTrain, 
 			Boolean writeOTP, Boolean writeRawData, Boolean writeSummaryData, Boolean writeGraphs, Boolean timeAsString, Boolean timeInSeconds, Boolean timeAsSerial)
 	{
-		super(directory, textAreaContents, writeEntireNetworkOnly, writeAllLines, writeTrainCount, writeVelocity, writeTrainMiles, writeElapsedTime, writeElapsedRunTimePerTrain, writeIdealRunTime, 
+		super(textAreaContents, writeEntireNetworkOnly, writeAllLines, writeTrainCount, writeVelocity, writeTrainMiles, writeElapsedTime, writeElapsedRunTimePerTrain, writeIdealRunTime, 
 				writeTrueDelay, writeTrueDelayMinutes100TM, writeTrueDelayPerTrain, writeOTP, writeRawData, writeSummaryData, writeGraphs, timeAsString, timeInSeconds, timeAsSerial);
 		
 		ArrayList<String> lineNames;
@@ -402,7 +402,7 @@ public class WriteExtractedFiles3 extends WriteExtractedFiles2
         firstColumnForThisGraph = 6;
 	}
 	
-	public String getResultsMessageWrite4()
+	public String getResultsMessageWrite3()
 	{
 		return resultsMessage;
 	}

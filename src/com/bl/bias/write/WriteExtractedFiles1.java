@@ -1,6 +1,5 @@
 package com.bl.bias.write;
 
-import java.io.File;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +20,7 @@ import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteExtractedFiles1
 {
-	private LocalTime startWriteFileTime = LocalTime.now();
+	private LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	protected String resultsMessage = "\nStarted writing output file at "+startWriteFileTime;
 	
 	Integer trainCount;
@@ -48,7 +47,7 @@ public class WriteExtractedFiles1
  		
 	XSSFWorkbook workbook = new XSSFWorkbook();
     
-	public WriteExtractedFiles1(File directory, String textAreaContents, Boolean writeEntireNetworkOnly, Boolean writeAllLines, Boolean writeTrainCount, Boolean writeVelocity, 
+	public WriteExtractedFiles1(String textAreaContents, Boolean writeEntireNetworkOnly, Boolean writeAllLines, Boolean writeTrainCount, Boolean writeVelocity, 
 			Boolean writeTrainMiles, Boolean writeElapsedTime, Boolean writeElapsedTimePerTrain, Boolean writeIdealRunTime, Boolean writeTrueDelay, Boolean writeTrueDelayMinutes100TM, Boolean writeTrueDelayPerTrain, 
 			Boolean writeOTP, Boolean writeRawData, Boolean writeSummaryData, Boolean writeGraphs, Boolean timeAsString, Boolean timeInSeconds, Boolean timeAsSerial)
 	{

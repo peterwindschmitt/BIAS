@@ -38,11 +38,11 @@ public class WriteExtractedFiles2 extends WriteExtractedFiles1
 	
 	List<RTCResultsAnalysisTypeDataRow> sortedTypeFiles;
  			
-	public WriteExtractedFiles2(File directory, String textAreaContents, Boolean writeEntireNetworkOnly, Boolean writeAllLines, Boolean writeTrainCount, Boolean writeVelocity, 
+	public WriteExtractedFiles2(String textAreaContents, Boolean writeEntireNetworkOnly, Boolean writeAllLines, Boolean writeTrainCount, Boolean writeVelocity, 
 			Boolean writeTrainMiles, Boolean writeElapsedTime, Boolean writeElapsedTimePerTrain, Boolean writeIdealRunTime, Boolean writeTrueDelay, Boolean writeTrueDelayMinutes100TM, Boolean writeTrueDelayPerTrain, 
 			Boolean writeOTP, Boolean writeRawData, Boolean writeSummaryData, Boolean writeGraphs, Boolean timeAsString, Boolean timeInSeconds, Boolean timeAsSerial)
 	{
-		super(directory, textAreaContents, writeEntireNetworkOnly, writeAllLines, writeTrainCount, writeVelocity, writeTrainMiles, writeElapsedTime, writeElapsedTimePerTrain, writeIdealRunTime, writeTrueDelay, 
+		super(textAreaContents, writeEntireNetworkOnly, writeAllLines, writeTrainCount, writeVelocity, writeTrainMiles, writeElapsedTime, writeElapsedTimePerTrain, writeIdealRunTime, writeTrueDelay, 
 				writeTrueDelayMinutes100TM, writeTrueDelayPerTrain, writeOTP, writeRawData, writeSummaryData, writeGraphs, timeAsString, timeInSeconds, timeAsSerial);
 		
 		// Set styles
