@@ -245,6 +245,15 @@ public class BIASRTCResultsAnalysisPageController
 				resetMessage();
 
 				validFilesAvailable.set(0);
+				
+				// Rebind radio buttons
+				doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+				useOptionsCustomAssignmentsRadioButton.disableProperty().bind(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().not());
+
+				doNotUseCustomAssignments = true;
+				useCustomAssignmentsFromModuleConfig = false;
+				useCustomAssignmentsFromOptions = false;
+				doNotUseCustomAssignmentsRadioButton.setSelected(true);
 
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -297,6 +306,15 @@ public class BIASRTCResultsAnalysisPageController
 				resetMessage();
 
 				validFilesAvailable.set(0);
+				
+				// Rebind radio buttons
+				doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+				useOptionsCustomAssignmentsRadioButton.disableProperty().bind(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().not());
+
+				doNotUseCustomAssignments = true;
+				useCustomAssignmentsFromModuleConfig = false;
+				useCustomAssignmentsFromOptions = false;
+				doNotUseCustomAssignmentsRadioButton.setSelected(true);
 
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
