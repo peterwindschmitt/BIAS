@@ -10,6 +10,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.bl.bias.app.BIASUscgBridgeComplianceAnalysisConfigPageController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.BridgeComplianceClosure;
 import com.bl.bias.tools.ConvertDateTime;
@@ -82,7 +83,8 @@ public class ReadExcelFileForBridgeCompliance
 					break;
 				}
 				
-				if (((lastClosureNumber + 1) != closureNumber) && (i != (firstRowOfClosures - 1)))
+				if ((((lastClosureNumber + 1) != closureNumber) && (i != (firstRowOfClosures - 1))) && 
+						(!BIASUscgBridgeComplianceAnalysisConfigPageController.getDisableCheckingCycleOrder()))
 				{
 					resultsMessage += "Closure in row "+(rowNumber+1)+" is out of sequence\n";
 					validFile = false;

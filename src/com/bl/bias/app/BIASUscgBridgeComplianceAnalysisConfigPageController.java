@@ -50,6 +50,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean includeViolationsOnClosureSheet;
 	private static Boolean includeSummaryResultsOnNotepad;
 	private static Boolean includeConfidentialityDisclaimer;
+	private static Boolean disableCheckingCycleOrder;
 
 	private static Boolean defaultIncludeSummaryResultsOnSpreadsheet = true;
 	private static Boolean defaultIncludeViolationsOnClosureSheet = true;
@@ -57,6 +58,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean defaultIncludeConfidentialityDisclaimer = true;
 	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
 	private static Boolean defaultBridgeEnabled = false;
+	private static Boolean defaultDisableCheckingCycleOrder = false;
 	private static String defaultInCircuitPermissibleDelay = "0";
 	private static String defaultMarineAcessPeriodStartHour = "00:00";
 	private static String defaultMarineAcessPeriodEndHour = "00:00";
@@ -73,6 +75,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	@FXML private CheckBox includeViolationsOnClosureSheetCheckBox;
 	@FXML private CheckBox includeSummaryResultsOnNotepadCheckBox;
 	@FXML private CheckBox includeConfidentialityDisclaimerCheckBox;
+	@FXML private CheckBox disableCycleOrderCheckBox;
 
 	// Bridge 1
 	private static String inCircuitPermissibleDelayBridge1;
@@ -186,10 +189,10 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			bridgeTab1.setText(BIASUscgBridgeComplianceAnalysisController.getBridgeNames().get(0).getValue());
 			bridgeTab2.setText(BIASUscgBridgeComplianceAnalysisController.getBridgeNames().get(1).getValue());
 		}
-		
+
 		bridge1Enabled.setValue(false);
 		bridge2Enabled.setValue(false);
-		
+
 		marinePeriodStartDoubleTable1.setStyle( "-fx-alignment: CENTER;");
 		marinePeriodStartTimeTable1.setStyle( "-fx-alignment: CENTER;");
 		marinePeriodEndDoubleTable1.setStyle( "-fx-alignment: CENTER;");
@@ -269,6 +272,22 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_includeConfidentialityDisclaimer", false);
 			includeConfidentialityDisclaimerCheckBox.setSelected(false);
+		}
+
+		// See if cycle #s should be checked for ordering 
+		if (prefs.getBoolean("cg_disableCheckingCycleOrdering", defaultDisableCheckingCycleOrder))
+		{
+			disableCheckingCycleOrder = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_disableCheckingCycleOrdering", true);
+			disableCycleOrderCheckBox.setSelected(true);
+		}
+		else
+		{
+			disableCheckingCycleOrder = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_disableCheckingCycleOrdering", false);
+			disableCycleOrderCheckBox.setSelected(false);
 		}
 
 		// See if bridge 1 name is stored
@@ -841,6 +860,22 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			includeConfidentialityDisclaimer = true;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("cg_includeConfidentialityDisclaimer", true);
+		}
+	}
+
+	@FXML private void handleDisableCycleOrderCheckBox(ActionEvent event)
+	{
+		if (disableCheckingCycleOrder)
+		{
+			disableCheckingCycleOrder = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_disableCheckingCycleOrdering", false);
+		}
+		else
+		{
+			disableCheckingCycleOrder = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_disableCheckingCycleOrdering", true);
 		}
 	}
 
@@ -1491,6 +1526,11 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	public static Boolean getIncludeConfidentialityDisclaimer()
 	{
 		return includeConfidentialityDisclaimer;
+	}
+	
+	public static Boolean getDisableCheckingCycleOrder()
+	{
+		return disableCheckingCycleOrder;
 	}
 
 	public static Boolean getIncludeMarineHighUsagePeriodsBridge1()

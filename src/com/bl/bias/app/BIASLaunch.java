@@ -34,7 +34,8 @@ public class BIASLaunch extends Application
 	// 6.0 was 2/23/2024   (added JUA Compliance module)
 	// 6.1 was 12/12/2024  (added ability to persistently store two bridges in USCG bridge compliance module)
 	// 6.2 was 1/6/2025    (added logic so that RTC Results can be saved to specified location even when using nano-time filename)
-	private final static String version = "6.2 (January 5, 2025)";
+	// 6.3 was 1/7/2025    (added ability to suppress checking cycle # ordering for bridge results analysis)
+	private final static String version = "6.3 (January 7, 2025)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 4;
  	//
 	// Session validity
