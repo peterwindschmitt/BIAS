@@ -85,6 +85,7 @@ public class BIASRTCResultsAnalysisPageController
 	@FXML private ProgressBar progressBar;
 
 	@FXML private Label selectProjectFolderLabel;
+	@FXML private Label step2Label;
 	@FXML private Label folderNameLabel;
 	@FXML private Label assignOptionsLabel;
 	@FXML private Label messageLabel;
@@ -124,6 +125,7 @@ public class BIASRTCResultsAnalysisPageController
 		filesToExecuteForBB = validFilesAvailable.greaterThan(0);
 		disableAssignOptionsButton = filesToExecuteForBB.not();
 		assignOptionsButton.disableProperty().bind(disableAssignOptionsButton);
+		step2Label.disableProperty().bind(disableAssignOptionsButton);
 		assignOptionsLabel.disableProperty().bind(disableAssignOptionsButton);
 		doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
 
