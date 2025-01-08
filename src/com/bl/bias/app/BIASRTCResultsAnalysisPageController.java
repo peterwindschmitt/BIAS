@@ -84,6 +84,7 @@ public class BIASRTCResultsAnalysisPageController
 
 	@FXML private ProgressBar progressBar;
 
+	@FXML private Label step1Label;
 	@FXML private Label selectProjectFolderLabel;
 	@FXML private Label step2Label;
 	@FXML private Label folderNameLabel;
@@ -184,6 +185,7 @@ public class BIASRTCResultsAnalysisPageController
 	{
 		executionInProgress.setValue(true);
 		validFilesAvailable.set(0);
+		step1Label.setDisable(true);
 		selectProjectFolderLabel.disableProperty().unbind();
 		selectProjectFolderLabel.setDisable(true);
 		assignOptionsLabel.disableProperty().unbind();
@@ -257,6 +259,7 @@ public class BIASRTCResultsAnalysisPageController
 				useCustomAssignmentsFromOptions = false;
 				doNotUseCustomAssignmentsRadioButton.setSelected(true);
 
+				step1Label.setDisable(false);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
 				progressBar.setVisible(false);
@@ -318,6 +321,7 @@ public class BIASRTCResultsAnalysisPageController
 				useCustomAssignmentsFromOptions = false;
 				doNotUseCustomAssignmentsRadioButton.setSelected(true);
 
+				step1Label.setDisable(false);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
 				progressBar.setVisible(false);
@@ -339,6 +343,7 @@ public class BIASRTCResultsAnalysisPageController
 
 		validFilesAvailable.set(0);
 
+		step1Label.setDisable(false);
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		progressBar.setVisible(false);

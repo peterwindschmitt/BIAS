@@ -48,6 +48,9 @@ public class BIASTtestPageController
 	@FXML private Label fileANameLabel;
 	@FXML private Label fileBNameLabel;
 	@FXML private Label selectParametersLabel;
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
+	@FXML private Label step3Label;
 
 	@FXML private Button selectFileAButton;
 	@FXML private Button selectFileBButton;
@@ -126,6 +129,7 @@ public class BIASTtestPageController
 		aSelected = new SimpleBooleanProperty();
 		aSelected.set(false);
 		disableSelectFileB = aSelected.not();
+		step2Label.disableProperty().bind(disableSelectFileB);
 		selectB.disableProperty().bind(disableSelectFileB);
 		selectFileBButton.disableProperty().bind(disableSelectFileB);
 
@@ -134,6 +138,7 @@ public class BIASTtestPageController
 		bSelected.set(false);
 		disableCheckBoxes = bSelected.not();
 		selectParametersLabel.disableProperty().bind(disableCheckBoxes);
+		step3Label.disableProperty().bind(disableCheckBoxes);
 		velocityCheckbox.disableProperty().bind(disableCheckBoxes);
 		trueDelayMinutesPer100TrainMilesCheckbox.disableProperty().bind(disableCheckBoxes);
 		otpCheckbox.disableProperty().bind(disableCheckBoxes);
@@ -197,6 +202,7 @@ public class BIASTtestPageController
 
 	@FXML public void handleExecuteButton()
 	{
+		step1Label.setDisable(true);
 		velocityCheckbox.disableProperty().unbind();
 		velocityCheckbox.setDisable(true);
 		trueDelayMinutesPer100TrainMilesCheckbox.disableProperty().unbind();
@@ -210,8 +216,12 @@ public class BIASTtestPageController
 		selectFileBButton.disableProperty().unbind();
 		selectFileBButton.setDisable(true);
 
+		step2Label.disableProperty().unbind();
+		step2Label.setDisable(true);
 		selectA.disableProperty().unbind();
 		selectA.setDisable(true);
+		step3Label.disableProperty().unbind();
+		step3Label.setDisable(true);
 		selectB.disableProperty().unbind();
 		selectB.setDisable(true);
 		selectParametersLabel.disableProperty().unbind();
@@ -289,7 +299,8 @@ public class BIASTtestPageController
 				disableSelectFileB = aSelected.not();
 				selectB.disableProperty().bind(disableSelectFileB);
 				selectFileBButton.disableProperty().bind(disableSelectFileB);
-
+				step2Label.disableProperty().bind(disableSelectFileB);
+				
 				// Bind Checkboxes to B
 				bSelected = new SimpleBooleanProperty();
 				bSelected.set(false);
@@ -299,7 +310,8 @@ public class BIASTtestPageController
 				trueDelayMinutesPer100TrainMilesCheckbox.disableProperty().bind(disableCheckBoxes);
 				otpCheckbox.disableProperty().bind(disableCheckBoxes);
 				elapsedRunTimePerTrainCheckbox.disableProperty().bind(disableCheckBoxes);
-
+				step3Label.disableProperty().bind(disableCheckBoxes);
+				
 				// Bind Execute to B and Checkboxes
 				velocitySelected = new SimpleBooleanProperty();
 				velocitySelected.set(true);
@@ -309,7 +321,7 @@ public class BIASTtestPageController
 				elapsedRunTimePerTrainSelected.set(true);
 				otpSelected = new SimpleBooleanProperty();
 				otpSelected.set(true);
-
+				
 				disableExecuteButton = bSelected.not().or(velocitySelected.not().and(trueDelayMinutesPer100TrainMilesSelected.not().and(elapsedRunTimePerTrainSelected.not().and(otpSelected.not()))));
 				executeButton.disableProperty().bind(disableExecuteButton);
 
@@ -393,6 +405,7 @@ public class BIASTtestPageController
 				disableSelectFileB = aSelected.not();
 				selectB.disableProperty().bind(disableSelectFileB);
 				selectFileBButton.disableProperty().bind(disableSelectFileB);
+				step2Label.disableProperty().bind(disableSelectFileB);
 
 				// Bind Checkboxes to B
 				bSelected = new SimpleBooleanProperty();
@@ -403,6 +416,7 @@ public class BIASTtestPageController
 				trueDelayMinutesPer100TrainMilesCheckbox.disableProperty().bind(disableCheckBoxes);
 				otpCheckbox.disableProperty().bind(disableCheckBoxes);
 				elapsedRunTimePerTrainCheckbox.disableProperty().bind(disableCheckBoxes);
+				step3Label.disableProperty().bind(disableCheckBoxes);
 
 				// Bind Execute to B and Checkboxes
 				velocitySelected = new SimpleBooleanProperty();
@@ -457,6 +471,8 @@ public class BIASTtestPageController
 		progressBar.setProgress(0);
 		progressBar.setVisible(false);
 
+		step1Label.setDisable(false);
+		
 		// Reset bindings and properties
 		// Bind B to A
 		aSelected = new SimpleBooleanProperty();
@@ -464,6 +480,7 @@ public class BIASTtestPageController
 		disableSelectFileB = aSelected.not();
 		selectB.disableProperty().bind(disableSelectFileB);
 		selectFileBButton.disableProperty().bind(disableSelectFileB);
+		step2Label.disableProperty().bind(disableSelectFileB);
 
 		// Bind Checkboxes to B
 		bSelected = new SimpleBooleanProperty();
@@ -474,6 +491,7 @@ public class BIASTtestPageController
 		trueDelayMinutesPer100TrainMilesCheckbox.disableProperty().bind(disableCheckBoxes);
 		otpCheckbox.disableProperty().bind(disableCheckBoxes);
 		elapsedRunTimePerTrainCheckbox.disableProperty().bind(disableCheckBoxes);
+		step3Label.disableProperty().bind(disableCheckBoxes);
 
 		// Bind Execute to B and Checkboxes
 		velocitySelected = new SimpleBooleanProperty();

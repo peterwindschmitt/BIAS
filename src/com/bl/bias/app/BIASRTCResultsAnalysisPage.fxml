@@ -38,7 +38,7 @@
         <RowConstraints maxHeight="73.0" minHeight="73.0" percentHeight="0.0" prefHeight="73.0" vgrow="ALWAYS" />
 	</rowConstraints>
 	<children>
-		<Label text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+		<Label fx:id="step1Label" text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
 			<padding>
 				<Insets left="10.0" />
 			</padding>
