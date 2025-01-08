@@ -40,12 +40,12 @@
 				<Insets bottom="-5.0" right="10.0" top="10.0" />
 			</GridPane.margin>
 		</Button>
-		<Label text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+		<Label fx:id="step1Label" text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
 			<padding>
 				<Insets left="10.0" />
 			</padding>
 		</Label>
-		<Label text="2." GridPane.rowIndex="3">
+		<Label fx:id="step2Label" text="2." GridPane.rowIndex="3">
 			<padding>
 				<Insets left="10.0" />
 			</padding>

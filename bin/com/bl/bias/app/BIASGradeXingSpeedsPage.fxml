@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.bl.bias.app.BIASGradeXingSpeedsController">
+<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASGradeXingSpeedsController">
 	<columnConstraints>
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
@@ -39,7 +39,7 @@
 				<Insets bottom="-5.0" right="10.0" />
 			</GridPane.margin>
 		</Button>
-		<Label text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+		<Label fx:id="step1Label" text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
 			<padding>
 				<Insets left="10.0" />
 			</padding>
@@ -88,12 +88,12 @@
             <Insets left="10.0" />
          </padding>
       </Label>
-       <Label text="6.  Line to evaluate: " GridPane.rowIndex="3">
+       <Label fx:id="step2Label" text="6.  Line to evaluate: " GridPane.rowIndex="3">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-      <Label text="3." GridPane.rowIndex="5">
+      <Label fx:id="step3Label" text="3." GridPane.rowIndex="5">
          <padding>
             <Insets left="10.0" />
          </padding>

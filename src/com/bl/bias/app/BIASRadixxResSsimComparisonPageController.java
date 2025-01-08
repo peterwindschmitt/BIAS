@@ -31,6 +31,8 @@ import javafx.event.ActionEvent;
 
 public class BIASRadixxResSsimComparisonPageController 
 {
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
 	@FXML private Label selectA;
 	@FXML private Label selectB;
 	@FXML private Label fileANameLabel;

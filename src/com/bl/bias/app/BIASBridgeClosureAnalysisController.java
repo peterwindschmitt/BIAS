@@ -59,6 +59,8 @@ public class BIASBridgeClosureAnalysisController
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
 	@FXML private Label selectLineLabel;

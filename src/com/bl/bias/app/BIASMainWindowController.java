@@ -76,6 +76,8 @@ public class BIASMainWindowController
 
 	@FXML private ImageView headerBackground; 
 
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
 	@FXML private Label IASLabel;
 
 	@FXML private void initialize() throws IOException
@@ -350,18 +352,12 @@ public class BIASMainWindowController
 
 	@FXML private void handleMenuItemRadixxResSsimComparisonConfig(ActionEvent event) throws IOException
 	{
-		if (!mainGridPane.getChildren().contains(nodeRadixxResSsimComparisonConfig))
-		{	
-			showModuleOnMainGridPane(nodeRadixxResSsimComparisonConfig);
-		}
+		showModuleOnMainGridPane(nodeRadixxResSsimComparisonConfig);
 	}
 
 	@FXML private void handleMenuItemUscgBridgeCompliance(ActionEvent event) throws IOException
 	{
-		if (!mainGridPane.getChildren().contains(nodeRadixxResSsimComparisonConfig))
-		{	
-			showModuleOnMainGridPane(nodeUscgBridgeCompliance);
-		}
+		showModuleOnMainGridPane(nodeUscgBridgeCompliance);
 	}
 	
 	@FXML private void handleMenuItemUscgBridgeComplianceConfig(ActionEvent event) throws IOException
@@ -376,10 +372,7 @@ public class BIASMainWindowController
 	
 	@FXML private void handleMenuItemRecoveryRateConfig(ActionEvent event) throws IOException
 	{
-		if (!mainGridPane.getChildren().contains(nodeRecoveryRateConfig))
-		{	
-			showModuleOnMainGridPane(nodeRecoveryRateConfig);
-		}
+		showModuleOnMainGridPane(nodeRecoveryRateConfig);
 	}
 	
 	@FXML private void handleMenuItemJuaCompliance(ActionEvent event) throws IOException
@@ -417,6 +410,9 @@ public class BIASMainWindowController
 		if (mainGridPane.getChildren().contains(nodeParseConfig))
 			mainGridPane.getChildren().remove(nodeParseConfig);
 
+		if (mainGridPane.getChildren().contains(nodeRadixxResSsimConversionIATAExcel))
+			mainGridPane.getChildren().remove(nodeRadixxResSsimConversionIATAExcel);
+		
 		if (mainGridPane.getChildren().contains(nodeRadixxResSsimConversionIATAExcelConfig))
 			mainGridPane.getChildren().remove(nodeRadixxResSsimConversionIATAExcelConfig);
 

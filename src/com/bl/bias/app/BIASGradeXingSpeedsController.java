@@ -51,6 +51,9 @@ public class BIASGradeXingSpeedsController
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
+	@FXML private Label step3Label;
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
 	@FXML private Label trainsInTpcFileLabel;
