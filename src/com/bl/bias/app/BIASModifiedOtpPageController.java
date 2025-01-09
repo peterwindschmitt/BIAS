@@ -39,6 +39,7 @@ public class BIASModifiedOtpPageController
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
+	@FXML private Label step1Label;
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
 
@@ -97,6 +98,7 @@ public class BIASModifiedOtpPageController
 				message = "\nStarting Modified OTP Analysis at "+ConvertDateTime.getTimeStamp();
 				displayMessage(message);
 
+				step1Label.setDisable(true);
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
@@ -144,6 +146,7 @@ public class BIASModifiedOtpPageController
 
 				saveFileFolderForSerialFileName = directory.toString();
 
+				step1Label.setDisable(true);
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
@@ -173,6 +176,8 @@ public class BIASModifiedOtpPageController
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
 
+		step1Label.setDisable(false);
+		selectProjectFileLabel.setDisable(false);
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);

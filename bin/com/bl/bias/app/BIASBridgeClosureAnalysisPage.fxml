@@ -44,7 +44,7 @@
 				<Insets left="10.0" />
 			</padding>
 		</Label>
-		<Label fx:id="step2Label" text="2." GridPane.rowIndex="3">
+		<Label fx:id="step2Label" disable="true" text="2." GridPane.rowIndex="3">
 			<padding>
 				<Insets left="10.0" />
 			</padding>

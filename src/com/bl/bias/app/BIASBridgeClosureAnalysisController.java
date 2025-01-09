@@ -119,6 +119,8 @@ public class BIASBridgeClosureAnalysisController
 				message = "\nStarting analysis of "+lineToAnalyze+" line at "+ConvertDateTime.getTimeStamp();
 				displayMessage(message);
 
+				step1Label.setDisable(true);
+				step2Label.setDisable(true);
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
@@ -134,6 +136,8 @@ public class BIASBridgeClosureAnalysisController
 				//  Did not commit file to save so reset
 				resetMessage();
 
+				step1Label.setDisable(false);
+				step2Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -171,6 +175,8 @@ public class BIASBridgeClosureAnalysisController
 
 				saveFileFolderForSerialFileName = directory.toString();
 
+				step1Label.setDisable(true);
+				step2Label.setDisable(true);
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
@@ -186,6 +192,8 @@ public class BIASBridgeClosureAnalysisController
 				//  Did not commit file to save so reset
 				resetMessage();
 
+				step1Label.setDisable(false);
+				step2Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -210,6 +218,9 @@ public class BIASBridgeClosureAnalysisController
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
 
+		step1Label.setDisable(false);
+		step2Label.setDisable(true);
+		selectProjectFileLabel.setDisable(false);
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
@@ -316,6 +327,7 @@ public class BIASBridgeClosureAnalysisController
 				// Required files also found
 				selectLineLabel.setDisable(false);
 				selectLineComboBox.setDisable(false);
+				step2Label.setDisable(false);
 
 				// Check .LINE file to generate entries for combobox 
 				getPrelimData = new BIASPreprocessLinesForBridgeClosureAnalysis(lineFile);

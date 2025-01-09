@@ -78,7 +78,7 @@
             <Insets bottom="10.0" left="10.0" />
          </GridPane.margin>
       </Button>
-      <Label text="2." GridPane.rowIndex="3">
+      <Label fx:id="step2Label" disable="true" text="2." GridPane.rowIndex="3">
          <padding>
             <Insets left="10.0" />
          </padding>
@@ -88,12 +88,7 @@
             <Insets left="10.0" />
          </padding>
       </Label>
-       <Label fx:id="step2Label" text="6.  Line to evaluate: " GridPane.rowIndex="3">
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-      <Label fx:id="step3Label" text="3." GridPane.rowIndex="5">
+      <Label fx:id="step3Label" disable="true" text="3." GridPane.rowIndex="5">
          <padding>
             <Insets left="10.0" />
          </padding>

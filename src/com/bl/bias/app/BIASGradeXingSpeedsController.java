@@ -133,6 +133,9 @@ public class BIASGradeXingSpeedsController
 				message += "\nStarting analysis of grade crossing speeds at "+ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
 				displayMessage(message);
 
+				step1Label.setDisable(true);
+				step2Label.setDisable(true);
+				step3Label.setDisable(true);
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
 				executeButton.setDisable(true);
@@ -152,6 +155,9 @@ public class BIASGradeXingSpeedsController
 				//  Did not commit file to save so reset
 				resetMessage();
 
+				step1Label.setDisable(false);
+				step2Label.setDisable(true);
+				step3Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -197,6 +203,9 @@ public class BIASGradeXingSpeedsController
 
 				saveFileFolderForSerialFileName = directory.toString();
 
+				step1Label.setDisable(true);
+				step2Label.setDisable(true);
+				step3Label.setDisable(true);
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
 				executeButton.setDisable(true);
@@ -216,6 +225,9 @@ public class BIASGradeXingSpeedsController
 				//  Did not commit file to save so reset
 				resetMessage();
 
+				step1Label.setDisable(false);
+				step2Label.setDisable(true);
+				step3Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -239,6 +251,9 @@ public class BIASGradeXingSpeedsController
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
 
+		step1Label.setDisable(false);
+		step2Label.setDisable(true);
+		step3Label.setDisable(true);
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		selectProjectFileLabel.setDisable(false);
@@ -339,6 +354,9 @@ public class BIASGradeXingSpeedsController
 
 			if (linkFileFound && optionFileFound && trainFileFound && nodeFileFound && lineFileFound)
 			{
+				step2Label.setDisable(false);
+				step3Label.setDisable(false);
+				
 				// Generate group names and abbreviations
 				getPrelimDataGroupNames = new AssignTrainTypeNameToTrainGroupName(optionFile);
 
@@ -407,6 +425,9 @@ public class BIASGradeXingSpeedsController
 			//  Did not commit read input file
 			resetMessage();
 
+			step1Label.setDisable(false);
+			step2Label.setDisable(true);
+			step3Label.setDisable(true);
 			executeButton.setDisable(true);
 			executeButton.setVisible(true);
 			resetButton.setVisible(false);

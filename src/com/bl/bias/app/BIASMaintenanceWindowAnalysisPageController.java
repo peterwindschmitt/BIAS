@@ -71,6 +71,8 @@ public class BIASMaintenanceWindowAnalysisPageController
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
 	@FXML private Label selectLineLabel;
@@ -145,6 +147,8 @@ public class BIASMaintenanceWindowAnalysisPageController
 				message = "\nStarting analysis of "+linesToAnalyze.toString()+" line at "+ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
 				displayMessage(message);
 
+				step1Label.setDisable(true);
+				step2Label.setDisable(true);
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
 				executeButton.setDisable(true);
@@ -163,6 +167,8 @@ public class BIASMaintenanceWindowAnalysisPageController
 				//  Did not commit file to save so reset
 				resetMessage();
 
+				step1Label.setDisable(false);
+				step2Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -201,6 +207,8 @@ public class BIASMaintenanceWindowAnalysisPageController
 
 				saveFileFolderForSerialFileName = directory.toString();
 
+				step1Label.setDisable(true);
+				step2Label.setDisable(true);
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
 				executeButton.setDisable(true);
@@ -219,6 +227,8 @@ public class BIASMaintenanceWindowAnalysisPageController
 				//  Did not commit file to save so reset
 				resetMessage();
 
+				step1Label.setDisable(false);
+				step2Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -241,6 +251,9 @@ public class BIASMaintenanceWindowAnalysisPageController
 		setProgressIndicator(0.00);
 		linesToAnalyze.clear();
 
+		step1Label.setDisable(false);
+		step2Label.setDisable(true);
+		selectProjectFileLabel.setDisable(false);
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		allLinesCheckBox.setDisable(true);
