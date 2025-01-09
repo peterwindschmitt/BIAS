@@ -135,7 +135,6 @@ public class BIASRTCResultsAnalysisPageController
 			useModuleConfigCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
 			typesAffected1Label.disableProperty().bind(disableAssignOptionsButton);
 			showTheTypes1Label.disableProperty().bind(disableAssignOptionsButton);
-
 		}
 		else 
 		{
@@ -252,6 +251,7 @@ public class BIASRTCResultsAnalysisPageController
 				
 				// Rebind radio buttons
 				doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+				BIASRTCResultsAnalysisOptionsWindowController.setGetCustomAssignmentsToFalse();
 				useOptionsCustomAssignmentsRadioButton.disableProperty().bind(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().not());
 
 				doNotUseCustomAssignments = true;
@@ -314,8 +314,9 @@ public class BIASRTCResultsAnalysisPageController
 				
 				// Rebind radio buttons
 				doNotUseCustomAssignmentsRadioButton.disableProperty().bind(disableAssignOptionsButton);
+				BIASRTCResultsAnalysisOptionsWindowController.setGetCustomAssignmentsToFalse();
 				useOptionsCustomAssignmentsRadioButton.disableProperty().bind(BIASRTCResultsAnalysisOptionsWindowController.getCustomAssignments().not());
-
+				
 				doNotUseCustomAssignments = true;
 				useCustomAssignmentsFromModuleConfig = false;
 				useCustomAssignmentsFromOptions = false;
