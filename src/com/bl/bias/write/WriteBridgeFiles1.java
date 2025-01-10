@@ -194,7 +194,7 @@ public class WriteBridgeFiles1
 			cell = row.createCell(5);
 			cell.setCellStyle(style1);
 			cell.setCellValue(ConvertDateTime.convertSecondsToDayHHMMSSString(crossings.get(i).getEntryNodeOSSeconds()));
-
+			
 			// Head-end off bridge
 			cell = row.createCell(6);
 			cell.setCellStyle(style1);

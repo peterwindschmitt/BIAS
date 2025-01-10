@@ -288,11 +288,11 @@ public class ConvertDateTime
 			formattedTime += hours + ":";
 
 		if (minutes == 0)
-			formattedTime += "00";
+			formattedTime += "00:";
 		else if (minutes < 10) 
-			formattedTime += "0"+minutes;
+			formattedTime += "0"+minutes+":";
 		else
-			formattedTime += minutes;
+			formattedTime += minutes + ":";
 
 		if (secondsLeft == 0)
 			formattedTime += "00";
