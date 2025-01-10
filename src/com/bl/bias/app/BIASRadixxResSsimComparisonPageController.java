@@ -112,8 +112,12 @@ public class BIASRadixxResSsimComparisonPageController
 			selectFileBButton.disableProperty().unbind();
 			selectFileBButton.setDisable(true);
 
+			step1Label.disableProperty().unbind();
+			step1Label.setDisable(true);
 			selectA.disableProperty().unbind();
 			selectA.setDisable(true);
+			step2Label.disableProperty().unbind();
+			step2Label.setDisable(true);
 			selectB.disableProperty().unbind();
 			selectB.setDisable(true);
 			
@@ -173,6 +177,7 @@ public class BIASRadixxResSsimComparisonPageController
 					aSelected = new SimpleBooleanProperty();
 					aSelected.set(false);
 					disableSelectFileB = aSelected.not();
+					step2Label.disableProperty().bind(disableSelectFileB);
 					selectB.disableProperty().bind(disableSelectFileB);
 					selectFileBButton.disableProperty().bind(disableSelectFileB);
 
@@ -184,6 +189,7 @@ public class BIASRadixxResSsimComparisonPageController
 					executeButton.disableProperty().bind(disableExecuteButton);
 
 					// Reset parameters to allow A to be again selected
+					step1Label.setDisable(false);
 					selectA.setDisable(false);
 					selectFileAButton.setDisable(false);		
 
@@ -244,6 +250,7 @@ public class BIASRadixxResSsimComparisonPageController
 					aSelected = new SimpleBooleanProperty();
 					aSelected.set(false);
 					disableSelectFileB = aSelected.not();
+					step2Label.disableProperty().bind(disableSelectFileB);
 					selectB.disableProperty().bind(disableSelectFileB);
 					selectFileBButton.disableProperty().bind(disableSelectFileB);
 
@@ -255,6 +262,7 @@ public class BIASRadixxResSsimComparisonPageController
 					executeButton.disableProperty().bind(disableExecuteButton);
 
 					// Reset parameters to allow A to be again selected
+					step1Label.setDisable(false);
 					selectA.setDisable(false);
 					selectFileAButton.setDisable(false);		
 
@@ -311,6 +319,7 @@ public class BIASRadixxResSsimComparisonPageController
 		executeButton.disableProperty().bind(disableExecuteButton);
 
 		// Reset parameters to allow A to be again selected
+		step1Label.setDisable(false);
 		selectA.setDisable(false);
 		selectFileAButton.setDisable(false);		
 

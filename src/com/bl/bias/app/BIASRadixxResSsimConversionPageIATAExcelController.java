@@ -45,6 +45,7 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 	@FXML private TextArea textArea;
 
+	@FXML private Label step1Label;
 	@FXML private Label	fileNameLabel;
 	@FXML private Label	orLabel;
 	@FXML private Label	convertLabel;
