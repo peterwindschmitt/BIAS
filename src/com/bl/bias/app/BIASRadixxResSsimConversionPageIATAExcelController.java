@@ -283,6 +283,7 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 				setProgressIndicator(0.00);
 				convertExcelToSsimRadioButton.setDisable(true);
 				convertSsimToExcelRadioButton.setDisable(true);
+				step1Label.setDisable(true);
 				convertLabel.setDisable(true);
 				orLabel.setDisable(true);
 				executeButton.setDisable(true);
@@ -334,6 +335,7 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
+				step1Label.setDisable(true);
 				convertExcelToSsimRadioButton.setDisable(true);
 				convertSsimToExcelRadioButton.setDisable(true);
 				convertLabel.setDisable(true);
@@ -372,6 +374,7 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 		orLabel.setDisable(false);
 		convertExcelToSsimRadioButton.setDisable(false);
 		
+		step1Label.setDisable(false);
 		convertSsimToExcelRadioButton.setDisable(false);
 		convertSsimToExcelRadioButton.setSelected(true);
 		ssimToExcel = true;
