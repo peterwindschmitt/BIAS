@@ -212,6 +212,7 @@ public class BIASRadixxResSsimConversionPageS3ExcelController
 				progressBar.setVisible(true);
 				setProgressIndicator(0.00);
 				convertSsimToExcelRadioButton.setDisable(true);
+				step1Label.setDisable(true);
 				convertLabel.setDisable(true);
 				executeButton.setDisable(true);
 				selectFileButton.setDisable(true);
@@ -266,7 +267,8 @@ public class BIASRadixxResSsimConversionPageS3ExcelController
 				convertLabel.setDisable(true);
 				executeButton.setDisable(true);
 				selectFileButton.setDisable(true);
-
+				step1Label.setDisable(true);
+				
 				continueAnalysis = true;
 
 				startTask();
@@ -295,6 +297,7 @@ public class BIASRadixxResSsimConversionPageS3ExcelController
 
 		convertLabel.setDisable(false);
 
+		step1Label.setDisable(false);
 		convertSsimToExcelRadioButton.setDisable(false);
 		convertSsimToExcelRadioButton.setSelected(true);
 		executeButton.setVisible(true);
