@@ -80,6 +80,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 	@FXML private RadioButton recurringMarineAccessPeriodFalseRadioButton;
 	@FXML private RadioButton recurringMarineAccessPeriodTrueRadioButton;
 
+	@FXML private Label step6Label;
 	@FXML private Label recurringMarineAccessPeriodDurationLabel;
 	@FXML private Label recurringMarineAccessPeriodSpanLabel;
 
@@ -184,6 +185,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			recurringMarineAccessPeriodEndHourCombobox.setDisable(false);
 
 			computeMarineHighUsagePeriodCheckBox.setDisable(false);
+			step6Label.setDisable(false);
 		}
 		else
 		{
@@ -197,13 +199,14 @@ public class BIASBridgeClosureAnalysisConfigPageController
 			recurringMarineAccessPeriodEndHourCombobox.setDisable(true);
 
 			computeMarineHighUsagePeriodCheckBox.setDisable(true);
+			step6Label.setDisable(true);
 			computeMarineHighUsagePeriodActive = false;
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.putBoolean("bc_computeMarineHighUsagePeriodActive", false);
 			computeMarineHighUsagePeriodCheckBox.setSelected(false);
 		}
 
-		// See if recurring marine access period start values are stored
+		// See if recurring marine access period starts values are stored
 		recurringMarineAccessPeriodStartMinuteCombobox.setItems(marineAccessPeriodStartMinuteValues);
 		recurringMarineAccessPeriodStartHourCombobox.setItems(marineAccessPeriodStartHourValues);
 
@@ -401,6 +404,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		computeMarineHighUsagePeriodActive = false;
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 			prefs.putBoolean("bc_computeMarineHighUsagePeriodActive", false);
+		step6Label.setDisable(true);
 		computeMarineHighUsagePeriodCheckBox.setSelected(false);
 	}
 
@@ -415,7 +419,7 @@ public class BIASBridgeClosureAnalysisConfigPageController
 		recurringMarineAccessPeriodEndMinuteCombobox.setDisable(false);
 		recurringMarineAccessPeriodStartHourCombobox.setDisable(false);
 		recurringMarineAccessPeriodEndHourCombobox.setDisable(false);
-
+		step6Label.setDisable(false);
 		computeMarineHighUsagePeriodCheckBox.setDisable(false);
 	}
 

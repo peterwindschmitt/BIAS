@@ -129,7 +129,7 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <Label maxWidth="10.0" minWidth="10.0" prefWidth="10.0" text="6." GridPane.rowIndex="10">
+            <Label fx:id="step6Label" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" text="6." GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>

@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -75,10 +74,6 @@ public class BIASMainWindowController
 	@FXML private Node nodeModifiedOtpConfig;
 
 	@FXML private ImageView headerBackground; 
-
-	@FXML private Label step1Label;
-	@FXML private Label step2Label;
-	@FXML private Label IASLabel;
 
 	@FXML private void initialize() throws IOException
 	{

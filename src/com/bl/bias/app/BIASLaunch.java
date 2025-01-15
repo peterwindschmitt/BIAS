@@ -58,7 +58,7 @@ public class BIASLaunch extends Application
 	private final static String permissions[] = 
 	{
 		// User, machine, logos, month expire, day expire, year expire, write prefs to registry, modules[]
-		"WindschmittPeter, PWINDSCHMITT-P17, FL, 12, 31, 2025, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, "
+		"WindschmittPeter, PWINDSCHMITT-P17, ALL, 12, 31, 2025, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, "
 		+ "Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, USCG Bridge Compliance Analysis, Recovery Rate Analysis, "
 		+ "JUA Compliance, Modified OTP, General Config, Parse Config",
 	};
