@@ -397,7 +397,27 @@ public class WriteModifiedOtpFiles1
 				cell.setCellValue(otp+"%");				
 			}
 		}
+		
+		// User-defined categories (if applicable)
+		if ((BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet1()) || (BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet2()))
+		{
+				rowCounter++;
+				rowCounter++;
+				row = modifiedOtpSheet.createRow(rowCounter);
+				cell = row.createCell(0);
+				cell.setCellStyle(style7);
+				cell.setCellValue("User-Defined Category");
 
+				cell = row.createCell(1);
+				cell.setCellStyle(style7);
+				cell.setCellValue("% OTP");
+				
+				// User-defined category 1
+				
+				// User-defined category 2
+		}
+		
+		//  Footnotes
 		rowCounter++;
 		rowCounter++;
 		row = modifiedOtpSheet.createRow(rowCounter);

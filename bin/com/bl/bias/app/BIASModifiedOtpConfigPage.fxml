@@ -920,41 +920,42 @@
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="134.0" prefWidth="134.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.0" minWidth="133.0" prefWidth="133.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.0" minWidth="133.0" prefWidth="133.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.0" minWidth="133.0" prefWidth="133.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                        <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
-                        <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" />
+                        <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" />
                         <RowConstraints />
                         <RowConstraints fillHeight="false" valignment="BOTTOM" />
                      </rowConstraints>
                      <children>
-			            <Label maxWidth="285.0" minHeight="35.0" prefWidth="285.0" text="consisting of types (case sensitive and separated by comma):" wrapText="true" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="3">
+			            <Label maxWidth="400.0" minHeight="20.0" prefWidth="400.0" text="consisting of types (case sensitive and separated by comma):" wrapText="true" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
 			               <GridPane.margin>
 			                  <Insets left="30.0" top="-10.0" />
 			               </GridPane.margin>
 			            </Label>
-			            <Label maxWidth="285.0" minHeight="35.0" prefWidth="285.0" text="consisting of types (case sensitive and separated by comma):" wrapText="true" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="6">
+			            <Label maxWidth="400.0" minHeight="20.0" prefWidth="400.0" text="consisting of types (case sensitive and separated by comma):" wrapText="true" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
 			               <GridPane.margin>
-			                  <Insets left="30.0" top="-10.0" />
+			                  <Insets bottom="10.0" left="30.0" top="-10.0" />
 			               </GridPane.margin>
 			            </Label>
 			            <TextArea fx:id="userCategory1NameTextArea" maxHeight="25.0" minHeight="25.0" onKeyTyped="#handleUserCategory1NameTextArea" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
 			                <GridPane.margin>
-			                  <Insets left="80.0" />
+			                  <Insets left="40.0" right="40.0" />
 			                </GridPane.margin>
 			            </TextArea>
 			            <TextArea fx:id="userCategory2NameTextArea" maxHeight="25.0" minHeight="25.0" onKeyTyped="#handleUserCategory2NameTextArea" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
 			                <GridPane.margin>
-			                  <Insets left="80.0" />
+			                  <Insets left="40.0" right="40.0" />
 			                </GridPane.margin>
 			            </TextArea>
 			            <Button fx:id="updateUserCategory1Button" mnemonicParsing="false" onAction="#handleUpdateUserCategory1Button" text="Update Category 1" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
@@ -962,14 +963,14 @@
 			                  <Insets right="10.0" />
 			               </GridPane.margin>
 			            </Button>
-			            <TextArea fx:id="userCategory1TypesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleUserCategory1TypesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="3">
+			            <TextArea fx:id="userCategory1TypesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleUserCategory1TypesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="2" GridPane.rowSpan="2">
 			               <GridPane.margin>
-			                  <Insets left="305.0" right="10.0" top="10.0" />
+			                  <Insets left="30.0" right="10.0" top="60.0" />
 			               </GridPane.margin>
 			            </TextArea>
-			            <TextArea fx:id="userCategory2TypesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleUserCategory2TypesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="6">
+			            <TextArea fx:id="userCategory2TypesTextArea" maxHeight="40.0" minHeight="40.0" onKeyTyped="#handleUserCategory2TypesTextArea" prefHeight="40.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="5" GridPane.rowSpan="2">
 			               <GridPane.margin>
-			                  <Insets left="305.0" right="10.0" top="10.0" />
+			                  <Insets left="30.0" right="10.0" top="60.0" />
 			               </GridPane.margin>
 			            </TextArea>
 			            <Button fx:id="updateUserCategory2Button" mnemonicParsing="false" onAction="#handleUpdateUserCategory2Button" text="Update Category 2" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
@@ -982,7 +983,7 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label text="User-Defined Assignment results are presented in addition to RTC-defined train types" GridPane.columnSpan="6" GridPane.rowIndex="1">
+                        <Label text="User-defined results are presented in addition to RTC-defined train types" GridPane.columnSpan="6" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -990,12 +991,12 @@
                               <Font name="System Italic" size="12.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="enableUserDefinedAssignmentCategory1CheckBox" mnemonicParsing="false" onAction="#handleEnableUserDefinedAssignmentCategory1CheckBox" text="1.  Enable User-defined Assignment Category 1 (if valid types are found) with name" textOverrun="CLIP" GridPane.columnSpan="5" GridPane.rowIndex="2">
+                        <CheckBox fx:id="enableUserDefinedAssignmentCategory1CheckBox" mnemonicParsing="false" onAction="#handleEnableUserDefinedAssignmentCategory1CheckBox" text="1.  Enable user-defined assignment 1 (if valid types are found) with name" textOverrun="CLIP" GridPane.columnSpan="5" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <CheckBox fx:id="enableUserDefinedAssignmentCategory2CheckBox" mnemonicParsing="false" onAction="#handleEnableUserDefinedAssignmentCategory2CheckBox" text="2.  Enable User-defined Assignment Category 2 (if valid types are found) with name" textOverrun="CLIP" GridPane.columnSpan="5" GridPane.rowIndex="5">
+                        <CheckBox fx:id="enableUserDefinedAssignmentCategory2CheckBox" mnemonicParsing="false" onAction="#handleEnableUserDefinedAssignmentCategory2CheckBox" text="2.  Enable user-defined assignment 2 (if valid types are found) with name" textOverrun="CLIP" GridPane.columnSpan="5" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
