@@ -34,7 +34,7 @@
 		<RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
         <RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
       <RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="30.0" vgrow="NEVER" />
-      <RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="30.0" vgrow="NEVER" />
         <RowConstraints maxHeight="73.0" minHeight="73.0" percentHeight="0.0" prefHeight="73.0" vgrow="ALWAYS" />
 	</rowConstraints>
 	<children>
@@ -104,7 +104,7 @@
       <RadioButton fx:id="useOptionsCustomAssignmentsRadioButton" mnemonicParsing="false" onAction="#handleUseOptionsCustomAssignmentsRadioButton" text="Use Custom Assignments from above Options" toggleGroup="$customAssignmentsToggleGroup" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8" />
 		<TextArea fx:id="textArea" editable="false" minHeight="143.0" prefHeight="143.0" prefWidth="117.0" text="Select processing options..." GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" GridPane.rowSpan="11">
 			<GridPane.margin>
-				<Insets bottom="10.0" left="100.0" right="10.0" top="15.0" />
+				<Insets bottom="10.0" left="100.0" right="10.0" top="10.0" />
 			</GridPane.margin>
 		</TextArea>
 		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">

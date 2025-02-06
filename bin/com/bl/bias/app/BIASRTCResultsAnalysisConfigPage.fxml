@@ -26,7 +26,7 @@
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="741.0" minWidth="131.0" prefWidth="239.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="28.0" minHeight="28.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -45,9 +45,9 @@
         </rowConstraints>
          <children>
             <Label text="RTC Results Analysis Configuration" underline="true">
-               <padding>
+               <GridPane.margin>
                   <Insets left="10.0" />
-               </padding>
+               </GridPane.margin>
             </Label>
             <Label text="1.  When a failed-dispatch .SUMMARY file is encountered:" GridPane.rowIndex="1">
                <padding>

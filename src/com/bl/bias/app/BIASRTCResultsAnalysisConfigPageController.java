@@ -91,7 +91,6 @@ public class BIASRTCResultsAnalysisConfigPageController
 
 	@FXML private void initialize()
 	{
-
 		userCategory1Name.addListener((observable, oldValue, newValue) -> {
 			notifyResultsAnalysisPageControllerOfChanges();
 		});
