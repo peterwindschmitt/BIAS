@@ -29,32 +29,29 @@ public class BIASModifiedOtpConfigPageController
 	private static Boolean b_exceptTrainsBasedOnRunTimeStatus; 
 	private static Boolean c_exceptTrainsBasedOnExternalAndRunTimeStatus;
 	private static Boolean d_doNotExceptTrains; 
-
 	private static Boolean useMethodology1;
 	private static Boolean useMethodology2;
 	private static Boolean useMethodology3;
-
 	private static Boolean useOtpThresholds;
-
-	private static Boolean suppressTrainsAndResultsWithNoEligibleReportings;
-	private static String permissibleMinutesOfDelayOptionA; 
-	private static String permissibleMinutesOfDelayOptionB; 
-
+	private static Boolean analyzeUserDefinedCategorySet1;
+	private static Boolean analyzeUserDefinedCategorySet2;
+	private static Boolean suppressTrainsAndResultsWithNoEligibleReportings;	
 	private static Boolean a_defaultExceptTrainsBasedOnExternalSchedule = false; 
 	private static Boolean b_defaultExceptTrainsBasedOnRunTimeStatus = false; 
 	private static Boolean c_defaultExceptTrainsBasedOnExternalAndRunTimeStatus = false;
 	private static Boolean d_defaultDoNotExceptTrains = true;
-
 	private static Boolean defaultUseMethodology1 = true;
 	private static Boolean defaultUseMethodology2 = false;
 	private static Boolean defaultUseMethodology3 = false;
-
 	private static Boolean defaultUseOtpThresholds = true;
-
+	private static Boolean defaultAnalyzeUserDefinedCategorySet1 = false;
+	private static Boolean defaultAnalyzeUserDefinedCategorySet2 = false;
 	private static Boolean defaultSuppressTrainsAndResultsWithNoEligibleReportings = true;
+	
+	private static String permissibleMinutesOfDelayOptionA; 
+	private static String permissibleMinutesOfDelayOptionB; 
 	private static String defaultPermissibleMinutesOfDelayOptionA = "10"; 
 	private static String defaultPermissibleMinutesOfDelayOptionB = "10"; 
-
 	private static String schedulePointEntries = ""; 
 	private static String actualPointEntries = "";
 
@@ -796,6 +793,38 @@ public class BIASModifiedOtpConfigPageController
 			userCategory2TypesTextArea.setText(userCategory2Types.getValue());
 
 			validCustomAssignment2Exists.setValue(true);
+		}
+
+		// See if preference is stored for analyzing Set 1
+		if (prefs.getBoolean("mo_analyzeUserDefinedCategorySet1", defaultAnalyzeUserDefinedCategorySet1))
+		{
+			analyzeUserDefinedCategorySet1 = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet1", true);
+			enableUserDefinedAssignmentCategory1CheckBox.setSelected(true);
+		}
+		else
+		{
+			analyzeUserDefinedCategorySet1 = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet1", false);
+			enableUserDefinedAssignmentCategory1CheckBox.setSelected(false);
+		}
+
+		// See if preference is stored for analyzing Set 2
+		if (prefs.getBoolean("mo_analyzeUserDefinedCategorySet2", defaultAnalyzeUserDefinedCategorySet2))
+		{
+			analyzeUserDefinedCategorySet2 = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet2", true);
+			enableUserDefinedAssignmentCategory2CheckBox.setSelected(true);
+		}
+		else
+		{
+			analyzeUserDefinedCategorySet2 = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet2", false);
+			enableUserDefinedAssignmentCategory2CheckBox.setSelected(false);
 		}
 
 		// Draw borders around Methodology labels
@@ -5300,11 +5329,11 @@ public class BIASModifiedOtpConfigPageController
 
 			userCategory1Types.setValue("");
 			userCategory1Name.setValue("");
-			
+
 			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory1TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory1Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-			
+
 			validCustomAssignment1Exists.setValue(false);
 		}
 		else if (userCategory1NameInput.equals(userCategory2Name.getValue()))
@@ -5337,7 +5366,7 @@ public class BIASModifiedOtpConfigPageController
 			userCategory1NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory1TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory1Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-			
+
 			validCustomAssignment1Exists.setValue(true);
 		}
 		else
@@ -5368,14 +5397,14 @@ public class BIASModifiedOtpConfigPageController
 				prefs.put("mo_userCategory2Name", "");
 				prefs.put("mo_userCategory2Types", "");
 			}
-			
+
 			userCategory2Types.setValue("");
 			userCategory2Name.setValue("");
-			
+
 			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory2TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory2Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-			
+
 			validCustomAssignment2Exists.setValue(false);
 		}
 		else if (userCategory2NameInput.equals(userCategory1Name.getValue()))
@@ -5408,7 +5437,7 @@ public class BIASModifiedOtpConfigPageController
 			userCategory2NameTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			userCategory2TypesTextArea.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 			updateUserCategory2Button.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-			
+
 			validCustomAssignment2Exists.setValue(true);
 		}
 		else
@@ -5425,15 +5454,37 @@ public class BIASModifiedOtpConfigPageController
 			userCategory2TypesTextArea.setText(userCategory2TypesInput);
 		}
 	}
-	
+
 	@FXML private void handleEnableUserDefinedAssignmentCategory1CheckBox()
 	{
-
+		if (analyzeUserDefinedCategorySet1 == false)
+		{
+			analyzeUserDefinedCategorySet1 = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet1", true);
+		}
+		else
+		{
+			analyzeUserDefinedCategorySet1 = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet1", false);
+		}		
 	}
 
 	@FXML private void handleEnableUserDefinedAssignmentCategory2CheckBox()
 	{
-
+		if (analyzeUserDefinedCategorySet2 == false)
+		{
+			analyzeUserDefinedCategorySet2 = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet2", true);
+		}
+		else
+		{
+			analyzeUserDefinedCategorySet2 = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("mo_analyzeUserDefinedCategorySet2", false);
+		}		
 	}
 
 	@FXML private void handleUserCategory1NameTextArea() 
@@ -5722,7 +5773,7 @@ public class BIASModifiedOtpConfigPageController
 	{
 		return suppressTrainsAndResultsWithNoEligibleReportings;
 	}
-	
+
 	public static SimpleStringProperty getUserCategory1Name()
 	{
 		return userCategory1Name;
@@ -5733,6 +5784,16 @@ public class BIASModifiedOtpConfigPageController
 		return userCategory1Types;
 	}
 
+	public static SimpleBooleanProperty getValidCustomAssignment1Exists()
+	{
+		return validCustomAssignment1Exists;
+	}
+	
+	public static Boolean getAnalyzeUserCategorySet1()
+	{
+		return analyzeUserDefinedCategorySet1;
+	}
+	
 	public static SimpleStringProperty getUserCategory2Name()
 	{
 		return userCategory2Name;
@@ -5742,14 +5803,14 @@ public class BIASModifiedOtpConfigPageController
 	{
 		return userCategory2Types;
 	}
-	
-	public static SimpleBooleanProperty getValidCustomAssignment1Exists()
-	{
-		return validCustomAssignment1Exists;
-	}
-	
+
 	public static SimpleBooleanProperty getValidCustomAssignment2Exists()
 	{
 		return validCustomAssignment2Exists;
+	}
+	
+	public static Boolean getAnalyzeUserCategorySet2()
+	{
+		return analyzeUserDefinedCategorySet2;
 	}
 }
