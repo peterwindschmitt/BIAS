@@ -350,7 +350,7 @@ public class WriteModifiedOtpFiles1
 		row = modifiedOtpSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Type (# in OTP calc)");
+		cell.setCellValue("Type (# in calc)");
 
 		cell = row.createCell(1);
 		cell.setCellStyle(style7);
@@ -397,26 +397,93 @@ public class WriteModifiedOtpFiles1
 				cell.setCellValue(otp+"%");				
 			}
 		}
-		
+
 		// User-defined categories (if applicable)
-		if ((BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet1()) || (BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet2()))
+		if (((BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet1()) && (BIASModifiedOtpConfigPageController.getValidCustomAssignment1Exists().getValue()))
+				|| ((BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet2()) && (BIASModifiedOtpConfigPageController.getValidCustomAssignment2Exists().getValue())))
 		{
-				rowCounter++;
+			rowCounter++;
+			rowCounter++;
+			row = modifiedOtpSheet.createRow(rowCounter);
+			cell = row.createCell(0);
+			cell.setCellStyle(style7);
+			cell.setCellValue("User-Defined Category (# in calc)");
+
+			cell = row.createCell(1);
+			cell.setCellStyle(style7);
+			cell.setCellValue("% OTP");
+
+			// User-defined category 1
+			if ((BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet1()) && (BIASModifiedOtpConfigPageController.getValidCustomAssignment1Exists().getValue()))
+			{
+				double numerator = 0.0;
+				double denominator = 0.0;
+				// for each type in user types
+				String[] userCategory1Types = BIASModifiedOtpConfigPageController.getUserCategory1Types().getValue().split(",");
+				for (String userCategoryType: userCategory1Types)
+				{
+					for (String type : sortedKeys)
+					{
+						if (userCategoryType.equals(type))
+						{
+							numerator += trainMakeData.get(type)[0];
+							denominator += trainMakeData.get(type)[1];	
+						}
+					}
+				}
+
+				// Complete calc
+				double otp = Math.round((numerator/denominator) * 1000) / 10.0;
+				int denominatorAsInt = (int) denominator;
+				String typeAndCount = BIASModifiedOtpConfigPageController.getUserCategory1Name().getValue() +" ["+denominatorAsInt+"]";
+
 				rowCounter++;
 				row = modifiedOtpSheet.createRow(rowCounter);
 				cell = row.createCell(0);
-				cell.setCellStyle(style7);
-				cell.setCellValue("User-Defined Category");
+				cell.setCellStyle(style5);
+				cell.setCellValue(typeAndCount);
 
 				cell = row.createCell(1);
-				cell.setCellStyle(style7);
-				cell.setCellValue("% OTP");
-				
-				// User-defined category 1
-				
-				// User-defined category 2
+				cell.setCellStyle(style1);
+				cell.setCellValue(otp+"%");
+			}
+
+			// User-defined category 2
+			if ((BIASModifiedOtpConfigPageController.getAnalyzeUserCategorySet2()) && (BIASModifiedOtpConfigPageController.getValidCustomAssignment2Exists().getValue()))
+			{
+				double numerator = 0.0;
+				double denominator = 0.0;
+				// for each type in user types
+				String[] userCategory2Types = BIASModifiedOtpConfigPageController.getUserCategory2Types().getValue().split(",");
+				for (String userCategoryType: userCategory2Types)
+				{
+					for (String type : sortedKeys)
+					{
+						if (userCategoryType.equals(type))
+						{
+							numerator += trainMakeData.get(type)[0];
+							denominator += trainMakeData.get(type)[1];	
+						}
+					}
+				}
+
+				// Complete calc
+				double otp = Math.round((numerator/denominator) * 1000) / 10.0;
+				int denominatorAsInt = (int) denominator;
+				String typeAndCount = BIASModifiedOtpConfigPageController.getUserCategory2Name().getValue() +" ["+denominatorAsInt+"]";
+
+				rowCounter++;
+				row = modifiedOtpSheet.createRow(rowCounter);
+				cell = row.createCell(0);
+				cell.setCellStyle(style5);
+				cell.setCellValue(typeAndCount);
+
+				cell = row.createCell(1);
+				cell.setCellStyle(style1);
+				cell.setCellValue(otp+"%");
+			}
 		}
-		
+
 		//  Footnotes
 		rowCounter++;
 		rowCounter++;
@@ -483,7 +550,7 @@ public class WriteModifiedOtpFiles1
 			cell.setCellStyle(style2);
 			cell.setCellValue("1. If (actual destination OS time) <= (actual origin time + scheduled traversal time)");
 		}	
-		
+
 		// Are trains excepted
 		if ((BIASModifiedOtpConfigPageController.getD_doNotExceptTrains()) && (BIASModifiedOtpConfigPageController.getUseMethodology3()))
 		{
@@ -501,7 +568,7 @@ public class WriteModifiedOtpFiles1
 			cell.setCellStyle(style2);
 			cell.setCellValue("No trains are 'excepted' due to lateness at origin");
 		}	
-		
+
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();

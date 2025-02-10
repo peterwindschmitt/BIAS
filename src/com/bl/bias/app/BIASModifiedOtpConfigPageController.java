@@ -5345,6 +5345,8 @@ public class BIASModifiedOtpConfigPageController
 			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
 			alert.show();
+			
+			validCustomAssignment1Exists.setValue(false);
 		}
 		else if ((userCategory1NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
 				&& (userCategory1TypesInput.matches("^[^,][a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*[^,]$")) 
@@ -5381,6 +5383,8 @@ public class BIASModifiedOtpConfigPageController
 
 			userCategory1NameTextArea.setText(userCategory1NameInput);
 			userCategory1TypesTextArea.setText(userCategory1TypesInput);
+			
+			validCustomAssignment1Exists.setValue(false);
 		}
 	}
 
@@ -5416,6 +5420,8 @@ public class BIASModifiedOtpConfigPageController
 			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 			stage.getIcons().add(new Image(this.getClass().getResource(BIASLaunch.getFrameIconFile()).toString()));
 			alert.show();
+			
+			validCustomAssignment2Exists.setValue(false);
 		}
 		else if ((userCategory2NameInput.matches("^[a-zA-Z\\s0-9_-]*$"))
 				&& (userCategory2TypesInput.matches("^[^,][a-zA-Z\\s,0-9_-]*(,\\s?[a-zA-Z\\s,0-9_-])*[^,]$")) 
@@ -5452,6 +5458,8 @@ public class BIASModifiedOtpConfigPageController
 
 			userCategory2NameTextArea.setText(userCategory2NameInput);
 			userCategory2TypesTextArea.setText(userCategory2TypesInput);
+			
+			validCustomAssignment2Exists.setValue(false);
 		}
 	}
 
