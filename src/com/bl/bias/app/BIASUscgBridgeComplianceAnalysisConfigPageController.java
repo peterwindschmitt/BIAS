@@ -76,7 +76,10 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	@FXML private CheckBox includeSummaryResultsOnNotepadCheckBox;
 	@FXML private CheckBox includeConfidentialityDisclaimerCheckBox;
 	@FXML private CheckBox disableCycleOrderCheckBox;
-
+	@FXML private CheckBox applyAbsurdValueCheckBox;
+	
+	@FXML private ComboBox<Integer> applyAbusrdValueComboBox;
+	
 	// Bridge 1
 	private static String inCircuitPermissibleDelayBridge1;
 	private static String marineAccessPeriodStartHourBridge1;

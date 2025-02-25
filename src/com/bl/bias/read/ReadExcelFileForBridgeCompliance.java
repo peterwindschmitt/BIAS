@@ -102,6 +102,13 @@ public class ReadExcelFileForBridgeCompliance
 				else
 					lastClosureEndTime = raiseTime;
 				
+				/*if ((lowerTime > raiseTime) && (lastDate == date))  // Use absurd duration length here (user-configurable and implementable)
+				{
+					resultsMessage += "Time in row "+(rowNumber+1)+" is out of sequence\n";
+					validFile = false;
+					break;
+				}*/
+								
 				if ((date < lastDate) && (i != (firstRowOfClosures - 1)))
 				{
 					resultsMessage += "Date in row "+(rowNumber+1)+" is out of sequence\n";

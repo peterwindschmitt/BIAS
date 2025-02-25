@@ -52,7 +52,8 @@
                         <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="174.0" prefHeight="189.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="142.0" prefHeight="167.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <CheckBox fx:id="includeConfidentialityDisclaimerCheckBox" mnemonicParsing="false" onAction="#handleIncludeConfidentialityDisclaimerCheckBox" text="1.  Embed 'Confidential and Prepared at the direction of Counsel' on output documents" GridPane.columnSpan="4">
@@ -85,36 +86,51 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <CheckBox fx:id="enableBridge1CheckBox" mnemonicParsing="false" onAction="#handleEnableBridge1CheckBox" text="5.  Bridge 1 name:" GridPane.rowIndex="5">
+                        <CheckBox fx:id="applyAbsurdValueCheckBox" mnemonicParsing="false" text="5.  Apply absurd closure duration of" GridPane.columnSpan="2" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <TextField fx:id="bridge1NameTextField" onKeyPressed="#handleBridge1NameTextField" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Label text="hours (halt processing if exceeded)" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5">
                            <GridPane.margin>
-                              <Insets left="-80.0" />
+                              <Insets left="60.0" />
                            </GridPane.margin>
-                        </TextField>
-                        <Button fx:id="updateBridgeName1Button" mnemonicParsing="false" onAction="#handleUpdateBridgeName1Button" text="Update" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </Button>
-                        <CheckBox fx:id="enableBridge2CheckBox" mnemonicParsing="false" onAction="#handleEnableBridge2CheckBox" text="6.  Bridge 2 name:" GridPane.rowIndex="6">
+                        </Label>
+                        <CheckBox fx:id="enableBridge1CheckBox" mnemonicParsing="false" onAction="#handleEnableBridge1CheckBox" text="6.  Bridge 1 name:" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <TextField fx:id="bridge2NameTextField" onKeyPressed="#handleBridge2NameTextField" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <TextField fx:id="bridge1NameTextField" onKeyPressed="#handleBridge1NameTextField" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="-80.0" />
                            </GridPane.margin>
                         </TextField>
-                        <Button fx:id="updateBridgeName2Button" mnemonicParsing="false" onAction="#handleUpdateBridgeName2Button" text="Update" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                        <Button fx:id="updateBridgeName1Button" mnemonicParsing="false" onAction="#handleUpdateBridgeName1Button" text="Update" GridPane.columnIndex="2" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Button>
+                        <CheckBox fx:id="enableBridge2CheckBox" mnemonicParsing="false" onAction="#handleEnableBridge2CheckBox" text="7.  Bridge 2 name:" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </CheckBox>
+                        <TextField fx:id="bridge2NameTextField" onKeyPressed="#handleBridge2NameTextField" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets left="-80.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Button fx:id="updateBridgeName2Button" mnemonicParsing="false" onAction="#handleUpdateBridgeName2Button" text="Update" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <ComboBox fx:id="absurdValueComboBox" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </ComboBox>
                      </children>
                      <opaqueInsets>
                         <Insets />
