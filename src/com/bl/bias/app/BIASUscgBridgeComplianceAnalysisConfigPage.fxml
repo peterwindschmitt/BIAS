@@ -86,14 +86,14 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <CheckBox fx:id="applyAbsurdValueCheckBox" mnemonicParsing="false" text="5.  Apply absurd closure duration of" GridPane.columnSpan="2" GridPane.rowIndex="5">
+                        <CheckBox fx:id="applyAbsurdValueCheckBox" mnemonicParsing="false" onAction="#handleAbsurdDurationValueCheckBox" text="5.  Apply absurd closure duration of" GridPane.columnSpan="2" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </CheckBox>
                         <Label text="hours (halt processing if exceeded)" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5">
                            <GridPane.margin>
-                              <Insets left="60.0" />
+                              <Insets left="80.0" />
                            </GridPane.margin>
                         </Label>
                         <CheckBox fx:id="enableBridge1CheckBox" mnemonicParsing="false" onAction="#handleEnableBridge1CheckBox" text="6.  Bridge 1 name:" GridPane.rowIndex="6">
@@ -126,7 +126,7 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Button>
-                        <ComboBox fx:id="absurdValueComboBox" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <ComboBox fx:id="absurdDurationValueComboBox" maxWidth="60.0" minWidth="60.0" onAction="#handleAbsurdDurationValueComboBox" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>

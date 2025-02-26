@@ -51,7 +51,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean includeSummaryResultsOnNotepad;
 	private static Boolean includeConfidentialityDisclaimer;
 	private static Boolean disableCheckingCycleOrder;
-
+	
 	private static Boolean defaultIncludeSummaryResultsOnSpreadsheet = true;
 	private static Boolean defaultIncludeViolationsOnClosureSheet = true;
 	private static Boolean defaultIncludeSummaryResultsOnNotepad = true;
@@ -59,9 +59,11 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static Boolean defaultComputeMarineHighUsagePeriodActive = false;
 	private static Boolean defaultBridgeEnabled = false;
 	private static Boolean defaultDisableCheckingCycleOrder = false;
+	private static Boolean defaultCheckAbsurdDuration = true;
 	private static String defaultInCircuitPermissibleDelay = "0";
 	private static String defaultMarineAcessPeriodStartHour = "00:00";
 	private static String defaultMarineAcessPeriodEndHour = "00:00";
+	private static String defaultAbsurdClosureDurationHoursValues = "6";
 	private static String defaultMaxClosureMinutes = "60";
 
 	private static ObservableList<MarineAccessPeriod> marineAccessPeriodsBridge1 = FXCollections.observableArrayList();
@@ -69,7 +71,11 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	private static ObservableList<String> highUsageHourValues =  FXCollections.observableArrayList("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
 			"12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00");
 	private static ObservableList<String> inCircuitPermissibleDelayValues =  FXCollections.observableArrayList("0", "5", "10");
+	private static ObservableList<String> absurdClosureDurationHoursValues =  FXCollections.observableArrayList("6", "9", "12");
 	private static ObservableList<String> maxClosureDurationMinutesValues =  FXCollections.observableArrayList("30", "60", "90", "120");
+	
+	private static SimpleStringProperty absurdDurationInHours = new SimpleStringProperty();;
+	private static SimpleBooleanProperty checkAbsurdDuration = new SimpleBooleanProperty();
 
 	@FXML private CheckBox includeSummaryResultsOnSpreadsheetCheckBox;
 	@FXML private CheckBox includeViolationsOnClosureSheetCheckBox;
@@ -78,8 +84,8 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	@FXML private CheckBox disableCycleOrderCheckBox;
 	@FXML private CheckBox applyAbsurdValueCheckBox;
 	
-	@FXML private ComboBox<Integer> applyAbusrdValueComboBox;
-	
+	@FXML private ComboBox<String> absurdDurationValueComboBox;
+
 	// Bridge 1
 	private static String inCircuitPermissibleDelayBridge1;
 	private static String marineAccessPeriodStartHourBridge1;
@@ -195,6 +201,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 
 		bridge1Enabled.setValue(false);
 		bridge2Enabled.setValue(false);
+		checkAbsurdDuration.setValue(defaultCheckAbsurdDuration);
 
 		marinePeriodStartDoubleTable1.setStyle( "-fx-alignment: CENTER;");
 		marinePeriodStartTimeTable1.setStyle( "-fx-alignment: CENTER;");
@@ -699,6 +706,38 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 		frTable2.setReorderable(false);
 		saTable2.setReorderable(false);
 		suTable2.setReorderable(false);
+
+		// See if absurd duration value is stored
+		absurdDurationValueComboBox.setItems(absurdClosureDurationHoursValues);
+
+		boolean absurdDurationHoursValueExists = prefs.get("cg_absurdDurationHoursValue", null) != null;
+		if (absurdDurationHoursValueExists)
+		{
+			absurdDurationValueComboBox.getSelectionModel().select(prefs.get("cg_absurdDurationHoursValue", defaultAbsurdClosureDurationHoursValues));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("cg_absurdDurationHoursValue", defaultAbsurdClosureDurationHoursValues);
+			absurdDurationValueComboBox.getSelectionModel().select(defaultAbsurdClosureDurationHoursValues);
+		}
+		absurdDurationInHours.setValue(prefs.get("cg_absurdDurationHoursValue", defaultAbsurdClosureDurationHoursValues));
+
+		// See if preference for checking absurd durations is stored
+		if (prefs.getBoolean("cg_checkAbsurdDuration", defaultCheckAbsurdDuration))
+		{
+			checkAbsurdDuration.setValue(true);
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_checkAbsurdDuration", true);
+			applyAbsurdValueCheckBox.setSelected(true);
+		}
+		else
+		{
+			checkAbsurdDuration.setValue(false);
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_checkAbsurdDuration", false);
+			applyAbsurdValueCheckBox.setSelected(false);
+		}
 
 		// See if "in-circuit" permissible delay values are stored for bridge 1
 		inCircuitDelayBridge1ComboBox.setItems(inCircuitPermissibleDelayValues);
@@ -1420,6 +1459,29 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 			prefs.put("cg_maxClosureMinutesBridge2", maxClosureMinutesBridge2ComboBox.getValue());
 	}
 
+	@FXML private void handleAbsurdDurationValueComboBox(ActionEvent event)
+	{
+		absurdDurationInHours.setValue(String.valueOf(absurdDurationValueComboBox.getValue()));
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+			prefs.put("cg_absurdDurationHoursValue", absurdDurationValueComboBox.getValue());
+	}
+
+	@FXML private void handleAbsurdDurationValueCheckBox(ActionEvent event) 
+	{
+		if (checkAbsurdDuration.getValue())
+		{
+			checkAbsurdDuration.setValue(false);
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_checkAbsurdDuration", false);
+		}
+		else
+		{
+			checkAbsurdDuration.setValue(true);
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("cg_checkAbsurdDuration", true);
+		}
+	}
+
 	@FXML private void handleEnableBridge1CheckBox(ActionEvent event) 
 	{
 		if (bridge1Enabled.getValue())
@@ -1530,7 +1592,7 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	{
 		return includeConfidentialityDisclaimer;
 	}
-	
+
 	public static Boolean getDisableCheckingCycleOrder()
 	{
 		return disableCheckingCycleOrder;
@@ -1614,6 +1676,16 @@ public class BIASUscgBridgeComplianceAnalysisConfigPageController
 	public static SimpleStringProperty getBridge2Name()
 	{
 		return bridge2Name;
+	}
+	
+	public static SimpleStringProperty getAbsurdDurationInHours()
+	{
+		return absurdDurationInHours;
+	}
+	
+	public static SimpleBooleanProperty getCheckAbsurdDuration()
+	{
+		return checkAbsurdDuration;
 	}
 
 	private static Double figureMarinePeriodSpanBridge1AsDouble(String marineAccessPeriodStartHour, String marineAccessPeriodEndHour)
