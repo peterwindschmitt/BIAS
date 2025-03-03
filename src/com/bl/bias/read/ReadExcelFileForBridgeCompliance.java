@@ -48,7 +48,7 @@ public class ReadExcelFileForBridgeCompliance
 			int lastClosureNumber = 0;
 			int lastDate = 0;
 			double lastClosureEndTime = 0.0;
-			
+
 			// Load row-by-row checking for errors
 			for (int i = firstRowOfClosures - 1; i <= lastRowOfClosures - 1; i++)
 			{
@@ -61,28 +61,28 @@ public class ReadExcelFileForBridgeCompliance
 				String tender = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(tenderColumn)).getStringCellValue().trim();
 				String trainType = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(trainTypeColumn)).getStringCellValue().trim();
 				String closureNotes = sheet.getRow(i).getCell(CellReference.convertColStringToIndex(notesColumn)).getStringCellValue().trim();
-				
+
 				if ((lowerTime < 0) || (lowerTime > 1))
 				{
 					resultsMessage += "Lower time in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
 					break;
 				}
-				
+
 				if ((raiseTime < 0) || (raiseTime > 1))
 				{
 					resultsMessage += "Raise time in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
 					break;
 				}
-				
+
 				if (!days.contains(day))
 				{
 					resultsMessage += "Day of week in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
 					break;
 				}
-				
+
 				if ((((lastClosureNumber + 1) != closureNumber) && (i != (firstRowOfClosures - 1))) && 
 						(!BIASUscgBridgeComplianceAnalysisConfigPageController.getDisableCheckingCycleOrder()))
 				{
@@ -92,7 +92,7 @@ public class ReadExcelFileForBridgeCompliance
 				}
 				else
 					lastClosureNumber = closureNumber;
-				
+
 				if (((lowerTime < lastClosureEndTime) && (i != (firstRowOfClosures - 1))) && (lastDate == date))
 				{
 					resultsMessage += "Time in row "+(rowNumber+1)+" is out of sequence\n";
@@ -101,14 +101,25 @@ public class ReadExcelFileForBridgeCompliance
 				}
 				else
 					lastClosureEndTime = raiseTime;
-				
-				/*if ((lowerTime > raiseTime) && (lastDate == date))  // Use absurd duration length here (user-configurable and implementable)
+
+				if ((lowerTime > raiseTime) && (lastDate == date) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getCheckAbsurdDuration().getValue())) 
 				{
-					resultsMessage += "Time in row "+(rowNumber+1)+" is out of sequence\n";
-					validFile = false;
-					break;
-				}*/
-								
+					double duration = 0.0;
+					if ((raiseTime - lowerTime) < 0)
+					{
+						duration = 1.0 + (raiseTime - lowerTime);
+					}
+					else
+						duration = raiseTime - lowerTime;
+
+					if (duration >= (Double.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getAbsurdDurationInHours().getValue())/24.0))  // Use absurd duration length here (user-configurable and implementable)
+					{
+						resultsMessage += "Time in row "+(rowNumber+1)+" is out of sequence\n";
+						validFile = false;
+						break;
+					}
+				}
+
 				if ((date < lastDate) && (i != (firstRowOfClosures - 1)))
 				{
 					resultsMessage += "Date in row "+(rowNumber+1)+" is out of sequence\n";
@@ -117,29 +128,29 @@ public class ReadExcelFileForBridgeCompliance
 				}
 				else
 					lastDate = date;
-				
+
 				Boolean modifyDurationOfFirstClosure = false;
 				Boolean modifyDurationOfLastClosure = false;
-				
+
 				// Determine if first closure duration needs to be modified
 				if ((raiseTime < lowerTime) && (i == (firstRowOfClosures - 1)))
 				{
 					modifyDurationOfFirstClosure = true;
 				}
-				
+
 				// Determine if last closure duration needs to be modified
 				if ((raiseTime < lowerTime) && (i == (lastRowOfClosures - 1)))
 				{
 					modifyDurationOfLastClosure = true;
 				}
-				
+
 				if (modifyDurationOfFirstClosure && modifyDurationOfLastClosure)
 				{
 					resultsMessage += "Time in row "+(rowNumber+1)+" is invalid\n";
 					validFile = false;
 					break;
 				}
-				
+
 				BridgeComplianceClosure closure = new BridgeComplianceClosure(modifyDurationOfFirstClosure, modifyDurationOfLastClosure, rowNumber, closureNumber, date, lowerTime, raiseTime, tender, day, trainType, closureNotes);
 				closures.add(closure);
 				closuresReadCount++;
@@ -155,7 +166,7 @@ public class ReadExcelFileForBridgeCompliance
 		{
 			wb.close();
 		}
-		
+
 		resultsMessage += "Read "+closuresReadCount+" closures from spreadsheet \n";
 		resultsMessage += "Finished parsing Excel file at "+ConvertDateTime.getTimeStamp()+"\n";
 	}
@@ -167,7 +178,7 @@ public class ReadExcelFileForBridgeCompliance
 		String dateSpan = (" [" + earliestDate + " to " + latestDate + "]");
 		return dateSpan;
 	}
-	
+
 	public String getResultsMessage()
 	{
 		return resultsMessage;
