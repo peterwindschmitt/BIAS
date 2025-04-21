@@ -102,7 +102,7 @@ public class ReadExcelFileForBridgeCompliance
 				else
 					lastClosureEndTime = raiseTime;
 
-				// Check for suspect out of sequence errors 
+				// Check for suspect out of sequence errors (MUST have selected in config)
 				if ((lowerTime > raiseTime) && (lastDate == date) && (BIASUscgBridgeComplianceAnalysisConfigPageController.getCheckAbsurdDuration().getValue())) 
 				{
 					double duration = 0.0;
@@ -121,7 +121,7 @@ public class ReadExcelFileForBridgeCompliance
 					}
 				}
 
-				// Check for absurd long closures
+				// Check for absurdly long closures (MUST have selected in config)
 				double duration = 0.0;
 				if ((raiseTime - lowerTime) < 0)
 				{
@@ -130,13 +130,15 @@ public class ReadExcelFileForBridgeCompliance
 				else
 					duration = raiseTime - lowerTime;
 
-				if (duration >= (Double.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getAbsurdDurationInHours().getValue())/24.0))  // Use absurd duration length here (user-configurable and implementable)
+				if ((duration >= (Double.valueOf(BIASUscgBridgeComplianceAnalysisConfigPageController.getAbsurdDurationInHours().getValue())/24.0))  // Use absurd duration length here (user-configurable and implementable)
+					&& (BIASUscgBridgeComplianceAnalysisConfigPageController.getCheckAbsurdDuration().getValue()))
 				{
 					resultsMessage += "Time in row "+(rowNumber+1)+" is absurd\n";
 					validFile = false;
 					break;
 				}
 
+				// Check if date out of sequence
 				if ((date < lastDate) && (i != (firstRowOfClosures - 1)))
 				{
 					resultsMessage += "Date in row "+(rowNumber+1)+" is out of sequence\n";

@@ -42,6 +42,8 @@ public class BIASMainWindowController
 	@FXML private MenuItem menuItemJuaComplianceConfig;
 	@FXML private MenuItem menuItemModifiedOtp;
 	@FXML private MenuItem menuItemModifiedOtpConfig;
+	@FXML private MenuItem menuItemS3CompareSchedule;
+	@FXML private MenuItem menuItemS3CompareScheduleConfig;
 	@FXML private MenuItem menuItemGeneralConfig;
 	@FXML private MenuItem menuItemParseConfig;
 	@FXML private MenuItem menuItemVersioningAndPermissions;
@@ -72,6 +74,8 @@ public class BIASMainWindowController
 	@FXML private Node nodeJuaComplianceConfig;
 	@FXML private Node nodeModifiedOtp;
 	@FXML private Node nodeModifiedOtpConfig;
+	@FXML private Node nodeS3CompareSchedule;
+	@FXML private Node nodeS3CompareScheduleConfig;
 
 	@FXML private ImageView headerBackground; 
 
@@ -106,6 +110,8 @@ public class BIASMainWindowController
 		nodeJuaCompliance = FXMLLoader.load(getClass().getResource("BIASJuaCompliancePage.fxml"));
 		nodeModifiedOtpConfig = FXMLLoader.load(getClass().getResource("BIASModifiedOtpConfigPage.fxml"));
 		nodeModifiedOtp = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
+		nodeS3CompareScheduleConfig = FXMLLoader.load(getClass().getResource("BIASS3CompareScheduleConfigPage.fxml"));
+		nodeS3CompareSchedule = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
 		
 		// LOADING BELOW nodes will throw exception if trying to launch as JAR
 		nodeMaintenanceWindowAnalysis = FXMLLoader.load(getClass().getResource("BIASMaintenanceWindowAnalysisPage.fxml"));
@@ -255,6 +261,17 @@ public class BIASMainWindowController
 				{
 					handleMenuItemModifiedOtp(null);
 				}
+			} 
+			else if (permittedModules[i].toString().contains("S3 Compare Schedule"))
+			{
+				//menuItemS3CompareSchedule.setVisible(true);
+				subMenuModuleConfig.setVisible(true);
+				menuItemS3CompareScheduleConfig.setVisible(true);
+
+				if (i == 0)
+				{
+					//handleMenuItemS3CompareSchedule(null);
+				}
 			}
 		}
 		menuItemVersioningAndPermissions.setVisible(true);
@@ -389,6 +406,11 @@ public class BIASMainWindowController
 	{
 		showModuleOnMainGridPane(nodeModifiedOtpConfig);
 	}
+	
+	@FXML private void handleMenuItemS3CompareScheduleConfig(ActionEvent event) throws IOException
+	{
+		showModuleOnMainGridPane(nodeS3CompareScheduleConfig);
+	}
 
 	void showModuleOnMainGridPane(Node nodeToDisplay)
 	{
@@ -470,6 +492,9 @@ public class BIASMainWindowController
 		
 		if (mainGridPane.getChildren().contains(nodeModifiedOtpConfig))
 			mainGridPane.getChildren().remove(nodeModifiedOtpConfig);
+		
+		if (mainGridPane.getChildren().contains(nodeS3CompareScheduleConfig))
+			mainGridPane.getChildren().remove(nodeS3CompareScheduleConfig);
 
 		// Add the desired Pane
 		mainGridPane.add(nodeToDisplay, 0, 2);    	
