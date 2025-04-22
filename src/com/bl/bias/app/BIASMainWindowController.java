@@ -264,13 +264,13 @@ public class BIASMainWindowController
 			} 
 			else if (permittedModules[i].toString().contains("S3 Compare Schedule"))
 			{
-				//menuItemS3CompareSchedule.setVisible(true);
+				menuItemS3CompareSchedule.setVisible(true);
 				subMenuModuleConfig.setVisible(true);
 				menuItemS3CompareScheduleConfig.setVisible(true);
 
 				if (i == 0)
 				{
-					//handleMenuItemS3CompareSchedule(null);
+					handleMenuItemS3CompareSchedule(null);
 				}
 			}
 		}
@@ -407,6 +407,11 @@ public class BIASMainWindowController
 		showModuleOnMainGridPane(nodeModifiedOtpConfig);
 	}
 	
+	@FXML private void handleMenuItemS3CompareSchedule(ActionEvent event) throws IOException
+	{
+		//showModuleOnMainGridPane(nodeS3CompareSchedule);
+	}
+	
 	@FXML private void handleMenuItemS3CompareScheduleConfig(ActionEvent event) throws IOException
 	{
 		showModuleOnMainGridPane(nodeS3CompareScheduleConfig);
@@ -492,6 +497,9 @@ public class BIASMainWindowController
 		
 		if (mainGridPane.getChildren().contains(nodeModifiedOtpConfig))
 			mainGridPane.getChildren().remove(nodeModifiedOtpConfig);
+		
+		//if (mainGridPane.getChildren().contains(nodeS3CompareSchedule))
+		//	mainGridPane.getChildren().remove(nodeS3CompareSchedule);
 		
 		if (mainGridPane.getChildren().contains(nodeS3CompareScheduleConfig))
 			mainGridPane.getChildren().remove(nodeS3CompareScheduleConfig);
