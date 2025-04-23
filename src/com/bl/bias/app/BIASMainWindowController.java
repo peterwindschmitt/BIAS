@@ -111,7 +111,7 @@ public class BIASMainWindowController
 		nodeModifiedOtpConfig = FXMLLoader.load(getClass().getResource("BIASModifiedOtpConfigPage.fxml"));
 		nodeModifiedOtp = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
 		nodeS3CompareScheduleConfig = FXMLLoader.load(getClass().getResource("BIASS3CompareScheduleConfigPage.fxml"));
-		nodeS3CompareSchedule = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
+		nodeS3CompareSchedule = FXMLLoader.load(getClass().getResource("BIASS3CompareSchedulePage.fxml"));
 		
 		// LOADING BELOW nodes will throw exception if trying to launch as JAR
 		nodeMaintenanceWindowAnalysis = FXMLLoader.load(getClass().getResource("BIASMaintenanceWindowAnalysisPage.fxml"));
@@ -409,7 +409,7 @@ public class BIASMainWindowController
 	
 	@FXML private void handleMenuItemS3CompareSchedule(ActionEvent event) throws IOException
 	{
-		//showModuleOnMainGridPane(nodeS3CompareSchedule);
+		showModuleOnMainGridPane(nodeS3CompareSchedule);
 	}
 	
 	@FXML private void handleMenuItemS3CompareScheduleConfig(ActionEvent event) throws IOException
@@ -498,8 +498,8 @@ public class BIASMainWindowController
 		if (mainGridPane.getChildren().contains(nodeModifiedOtpConfig))
 			mainGridPane.getChildren().remove(nodeModifiedOtpConfig);
 		
-		//if (mainGridPane.getChildren().contains(nodeS3CompareSchedule))
-		//	mainGridPane.getChildren().remove(nodeS3CompareSchedule);
+		if (mainGridPane.getChildren().contains(nodeS3CompareSchedule))
+			mainGridPane.getChildren().remove(nodeS3CompareSchedule);
 		
 		if (mainGridPane.getChildren().contains(nodeS3CompareScheduleConfig))
 			mainGridPane.getChildren().remove(nodeS3CompareScheduleConfig);

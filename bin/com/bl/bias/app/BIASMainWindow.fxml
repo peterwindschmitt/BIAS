@@ -40,7 +40,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Scheduling">
                     <items>
-      						<MenuItem fx:id="menuItemS3CompareSchedule" mnemonicParsing="true" text="S3 Compare Schedule" visible="false" />
+      						<MenuItem fx:id="menuItemS3CompareSchedule" mnemonicParsing="true" onAction="#handleMenuItemS3CompareSchedule" text="S3 Compare Schedule" visible="false" />
                    			<MenuItem fx:id="menuItemRadixxResSsimConversionS3Excel" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversionS3Excel" text="Radixx Res SSIM Conversion (S3 to Excel)" visible="false" />
                    			<MenuItem fx:id="menuItemRadixxResSsimComparison" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimComparison" text="Radixx Res SSIM Comparison (IATA to IATA)" visible="false" />
                         <MenuItem fx:id="menuItemRadixxResSsimConversionIATAExcel" mnemonicParsing="true" onAction="#handleMenuItemRadixxResSsimConversionIATAExcel" text="Radixx Res _SSIM Conversion (IATA to/from Excel)" visible="false" />
