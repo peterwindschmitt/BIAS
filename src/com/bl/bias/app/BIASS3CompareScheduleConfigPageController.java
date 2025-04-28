@@ -1,11 +1,12 @@
 package com.bl.bias.app;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -33,8 +34,10 @@ public class BIASS3CompareScheduleConfigPageController
 	private static LocalDate saturdayCoreDate;
 	private static LocalDate sundayCoreDate;
 
-	private static ObservableMap<String,Boolean> validCoreDatesMap = FXCollections.observableMap(new LinkedHashMap<String, Boolean>());
-
+	private ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
+	
+	private BIASS3CompareSchedulePageController biass3CompareSchedulePageController = new BIASS3CompareSchedulePageController();
+	
 	@FXML private Button updateAPIParametersButton;
 	@FXML private Button useLastSavedAPIParametersButton;
 	@FXML private Button clearAllDatesButton;
@@ -55,14 +58,14 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		prefs = Preferences.userRoot().node("BIAS");
 
-		validCoreDatesMap.put("M", false);
-		validCoreDatesMap.put("T", false);
-		validCoreDatesMap.put("W", false);
-		validCoreDatesMap.put("R", false);
-		validCoreDatesMap.put("F", false);
-		validCoreDatesMap.put("Sa", false);
-		validCoreDatesMap.put("Su", false);
-
+		validCoreDayList.addListener(new ListChangeListener<String>() {
+			@Override
+			//onChanged method
+			public void onChanged(ListChangeListener.Change c) {
+				biass3CompareSchedulePageController.alertOfConfigChange(validCoreDayList);
+			}
+		});
+		
 		// See if API parameters are stored
 		boolean uriExists = prefs.get("s3_uri", null) != null;
 		if (uriExists)
@@ -106,10 +109,15 @@ public class BIASS3CompareScheduleConfigPageController
 		// See if core dates are stored
 		// Monday
 		boolean mondayDateExists = prefs.get("s3_mondayCoreDate", null) != null;
-		if (mondayDateExists)
+		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("")))
 		{
 			mondayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_mondayCoreDate", "")));
-			validCoreDatesMap.put("M", true);
+			validCoreDayList.add("M");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_mondayCoreDate", "");
 		}
 
 		mondayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -118,11 +126,15 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				mondayCoreDate = mondayCoreDateDatePicker.getValue();
+				if (mondayCoreDate == null)
+					validCoreDayList.remove("M");
+				else if (!validCoreDayList.contains("M"))
+					validCoreDayList.add("M");
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				{
+				{					
 					if (mondayCoreDate == null)
-						prefs.remove("s3_mondayCoreDate");
+						prefs.put("s3_mondayCoreDate", "");
 					else
 						prefs.put("s3_mondayCoreDate", mondayCoreDate.toString());
 				}
@@ -131,10 +143,15 @@ public class BIASS3CompareScheduleConfigPageController
 
 		// Tuesday
 		boolean tuesdayDateExists = prefs.get("s3_tuesdayCoreDate", null) != null;
-		if (tuesdayDateExists)
+		if ((tuesdayDateExists) && (!prefs.get("s3_tuesdayCoreDate", "").equals("")))
 		{
 			tuesdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_tuesdayCoreDate", "")));
-			validCoreDatesMap.put("T", true);
+			validCoreDayList.add("T");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_tuesdayCoreDate", "");
 		}
 
 		tuesdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -143,9 +160,14 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				tuesdayCoreDate = tuesdayCoreDateDatePicker.getValue();
+				if (tuesdayCoreDate == null)
+					validCoreDayList.remove("T");
+				else if (!validCoreDayList.contains("T"))
+					validCoreDayList.add("T");
+				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 					if (tuesdayCoreDate == null)
-						prefs.remove("s3_tuesdayCoreDate");
+						prefs.put("s3_tuesdayCoreDate", "");
 					else
 						prefs.put("s3_tuesdayCoreDate", tuesdayCoreDate.toString());
 			}
@@ -153,10 +175,15 @@ public class BIASS3CompareScheduleConfigPageController
 
 		// Wednesday
 		boolean wednesdayDateExists = prefs.get("s3_wednesdayCoreDate", null) != null;
-		if (wednesdayDateExists)
+		if ((wednesdayDateExists) && (!prefs.get("s3_wednesdayCoreDate", "").equals("")))
 		{
 			wednesdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_wednesdayCoreDate", "")));
-			validCoreDatesMap.put("W", true);
+			validCoreDayList.add("W");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_wednesdayCoreDate", "");
 		}
 
 		wednesdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -165,11 +192,15 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				wednesdayCoreDate = wednesdayCoreDateDatePicker.getValue();
+				if (wednesdayCoreDate == null)
+					validCoreDayList.remove("W");
+				else if (!validCoreDayList.contains("W"))
+					validCoreDayList.add("W");
 				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (wednesdayCoreDate == null)
-						prefs.remove("s3_wednesdayCoreDate");
+						prefs.put("s3_wednesdayCoreDate", "");
 					else
 						prefs.put("s3_wednesdayCoreDate", wednesdayCoreDate.toString());
 				}
@@ -178,10 +209,15 @@ public class BIASS3CompareScheduleConfigPageController
 
 		// Thursday
 		boolean thursdayDateExists = prefs.get("s3_thursdayCoreDate", null) != null;
-		if (thursdayDateExists)
+		if ((thursdayDateExists) && (!prefs.get("s3_thursdayCoreDate", "").equals("")))
 		{
 			thursdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_thursdayCoreDate", "")));
-			validCoreDatesMap.put("R", true);
+			validCoreDayList.add("R");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_thursdayCoreDate", "");
 		}
 
 		thursdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -190,10 +226,15 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				thursdayCoreDate = thursdayCoreDateDatePicker.getValue();
+				if (thursdayCoreDate == null)
+					validCoreDayList.remove("R");
+				else if (!validCoreDayList.contains("R"))
+					validCoreDayList.add("R");
+				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (thursdayCoreDate == null)
-						prefs.remove("s3_thursdayCoreDate");
+						prefs.put("s3_thursdayCoreDate", "");
 					else
 						prefs.put("s3_thursdayCoreDate", thursdayCoreDate.toString());
 				}
@@ -202,10 +243,15 @@ public class BIASS3CompareScheduleConfigPageController
 
 		// Friday
 		boolean fridayDateExists = prefs.get("s3_fridayCoreDate", null) != null;
-		if (fridayDateExists)
+		if ((fridayDateExists) && (!prefs.get("s3_fridayCoreDate", "").equals("")))
 		{
 			fridayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_fridayCoreDate", "")));
-			validCoreDatesMap.put("F", true);
+			validCoreDayList.add("F");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_fridayCoreDate", "");
 		}
 
 		fridayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -214,10 +260,15 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				fridayCoreDate = fridayCoreDateDatePicker.getValue();
+				if (fridayCoreDate == null)
+					validCoreDayList.remove("F");
+				else if (!validCoreDayList.contains("F"))
+					validCoreDayList.add("F");
+				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (fridayCoreDate == null)
-						prefs.remove("s3_fridayCoreDate");
+						prefs.put("s3_fridayCoreDate", "");
 					else
 						prefs.put("s3_fridayCoreDate", fridayCoreDate.toString());
 				}
@@ -226,10 +277,15 @@ public class BIASS3CompareScheduleConfigPageController
 
 		// Saturday
 		boolean saturdayDateExists = prefs.get("s3_saturdayCoreDate", null) != null;
-		if (saturdayDateExists)
+		if ((saturdayDateExists) && (!prefs.get("s3_saturdayCoreDate", "").equals("")))
 		{
 			saturdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_saturdayCoreDate", "")));
-			validCoreDatesMap.put("Sa", true);
+			validCoreDayList.add("Sa");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_saturdayCoreDate", "");
 		}
 
 		saturdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -238,10 +294,15 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				saturdayCoreDate = saturdayCoreDateDatePicker.getValue();
+				if (saturdayCoreDate == null)
+					validCoreDayList.remove("Sa");
+				else if (!validCoreDayList.contains("Sa"))
+					validCoreDayList.add("Sa");
+				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (saturdayCoreDate == null)
-						prefs.remove("s3_saturdayCoreDate");
+						prefs.put("s3_saturdayCoreDate", "");
 					else
 						prefs.put("s3_saturdayCoreDate", saturdayCoreDate.toString());
 				}
@@ -250,10 +311,15 @@ public class BIASS3CompareScheduleConfigPageController
 
 		// Sunday
 		boolean sundayDateExists = prefs.get("s3_sundayCoreDate", null) != null;
-		if (sundayDateExists)
+		if ((sundayDateExists) && (!prefs.get("s3_sundayCoreDate", "").equals("")))
 		{
 			sundayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_sundayCoreDate", "")));
-			validCoreDatesMap.put("Su", true);
+			validCoreDayList.add("Su");
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_sundayCoreDate", "");
 		}
 
 		sundayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -262,10 +328,15 @@ public class BIASS3CompareScheduleConfigPageController
 			public void handle(ActionEvent event) 
 			{
 				sundayCoreDate = sundayCoreDateDatePicker.getValue();
+				if (sundayCoreDate == null)
+					validCoreDayList.remove("Su");
+				else if (!validCoreDayList.contains("Su"))
+					validCoreDayList.add("Su");
+				
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (sundayCoreDate == null)
-						prefs.remove("s3_sundayCoreDate");
+						prefs.put("s3_sundayCoreDate", "");
 					else
 						prefs.put("s3_sundayCoreDate", sundayCoreDate.toString());
 				}
@@ -322,13 +393,13 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
-			prefs.remove("s3_mondayCoreDate");
-			prefs.remove("s3_tuesdayCoreDate");
-			prefs.remove("s3_wednesdayCoreDate");
-			prefs.remove("s3_thursdayCoreDate");
-			prefs.remove("s3_fridayCoreDate");
-			prefs.remove("s3_saturdayCoreDate");
-			prefs.remove("s3_sundayCoreDate");
+			prefs.put("s3_mondayCoreDate","");
+			prefs.put("s3_tuesdayCoreDate","");
+			prefs.put("s3_wednesdayCoreDate","");
+			prefs.put("s3_thursdayCoreDate","");
+			prefs.put("s3_fridayCoreDate","");
+			prefs.put("s3_saturdayCoreDate","");
+			prefs.put("s3_sundayCoreDate","");
 		}
 
 		mondayCoreDateDatePicker.getEditor().clear();
@@ -347,13 +418,7 @@ public class BIASS3CompareScheduleConfigPageController
 		saturdayCoreDate = null;
 		sundayCoreDate = null;
 
-		validCoreDatesMap.put("M", false);
-		validCoreDatesMap.put("T", false);
-		validCoreDatesMap.put("W", false);
-		validCoreDatesMap.put("R", false);
-		validCoreDatesMap.put("F", false);
-		validCoreDatesMap.put("Sa", false);
-		validCoreDatesMap.put("Su", false);
+		validCoreDayList.clear();
 	}
 
 	public static String getUri()
@@ -405,9 +470,9 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		return sundayCoreDate;
 	}
-	
-	public static ObservableMap<String, Boolean> getValidCoreDatesMap()
+
+	public ObservableList<String> getValidCoreDatesMap()
 	{
-		return validCoreDatesMap;
+		return validCoreDayList;
 	}
 }

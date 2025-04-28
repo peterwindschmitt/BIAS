@@ -1,10 +1,13 @@
 package com.bl.bias.app;
 
+import java.awt.Color;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.analyze.ModifiedOtpAnalysis;
@@ -13,6 +16,11 @@ import com.bl.bias.read.ReadModifiedOtpFiles;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteModifiedOtpFiles2;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -36,18 +44,20 @@ public class BIASS3CompareSchedulePageController
 
 	private static Boolean continueAnalysis = true;
 
+	private static ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
+	
 	@FXML private Button executeButton;
 	@FXML private Button selectFileButton;
 	@FXML private Button resetButton;
 
-	@FXML private Label coreDateStatusM;
-	@FXML private Label coreDateStatusT;
-	@FXML private Label coreDateStatusW;
-	@FXML private Label coreDateStatusR;
-	@FXML private Label coreDateStatusF;
-	@FXML private Label coreDateStatusSa;
-	@FXML private Label coreDateStatusSu;
-	
+	@FXML private Label coreDateStatusMLabel;
+	@FXML private Label coreDateStatusTLabel;
+	@FXML private Label coreDateStatusWLabel;
+	@FXML private Label coreDateStatusRLabel;
+	@FXML private Label coreDateStatusFLabel;
+	@FXML private Label coreDateStatusSaLabel;
+	@FXML private Label coreDateStatusSuLabel;
+
 	@FXML private DatePicker startDatePicker;
 	@FXML private DatePicker endDatePicker;
 
@@ -55,20 +65,130 @@ public class BIASS3CompareSchedulePageController
 
 	@FXML private ProgressBar progressBar;
 
-	@FXML private void initialize()
+	public BIASS3CompareSchedulePageController()
 	{
 		prefs = Preferences.userRoot().node("BIAS");	
 	}
 
-	@FXML private void handleSelectFileButton(ActionEvent event) 
+	@FXML private void initialize()
 	{
-		chooseFile();
+		validCoreDayList.addListener(new ListChangeListener<String>() {
+			@Override
+			//onChanged method
+			public void onChanged(ListChangeListener.Change c) {
+				if (validCoreDayList.contains("M"))
+				{
+					coreDateStatusMLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusMLabel.setStyle("-fx-text-fill: red");
+				}
+				
+				if (validCoreDayList.contains("T"))
+				{
+					coreDateStatusTLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusTLabel.setStyle("-fx-text-fill: red");
+				}
+				
+				if (validCoreDayList.contains("W"))
+				{
+					coreDateStatusWLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusWLabel.setStyle("-fx-text-fill: red");
+				}
+				
+				if (validCoreDayList.contains("R"))
+				{
+					coreDateStatusRLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusRLabel.setStyle("-fx-text-fill: red");
+				}
+				
+				if (validCoreDayList.contains("F"))
+				{
+					coreDateStatusFLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusFLabel.setStyle("-fx-text-fill: red");
+				}
+				
+				if (validCoreDayList.contains("Sa"))
+				{
+					coreDateStatusSaLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusSaLabel.setStyle("-fx-text-fill: red");
+				}
+				
+				if (validCoreDayList.contains("Su"))
+				{
+					coreDateStatusSuLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					coreDateStatusSuLabel.setStyle("-fx-text-fill: red");
+				}
+			}
+		});
+		
+		boolean mondayDateExists = prefs.get("s3_mondayCoreDate", null) != null;
+		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("M");
+		}
+			
+		boolean tuesdayDateExists = prefs.get("s3_tuesdayCoreDate", null) != null;
+		if ((tuesdayDateExists) && (!prefs.get("s3_tuesdayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("T");
+		}
+		
+		boolean wednesdayDateExists = prefs.get("s3_wednesdayCoreDate", null) != null;
+		if ((wednesdayDateExists) && (!prefs.get("s3_wednesdayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("W");
+		}
+		
+		boolean thursdayDateExists = prefs.get("s3_thursdayCoreDate", null) != null;
+		if ((thursdayDateExists) && (!prefs.get("s3_thursdayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("R");
+		}
+		
+		boolean fridayDateExists = prefs.get("s3_fridayCoreDate", null) != null;
+		if ((fridayDateExists) && (!prefs.get("s3_fridayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("F");
+		}		
+		
+		boolean saturdayDateExists = prefs.get("s3_saturdayCoreDate", null) != null;
+		if ((saturdayDateExists) && (!prefs.get("s3_saturdayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("Sa");
+		}
+		
+		boolean sundayDateExists = prefs.get("s3_sundayCoreDate", null) != null;
+		if ((sundayDateExists) && (!prefs.get("s3_sundayCoreDate", "").equals("")))
+		{
+			validCoreDayList.add("Su");
+		}
 	}
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
 	{
+		System.out.println(validCoreDayList.toString());
+		/* Get location to save file to if not using system time as file name
 
-		// Get location to save file to if not using system time as file name
 		if (!BIASGeneralConfigController.getUseSerialTimeAsFileName())
 		{
 			FileChooser fileChooser = new FileChooser();
@@ -124,7 +244,6 @@ public class BIASS3CompareSchedulePageController
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
-				//fileNameLabel.setText("");
 			}	
 		}
 		else
@@ -171,7 +290,7 @@ public class BIASS3CompareSchedulePageController
 				resetButton.setVisible(false);
 				selectFileButton.setDisable(false);
 			}	
-		}
+		}*/
 	}
 
 	@FXML private void handleResetButton(ActionEvent event) 
@@ -184,81 +303,7 @@ public class BIASS3CompareSchedulePageController
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
 		selectFileButton.setDisable(false);
-	}
-
-	private void chooseFile()
-	{
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Select File");
-		FileChooser.ExtensionFilter fileExtensions = 
-				new FileChooser.ExtensionFilter(
-						"RTC Option Files", "*.OPTION");
-
-		fileChooser.getExtensionFilters().add(fileExtensions);		
-
-		// See if last directory is stored
-		if ((prefs.get("s3_lastDirectoryForModifiedOtp", null) != null) && (BIASGeneralConfigController.getUseLastDirectory()))
-		{
-			Path path = Paths.get(prefs.get("s3_lastDirectoryForModifiedOtp", null));
-
-			if ((path.toFile().exists()) && (path !=null))
-				fileChooser.setInitialDirectory(path.toFile());
-		}
-
-		// Show the chooser and get the file
-		Stage stageForFileChooser = (Stage) selectFileButton.getScene().getWindow();
-		File file = fileChooser.showOpenDialog(stageForFileChooser);
-
-		// Valid .OPTION file found
-		if (file != null)
-		{
-			Boolean trainFileFound = false;
-			Boolean performanceFileFound = false;
-
-			executeButton.setDisable(true);
-
-			// Write message
-			clearMessage();
-			message = "BIAS Modified OTP Module - "+BIASLaunch.getSoftwareVersion()+"\n";
-
-			// Store path for subsequent runs and set labels
-			fileAsString = file.getName().toString();
-			fullyQualifiedPath = file.toString();
-			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("mo_lastDirectoryForModifiedOtp", file.getParent());
-
-			// Check that .TRAIN file exists
-			File trainFile = new File(file.getParent(), fileAsString.replace(".OPTION", ".TRAIN"));
-			if (trainFile.exists())
-				trainFileFound = true;
-			else
-				message += "\n.TRAIN file is missing!";
-
-			// Check that .PERFORMANCE file(s) exists
-			// Determine if there is at least one .PERFORMANCE file to review
-			File directoryPathForFile = file.getParentFile();
-			Integer countOfPerformanceFiles = directoryPathForFile.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File directory, String name) {
-					return name.endsWith(".PERFORMANCE");
-				}
-			}).length;
-
-			if (countOfPerformanceFiles > 0)
-				performanceFileFound = true;
-			else
-				message += "\n.PERFORMANCE file(s) missing!";
-
-			if ((performanceFileFound) && (trainFileFound))
-			{
-				executeButton.setDisable(false);
-			}
-			else
-				message += "\n\nUnable to perform analysis due to missing file(s)";
-
-			displayMessage(message);
-		}
-	}                     
+	}     
 
 	private void startTask()
 	{
@@ -397,5 +442,11 @@ public class BIASS3CompareSchedulePageController
 	public static String getSaveFileFolderForSerialFileName()
 	{
 		return saveFileFolderForSerialFileName;
+	}
+
+	public void alertOfConfigChange(ObservableList<String> validCoreDayListFromConfig)
+	{
+		validCoreDayList.clear();
+		validCoreDayList.addAll(validCoreDayListFromConfig);
 	}
 }
