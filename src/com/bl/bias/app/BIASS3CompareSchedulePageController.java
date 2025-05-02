@@ -1,29 +1,34 @@
 package com.bl.bias.app;
 
-import java.awt.Color;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Calendar;
 import java.util.prefs.Preferences;
 
-import com.bl.bias.analyze.ModifiedOtpAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.read.ReadModifiedOtpFiles;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteModifiedOtpFiles2;
 
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -31,11 +36,10 @@ import javafx.scene.control.TextArea;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class BIASS3CompareSchedulePageController 
 {
-	private static String fileAsString;
-	private static String fullyQualifiedPath;
 	private static String message = "";
 	private static String saveFileLocationForUserSpecifiedFileName;
 	private static String saveFileFolderForSerialFileName;
@@ -44,12 +48,21 @@ public class BIASS3CompareSchedulePageController
 
 	private static Boolean continueAnalysis = true;
 
+	private static BooleanBinding disableExecuteButton;
+	private static BooleanBinding coreDayCountBP;
+	private static SimpleIntegerProperty coreDayCountSelectedIP;
+	private static SimpleBooleanProperty startDateSelectedBP;
+	private static SimpleBooleanProperty endDateSelectedBP;
+
+	private static LocalDate startDate;
+	private static LocalDate endDate;
+
 	private static ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
-	
+
 	@FXML private Button executeButton;
-	@FXML private Button selectFileButton;
 	@FXML private Button resetButton;
 
+	@FXML private Label coreDateLabel;
 	@FXML private Label coreDateStatusMLabel;
 	@FXML private Label coreDateStatusTLabel;
 	@FXML private Label coreDateStatusWLabel;
@@ -57,6 +70,10 @@ public class BIASS3CompareSchedulePageController
 	@FXML private Label coreDateStatusFLabel;
 	@FXML private Label coreDateStatusSaLabel;
 	@FXML private Label coreDateStatusSuLabel;
+	@FXML private Label step1TextLabel;
+	@FXML private Label step2TextLabel;
+	@FXML private Label step1Label;
+	@FXML private Label step2Label;
 
 	@FXML private DatePicker startDatePicker;
 	@FXML private DatePicker endDatePicker;
@@ -72,10 +89,63 @@ public class BIASS3CompareSchedulePageController
 
 	@FXML private void initialize()
 	{
+		startDateSelectedBP = new SimpleBooleanProperty();
+		endDateSelectedBP = new SimpleBooleanProperty();
+		
+		startDatePicker.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				if (startDatePicker.getValue() != null)
+				{
+					startDateSelectedBP.set(true);
+				}
+				else
+				{
+					startDateSelectedBP.set(false);
+				}
+			}
+		});
+				
+		endDatePicker.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				if (endDatePicker.getValue() != null)
+				{
+					endDateSelectedBP.set(true);
+				}
+				else
+				{
+					endDateSelectedBP.set(false);
+				}
+			}
+		});
+		
+		startDateSelectedBP.addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(true)) 
+            {
+            	endDatePicker.setDisable(false);
+            	step2TextLabel.setDisable(false);
+            	step2Label.setDisable(false);
+            }
+            else
+            {
+            	endDatePicker.setDisable(true);
+            	endDatePicker.setValue(null);
+            	step2TextLabel.setDisable(true);
+            	step2Label.setDisable(true);
+            }
+        });
+		
 		validCoreDayList.addListener(new ListChangeListener<String>() {
 			@Override
 			//onChanged method
 			public void onChanged(ListChangeListener.Change c) {
+				coreDayCountSelectedIP.set(validCoreDayList.size());
+				
 				if (validCoreDayList.contains("M"))
 				{
 					coreDateStatusMLabel.setStyle("-fx-text-fill: green");
@@ -84,7 +154,7 @@ public class BIASS3CompareSchedulePageController
 				{
 					coreDateStatusMLabel.setStyle("-fx-text-fill: red");
 				}
-				
+
 				if (validCoreDayList.contains("T"))
 				{
 					coreDateStatusTLabel.setStyle("-fx-text-fill: green");
@@ -93,7 +163,7 @@ public class BIASS3CompareSchedulePageController
 				{
 					coreDateStatusTLabel.setStyle("-fx-text-fill: red");
 				}
-				
+
 				if (validCoreDayList.contains("W"))
 				{
 					coreDateStatusWLabel.setStyle("-fx-text-fill: green");
@@ -102,7 +172,7 @@ public class BIASS3CompareSchedulePageController
 				{
 					coreDateStatusWLabel.setStyle("-fx-text-fill: red");
 				}
-				
+
 				if (validCoreDayList.contains("R"))
 				{
 					coreDateStatusRLabel.setStyle("-fx-text-fill: green");
@@ -111,7 +181,7 @@ public class BIASS3CompareSchedulePageController
 				{
 					coreDateStatusRLabel.setStyle("-fx-text-fill: red");
 				}
-				
+
 				if (validCoreDayList.contains("F"))
 				{
 					coreDateStatusFLabel.setStyle("-fx-text-fill: green");
@@ -120,7 +190,7 @@ public class BIASS3CompareSchedulePageController
 				{
 					coreDateStatusFLabel.setStyle("-fx-text-fill: red");
 				}
-				
+
 				if (validCoreDayList.contains("Sa"))
 				{
 					coreDateStatusSaLabel.setStyle("-fx-text-fill: green");
@@ -129,7 +199,7 @@ public class BIASS3CompareSchedulePageController
 				{
 					coreDateStatusSaLabel.setStyle("-fx-text-fill: red");
 				}
-				
+
 				if (validCoreDayList.contains("Su"))
 				{
 					coreDateStatusSuLabel.setStyle("-fx-text-fill: green");
@@ -141,54 +211,124 @@ public class BIASS3CompareSchedulePageController
 			}
 		});
 		
-		boolean mondayDateExists = prefs.get("s3_mondayCoreDate", null) != null;
-		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("")))
+		coreDayCountSelectedIP = new SimpleIntegerProperty();
+		coreDayCountBP = coreDayCountSelectedIP.isEqualTo(7);
+		
+		// disable execute button if there isn't a start and end date and if all DOW are not present in core assignments
+		disableExecuteButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not());          
+		executeButton.disableProperty().bind(disableExecuteButton);
+
+		boolean mondayDateExists = Boolean.getBoolean(prefs.get("s3_mondayCoreDate", null));
+		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("M")))
 		{
 			validCoreDayList.add("M");
 		}
-			
-		boolean tuesdayDateExists = prefs.get("s3_tuesdayCoreDate", null) != null;
-		if ((tuesdayDateExists) && (!prefs.get("s3_tuesdayCoreDate", "").equals("")))
+
+		boolean tuesdayDateExists = Boolean.getBoolean(prefs.get("s3_tuesdayCoreDate", null));
+		if ((tuesdayDateExists) && (!prefs.get("s3_tuesdayCoreDate", "").equals("T")))
 		{
 			validCoreDayList.add("T");
 		}
-		
-		boolean wednesdayDateExists = prefs.get("s3_wednesdayCoreDate", null) != null;
-		if ((wednesdayDateExists) && (!prefs.get("s3_wednesdayCoreDate", "").equals("")))
+
+		boolean wednesdayDateExists = Boolean.getBoolean(prefs.get("s3_wednesdayCoreDate", null));
+		if ((wednesdayDateExists) && (!prefs.get("s3_wednesdayCoreDate", "").equals("W")))
 		{
 			validCoreDayList.add("W");
 		}
-		
-		boolean thursdayDateExists = prefs.get("s3_thursdayCoreDate", null) != null;
-		if ((thursdayDateExists) && (!prefs.get("s3_thursdayCoreDate", "").equals("")))
+
+		boolean thursdayDateExists = Boolean.getBoolean(prefs.get("s3_thursdayCoreDate", null));
+		if ((thursdayDateExists) && (!prefs.get("s3_thursdayCoreDate", "").equals("R")))
 		{
 			validCoreDayList.add("R");
 		}
-		
-		boolean fridayDateExists = prefs.get("s3_fridayCoreDate", null) != null;
-		if ((fridayDateExists) && (!prefs.get("s3_fridayCoreDate", "").equals("")))
+
+		boolean fridayDateExists = Boolean.getBoolean(prefs.get("s3_fridayCoreDate", null));
+		if ((fridayDateExists) && (!prefs.get("s3_fridayCoreDate", "").equals("F")))
 		{
 			validCoreDayList.add("F");
 		}		
-		
-		boolean saturdayDateExists = prefs.get("s3_saturdayCoreDate", null) != null;
-		if ((saturdayDateExists) && (!prefs.get("s3_saturdayCoreDate", "").equals("")))
+
+		boolean saturdayDateExists = Boolean.getBoolean(prefs.get("s3_saturdayCoreDate", null));
+		if ((saturdayDateExists) && (!prefs.get("s3_saturdayCoreDate", "").equals("Sa")))
 		{
 			validCoreDayList.add("Sa");
 		}
-		
-		boolean sundayDateExists = prefs.get("s3_sundayCoreDate", null) != null;
-		if ((sundayDateExists) && (!prefs.get("s3_sundayCoreDate", "").equals("")))
+
+		boolean sundayDateExists = Boolean.getBoolean(prefs.get("s3_sundayCoreDate", null));
+		if ((sundayDateExists) && (!prefs.get("s3_sundayCoreDate", "").equals("Su")))
 		{
 			validCoreDayList.add("Su");
 		}
+
+		if (validCoreDayList.contains("M"))
+		{
+			coreDateStatusMLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusMLabel.setStyle("-fx-text-fill: red");
+		}
+
+		if (validCoreDayList.contains("T"))
+		{
+			coreDateStatusTLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusTLabel.setStyle("-fx-text-fill: red");
+		}
+
+		if (validCoreDayList.contains("W"))
+		{
+			coreDateStatusWLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusWLabel.setStyle("-fx-text-fill: red");
+		}
+
+		if (validCoreDayList.contains("R"))
+		{
+			coreDateStatusRLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusRLabel.setStyle("-fx-text-fill: red");
+		}
+
+		if (validCoreDayList.contains("F"))
+		{
+			coreDateStatusFLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusFLabel.setStyle("-fx-text-fill: red");
+		}
+
+		if (validCoreDayList.contains("Sa"))
+		{
+			coreDateStatusSaLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusSaLabel.setStyle("-fx-text-fill: red");
+		}
+
+		if (validCoreDayList.contains("Su"))
+		{
+			coreDateStatusSuLabel.setStyle("-fx-text-fill: green");
+		}
+		else
+		{
+			coreDateStatusSuLabel.setStyle("-fx-text-fill: red");
+		}
+		
+		coreDayCountSelectedIP.set(validCoreDayList.size());
 	}
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
 	{
-		System.out.println(validCoreDayList.toString());
-		/* Get location to save file to if not using system time as file name
-
+		// Get location to save file to if not using system time as file name
 		if (!BIASGeneralConfigController.getUseSerialTimeAsFileName())
 		{
 			FileChooser fileChooser = new FileChooser();
@@ -225,11 +365,26 @@ public class BIASS3CompareSchedulePageController
 
 				message = "\nStarting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp();
 				displayMessage(message);
-
-				//step1Label.setDisable(true);
-				//selectFileButton.setDisable(true);
-				//selectProjectFileLabel.setDisable(true);
-				//executeButton.setDisable(true);
+				
+				// Unbind buttons
+				executeButton.disableProperty().unbind();
+				
+				// Disable controls
+				step1Label.setDisable(true);
+				step1TextLabel.setDisable(true);
+				step2Label.setDisable(true);
+				step2TextLabel.setDisable(true);
+				startDatePicker.setDisable(true);
+				endDatePicker.setDisable(true);
+				coreDateLabel.setDisable(true);
+				coreDateStatusMLabel.setDisable(true);
+				coreDateStatusTLabel.setDisable(true);
+				coreDateStatusWLabel.setDisable(true);
+				coreDateStatusRLabel.setDisable(true);
+				coreDateStatusFLabel.setDisable(true);
+				coreDateStatusSaLabel.setDisable(true);
+				coreDateStatusSuLabel.setDisable(true);
+				executeButton.setDisable(true);
 
 				continueAnalysis = true;
 
@@ -239,11 +394,30 @@ public class BIASS3CompareSchedulePageController
 			{
 				//  Did not commit file to save so reset
 				resetMessage();
+				
+				// Rebind buttons
+				executeButton.disableProperty().bind(disableExecuteButton);
+				
+				// Enable controls
+				step1Label.setDisable(false);
+				step1TextLabel.setDisable(false);
+				step2Label.setDisable(false);
+				step2TextLabel.setDisable(false);
+				startDatePicker.setDisable(false);
+				endDatePicker.setDisable(false);
+				coreDateLabel.setDisable(false);
+				coreDateStatusMLabel.setDisable(false);
+				coreDateStatusTLabel.setDisable(false);
+				coreDateStatusWLabel.setDisable(false);
+				coreDateStatusRLabel.setDisable(false);
+				coreDateStatusFLabel.setDisable(false);
+				coreDateStatusSaLabel.setDisable(false);
+				coreDateStatusSuLabel.setDisable(false);
+				startDatePicker.setValue(null);
+				endDatePicker.setValue(null);
 
-				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
-				selectFileButton.setDisable(false);
 			}	
 		}
 		else
@@ -265,15 +439,32 @@ public class BIASS3CompareSchedulePageController
 			File directory = directoryChooser.showDialog(stageForFolderChooser);
 			if (directory != null)
 			{
-				message = "\nStarting Modified OTP Analysis at "+ConvertDateTime.getTimeStamp();
+				message = "\nStarting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp();
 				displayMessage(message);
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-					prefs.put("mo_lastDirectorySavedTo", directory.toString());
+					prefs.put("s3_lastDirectorySavedTo", directory.toString());
 
 				saveFileFolderForSerialFileName = directory.toString();
-
-				selectFileButton.setDisable(true);
+				
+				// Unbind buttons
+				executeButton.disableProperty().unbind();
+				
+				// Disable controls
+				step1Label.setDisable(true);
+				step1TextLabel.setDisable(true);
+				step2Label.setDisable(true);
+				step2TextLabel.setDisable(true);
+				startDatePicker.setDisable(true);
+				endDatePicker.setDisable(true);
+				coreDateLabel.setDisable(true);
+				coreDateStatusMLabel.setDisable(true);
+				coreDateStatusTLabel.setDisable(true);
+				coreDateStatusWLabel.setDisable(true);
+				coreDateStatusRLabel.setDisable(true);
+				coreDateStatusFLabel.setDisable(true);
+				coreDateStatusSaLabel.setDisable(true);
+				coreDateStatusSuLabel.setDisable(true);
 				executeButton.setDisable(true);
 
 				continueAnalysis = true;
@@ -284,13 +475,32 @@ public class BIASS3CompareSchedulePageController
 			{
 				//  Did not commit file to save so reset
 				resetMessage();
+				
+				// Rebind buttons
+				executeButton.disableProperty().bind(disableExecuteButton);
+				
+				// Enable controls
+				step1Label.setDisable(false);
+				step1TextLabel.setDisable(false);
+				step2Label.setDisable(false);
+				step2TextLabel.setDisable(false);
+				startDatePicker.setDisable(false);
+				endDatePicker.setDisable(false);
+				coreDateLabel.setDisable(false);
+				coreDateStatusMLabel.setDisable(false);
+				coreDateStatusTLabel.setDisable(false);
+				coreDateStatusWLabel.setDisable(false);
+				coreDateStatusRLabel.setDisable(false);
+				coreDateStatusFLabel.setDisable(false);
+				coreDateStatusSaLabel.setDisable(false);
+				coreDateStatusSuLabel.setDisable(false);
+				startDatePicker.setValue(null);
+				endDatePicker.setValue(null);
 
-				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
-				selectFileButton.setDisable(false);
 			}	
-		}*/
+		}
 	}
 
 	@FXML private void handleResetButton(ActionEvent event) 
@@ -299,10 +509,30 @@ public class BIASS3CompareSchedulePageController
 
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
+		
+		// Rebind buttons
+		executeButton.disableProperty().bind(disableExecuteButton);
+		
+		// Enable controls
+		step1Label.setDisable(false);
+		step1TextLabel.setDisable(false);
+		step2Label.setDisable(false);
+		step2TextLabel.setDisable(false);
+		startDatePicker.setDisable(false);
+		endDatePicker.setDisable(false);
+		coreDateLabel.setDisable(false);
+		coreDateStatusMLabel.setDisable(false);
+		coreDateStatusTLabel.setDisable(false);
+		coreDateStatusWLabel.setDisable(false);
+		coreDateStatusRLabel.setDisable(false);
+		coreDateStatusFLabel.setDisable(false);
+		coreDateStatusSaLabel.setDisable(false);
+		coreDateStatusSuLabel.setDisable(false);
+		startDatePicker.setValue(null);
+		endDatePicker.setValue(null);
 
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
-		selectFileButton.setDisable(false);
 	}     
 
 	private void startTask()
@@ -332,6 +562,8 @@ public class BIASS3CompareSchedulePageController
 
 	private void runTask() throws InterruptedException, IOException
 	{
+		System.out.println("running");
+		/*
 		// Check date/time format, verbose .ROUTE file, output format and ENGLISH input units
 		File optionFile = new File(fullyQualifiedPath);
 		File optionFileFolder = new File(optionFile.getParent());
@@ -399,9 +631,12 @@ public class BIASS3CompareSchedulePageController
 		else
 		{
 			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-		}
+		}*/
 
-		//  Now reset for next case
+		// Now reset for next case
+		// Rebind buttons
+		executeButton.disableProperty().bind(disableExecuteButton);
+				
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);

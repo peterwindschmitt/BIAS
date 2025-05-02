@@ -57,7 +57,7 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private void initialize() 
 	{
 		prefs = Preferences.userRoot().node("BIAS");
-
+		
 		validCoreDayList.addListener(new ListChangeListener<String>() {
 			@Override
 			//onChanged method

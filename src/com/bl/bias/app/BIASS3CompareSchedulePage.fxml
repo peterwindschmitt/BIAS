@@ -39,24 +39,26 @@
             <Insets left="10.0" />
          </GridPane.margin>
 		</Label>
+      <Label fx:id="step1TextLabel" alignment="CENTER" text="Start checking schedules on:" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
       <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="TOP" />
-      <Label fx:id="step1Label1" text="2." GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+      <Label fx:id="step2Label" disable="true" text="2." GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin>
       </Label>
-      <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="TOP" />
+      <Label fx:id="step2TextLabel" alignment="CENTER" disable="true" text="Finish checking schedules on:" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+      <DatePicker fx:id="endDatePicker" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="TOP" />
       <TextArea fx:id="textArea" editable="false" text="Select processing options..." GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowSpan="6">
          <GridPane.margin>
             <Insets bottom="10.0" right="10.0" top="15.0" />
          </GridPane.margin>
       </TextArea>
-		<Button fx:id="executeButton" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
+		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
 			<GridPane.margin>
 				<Insets bottom="10.0" left="10.0" />
 			</GridPane.margin>
 		</Button>
-      <Label text="Core date status:" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="TOP">
+      <Label fx:id="coreDateLabel" text="Core day status:" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin></Label>
