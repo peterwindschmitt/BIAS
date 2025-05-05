@@ -1,8 +1,11 @@
 package com.bl.bias.app;
 
-
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -91,7 +94,7 @@ public class BIASS3CompareSchedulePageController
 	{
 		startDateSelectedBP = new SimpleBooleanProperty();
 		endDateSelectedBP = new SimpleBooleanProperty();
-		
+
 		startDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -99,6 +102,7 @@ public class BIASS3CompareSchedulePageController
 			{
 				if (startDatePicker.getValue() != null)
 				{
+					startDate = startDatePicker.getValue();
 					startDateSelectedBP.set(true);
 				}
 				else
@@ -107,7 +111,7 @@ public class BIASS3CompareSchedulePageController
 				}
 			}
 		});
-				
+
 		endDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -115,6 +119,7 @@ public class BIASS3CompareSchedulePageController
 			{
 				if (endDatePicker.getValue() != null)
 				{
+					endDate = endDatePicker.getValue();
 					endDateSelectedBP.set(true);
 				}
 				else
@@ -123,29 +128,29 @@ public class BIASS3CompareSchedulePageController
 				}
 			}
 		});
-		
+
 		startDateSelectedBP.addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals(true)) 
-            {
-            	endDatePicker.setDisable(false);
-            	step2TextLabel.setDisable(false);
-            	step2Label.setDisable(false);
-            }
-            else
-            {
-            	endDatePicker.setDisable(true);
-            	endDatePicker.setValue(null);
-            	step2TextLabel.setDisable(true);
-            	step2Label.setDisable(true);
-            }
-        });
-		
+			if (newValue.equals(true)) 
+			{
+				endDatePicker.setDisable(false);
+				step2TextLabel.setDisable(false);
+				step2Label.setDisable(false);
+			}
+			else
+			{
+				endDatePicker.setDisable(true);
+				endDatePicker.setValue(null);
+				step2TextLabel.setDisable(true);
+				step2Label.setDisable(true);
+			}
+		});
+
 		validCoreDayList.addListener(new ListChangeListener<String>() {
 			@Override
 			//onChanged method
 			public void onChanged(ListChangeListener.Change c) {
 				coreDayCountSelectedIP.set(validCoreDayList.size());
-				
+
 				if (validCoreDayList.contains("M"))
 				{
 					coreDateStatusMLabel.setStyle("-fx-text-fill: green");
@@ -210,10 +215,10 @@ public class BIASS3CompareSchedulePageController
 				}
 			}
 		});
-		
+
 		coreDayCountSelectedIP = new SimpleIntegerProperty();
 		coreDayCountBP = coreDayCountSelectedIP.isEqualTo(7);
-		
+
 		// disable execute button if there isn't a start and end date and if all DOW are not present in core assignments
 		disableExecuteButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not());          
 		executeButton.disableProperty().bind(disableExecuteButton);
@@ -322,7 +327,7 @@ public class BIASS3CompareSchedulePageController
 		{
 			coreDateStatusSuLabel.setStyle("-fx-text-fill: red");
 		}
-		
+
 		coreDayCountSelectedIP.set(validCoreDayList.size());
 	}
 
@@ -352,6 +357,7 @@ public class BIASS3CompareSchedulePageController
 
 			if (file != null) 
 			{
+				clearMessage();
 				try 
 				{
 					saveFileLocationForUserSpecifiedFileName = file.toString();
@@ -363,12 +369,12 @@ public class BIASS3CompareSchedulePageController
 					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 				}
 
-				message = "\nStarting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp();
+				message = "Starting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
 				displayMessage(message);
-				
+
 				// Unbind buttons
 				executeButton.disableProperty().unbind();
-				
+
 				// Disable controls
 				step1Label.setDisable(true);
 				step1TextLabel.setDisable(true);
@@ -394,10 +400,10 @@ public class BIASS3CompareSchedulePageController
 			{
 				//  Did not commit file to save so reset
 				resetMessage();
-				
+
 				// Rebind buttons
 				executeButton.disableProperty().bind(disableExecuteButton);
-				
+
 				// Enable controls
 				step1Label.setDisable(false);
 				step1TextLabel.setDisable(false);
@@ -439,17 +445,18 @@ public class BIASS3CompareSchedulePageController
 			File directory = directoryChooser.showDialog(stageForFolderChooser);
 			if (directory != null)
 			{
-				message = "\nStarting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp();
+				clearMessage();
+				message = "Starting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
 				displayMessage(message);
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 					prefs.put("s3_lastDirectorySavedTo", directory.toString());
 
 				saveFileFolderForSerialFileName = directory.toString();
-				
+
 				// Unbind buttons
 				executeButton.disableProperty().unbind();
-				
+
 				// Disable controls
 				step1Label.setDisable(true);
 				step1TextLabel.setDisable(true);
@@ -475,10 +482,10 @@ public class BIASS3CompareSchedulePageController
 			{
 				//  Did not commit file to save so reset
 				resetMessage();
-				
+
 				// Rebind buttons
 				executeButton.disableProperty().bind(disableExecuteButton);
-				
+
 				// Enable controls
 				step1Label.setDisable(false);
 				step1TextLabel.setDisable(false);
@@ -509,10 +516,10 @@ public class BIASS3CompareSchedulePageController
 
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
-		
+
 		// Rebind buttons
 		executeButton.disableProperty().bind(disableExecuteButton);
-		
+
 		// Enable controls
 		step1Label.setDisable(false);
 		step1TextLabel.setDisable(false);
@@ -562,23 +569,51 @@ public class BIASS3CompareSchedulePageController
 
 	private void runTask() throws InterruptedException, IOException
 	{
-		System.out.println("running");
-		/*
-		// Check date/time format, verbose .ROUTE file, output format and ENGLISH input units
-		File optionFile = new File(fullyQualifiedPath);
-		File optionFileFolder = new File(optionFile.getParent());
-		BIASValidateOptionsAndINIFileSchemeA.bIASCheckOptionFiles(optionFileFolder);
-		if (BIASValidateOptionsAndINIFileSchemeA.getOptionsFilesFormattedCorrectly())
+		continueAnalysis = true;
+		// Check date range is ordered properly
+		if (startDate.isAfter(endDate))
 		{
-			message = "\nValidated date/time format, output format and speed/distance \nunits from .OPTION file\n";
-		}
-		else
-		{
-			message = "\nInvalid date/time format, output format, speed/distance \nunits, invalid .OPTION file and/or invalid count of .OPTION files\n";
 			continueAnalysis = false;
+			displayMessage("\nSelected Start Date is after End Date.");
+			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
 		}
-		displayMessage(message);
 
+		if (continueAnalysis)
+		{
+			// Check API parameters in module's config 
+			String uri = BIASS3CompareScheduleConfigPageController.getUri();
+			String host = BIASS3CompareScheduleConfigPageController.getHost();
+			String key = BIASS3CompareScheduleConfigPageController.getKey();
+			if ((uri != null) && (host != null) && (key != null))
+			{
+				message = "\nAttempting to connect to S3's API ...\n";
+
+				HttpRequest request = HttpRequest.newBuilder()
+						.uri(URI.create(uri))
+						.header("X-RapidAPI-Host", host)
+						.header("X-RapidAPI-Key", key)
+						.method("GET", HttpRequest.BodyPublishers.noBody())
+						.build();
+				HttpResponse<String> response = null;
+				try {
+					response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println(response.body());
+			}
+			else
+			{
+				message = "\nInvalid API URI, host or key specified!\n";
+				continueAnalysis = false;
+			}
+			
+			displayMessage(message);
+		}	
+
+		/*
 		if (continueAnalysis)
 		{
 			// Ensure that there is at least one valid entry from config
@@ -636,7 +671,7 @@ public class BIASS3CompareSchedulePageController
 		// Now reset for next case
 		// Rebind buttons
 		executeButton.disableProperty().bind(disableExecuteButton);
-				
+
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);
