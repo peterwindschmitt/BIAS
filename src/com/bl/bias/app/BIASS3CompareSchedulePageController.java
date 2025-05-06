@@ -1,11 +1,6 @@
 package com.bl.bias.app;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -14,6 +9,7 @@ import java.util.Calendar;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.read.ReadS3CompareScheduleFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
 import javafx.beans.binding.BooleanBinding;
@@ -567,7 +563,7 @@ public class BIASS3CompareSchedulePageController
 		backgroundThread.start();
 	}
 
-	private void runTask() throws InterruptedException, IOException
+	private void runTask() throws Exception
 	{
 		continueAnalysis = true;
 		// Check date range is ordered properly
@@ -580,52 +576,14 @@ public class BIASS3CompareSchedulePageController
 
 		if (continueAnalysis)
 		{
-			// Check API parameters in module's config 
-			String uri = BIASS3CompareScheduleConfigPageController.getUri();
-			String host = BIASS3CompareScheduleConfigPageController.getHost();
-			String key = BIASS3CompareScheduleConfigPageController.getKey();
-			if ((uri != null) && (host != null) && (key != null))
-			{
-				message = "\nAttempting to connect to S3's API ...\n";
-
-				HttpRequest request = HttpRequest.newBuilder()
-						.uri(URI.create(uri))
-						.header("X-RapidAPI-Host", host)
-						.header("X-RapidAPI-Key", key)
-						.method("GET", HttpRequest.BodyPublishers.noBody())
-						.build();
-				HttpResponse<String> response = null;
-				try {
-					response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println(response.body());
-			}
-			else
-			{
-				message = "\nInvalid API URI, host or key specified!\n";
-				continueAnalysis = false;
-			}
-			
+			// Read all objects that are required for the modified OTP analysis
+			ReadS3CompareScheduleFiles readData = new ReadS3CompareScheduleFiles(BIASS3CompareScheduleConfigPageController.getUri(), 
+					BIASS3CompareScheduleConfigPageController.getHost(), BIASS3CompareScheduleConfigPageController.getKey());
+			message = readData.getResultsMessage();
 			displayMessage(message);
-		}	
 
-		/*
-		if (continueAnalysis)
-		{
-			// Ensure that there is at least one valid entry from config
-			if (BIASModifiedOtpConfigPageController.getSchedulePointEntries().split(",").length > 0) 
-			{
-				// Read all objects that are required for the modified OTP analysis
-				ReadModifiedOtpFiles readData = new ReadModifiedOtpFiles(fullyQualifiedPath);
-				message = readData.getResultsMessage();
-				displayMessage(message);
-
-				setProgressIndicator(0.20);
-
+			setProgressIndicator(0.20);
+			/*
 				if (ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile().size() > 0)
 				{
 					// Analyze trains' modified OTP
@@ -656,17 +614,8 @@ public class BIASS3CompareSchedulePageController
 					displayMessage("\nNo qualifying run-time trains were found to compare schedule points against.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
-			}
-			else
-			{
-				displayMessage("\nMust select at least one train, node and departure time to run analysis");
-				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-			}
+			*/
 		}
-		else
-		{
-			displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-		}*/
 
 		// Now reset for next case
 		// Rebind buttons
