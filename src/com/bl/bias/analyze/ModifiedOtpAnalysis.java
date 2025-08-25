@@ -122,7 +122,7 @@ public class ModifiedOtpAnalysis
 										((BIASModifiedOtpConfigPageController.getB_exceptTrainsBasedOnRunTimeStatus() ||
 												BIASModifiedOtpConfigPageController.getC_exceptTrainsBasedOnExternalAndRunTimeStatus())))
 								{
-									System.out.println("excepting at 125");
+									//System.out.println("excepting at 125");
 									make = "EXCEPT";	
 									num = 0;
 									denom = 0;
@@ -142,7 +142,7 @@ public class ModifiedOtpAnalysis
 										{
 											if ((actualOriginTimeToUse - actualOriginTimeToUse.intValue()) > (ConvertDateTime.convertHHMMStringToSerial(externalSchedulesFromConfig.split(",")[m + 2])) + exceptTrainThresholdFromConfigFileOptionAAsSerial)
 											{
-												System.out.println("excepting at 145");
+												//System.out.println("excepting at 145");
 												make = "EXCEPT";	
 												num = 0;
 												denom = 0;

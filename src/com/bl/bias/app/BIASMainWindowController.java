@@ -25,11 +25,14 @@ public class BIASMainWindowController
 	@FXML private MenuItem menuItemRadixxResSsimConversionIATAExcel;
 	@FXML private MenuItem menuItemRadixxResSsimConversionS3Excel;
 	@FXML private MenuItem menuItemRadixxResSsimComparison;
+	@FXML private MenuItem menuItemS3CompareSchedule;
 	@FXML private MenuItem menuItemGradeXingSpeeds;
 	@FXML private MenuItem menuItemUscgBridgeCompliance;
 	@FXML private MenuItem menuItemRecoveryRate;
+	@FXML private MenuItem menuItemModifiedOtp;
+	@FXML private MenuItem menuItemGtm;
 	@FXML private MenuItem menuItemJuaCompliance;
-	@FXML private MenuItem menuItemExit; 
+	
 	@FXML private MenuItem menuItemRTCResultsAnalysisConfig;
 	@FXML private MenuItem menuItemTTestConfig;
 	@FXML private MenuItem menuItemBridgeClosureAnalysisConfig;
@@ -39,14 +42,17 @@ public class BIASMainWindowController
 	@FXML private MenuItem menuItemGradeXingSpeedsConfig;
 	@FXML private MenuItem menuItemUscgBridgeComplianceConfig;
 	@FXML private MenuItem menuItemRecoveryRateConfig;
-	@FXML private MenuItem menuItemJuaComplianceConfig;
-	@FXML private MenuItem menuItemModifiedOtp;
 	@FXML private MenuItem menuItemModifiedOtpConfig;
-	@FXML private MenuItem menuItemS3CompareSchedule;
 	@FXML private MenuItem menuItemS3CompareScheduleConfig;
+	@FXML private MenuItem menuItemGtmConfig;
+	@FXML private MenuItem menuItemJuaComplianceConfig;
+	
 	@FXML private MenuItem menuItemGeneralConfig;
 	@FXML private MenuItem menuItemParseConfig;
 	@FXML private MenuItem menuItemVersioningAndPermissions;
+	
+	@FXML private MenuItem menuItemExit; 
+	
 
 	@FXML private Node nodeRTCResultsAnalysis;
 	@FXML private Node nodeTTest;
@@ -76,6 +82,8 @@ public class BIASMainWindowController
 	@FXML private Node nodeModifiedOtpConfig;
 	@FXML private Node nodeS3CompareSchedule;
 	@FXML private Node nodeS3CompareScheduleConfig;
+	@FXML private Node nodeGtm;
+	@FXML private Node nodeGtmConfig;
 
 	@FXML private ImageView headerBackground; 
 
@@ -112,6 +120,8 @@ public class BIASMainWindowController
 		nodeModifiedOtp = FXMLLoader.load(getClass().getResource("BIASModifiedOtpPage.fxml"));
 		nodeS3CompareScheduleConfig = FXMLLoader.load(getClass().getResource("BIASS3CompareScheduleConfigPage.fxml"));
 		nodeS3CompareSchedule = FXMLLoader.load(getClass().getResource("BIASS3CompareSchedulePage.fxml"));
+		nodeGtm = FXMLLoader.load(getClass().getResource("BIASGtmPage.fxml"));
+		nodeGtmConfig = FXMLLoader.load(getClass().getResource("BIASGtmConfigPage.fxml"));
 		
 		// LOADING BELOW nodes will throw exception if trying to launch as JAR
 		nodeMaintenanceWindowAnalysis = FXMLLoader.load(getClass().getResource("BIASMaintenanceWindowAnalysisPage.fxml"));
@@ -273,6 +283,17 @@ public class BIASMainWindowController
 					handleMenuItemS3CompareSchedule(null);
 				}
 			}
+			else if (permittedModules[i].toString().contains("GTM"))
+			{
+				menuItemGtm.setVisible(true);
+				subMenuModuleConfig.setVisible(true);
+				menuItemGtmConfig.setVisible(true);
+				
+				if (i == 0)
+				{
+					handleMenuItemGtm(null);
+				}
+			}
 		}
 		menuItemVersioningAndPermissions.setVisible(true);
 	}
@@ -412,6 +433,16 @@ public class BIASMainWindowController
 		showModuleOnMainGridPane(nodeS3CompareSchedule);
 	}
 	
+	@FXML private void handleMenuItemGtm(ActionEvent event) throws IOException
+	{
+		showModuleOnMainGridPane(nodeGtm);
+	}
+	
+	@FXML private void handleMenuItemGtmConfig(ActionEvent event) throws IOException
+	{
+		showModuleOnMainGridPane(nodeGtmConfig);
+	}
+	
 	@FXML private void handleMenuItemS3CompareScheduleConfig(ActionEvent event) throws IOException
 	{
 		showModuleOnMainGridPane(nodeS3CompareScheduleConfig);
@@ -503,6 +534,9 @@ public class BIASMainWindowController
 		
 		if (mainGridPane.getChildren().contains(nodeS3CompareScheduleConfig))
 			mainGridPane.getChildren().remove(nodeS3CompareScheduleConfig);
+		
+		if (mainGridPane.getChildren().contains(nodeGtm))
+			mainGridPane.getChildren().remove(nodeGtm);
 
 		// Add the desired Pane
 		mainGridPane.add(nodeToDisplay, 0, 2);    	

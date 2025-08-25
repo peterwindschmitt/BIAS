@@ -236,112 +236,112 @@ public class WriteModifiedOtpFiles1
 			}
 			else
 			{
-				row = modifiedOtpSheet.createRow(rowCounter);
-
-				// Run
-				cell = row.createCell(0);
-				cell.setCellStyle(style5);
-				cell.setCellValue(trainPeformanceFiles.get(i).getPerformanceFileName().replace(fileAsString, "").replace(".PERFORMANCE", ""));
-
-				// Train Symbol
-				cell = row.createCell(1);
-				cell.setCellStyle(style5);
-				cell.setCellValue(trainPeformanceFiles.get(i).getTrainSymbol());
-
-				// Train Type
-				cell = row.createCell(2);
-				cell.setCellStyle(style1);
-				cell.setCellValue(trainPeformanceFiles.get(i).getTrainType());
-
-				// Train's OTP Threshold
-				String trainOtpThresholdAsString;
-				if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
-					trainOtpThresholdAsString = ConvertDateTime.convertSerialToHHMMSSString(trainPeformanceFiles.get(i).getOtpThresholdAsDouble());
-				else
-					trainOtpThresholdAsString = "N/A";
-				cell = row.createCell(3);
-				cell.setCellStyle(style1);
-				cell.setCellValue(trainOtpThresholdAsString);
-
-				// Need to accommodate multiple O/D pairs here as well as nulls
-				if (trainPeformanceFiles.get(i).getReportingPoints().size() > 0)
+				for (int j = 0; j < trainPeformanceFiles.get(i).getReportingPoints().size(); j++)
 				{
+					row = modifiedOtpSheet.createRow(rowCounter);
+
+					// Run
+					cell = row.createCell(0);
+					cell.setCellStyle(style5);
+					cell.setCellValue(trainPeformanceFiles.get(i).getPerformanceFileName().replace(fileAsString, "").replace(".PERFORMANCE", ""));
+
+					// Train Symbol
+					cell = row.createCell(1);
+					cell.setCellStyle(style5);
+					cell.setCellValue(trainPeformanceFiles.get(i).getTrainSymbol());
+
+					// Train Type
+					cell = row.createCell(2);
+					cell.setCellStyle(style1);
+					cell.setCellValue(trainPeformanceFiles.get(i).getTrainType());
+
+					// Train's OTP Threshold
+					String trainOtpThresholdAsString;
+					if (BIASModifiedOtpConfigPageController.getUseOtpThresholds())
+						trainOtpThresholdAsString = ConvertDateTime.convertSerialToHHMMSSString(trainPeformanceFiles.get(i).getOtpThresholdAsDouble());
+					else
+						trainOtpThresholdAsString = "N/A";
+					cell = row.createCell(3);
+					cell.setCellStyle(style1);
+					cell.setCellValue(trainOtpThresholdAsString);
+
 					// Origin Node
-					String originNode = trainPeformanceFiles.get(i).getReportingPoints().get(0).getOriginNode();
+					String originNode = trainPeformanceFiles.get(i).getReportingPoints().get(j).getOriginNode();
 					cell = row.createCell(4);
 					cell.setCellStyle(style1);
 					cell.setCellValue(originNode);
 
 					// Scheduled Origin Time
-					String scheduledOriginTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getScheduleOriginTimeToUseAsDouble());
+					String scheduledOriginTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getScheduleOriginTimeToUseAsDouble());
 					cell = row.createCell(5);
 					cell.setCellStyle(style1);
 					cell.setCellValue(scheduledOriginTime);
 
 					// Origin OS Time
-					String originOsTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getActualOriginTimeToUseAsDouble());
+					String originOsTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getActualOriginTimeToUseAsDouble());
 					cell = row.createCell(6);
 					cell.setCellStyle(style1);
 					cell.setCellValue(originOsTime);
 
 					// Late at Origin
-					if (trainPeformanceFiles.get(i).getReportingPoints().get(0).getLateAtOriginAsDouble() > 0)
+					if (trainPeformanceFiles.get(i).getReportingPoints().get(j).getLateAtOriginAsDouble() > 0)
 					{
-						String lateAtOrigin = ConvertDateTime.convertSerialToHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getLateAtOriginAsDouble());
+						String lateAtOrigin = ConvertDateTime.convertSerialToHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getLateAtOriginAsDouble());
 						cell = row.createCell(7);
 						cell.setCellStyle(style1);
 						cell.setCellValue(lateAtOrigin);
 					}
 
 					// Destination Node
-					String destinationNode = trainPeformanceFiles.get(i).getReportingPoints().get(0).getDestinationNode();
+					String destinationNode = trainPeformanceFiles.get(i).getReportingPoints().get(j).getDestinationNode();
 					cell = row.createCell(8);
 					cell.setCellStyle(style1);
 					cell.setCellValue(destinationNode);
 
 					// Scheduled Destination Time
-					String scheduledDestinationTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getScheduleDestinationTimeToUseAsDouble());
+					String scheduledDestinationTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getScheduleDestinationTimeToUseAsDouble());
 					cell = row.createCell(9);
 					cell.setCellStyle(style1);
 					cell.setCellValue(scheduledDestinationTime);
 
 					// Destination OS Time
-					String destinationOsTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getActualDestinationTimeToUseAsDouble());
+					String destinationOsTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getActualDestinationTimeToUseAsDouble());
 					cell = row.createCell(10);
 					cell.setCellStyle(style1);
 					cell.setCellValue(destinationOsTime);
 
 					// Scheduled Transit Time
-					String scheduledTransitTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getScheduleTransitTimeAsDouble());
+					String scheduledTransitTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getScheduleTransitTimeAsDouble());
 					cell = row.createCell(11);
 					cell.setCellStyle(style1);
 					cell.setCellValue(scheduledTransitTime);
 
 					// Actual Transit Time
-					String actualTransitTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(0).getActualTransitTimeAsDouble());
+					String actualTransitTime = ConvertDateTime.convertSerialToDDHHMMSSString(trainPeformanceFiles.get(i).getReportingPoints().get(j).getActualTransitTimeAsDouble());
 					cell = row.createCell(12);
 					cell.setCellStyle(style1);
 					cell.setCellValue(actualTransitTime);
 
 					// Make
-					String make = trainPeformanceFiles.get(i).getReportingPoints().get(0).getMake();
+					String make = trainPeformanceFiles.get(i).getReportingPoints().get(j).getMake();
 					cell = row.createCell(13);
 					cell.setCellStyle(style1);
 					cell.setCellValue(make);
 
 					// Num
-					Integer num = Integer.valueOf(trainPeformanceFiles.get(i).getReportingPoints().get(0).getNum());
+					Integer num = Integer.valueOf(trainPeformanceFiles.get(i).getReportingPoints().get(j).getNum());
 					cell = row.createCell(14);
 					cell.setCellStyle(style1);
 					cell.setCellValue(num);
 
 					// Denom
-					Integer denom = Integer.valueOf(trainPeformanceFiles.get(i).getReportingPoints().get(0).getDenom());
+					Integer denom = Integer.valueOf(trainPeformanceFiles.get(i).getReportingPoints().get(j).getDenom());
 					cell = row.createCell(15);
 					cell.setCellStyle(style1);
 					cell.setCellValue(denom);
+
+					rowCounter++;
 				}
-				rowCounter++;
 			}
 		}
 

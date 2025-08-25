@@ -35,7 +35,8 @@ public class BIASLaunch extends Application
 	// 6.1 was 12/12/2024  (added ability to persistently store two bridges in USCG bridge compliance module)
 	// 6.2 was 1/6/2025    (added logic so that RTC Results can be saved to specified location even when using nano-time filename)
 	// 6.3 was 1/7/2025    (added ability to suppress checking cycle # ordering for bridge results analysis (for prolonged outages and end-of-year rollover))
-	private final static String version = "6.3 (January 7, 2025)";
+	// 6.4 was 8/26/2025   (added GTM analysis)
+	private final static String version = "6.4 (August 26, 2025)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 4;
  	//
 	// Session validity 
@@ -60,7 +61,7 @@ public class BIASLaunch extends Application
 		// User, machine, logos, month expire, day expire, year expire, write prefs to registry, modules[]
 		"WindschmittPeter, PWINDSCHMITT-P17, ALL, 12, 31, 2025, TRUE, RTC Results Analysis, T-test Analysis, Bridge Closure Analysis, Maintenance Window Analysis, "
 		+ "Radixx Res SSIM Conversion, Radixx Res SSIM Comparison, Grade Crossing Speed Analysis, USCG Bridge Compliance Analysis, Recovery Rate Analysis, "
-		+ "JUA Compliance, Modified OTP, S3 Compare Schedule, General Config, Parse Config",
+		+ "JUA Compliance, Modified OTP, S3 Compare Schedule, GTM Analysis, General Config, Parse Config",
 	};
 	//************************************************************************************************
 

@@ -36,6 +36,7 @@
                         	<MenuItem fx:id="menuItemGradeXingSpeeds" mnemonicParsing="true" onAction="#handleMenuItemGradeXingSpeeds" text="Grade _Crossing Speed Analysis" visible="false" />
                         	<MenuItem fx:id="menuItemRecoveryRate" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRate" text="Recovery Rate Analysis" visible="false" />
                         <MenuItem fx:id="menuItemModifiedOtp" mnemonicParsing="true" onAction="#handleMenuItemModifiedOtp" text="Modified _OTP Analysis" visible="false" />
+                        <MenuItem fx:id="menuItemGtm" mnemonicParsing="false" onAction="#handleMenuItemGtm" text="GTM Analysis" visible="false" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Scheduling">
@@ -69,6 +70,7 @@
                           	  <MenuItem fx:id="menuItemGradeXingSpeedsConfig" mnemonicParsing="false" onAction="#handleMenuItemGradeXingSpeedsConfig" text="Grade Crossing Speeds" visible="false" />
                               <MenuItem fx:id="menuItemRecoveryRateConfig" mnemonicParsing="true" onAction="#handleMenuItemRecoveryRateConfig" text="Recovery Rate Analysis" visible="false" />
                               <MenuItem fx:id="menuItemModifiedOtpConfig" mnemonicParsing="true" onAction="#handleMenuItemModifiedOtpConfig" text="Modified OTP Analysis" visible="false" />
+                              <MenuItem fx:id="menuItemGtmConfig" mnemonicParsing="true" onAction="#handleMenuItemGtmConfig" text="GTM Analysis" visible="false" />
                           </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Scheduling">

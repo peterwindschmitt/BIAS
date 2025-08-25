@@ -102,7 +102,9 @@ public class ReadModifiedOtpFiles
 				else if ((openingSequence) && (lineFromFile.contains(targetSequence5)))
 				{
 					if ((trainEnabled) && (trainNotExcluded))
+					{
 						eligibleTrainsFromTrainFile.put(trainSymbol, trainType);
+					}
 					openingSequence = false;
 				}
 			}
