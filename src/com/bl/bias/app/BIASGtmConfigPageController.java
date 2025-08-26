@@ -46,22 +46,6 @@ public class BIASGtmConfigPageController
 
 	@FXML private void initialize()
 	{
-		userCategory1Name.addListener((observable, oldValue, newValue) -> {
-			notifyGtmAnalysisPageControllerOfChanges();
-		});
-
-		userCategory1Types.addListener((observable, oldValue, newValue) -> {
-			notifyGtmAnalysisPageControllerOfChanges();
-		});
-
-		userCategory2Name.addListener((observable, oldValue, newValue) -> {
-			notifyGtmAnalysisPageControllerOfChanges();
-		});
-
-		userCategory2Types.addListener((observable, oldValue, newValue) -> {
-			notifyGtmAnalysisPageControllerOfChanges();
-		});
-
 		// See if preferences are stored for User-defined Category 1
 		if ((prefs.get("tm_userCategory1Name", "") != null) && (prefs.get("tm_userCategory1Name", "") != "") && (prefs.get("tm_userCategory1Types", "") != null) && (prefs.get("tm_userCategory1Types", "") != ""))
 		{
@@ -279,10 +263,5 @@ public class BIASGtmConfigPageController
 	public static SimpleBooleanProperty getValidCustomAssignment2Exists()
 	{
 		return validCustomAssignment2Exists;
-	}
-
-	void notifyGtmAnalysisPageControllerOfChanges()
-	{
-		//BIASGtmPageController.changeMadeToCustomTypesInConfig();
 	}
 }

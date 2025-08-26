@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
@@ -28,10 +29,10 @@
 		<RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
 		<RowConstraints maxHeight="28.0" minHeight="28.0" percentHeight="0.0" prefHeight="28.0" vgrow="NEVER" />
 		<RowConstraints maxHeight="28.0" minHeight="28.0" prefHeight="28.0" vgrow="NEVER" />
-		<RowConstraints maxHeight="28.0" minHeight="28.0" prefHeight="28.0" vgrow="NEVER" />
-		<RowConstraints maxHeight="35.0" minHeight="35.0" percentHeight="0.0" prefHeight="35.0" vgrow="NEVER" />
-        <RowConstraints maxHeight="75.0" minHeight="75.0" percentHeight="0.0" prefHeight="75.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="56.0" minHeight="56.0" prefHeight="56.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="82.0" minHeight="82.0" percentHeight="0.0" prefHeight="82.0" vgrow="NEVER" />
         <RowConstraints maxHeight="75.0" minHeight="75.0" percentHeight="0.0" prefHeight="75.0" vgrow="ALWAYS" />
+      <RowConstraints />
 	</rowConstraints>
 	<children>
 		<Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSelectFileButton" text="Select File" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
@@ -39,24 +40,14 @@
 				<Insets bottom="-5.0" right="10.0" top="10.0" />
 			</GridPane.margin>
 		</Button>
-		<Label fx:id="step1Label" text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-			<padding>
-				<Insets left="10.0" />
-			</padding>
-		</Label>
-		<Label fx:id="step2Label" disable="true" text="2." GridPane.rowIndex="3">
-			<padding>
-				<Insets left="10.0" />
-			</padding>
-		</Label>
-		<Label fx:id="selectProjectFileLabel" text="Select project's .OPTION file" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+		<Label fx:id="selectProjectFileLabel" text="1.  Select project's .OPTION file" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
 			<GridPane.margin>
-				<Insets left="10.0" />
+				<Insets />
 			</GridPane.margin>
 		</Label>
-      <Label fx:id="selectLineLabel" disable="true" text="Select line to measure GTMs over" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
+      <Label fx:id="selectLineLabel" disable="true" text="2.  Select line to measure GTMs over" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
          <GridPane.margin>
-            <Insets left="10.0" />
+            <Insets />
          </GridPane.margin>
       </Label>
 		<Label fx:id="fileNameLabel" alignment="TOP_LEFT" prefHeight="60.0" prefWidth="266.0" textFill="RED" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
@@ -69,12 +60,12 @@
 				<Insets bottom="10.0" left="100.0" right="10.0" top="15.0" />
 			</GridPane.margin>
 		</TextArea>
-		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
+		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="BOTTOM">
 			<GridPane.margin>
 				<Insets bottom="10.0" left="10.0" />
 			</GridPane.margin>
 		</Button>
-      <Button fx:id="resetButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleResetButton" prefHeight="30.0" prefWidth="80.0" text="Reset" visible="false" GridPane.halignment="LEFT" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
+      <Button fx:id="resetButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleResetButton" prefHeight="30.0" prefWidth="80.0" text="Reset" visible="false" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" />
          </GridPane.margin>
@@ -84,10 +75,16 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </ComboBox>
-      <ProgressBar fx:id="progressBar" prefWidth="180.0" progress="0.0" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
+      <ProgressBar fx:id="progressBar" prefWidth="180.0" progress="0.0" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets bottom="15.0" left="80.0" />
          </GridPane.margin>
       </ProgressBar>
+      <CheckBox fx:id="useCustomAssignmentsCheckbox" disable="true" mnemonicParsing="false" onAction="#handleUseCustomAssignmentsCheckbox" GridPane.rowIndex="6" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets left="5.0" />
+         </GridPane.margin>
+      </CheckBox>
+      <Label fx:id="useCustomAssignmentsLabel" disable="true" text="3.  Use Operator Assignments from GTM Config, if they exist" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="TOP" />
 	</children>
 </GridPane>

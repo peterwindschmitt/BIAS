@@ -3849,7 +3849,7 @@ public class BIASParseConfigPageController
 		if (prefs.get("r_trainType", null) == null)
 		{
 			// Write value for subsequent runs
-			r_trainType = "485,500";
+			r_trainType = "485,505";
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				prefs.put("r_trainType", r_trainType);
 		}

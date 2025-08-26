@@ -537,6 +537,9 @@ public class BIASMainWindowController
 		
 		if (mainGridPane.getChildren().contains(nodeGtm))
 			mainGridPane.getChildren().remove(nodeGtm);
+		
+		if (mainGridPane.getChildren().contains(nodeGtmConfig))
+			mainGridPane.getChildren().remove(nodeGtmConfig);
 
 		// Add the desired Pane
 		mainGridPane.add(nodeToDisplay, 0, 2);    	

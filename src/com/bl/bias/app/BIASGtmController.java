@@ -15,6 +15,7 @@ import com.bl.bias.write.WriteGTMFiles2;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -43,6 +44,7 @@ public class BIASGtmController
 	private static Preferences prefs;
 
 	private static Boolean continueAnalysis = true;
+	private static Boolean useCustomAssignments = false;
 
 	BIASPreprocessLinesForGtmAnalysis getPrelimData;
 
@@ -51,13 +53,14 @@ public class BIASGtmController
 	@FXML private Button selectFileButton;
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
+	
+	@FXML private CheckBox useCustomAssignmentsCheckbox;
 
-	@FXML private Label step1Label;
-	@FXML private Label step2Label;
 	@FXML private Label selectProjectFileLabel;
 	@FXML private Label fileNameLabel;
 	@FXML private Label selectLineLabel;
-
+	@FXML private Label useCustomAssignmentsLabel;	
+	
 	@FXML private TextArea textArea;
 
 	@FXML private ProgressBar progressBar;
@@ -112,13 +115,13 @@ public class BIASGtmController
 				message = "\nStarting analysis of "+lineToAnalyze+" line at "+ConvertDateTime.getTimeStamp();
 				displayMessage(message);
 
-				step1Label.setDisable(true);
-				step2Label.setDisable(true);
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
 				selectLineComboBox.setDisable(true);
 				selectLineLabel.setDisable(true);
+				useCustomAssignmentsCheckbox.setDisable(true);
+				useCustomAssignmentsLabel.setDisable(true);
 
 				continueAnalysis = true;
 
@@ -129,8 +132,6 @@ public class BIASGtmController
 				//  Did not commit file to save so reset
 				resetMessage();
 
-				step1Label.setDisable(false);
-				step2Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -139,6 +140,8 @@ public class BIASGtmController
 				selectLineComboBox.getItems().removeAll(getPrelimData.returnAvailableLines());
 				selectLineComboBox.setDisable(true);
 				fileNameLabel.setText("");
+				useCustomAssignmentsCheckbox.setDisable(true);
+				useCustomAssignmentsLabel.setDisable(true);
 			}	
 		}
 		else
@@ -168,13 +171,13 @@ public class BIASGtmController
 
 				saveFileFolderForSerialFileName = directory.toString();
 
-				step1Label.setDisable(true);
-				step2Label.setDisable(true);
 				selectFileButton.setDisable(true);
 				selectProjectFileLabel.setDisable(true);
 				executeButton.setDisable(true);
 				selectLineComboBox.setDisable(true);
 				selectLineLabel.setDisable(true);
+				useCustomAssignmentsCheckbox.setDisable(true);
+				useCustomAssignmentsLabel.setDisable(true);
 
 				continueAnalysis = true;
 
@@ -185,8 +188,6 @@ public class BIASGtmController
 				//  Did not commit file to save so reset
 				resetMessage();
 
-				step1Label.setDisable(false);
-				step2Label.setDisable(true);
 				executeButton.setDisable(true);
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -195,6 +196,8 @@ public class BIASGtmController
 				selectLineComboBox.getItems().removeAll(getPrelimData.returnAvailableLines());
 				selectLineComboBox.setDisable(true);
 				fileNameLabel.setText("");
+				useCustomAssignmentsCheckbox.setDisable(true);
+				useCustomAssignmentsLabel.setDisable(true);
 			}	
 		}
 	}
@@ -206,8 +209,6 @@ public class BIASGtmController
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
 
-		step1Label.setDisable(false);
-		step2Label.setDisable(true);
 		selectProjectFileLabel.setDisable(false);
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
@@ -216,11 +217,22 @@ public class BIASGtmController
 		selectLineComboBox.getItems().removeAll(getPrelimData.returnAvailableLines());
 		selectLineComboBox.setDisable(true);
 		fileNameLabel.setText("");
+		useCustomAssignmentsCheckbox.setDisable(true);
+		useCustomAssignmentsLabel.setDisable(true);
+
 	}
 
 	@FXML private void handleSelectLineComboBox(ActionEvent event) 
 	{
 		lineToAnalyze = selectLineComboBox.getValue();
+	}
+	
+	@FXML private void handleUseCustomAssignmentsCheckbox(ActionEvent event) 
+	{
+		if (useCustomAssignments == false)
+			useCustomAssignments = true;
+		else 
+			useCustomAssignments = false;
 	}
 
 	private void chooseFile()
@@ -297,11 +309,12 @@ public class BIASGtmController
 				simulationDuration = null;
 				warmUpDuration = null;
 				coolDownDuration = null;
-				
+
 				// Required files also found
 				selectLineLabel.setDisable(false);
 				selectLineComboBox.setDisable(false);
-				step2Label.setDisable(false);
+				useCustomAssignmentsCheckbox.setDisable(false);
+				useCustomAssignmentsLabel.setDisable(false);
 
 				// Check .LINE file to generate entries for combobox 
 				getPrelimData = new BIASPreprocessLinesForGtmAnalysis(lineFile);
@@ -368,7 +381,7 @@ public class BIASGtmController
 					message += " for "+simulationDuration+" dd:hh:mm";
 					message += " with a warm-up period of "+warmUpDuration+" dd:hh:mm";
 					message += " and a cool-down period of "+coolDownDuration+" dd:hh:mm\n";
-					
+
 					executeButton.setDisable(false);
 				}
 				else
@@ -455,10 +468,10 @@ public class BIASGtmController
 			displayMessage(message);
 
 			setProgressIndicator(0.25);
-			
+
 			if (continueAnalysis)
 			{
-				GtmAnalysis gtmAnalysis = new GtmAnalysis(readData.returnNodesFromLineFile(), readData.returnLinksFromLinkFile(), readData.returnTraversalsFromRouteFile());
+				GtmAnalysis gtmAnalysis = new GtmAnalysis(readData.returnNodesFromLineFile(), readData.returnLinksFromLinkFile(), readData.returnTraversalsFromRouteFile(), useCustomAssignments);
 				message = gtmAnalysis.getResultsMessage();
 
 				displayMessage(message);
@@ -563,5 +576,10 @@ public class BIASGtmController
 	public static String getAnalyzedLine()
 	{
 		return lineToAnalyze;
+	}
+	
+	public static Boolean getUseCustomAssignments()
+	{
+		return useCustomAssignments;
 	}
 }

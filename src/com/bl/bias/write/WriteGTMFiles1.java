@@ -19,7 +19,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.bl.bias.analyze.GtmAnalysis;
+import com.bl.bias.app.BIASGtmConfigPageController;
 import com.bl.bias.app.BIASGtmController;
+import com.bl.bias.app.BIASPreprocessLinesForGtmAnalysis;
 import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteGTMFiles1 
@@ -37,10 +39,11 @@ public class WriteGTMFiles1
 	Integer rowCounter = 0;
 	Double totalTrainMiles = 0.0;
 	Double totalGtm = 0.0;
-	
+
 	DecimalFormat gtmdf = new DecimalFormat("#.#");
 	DecimalFormat tmdf = new DecimalFormat("#.##");
-	
+	DecimalFormat percentdf = new DecimalFormat("#.#");
+
 	public WriteGTMFiles1 (String textArea, String fileAsString)
 	{
 		tonsByTypeHashMap.putAll(GtmAnalysis.getTonsByTypeHashMap()); 
@@ -161,7 +164,12 @@ public class WriteGTMFiles1
 
 		// Header rows
 		// Case name
-		gtmSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
+		if (BIASGtmController.getUseCustomAssignments() 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment1Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+			gtmSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6));
+		else
+			gtmSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
 
 		Row row;
 		Cell cell;
@@ -186,11 +194,50 @@ public class WriteGTMFiles1
 
 		cell = row.createCell(2);
 		cell.setCellStyle(style7);
-		cell.setCellValue("Train miles");
+		cell.setCellValue("Train Miles");
 
-		cell = row.createCell(3);
-		cell.setCellStyle(style7);
-		cell.setCellValue("Gross Ton Miles (*1,000)");
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+		{
+			cell = row.createCell(3);
+			cell.setCellStyle(style7);
+			cell.setCellValue("%");
+		}
+
+
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+		{
+			cell = row.createCell(4);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Gross Ton Miles (*1,000)");
+		}
+		else
+		{
+			cell = row.createCell(3);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Gross Ton Miles (*1,000)");
+		}
+
+
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+		{
+			cell = row.createCell(5);
+			cell.setCellStyle(style7);
+			cell.setCellValue("%");
+		}			
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+		{
+			cell = row.createCell(6);
+			cell.setCellStyle(style7);
+			cell.setCellValue("Operator");
+		}		
 
 		// By train type
 		rowCounter++;
@@ -216,16 +263,63 @@ public class WriteGTMFiles1
 			cell.setCellValue(tmdf.format(trainMiles));
 
 			// Ton Miles
-			Double tonMiles = Math.round(tonsByTypeHashMap.get(tonsByTypeHashMap.keySet().toArray()[i])) / 1000.0;
-			totalGtm += tonMiles;
-			cell = row.createCell(3);
-			cell.setCellStyle(style1);
-			cell.setCellValue(gtmdf.format(tonMiles));
+			if ((BIASGtmController.getUseCustomAssignments())	 
+					&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+							|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+			{
+				Double tonMiles = Math.round(tonsByTypeHashMap.get(tonsByTypeHashMap.keySet().toArray()[i])) / 1000.0;
+				totalGtm += tonMiles;
+				cell = row.createCell(4);
+				cell.setCellStyle(style1);
+				cell.setCellValue(gtmdf.format(tonMiles));
+			}
+			else
+			{
+				Double tonMiles = Math.round(tonsByTypeHashMap.get(tonsByTypeHashMap.keySet().toArray()[i])) / 1000.0;
+				totalGtm += tonMiles;
+				cell = row.createCell(3);
+				cell.setCellStyle(style1);
+				cell.setCellValue(gtmdf.format(tonMiles));
+			}
 
+			// Show user-defined groups
+			if (BIASGtmController.getUseCustomAssignments() 
+					&& ((BIASGtmConfigPageController.getValidCustomAssignment1Exists().getValue().equals(true))
+							|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+			{
+				String typesToDisplay = "-";
+
+				// If Assignment 1 and 2 exist
+				if ((GtmAnalysis.getTypesinUserAssignments1AsHashSet().contains(tonsByTypeHashMap.keySet().toArray()[i].toString())) 
+						&& (GtmAnalysis.getTypesinUserAssignments2AsHashSet().contains(tonsByTypeHashMap.keySet().toArray()[i].toString())))
+				{
+					typesToDisplay = BIASGtmConfigPageController.getUserCategory1Name().getValue();
+					typesToDisplay += ", ";
+					typesToDisplay = BIASGtmConfigPageController.getUserCategory2Name().getValue();
+				}
+
+				// If only Assignment 1
+				if ((GtmAnalysis.getTypesinUserAssignments1AsHashSet().contains(tonsByTypeHashMap.keySet().toArray()[i].toString()))
+						&& (!GtmAnalysis.getTypesinUserAssignments2AsHashSet().contains(tonsByTypeHashMap.keySet().toArray()[i].toString())))
+				{
+					typesToDisplay = BIASGtmConfigPageController.getUserCategory1Name().getValue();
+				}				
+
+				// If only Assignment 2
+				if ((GtmAnalysis.getTypesinUserAssignments2AsHashSet().contains(tonsByTypeHashMap.keySet().toArray()[i].toString()))
+						&& (!GtmAnalysis.getTypesinUserAssignments1AsHashSet().contains(tonsByTypeHashMap.keySet().toArray()[i].toString())))
+				{
+					typesToDisplay = BIASGtmConfigPageController.getUserCategory2Name().getValue();
+				}
+
+				cell = row.createCell(6);
+				cell.setCellStyle(style1);
+				cell.setCellValue(typesToDisplay);
+			}
 			rowCounter++;
 		}
 
-		// Totals
+		// Totals by Type
 		rowCounter++;
 		row = gtmSheet.createRow(rowCounter);
 		cell = row.createCell(1);
@@ -233,10 +327,107 @@ public class WriteGTMFiles1
 		cell.setCellValue("Total");
 		cell = row.createCell(2);
 		cell.setCellStyle(style11);
-		cell.setCellValue(totalTrainMiles);
-		cell = row.createCell(3);
-		cell.setCellStyle(style11);
-		cell.setCellValue(gtmdf.format(totalGtm));
+		cell.setCellValue(tmdf.format(totalTrainMiles));
+
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+		{
+			cell = row.createCell(4);
+			cell.setCellStyle(style11);
+			cell.setCellValue(gtmdf.format(totalGtm));
+		}
+		else
+		{
+			cell = row.createCell(3);
+			cell.setCellStyle(style11);
+			cell.setCellValue(gtmdf.format(totalGtm));
+		}
+
+
+		// User defined category totals
+		if (BIASGtmController.getUseCustomAssignments()	&& (BIASGtmConfigPageController.getValidCustomAssignment1Exists().getValue().equals(true)))
+		{
+			rowCounter++;
+			row = gtmSheet.createRow(rowCounter);
+			cell = row.createCell(1);
+			cell.setCellStyle(style10);
+			cell.setCellValue(BIASGtmConfigPageController.getUserCategory1Name().getValue());
+			
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(tmdf.format(GtmAnalysis.getTrainMilesUserAssignment1()));
+			
+			cell = row.createCell(3);
+			cell.setCellStyle(style11);
+			double trainMilesPercentageOperator1 = GtmAnalysis.getTrainMilesUserAssignment1()/totalTrainMiles;
+			cell.setCellValue(percentdf.format(trainMilesPercentageOperator1 * 100).concat("%"));
+			
+			cell = row.createCell(4);
+			cell.setCellStyle(style11);
+			cell.setCellValue(gtmdf.format(GtmAnalysis.getTonMilesUserAssignment1()/1000));
+			
+			cell = row.createCell(5);
+			cell.setCellStyle(style11);
+			double tonMilesPercentageOperator1 = (GtmAnalysis.getTonMilesUserAssignment1()/1000)/totalGtm;
+			cell.setCellValue(percentdf.format(tonMilesPercentageOperator1 * 100).concat("%"));
+		}
+
+		if (BIASGtmController.getUseCustomAssignments()	&& (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true)))
+		{
+			rowCounter++;
+			row = gtmSheet.createRow(rowCounter);
+			cell = row.createCell(1);
+			cell.setCellStyle(style10);
+			cell.setCellValue(BIASGtmConfigPageController.getUserCategory2Name().getValue());
+			
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(tmdf.format(GtmAnalysis.getTrainMilesUserAssignment2()));
+			
+			cell = row.createCell(3);
+			cell.setCellStyle(style11);
+			double trainMilesPercentageOperator2 = GtmAnalysis.getTrainMilesUserAssignment2()/totalTrainMiles;
+			cell.setCellValue(percentdf.format(trainMilesPercentageOperator2 * 100).concat("%"));
+			
+			cell = row.createCell(4);
+			cell.setCellStyle(style11);
+			cell.setCellValue(gtmdf.format(GtmAnalysis.getTonMilesUserAssignment2()/1000));
+			
+			cell = row.createCell(5);
+			cell.setCellStyle(style11);
+			double tonMilesPercentageOperator2 = (GtmAnalysis.getTonMilesUserAssignment2()/1000)/totalGtm;
+			cell.setCellValue(percentdf.format(tonMilesPercentageOperator2 * 100).concat("%"));
+		}
+
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
+		{
+			rowCounter++;
+			row = gtmSheet.createRow(rowCounter);
+			cell = row.createCell(1);
+			cell.setCellStyle(style10);
+			cell.setCellValue("No Operator Defined");
+			
+			cell = row.createCell(2);
+			cell.setCellStyle(style11);
+			cell.setCellValue(tmdf.format(totalTrainMiles - GtmAnalysis.getTrainMilesUserAssignment1()- GtmAnalysis.getTrainMilesUserAssignment2()));
+			
+			cell = row.createCell(3);
+			cell.setCellStyle(style11);
+			double noOperatorTrainMiles = (totalTrainMiles - GtmAnalysis.getTrainMilesUserAssignment1()- GtmAnalysis.getTrainMilesUserAssignment2())/totalTrainMiles;
+			cell.setCellValue(percentdf.format(noOperatorTrainMiles*100).concat("%"));
+			
+			cell = row.createCell(4);
+			cell.setCellStyle(style11);
+			cell.setCellValue(gtmdf.format(totalGtm - (GtmAnalysis.getTonMilesUserAssignment1()/1000) - (GtmAnalysis.getTonMilesUserAssignment2()/1000)));
+			
+			cell = row.createCell(5);
+			cell.setCellStyle(style11);
+			double noOperatorTonMiles = ((totalGtm - (GtmAnalysis.getTonMilesUserAssignment1()/1000) - (GtmAnalysis.getTonMilesUserAssignment2()/1000))/totalGtm)/1000;
+			cell.setCellValue(percentdf.format(noOperatorTonMiles * 100).concat("%"));
+		}
 
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
@@ -250,20 +441,51 @@ public class WriteGTMFiles1
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 
 		// Resize all columns to fit the content size
-		for (int i = 0; i < 4; i++) 
+		if ((BIASGtmController.getUseCustomAssignments())	 
+				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
+						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
 		{
-			if (i == 0)   // Line
+			for (int i = 0; i < 7; i++) 
 			{
-				gtmSheet.setColumnWidth(i, 10000);
+				if (i == 0)   // Line
+				{
+					gtmSheet.setColumnWidth(i, 8000);
+				}
+				else if (i == 1)   // Type
+				{
+					gtmSheet.setColumnWidth(i, 8000);
+				}
+				else if ((i == 2) || (i == 4))  // Miles and Tons
+				{
+					gtmSheet.setColumnWidth(i, 6000);
+				}
+				else if ((i == 3) || (i == 5))  // %
+				{
+					gtmSheet.setColumnWidth(i, 1300);
+				}
+				else if (i == 6) 
+				{
+					gtmSheet.setColumnWidth(i, 6000);
+				}	
 			}
-			else if (i == 1)   // Type
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++) 
 			{
-				gtmSheet.setColumnWidth(i, 8000);
+				if (i == 0)   // Line
+				{
+					gtmSheet.setColumnWidth(i, 8000);
+				}
+				else if (i == 1)   // Type
+				{
+					gtmSheet.setColumnWidth(i, 8000);
+				}
+				else if ((i == 2) || (i == 3))  // Miles and Tons
+				{
+					gtmSheet.setColumnWidth(i, 6000);
+				}
 			}
-			else if ((i == 2) || (i == 3))  // Miles and Tons
-			{
-				gtmSheet.setColumnWidth(i, 6000);
-			}	
 		}
 	}
 
