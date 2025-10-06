@@ -433,7 +433,7 @@ public class BIASGtmController
 		}
 		else
 		{
-			message += "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
+			message = "\nInvalid date/time format, verbose .ROUTE file, output format, speed/distance units, invalid .OPTION file and/or invalid count of .OPTION files\n";
 			displayMessage(message);
 			continueAnalysis = false;
 		}

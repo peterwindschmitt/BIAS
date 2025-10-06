@@ -22,7 +22,7 @@ public class GtmAnalysis
 	private static HashSet<String> typesFoundHashSet = new HashSet<String>();
 	private static HashSet<String> typesInUserAssignments1AsHashSet = new HashSet<String>();
 	private static HashSet<String> typesInUserAssignments2AsHashSet = new HashSet<String>();
-	
+
 	private static HashMap<String, Double> tonsByTypeHashMap = new HashMap<String, Double>();
 	private static HashMap<String, Double> trainMilesByTypeHashMap = new HashMap<String, Double>();
 	private static double trainMilesUserAssignment1;
@@ -36,7 +36,7 @@ public class GtmAnalysis
 		typesFoundHashSet.clear();
 		typesInUserAssignments1AsHashSet.clear();
 		typesInUserAssignments2AsHashSet.clear();
-				
+
 		trainMilesUserAssignment1 = 0.0;
 		tonMilesUserAssignment1 = 0.0;
 		trainMilesUserAssignment2 = 0.0;
@@ -80,7 +80,6 @@ public class GtmAnalysis
 		String currentType = "";
 		Integer traversals = 0;
 		String linkDirection = "";
-		String trainDirection = "";
 		HashSet<String> usedSymbols = new HashSet<String>();
 
 		// For each row of the ROUTE file containing a run-time train
@@ -94,35 +93,26 @@ public class GtmAnalysis
 			for (int j = 0; j < traversalsByLinkArrayList.size(); j++)
 			{
 				linkDirection = traversalsByLinkArrayList.get(j).getLinkDirection();
-				trainDirection = returnTraversalsFromRouteFile.get(i).getTrainDirection().substring(0,1);			
 
 				if (((traversalsByLinkArrayList.get(j).getNodeA().contains(returnTraversalsFromRouteFile.get(i).getNode())))
 						&& ((traversalsByLinkArrayList.get(j).getNodeB().contains(returnTraversalsFromRouteFile.get(i + 1).getNode()))))
 				{
-					// Removed below on 9/14/25 as it did not count the miles/gtms for trains that change directions en route without stopping (like TriRail) 
-					//if ((linkDirection.equals(trainDirection)) ||
-					//		((linkDirection.equals("S")) && (trainDirection.equals("E"))) ||
-					//		((linkDirection.equals("E")) && (trainDirection.equals("S"))) ||
-					//		((linkDirection.equals("N")) && (trainDirection.equals("W"))) ||
-					//		((linkDirection.equals("W")) && (trainDirection.equals("N"))))
-					//{
-						usedSymbols.add(currentSymbol);
+					usedSymbols.add(currentSymbol);
 
-						traversalsByLinkArrayList.get(j).addTraversal(currentSymbol, currentType, returnTraversalsFromRouteFile.get(i).getWeight(), linkDirection);
-						traversals++;
-					//}					
+					traversalsByLinkArrayList.get(j).addTraversal(currentSymbol, currentType, returnTraversalsFromRouteFile.get(i).getWeight(), linkDirection);
+					traversals++;
 				}
 			}
 		}
 
 		Iterator<String> itrTypes = typesFoundHashSet.iterator();
-	
+
 		while (itrTypes.hasNext())
 		{
 			Double gtmAssignedToThisLineThisType = 0.0;
 			Double trainMilesAssignedToThisLineThisType = 0.0;
 			String typeToWorkWith = itrTypes.next();
-			
+
 			for (int j = 0; j < traversalsByLinkArrayList.size(); j++)
 			{
 				for (int k = 0; k < traversalsByLinkArrayList.get(j).getTraversals().size(); k++)
@@ -136,10 +126,10 @@ public class GtmAnalysis
 						Double gtmToAddToLink = weightOverLink * distanceOfLink; 
 						gtmAssignedToThisLineThisType += gtmToAddToLink;
 					}
-					
+
 					// User category 1
 					if ((typesInUserAssignments1AsHashSet.contains(traversalsByLinkArrayList.get(j).getTraversals().get(k).getTrainType()))		
-						&& (traversalsByLinkArrayList.get(j).getTraversals().get(k).getTrainType().equals(typeToWorkWith)))
+							&& (traversalsByLinkArrayList.get(j).getTraversals().get(k).getTrainType().equals(typeToWorkWith)))
 					{
 						Integer weightOverLink = traversalsByLinkArrayList.get(j).getTraversals().get(k).getWeight();
 						Double distanceOfLink = traversalsByLinkArrayList.get(j).getDistance();
@@ -149,7 +139,7 @@ public class GtmAnalysis
 
 					// User category 2
 					if ((typesInUserAssignments2AsHashSet.contains(traversalsByLinkArrayList.get(j).getTraversals().get(k).getTrainType()))	
-						&& (traversalsByLinkArrayList.get(j).getTraversals().get(k).getTrainType().equals(typeToWorkWith)))
+							&& (traversalsByLinkArrayList.get(j).getTraversals().get(k).getTrainType().equals(typeToWorkWith)))
 					{
 
 						Integer weightOverLink = traversalsByLinkArrayList.get(j).getTraversals().get(k).getWeight();
@@ -160,11 +150,11 @@ public class GtmAnalysis
 					}
 				}				
 			}
-			
+
 			tonsByTypeHashMap.put(typeToWorkWith, gtmAssignedToThisLineThisType);
 			trainMilesByTypeHashMap.put(typeToWorkWith, trainMilesAssignedToThisLineThisType);
 		}
-		
+
 		resultsMessage += "Found "+traversals+" traversals by "+usedSymbols.size()+" trains over "+traversalsByLinkArrayList.size()+" eligible links in the selected line\n";
 		resultsMessage += "Finished GTM Analysis results at "+ConvertDateTime.getTimeStamp()+"\n";
 	}
@@ -198,17 +188,17 @@ public class GtmAnalysis
 	{
 		return tonMilesUserAssignment2;
 	}
-	
+
 	public static HashSet<String> getTypesinUserAssignments1AsHashSet()
 	{
 		return typesInUserAssignments1AsHashSet;
 	}
-	
+
 	public static HashSet<String> getTypesinUserAssignments2AsHashSet()
 	{
 		return typesInUserAssignments2AsHashSet;
 	}
-
+	
 	public String getResultsMessage()
 	{
 		return resultsMessage;
