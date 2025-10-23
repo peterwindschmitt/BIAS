@@ -32,7 +32,8 @@
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
             <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
+            <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" />
+            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
@@ -41,7 +42,7 @@
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
-            <RowConstraints minHeight="80.0" prefHeight="80.0" />
+            <RowConstraints minHeight="70.0" prefHeight="70.0" />
         </rowConstraints>
          <children>
             <Label text="S3 Compare Schedule" underline="true">
@@ -54,70 +55,70 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="URI" GridPane.rowIndex="2">
+            <Label text="URI" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="uriTextField" onKeyTyped="#handleTextChangedURITextField" GridPane.columnSpan="3" GridPane.rowIndex="2">
+            <TextField fx:id="uriTextField1" onKeyTyped="#handleTextChangedURITextField1" GridPane.columnSpan="3" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="55.0" right="230.0" />
                </GridPane.margin>
             </TextField>
-            <Label text="Host" GridPane.rowIndex="4">
+            <Label text="Host" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="hostTextField" onKeyTyped="#handleTextChangedHostTextField" GridPane.columnSpan="3" GridPane.rowIndex="4">
+            <TextField fx:id="hostTextField1" onKeyTyped="#handleTextChangedHostTextField1" GridPane.columnSpan="3" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets left="55.0" right="230.0" />
                </GridPane.margin>
             </TextField>
-            <Label text="Key" GridPane.rowIndex="6">
+            <Label text="Key" GridPane.rowIndex="8">
                <GridPane.margin>
                   <Insets left="25.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="keyTextField" onKeyTyped="#handleTextChangedKeyTextField" GridPane.columnSpan="3" GridPane.rowIndex="6">
+            <TextField fx:id="keyTextField1" onKeyTyped="#handleTextChangedKeyTextField1" GridPane.columnSpan="3" GridPane.rowIndex="8">
                <GridPane.margin>
                   <Insets left="55.0" right="230.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="updateAPIParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateAPIParametersButton" prefWidth="180.0" text="Update API Parameters" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+            <Button fx:id="updateAPIParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateAPIParametersButton" prefWidth="180.0" text="Update API Parameters" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets right="30.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="useLastSavedAPIParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedAPIParametersButton" prefWidth="180.0" text="Use Last Saved API Parameters" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+            <Button fx:id="useLastSavedAPIParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedAPIParametersButton" prefWidth="180.0" text="Use Last Saved API Parameters" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets right="30.0" />
                </GridPane.margin>
             </Button>
-            <Label text="2.  Core Schedule Dates" GridPane.rowIndex="8">
+            <Label text="2.  Core Schedule Dates" GridPane.rowIndex="10">
                <padding>
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label text="Monday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-            <Label text="Tuesday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-            <Label text="Wednesday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-            <DatePicker fx:id="mondayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="10">
+            <Label text="Monday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <Label text="Tuesday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <Label text="Wednesday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <DatePicker fx:id="mondayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </DatePicker>
-            <DatePicker fx:id="tuesdayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-            <DatePicker fx:id="wednesdayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-            <Label text="Thursday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-            <Label text="Friday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-            <Label text="Saturday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-            <DatePicker fx:id="thursdayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
-            <DatePicker fx:id="fridayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
-            <DatePicker fx:id="saturdayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
-            <Label text="Sunday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
-            <DatePicker fx:id="sundayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
-            <Button fx:id="clearAllDatesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleClearAllDatesButton" prefWidth="180.0" text="Clear All Dates" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="14">
+            <DatePicker fx:id="tuesdayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+            <DatePicker fx:id="wednesdayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+            <Label text="Thursday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
+            <Label text="Friday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
+            <Label text="Saturday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="13" />
+            <DatePicker fx:id="thursdayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
+            <DatePicker fx:id="fridayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
+            <DatePicker fx:id="saturdayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="14" />
+            <Label text="Sunday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="15" />
+            <DatePicker fx:id="sundayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="16" />
+            <Button fx:id="clearAllDatesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleClearAllDatesButton" prefWidth="180.0" text="Clear All Dates" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="16">
                <GridPane.margin>
                   <Insets right="30.0" />
                </GridPane.margin>

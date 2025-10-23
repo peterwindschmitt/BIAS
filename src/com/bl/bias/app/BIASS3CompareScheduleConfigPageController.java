@@ -18,9 +18,9 @@ public class BIASS3CompareScheduleConfigPageController
 {	
 	private static Preferences prefs;
 
-	private static String uri;
-	private static String host;
-	private static String key;
+	private static String uri1;
+	private static String host1;
+	private static String key1;
 
 	private static String defaultUri = ""; 
 	private static String defaultHost = ""; 
@@ -42,9 +42,9 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private Button useLastSavedAPIParametersButton;
 	@FXML private Button clearAllDatesButton;
 
-	@FXML private TextField uriTextField;
-	@FXML private TextField hostTextField;
-	@FXML private TextField keyTextField;
+	@FXML private TextField uriTextField1;
+	@FXML private TextField hostTextField1;
+	@FXML private TextField keyTextField1;
 
 	@FXML private DatePicker mondayCoreDateDatePicker;
 	@FXML private DatePicker tuesdayCoreDateDatePicker;
@@ -67,44 +67,44 @@ public class BIASS3CompareScheduleConfigPageController
 		});
 		
 		// See if API parameters are stored
-		boolean uriExists = prefs.get("s3_uri", null) != null;
-		if (uriExists)
+		boolean uri1Exists = prefs.get("s3_uri1", null) != null;
+		if (uri1Exists)
 		{
-			uriTextField.setText(prefs.get("s3_uri", defaultUri));
+			uriTextField1.setText(prefs.get("s3_uri1", defaultUri));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_uri", defaultUri);
-			uriTextField.setText(prefs.get("s3_uri", defaultUri));
+				prefs.put("s3_uri1", defaultUri);
+			uriTextField1.setText(prefs.get("s3_uri1", defaultUri));
 		}
-		uri = prefs.get("s3_uri", defaultUri);
+		uri1 = prefs.get("s3_uri1", defaultUri);
 
-		boolean hostExists = prefs.get("s3_host", null) != null;
-		if (hostExists)
+		boolean host1Exists = prefs.get("s3_host1", null) != null;
+		if (host1Exists)
 		{
-			hostTextField.setText(prefs.get("s3_host", defaultHost));
+			hostTextField1.setText(prefs.get("s3_host1", defaultHost));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_host", defaultHost);
-			uriTextField.setText(prefs.get("s3_host", defaultHost));
+				prefs.put("s3_host1", defaultHost);
+			hostTextField1.setText(prefs.get("s3_host1", defaultHost));
 		}
-		host = prefs.get("s3_host", defaultHost);
+		host1 = prefs.get("s3_host1", defaultHost);
 
-		boolean keyExists = prefs.get("s3_key", null) != null;
-		if (keyExists)
+		boolean key1Exists = prefs.get("s3_key1", null) != null;
+		if (key1Exists)
 		{
-			keyTextField.setText(prefs.get("s3_key", defaultKey));
+			keyTextField1.setText(prefs.get("s3_key1", defaultKey));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_key", defaultKey);
-			keyTextField.setText(prefs.get("s3_key", defaultKey));
+				prefs.put("s3_key1", defaultKey);
+			keyTextField1.setText(prefs.get("s3_key1", defaultKey));
 		}
-		key = prefs.get("s3_key", defaultKey);
+		key1 = prefs.get("s3_key1", defaultKey);
 
 		// See if core dates are stored
 		// Monday
@@ -344,49 +344,49 @@ public class BIASS3CompareScheduleConfigPageController
 		});
 	};
 
-	@FXML private void handleTextChangedURITextField()
+	@FXML private void handleTextChangedURITextField1()
 	{
-		uriTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		uriTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleTextChangedHostTextField()
+	@FXML private void handleTextChangedHostTextField1()
 	{
-		hostTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		hostTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleTextChangedKeyTextField()
+	@FXML private void handleTextChangedKeyTextField1()
 	{
-		keyTextField.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		keyTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleUpdateAPIParametersButton()
 	{
-		uriTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		hostTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		keyTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		hostTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
-		uri = uriTextField.getText();
-		host = hostTextField.getText();
-		key = keyTextField.getText();
+		uri1 = uriTextField1.getText();
+		host1 = hostTextField1.getText();
+		key1 = keyTextField1.getText();
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
-			prefs.put("s3_uri", uri);
-			prefs.put("s3_host", host);
-			prefs.put("s3_key", key);
+			prefs.put("s3_uri1", uri1);
+			prefs.put("s3_host1", host1);
+			prefs.put("s3_key1", key1);
 		}
 	}
 
 	@FXML private void handleUseLastSavedAPIParametersButton()
 	{
-		uriTextField.setText(uri);
-		uriTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		uriTextField1.setText(uri1);
+		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
-		hostTextField.setText(host);
-		hostTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		hostTextField1.setText(host1);
+		hostTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
-		keyTextField.setText(key);
-		keyTextField.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		keyTextField1.setText(key1);
+		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleClearAllDatesButton()
@@ -423,17 +423,17 @@ public class BIASS3CompareScheduleConfigPageController
 
 	public static String getUri()
 	{
-		return uri;
+		return uri1;
 	}
 
 	public static String getHost()
 	{
-		return host;
+		return host1;
 	}
 
 	public static String getKey()
 	{
-		return key;
+		return key1;
 	}
 
 	public static LocalDate getMondayCoreDate()
