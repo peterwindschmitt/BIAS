@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
@@ -13,21 +12,15 @@ import com.bl.bias.read.ReadS3CompareScheduleFiles;
 import com.bl.bias.tools.ConvertDateTime;
 
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -35,7 +28,6 @@ import javafx.scene.control.TextArea;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 public class BIASS3CompareSchedulePageController 
 {
@@ -71,8 +63,10 @@ public class BIASS3CompareSchedulePageController
 	@FXML private Label coreDateStatusSuLabel;
 	@FXML private Label step1TextLabel;
 	@FXML private Label step2TextLabel;
+	@FXML private Label step3TextLabel;
 	@FXML private Label step1Label;
 	@FXML private Label step2Label;
+	@FXML private Label step3Label;
 
 	@FXML private DatePicker startDatePicker;
 	@FXML private DatePicker endDatePicker;

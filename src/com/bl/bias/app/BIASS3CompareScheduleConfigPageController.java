@@ -27,7 +27,6 @@ public class BIASS3CompareScheduleConfigPageController
 	private static String key2;
 	private static String connectionName2;
 	
-
 	private static String defaultUri = ""; 
 	private static String defaultHost = ""; 
 	private static String defaultKey = ""; 

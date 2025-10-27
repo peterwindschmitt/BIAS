@@ -108,5 +108,11 @@
             <Insets bottom="15.0" left="80.0" />
          </GridPane.margin>
       </ProgressBar>
+      <Label fx:id="step3Label" disable="true" text="3." GridPane.rowIndex="5" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Label>
+      <Label fx:id="step3TextLabel" alignment="CENTER" disable="true" text="API Connection:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
 	</children>
 </GridPane>
