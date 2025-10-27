@@ -21,10 +21,17 @@ public class BIASS3CompareScheduleConfigPageController
 	private static String uri1;
 	private static String host1;
 	private static String key1;
+	private static String connectionName1;
+	private static String uri2;
+	private static String host2;
+	private static String key2;
+	private static String connectionName2;
+	
 
 	private static String defaultUri = ""; 
 	private static String defaultHost = ""; 
 	private static String defaultKey = ""; 
+	private static String defaultConnectionName = ""; 
 
 	private static LocalDate mondayCoreDate;
 	private static LocalDate tuesdayCoreDate;
@@ -35,16 +42,23 @@ public class BIASS3CompareScheduleConfigPageController
 	private static LocalDate sundayCoreDate;
 
 	private ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
-	
+
 	private BIASS3CompareSchedulePageController biass3CompareSchedulePageController = new BIASS3CompareSchedulePageController();
-	
-	@FXML private Button updateAPIParametersButton;
-	@FXML private Button useLastSavedAPIParametersButton;
+
+	@FXML private Button updateAPI1ParametersButton;
+	@FXML private Button useLastSavedAPI1ParametersButton;
+	@FXML private Button updateAPI2ParametersButton;
+	@FXML private Button useLastSavedAPI2ParametersButton;
 	@FXML private Button clearAllDatesButton;
 
 	@FXML private TextField uriTextField1;
 	@FXML private TextField hostTextField1;
 	@FXML private TextField keyTextField1;
+	@FXML private TextField connectionNameTextField1;
+	@FXML private TextField uriTextField2;
+	@FXML private TextField hostTextField2;
+	@FXML private TextField keyTextField2;
+	@FXML private TextField connectionNameTextField2;
 
 	@FXML private DatePicker mondayCoreDateDatePicker;
 	@FXML private DatePicker tuesdayCoreDateDatePicker;
@@ -57,7 +71,7 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private void initialize() 
 	{
 		prefs = Preferences.userRoot().node("BIAS");
-		
+
 		validCoreDayList.addListener(new ListChangeListener<String>() {
 			@Override
 			//onChanged method
@@ -65,8 +79,8 @@ public class BIASS3CompareScheduleConfigPageController
 				biass3CompareSchedulePageController.alertOfConfigChange(validCoreDayList);
 			}
 		});
-		
-		// See if API parameters are stored
+
+		// See if API 1 parameters are stored
 		boolean uri1Exists = prefs.get("s3_uri1", null) != null;
 		if (uri1Exists)
 		{
@@ -105,6 +119,72 @@ public class BIASS3CompareScheduleConfigPageController
 			keyTextField1.setText(prefs.get("s3_key1", defaultKey));
 		}
 		key1 = prefs.get("s3_key1", defaultKey);
+		
+		boolean connectionName1Exists = prefs.get("s3_connectionName1", null) != null;
+		if (connectionName1Exists)
+		{
+			connectionNameTextField1.setText(prefs.get("s3_connectionName1", defaultConnectionName));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_connectionName1", defaultConnectionName);
+			connectionNameTextField1.setText(prefs.get("s3_connectionName1", defaultConnectionName));
+		}
+		connectionName1 = prefs.get("s3_connectionName1", defaultConnectionName);
+		
+		// See if API 2 parameters are stored
+		boolean uri2Exists = prefs.get("s3_uri2", null) != null;
+		if (uri2Exists)
+		{
+			uriTextField2.setText(prefs.get("s3_uri2", defaultUri));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_uri2", defaultUri);
+			uriTextField2.setText(prefs.get("s3_uri2", defaultUri));
+		}
+		uri2 = prefs.get("s3_uri2", defaultUri);
+
+		boolean host2Exists = prefs.get("s3_host2", null) != null;
+		if (host2Exists)
+		{
+			hostTextField2.setText(prefs.get("s3_host2", defaultHost));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_host2", defaultHost);
+			hostTextField2.setText(prefs.get("s3_host2", defaultHost));
+		}
+		host2 = prefs.get("s3_host2", defaultHost);
+
+		boolean key2Exists = prefs.get("s3_key2", null) != null;
+		if (key2Exists)
+		{
+			keyTextField2.setText(prefs.get("s3_key2", defaultKey));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_key2", defaultKey);
+			keyTextField2.setText(prefs.get("s3_key2", defaultKey));
+		}
+		key2 = prefs.get("s3_key2", defaultKey);
+		
+		boolean connectionName2Exists = prefs.get("s3_connectionName2", null) != null;
+		if (connectionName2Exists)
+		{
+			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultConnectionName));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_connectionName2", defaultConnectionName);
+			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultConnectionName));
+		}
+		connectionName2 = prefs.get("s3_connectionName2", defaultConnectionName);
 
 		// See if core dates are stored
 		// Monday
@@ -164,7 +244,7 @@ public class BIASS3CompareScheduleConfigPageController
 					validCoreDayList.remove("T");
 				else if (!validCoreDayList.contains("T"))
 					validCoreDayList.add("T");
-				
+
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 					if (tuesdayCoreDate == null)
 						prefs.put("s3_tuesdayCoreDate", "");
@@ -196,7 +276,7 @@ public class BIASS3CompareScheduleConfigPageController
 					validCoreDayList.remove("W");
 				else if (!validCoreDayList.contains("W"))
 					validCoreDayList.add("W");
-				
+
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (wednesdayCoreDate == null)
@@ -230,7 +310,7 @@ public class BIASS3CompareScheduleConfigPageController
 					validCoreDayList.remove("R");
 				else if (!validCoreDayList.contains("R"))
 					validCoreDayList.add("R");
-				
+
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (thursdayCoreDate == null)
@@ -264,7 +344,7 @@ public class BIASS3CompareScheduleConfigPageController
 					validCoreDayList.remove("F");
 				else if (!validCoreDayList.contains("F"))
 					validCoreDayList.add("F");
-				
+
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (fridayCoreDate == null)
@@ -298,7 +378,7 @@ public class BIASS3CompareScheduleConfigPageController
 					validCoreDayList.remove("Sa");
 				else if (!validCoreDayList.contains("Sa"))
 					validCoreDayList.add("Sa");
-				
+
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (saturdayCoreDate == null)
@@ -332,7 +412,7 @@ public class BIASS3CompareScheduleConfigPageController
 					validCoreDayList.remove("Su");
 				else if (!validCoreDayList.contains("Su"))
 					validCoreDayList.add("Su");
-				
+
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 				{
 					if (sundayCoreDate == null)
@@ -348,36 +428,85 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		uriTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
+	
+	@FXML private void handleTextChangedURITextField2()
+	{
+		uriTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
 
 	@FXML private void handleTextChangedHostTextField1()
 	{
 		hostTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedHostTextField2()
+	{
+		hostTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleTextChangedKeyTextField1()
 	{
 		keyTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
+	
+	@FXML private void handleTextChangedKeyTextField2()
+	{
+		keyTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
 
-	@FXML private void handleUpdateAPIParametersButton()
+	@FXML private void handleTextChangedConnectionNameTextField1()
+	{
+		connectionNameTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedConnectionNameTextField2()
+	{
+		connectionNameTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleUpdateAPI1ParametersButton()
 	{
 		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		hostTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		connectionNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 		uri1 = uriTextField1.getText();
 		host1 = hostTextField1.getText();
 		key1 = keyTextField1.getText();
+		connectionName1 = connectionNameTextField1.getText();
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.put("s3_uri1", uri1);
 			prefs.put("s3_host1", host1);
 			prefs.put("s3_key1", key1);
+			prefs.put("s3_connectionName1", connectionName1);
+		}
+	}
+	
+	@FXML private void handleUpdateAPI2ParametersButton()
+	{
+		uriTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		hostTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		keyTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		connectionNameTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		uri2 = uriTextField2.getText();
+		host2 = hostTextField2.getText();
+		key2 = keyTextField2.getText();
+		connectionName2 = connectionNameTextField2.getText();
+
+		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+		{
+			prefs.put("s3_uri2", uri2);
+			prefs.put("s3_host2", host2);
+			prefs.put("s3_key2", key2);
+			prefs.put("s3_connectionName2", connectionName2);
 		}
 	}
 
-	@FXML private void handleUseLastSavedAPIParametersButton()
+	@FXML private void handleUseLastSavedAPI1ParametersButton()
 	{
 		uriTextField1.setText(uri1);
 		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
@@ -387,6 +516,24 @@ public class BIASS3CompareScheduleConfigPageController
 
 		keyTextField1.setText(key1);
 		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
+		connectionNameTextField1.setText(connectionName1);
+		connectionNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleUseLastSavedAPI2ParametersButton()
+	{
+		uriTextField2.setText(uri2);
+		uriTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		hostTextField2.setText(host2);
+		hostTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+
+		keyTextField2.setText(key2);
+		keyTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
+		connectionNameTextField2.setText(connectionName2);
+		connectionNameTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 
 	@FXML private void handleClearAllDatesButton()
@@ -421,19 +568,44 @@ public class BIASS3CompareScheduleConfigPageController
 		validCoreDayList.clear();
 	}
 
-	public static String getUri()
+	public static String getUri1()
 	{
 		return uri1;
 	}
+	
+	public static String getUri2()
+	{
+		return uri2;
+	}
 
-	public static String getHost()
+	public static String getHost1()
 	{
 		return host1;
 	}
+	
+	public static String getHost2()
+	{
+		return host2;
+	}
 
-	public static String getKey()
+	public static String getKey1()
 	{
 		return key1;
+	}
+	
+	public static String getKey2()
+	{
+		return key2;
+	}
+	
+	public static String getConnectionName1()
+	{
+		return connectionName1;
+	}
+	
+	public static String getConnectionName2()
+	{
+		return connectionName2;
 	}
 
 	public static LocalDate getMondayCoreDate()

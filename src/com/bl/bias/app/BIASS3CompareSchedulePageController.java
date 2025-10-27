@@ -577,8 +577,8 @@ public class BIASS3CompareSchedulePageController
 		if (continueAnalysis)
 		{
 			// Read all objects that are required for the modified OTP analysis
-			ReadS3CompareScheduleFiles readData = new ReadS3CompareScheduleFiles(BIASS3CompareScheduleConfigPageController.getUri(), 
-					BIASS3CompareScheduleConfigPageController.getHost(), BIASS3CompareScheduleConfigPageController.getKey());
+			ReadS3CompareScheduleFiles readData = new ReadS3CompareScheduleFiles(BIASS3CompareScheduleConfigPageController.getUri1(), 
+					BIASS3CompareScheduleConfigPageController.getHost1(), BIASS3CompareScheduleConfigPageController.getKey1());
 			message = readData.getResultsMessage();
 			displayMessage(message);
 
