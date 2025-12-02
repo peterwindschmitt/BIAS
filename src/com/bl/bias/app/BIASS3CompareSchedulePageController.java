@@ -14,6 +14,7 @@ import com.bl.bias.tools.ConvertDateTime;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -24,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -40,6 +42,7 @@ public class BIASS3CompareSchedulePageController
 	private static Boolean continueAnalysis = true;
 
 	private static BooleanBinding disableExecuteButton;
+	private static BooleanBinding disableAPIConnectionsRadioButton;
 	private static BooleanBinding coreDayCountBP;
 	private static SimpleIntegerProperty coreDayCountSelectedIP;
 	private static SimpleBooleanProperty startDateSelectedBP;
@@ -49,6 +52,9 @@ public class BIASS3CompareSchedulePageController
 	private static LocalDate endDate;
 
 	private static ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
+
+	private static ObservableValue<String> con1NameAsObservable;
+	private static ObservableValue<String> con2NameAsObservable;
 
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
@@ -67,9 +73,14 @@ public class BIASS3CompareSchedulePageController
 	@FXML private Label step1Label;
 	@FXML private Label step2Label;
 	@FXML private Label step3Label;
+	@FXML private Label con1Label;
+	@FXML private Label con2Label;
 
 	@FXML private DatePicker startDatePicker;
 	@FXML private DatePicker endDatePicker;
+
+	@FXML private RadioButton con1RadioButton;
+	@FXML private RadioButton con2RadioButton;
 
 	@FXML private TextArea textArea;
 
@@ -77,7 +88,10 @@ public class BIASS3CompareSchedulePageController
 
 	public BIASS3CompareSchedulePageController()
 	{
-		prefs = Preferences.userRoot().node("BIAS");	
+		prefs = Preferences.userRoot().node("BIAS");
+
+		con1NameAsObservable = BIASS3CompareScheduleConfigPageController.getConnectionName1();
+		con2NameAsObservable = BIASS3CompareScheduleConfigPageController.getConnectionName2();		
 	}
 
 	@FXML private void initialize()
@@ -132,6 +146,33 @@ public class BIASS3CompareSchedulePageController
 				endDatePicker.setValue(null);
 				step2TextLabel.setDisable(true);
 				step2Label.setDisable(true);
+			}
+		});
+
+		endDateSelectedBP.addListener((observable, oldValue, newValue) -> {
+			if (newValue.equals(true)) 
+			{
+				step3TextLabel.setDisable(false);
+				step3Label.setDisable(false);
+
+				con1Label.disableProperty().unbind();
+				con2Label.disableProperty().unbind();
+				con1Label.setDisable(false);
+				con2Label.setDisable(false);
+				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+			}
+			else
+			{
+				step3TextLabel.setDisable(true);
+				step3Label.setDisable(true);
+
+				con1Label.disableProperty().unbind();
+				con2Label.disableProperty().unbind();
+				con1Label.setDisable(true);
+				con2Label.setDisable(true);
+				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
 			}
 		});
 
@@ -209,9 +250,40 @@ public class BIASS3CompareSchedulePageController
 		coreDayCountSelectedIP = new SimpleIntegerProperty();
 		coreDayCountBP = coreDayCountSelectedIP.isEqualTo(7);
 
-		// disable execute button if there isn't a start and end date and if all DOW are not present in core assignments
-		disableExecuteButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not());          
+		// Update API connection 1 labels
+		if (con1NameAsObservable.getValue().equals(""))
+			con1Label.setText("N/A");
+		else
+			con1Label.setText(con1NameAsObservable.getValue());
+
+		con1NameAsObservable.addListener((observable, oldValue, newValue) -> {
+			if (newValue.equals(""))
+				con1Label.setText("N/A");
+			else
+				con1Label.setText(newValue);
+		});	
+
+		// Update API connection 2 labels
+		if (con2NameAsObservable.getValue().equals("")) 
+			con2Label.setText("N/A");
+		else
+			con2Label.setText(con2NameAsObservable.getValue());
+
+		con2NameAsObservable.addListener((observable, oldValue, newValue) -> {
+			if (newValue.equals(""))
+				con2Label.setText("N/A");
+			else
+				con2Label.setText(newValue);
+		});	
+
+		// disable execute button and API radio buttons if 1)there isn't a start and 2) an end date and 3) if all DOW are not present in core assignments
+		disableExecuteButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not());   
+		disableAPIConnectionsRadioButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not()); 
 		executeButton.disableProperty().bind(disableExecuteButton);
+		con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+		con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+		con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+		con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
 
 		boolean mondayDateExists = Boolean.getBoolean(prefs.get("s3_mondayCoreDate", null));
 		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("M")))
@@ -364,14 +436,24 @@ public class BIASS3CompareSchedulePageController
 
 				// Unbind buttons
 				executeButton.disableProperty().unbind();
+				con1RadioButton.disableProperty().unbind();
+				con2RadioButton.disableProperty().unbind();
+				con1Label.disableProperty().unbind();
+				con2Label.disableProperty().unbind();
 
 				// Disable controls
 				step1Label.setDisable(true);
 				step1TextLabel.setDisable(true);
 				step2Label.setDisable(true);
 				step2TextLabel.setDisable(true);
+				step3Label.setDisable(true);
+				step3TextLabel.setDisable(true);
 				startDatePicker.setDisable(true);
 				endDatePicker.setDisable(true);
+				con1RadioButton.setDisable(true);
+				con2RadioButton.setDisable(true);
+				con1Label.setDisable(true);
+				con2Label.setDisable(true);
 				coreDateLabel.setDisable(true);
 				coreDateStatusMLabel.setDisable(true);
 				coreDateStatusTLabel.setDisable(true);
@@ -393,14 +475,24 @@ public class BIASS3CompareSchedulePageController
 
 				// Rebind buttons
 				executeButton.disableProperty().bind(disableExecuteButton);
+				con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
 
 				// Enable controls
 				step1Label.setDisable(false);
 				step1TextLabel.setDisable(false);
 				step2Label.setDisable(false);
 				step2TextLabel.setDisable(false);
+				step3Label.setDisable(false);
+				step3TextLabel.setDisable(false);
 				startDatePicker.setDisable(false);
 				endDatePicker.setDisable(false);
+				con1RadioButton.setDisable(false);
+				con2RadioButton.setDisable(false);
+				con1Label.setDisable(false);
+				con2Label.setDisable(false);
 				coreDateLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
@@ -446,14 +538,24 @@ public class BIASS3CompareSchedulePageController
 
 				// Unbind buttons
 				executeButton.disableProperty().unbind();
+				con1RadioButton.disableProperty().unbind();
+				con2RadioButton.disableProperty().unbind();
+				con1Label.disableProperty().unbind();
+				con2Label.disableProperty().unbind();
 
 				// Disable controls
 				step1Label.setDisable(true);
 				step1TextLabel.setDisable(true);
 				step2Label.setDisable(true);
 				step2TextLabel.setDisable(true);
+				step3Label.setDisable(true);
+				step3TextLabel.setDisable(true);
 				startDatePicker.setDisable(true);
 				endDatePicker.setDisable(true);
+				con1Label.setDisable(true);
+				con2Label.setDisable(true);
+				con1RadioButton.setDisable(true);
+				con2RadioButton.setDisable(true);
 				coreDateLabel.setDisable(true);
 				coreDateStatusMLabel.setDisable(true);
 				coreDateStatusTLabel.setDisable(true);
@@ -475,14 +577,24 @@ public class BIASS3CompareSchedulePageController
 
 				// Rebind buttons
 				executeButton.disableProperty().bind(disableExecuteButton);
+				con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
 
 				// Enable controls
 				step1Label.setDisable(false);
 				step1TextLabel.setDisable(false);
 				step2Label.setDisable(false);
 				step2TextLabel.setDisable(false);
+				step3Label.setDisable(false);
+				step3TextLabel.setDisable(false);
 				startDatePicker.setDisable(false);
 				endDatePicker.setDisable(false);
+				con1Label.setDisable(false);
+				con2Label.setDisable(false);
+				con1RadioButton.setDisable(false);
+				con2RadioButton.setDisable(false);
 				coreDateLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
@@ -507,16 +619,19 @@ public class BIASS3CompareSchedulePageController
 		progressBar.setVisible(false);
 		setProgressIndicator(0.00);
 
-		// Rebind buttons
-		executeButton.disableProperty().bind(disableExecuteButton);
-
 		// Enable controls
 		step1Label.setDisable(false);
 		step1TextLabel.setDisable(false);
 		step2Label.setDisable(false);
 		step2TextLabel.setDisable(false);
+		step3Label.setDisable(false);
+		step3TextLabel.setDisable(false);
 		startDatePicker.setDisable(false);
-		endDatePicker.setDisable(false);
+		endDatePicker.setDisable(false);	
+		con1Label.setDisable(false);
+		con2Label.setDisable(false);
+		con1RadioButton.setDisable(false);
+		con2RadioButton.setDisable(false);
 		coreDateLabel.setDisable(false);
 		coreDateStatusMLabel.setDisable(false);
 		coreDateStatusTLabel.setDisable(false);
@@ -527,6 +642,13 @@ public class BIASS3CompareSchedulePageController
 		coreDateStatusSuLabel.setDisable(false);
 		startDatePicker.setValue(null);
 		endDatePicker.setValue(null);
+
+		// Rebind buttons
+		executeButton.disableProperty().bind(disableExecuteButton);
+		con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+		con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+		con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+		con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
 
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
@@ -608,12 +730,16 @@ public class BIASS3CompareSchedulePageController
 					displayMessage("\nNo qualifying run-time trains were found to compare schedule points against.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
-			*/
+			 */
 		}
 
 		// Now reset for next case
 		// Rebind buttons
 		executeButton.disableProperty().bind(disableExecuteButton);
+		//con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+		//con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
+		//con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+		//con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
 
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);

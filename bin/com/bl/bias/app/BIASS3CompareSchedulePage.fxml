@@ -5,7 +5,9 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -113,6 +115,29 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="step3TextLabel" alignment="CENTER" disable="true" text="API Connection:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+      <Label fx:id="step3TextLabel" alignment="CENTER" disable="true" text="S3 API:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+      <RadioButton fx:id="con1RadioButton" disable="true" mnemonicParsing="false" selected="true" text="Connection 1:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets top="25.0" />
+         </GridPane.margin>
+         <toggleGroup>
+            <ToggleGroup fx:id="apiToggleGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="con2RadioButton" disable="true" mnemonicParsing="false" text="Connection 2:" toggleGroup="$apiToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <GridPane.margin>
+            <Insets top="20.0" />
+         </GridPane.margin>
+      </RadioButton>
+      <Label fx:id="con1Label" disable="true" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets left="100.0" top="25.0" />
+         </GridPane.margin>
+      </Label>
+      <Label fx:id="con2Label" disable="true" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <GridPane.margin>
+            <Insets left="100.0" top="20.0" />
+         </GridPane.margin>
+      </Label>
 	</children>
 </GridPane>

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -13,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.beans.property.SimpleStringProperty;
 
 public class BIASS3CompareScheduleConfigPageController
 {	
@@ -21,11 +23,13 @@ public class BIASS3CompareScheduleConfigPageController
 	private static String uri1;
 	private static String host1;
 	private static String key1;
-	private static String connectionName1;
+	private static ObservableValue<String> connectionName1AsObservable;
+	private static String connectionName1AsString;
 	private static String uri2;
 	private static String host2;
 	private static String key2;
-	private static String connectionName2;
+	private static ObservableValue<String> connectionName2AsObservable;
+	private static String connectionName2AsString;
 	
 	private static String defaultUri = ""; 
 	private static String defaultHost = ""; 
@@ -130,7 +134,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_connectionName1", defaultConnectionName);
 			connectionNameTextField1.setText(prefs.get("s3_connectionName1", defaultConnectionName));
 		}
-		connectionName1 = prefs.get("s3_connectionName1", defaultConnectionName);
+		connectionName1AsObservable = new SimpleStringProperty(prefs.get("s3_connectionName1", defaultConnectionName));
 		
 		// See if API 2 parameters are stored
 		boolean uri2Exists = prefs.get("s3_uri2", null) != null;
@@ -183,7 +187,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_connectionName2", defaultConnectionName);
 			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultConnectionName));
 		}
-		connectionName2 = prefs.get("s3_connectionName2", defaultConnectionName);
+		connectionName2AsObservable = new SimpleStringProperty(prefs.get("s3_connectionName2", defaultConnectionName));
 
 		// See if core dates are stored
 		// Monday
@@ -473,14 +477,15 @@ public class BIASS3CompareScheduleConfigPageController
 		uri1 = uriTextField1.getText();
 		host1 = hostTextField1.getText();
 		key1 = keyTextField1.getText();
-		connectionName1 = connectionNameTextField1.getText();
+		connectionName1AsString = connectionNameTextField1.getText();
+		((SimpleStringProperty) connectionName1AsObservable).set(connectionNameTextField1.getText());
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.put("s3_uri1", uri1);
 			prefs.put("s3_host1", host1);
 			prefs.put("s3_key1", key1);
-			prefs.put("s3_connectionName1", connectionName1);
+			prefs.put("s3_connectionName1", connectionName1AsString);
 		}
 	}
 	
@@ -494,14 +499,15 @@ public class BIASS3CompareScheduleConfigPageController
 		uri2 = uriTextField2.getText();
 		host2 = hostTextField2.getText();
 		key2 = keyTextField2.getText();
-		connectionName2 = connectionNameTextField2.getText();
+		connectionName2AsString = connectionNameTextField2.getText();
+		((SimpleStringProperty) connectionName2AsObservable).set(connectionNameTextField2.getText());
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.put("s3_uri2", uri2);
 			prefs.put("s3_host2", host2);
 			prefs.put("s3_key2", key2);
-			prefs.put("s3_connectionName2", connectionName2);
+			prefs.put("s3_connectionName2", connectionName2AsString);
 		}
 	}
 
@@ -516,7 +522,7 @@ public class BIASS3CompareScheduleConfigPageController
 		keyTextField1.setText(key1);
 		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		
-		connectionNameTextField1.setText(connectionName1);
+		connectionNameTextField1.setText(connectionName1AsString);
 		connectionNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 	
@@ -531,7 +537,7 @@ public class BIASS3CompareScheduleConfigPageController
 		keyTextField2.setText(key2);
 		keyTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		
-		connectionNameTextField2.setText(connectionName2);
+		connectionNameTextField2.setText(connectionName2AsString);
 		connectionNameTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 
@@ -597,14 +603,14 @@ public class BIASS3CompareScheduleConfigPageController
 		return key2;
 	}
 	
-	public static String getConnectionName1()
+	public static ObservableValue<String> getConnectionName1()
 	{
-		return connectionName1;
+		return connectionName1AsObservable;
 	}
 	
-	public static String getConnectionName2()
+	public static ObservableValue<String> getConnectionName2()
 	{
-		return connectionName2;
+		return connectionName2AsObservable;
 	}
 
 	public static LocalDate getMondayCoreDate()
