@@ -91,7 +91,7 @@ public class BIASS3CompareSchedulePageController
 		prefs = Preferences.userRoot().node("BIAS");
 
 		con1NameAsObservable = BIASS3CompareScheduleConfigPageController.getProfileName1AsObservable();
-		con2NameAsObservable = BIASS3CompareScheduleConfigPageController.getConnectionName2();		
+		con2NameAsObservable = BIASS3CompareScheduleConfigPageController.getProfileName2AsObservable();	
 	}
 
 	@FXML private void initialize()
