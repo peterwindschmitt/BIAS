@@ -21,20 +21,29 @@ public class BIASS3CompareScheduleConfigPageController
 	private static Preferences prefs;
 
 	private static String uri1;
-	private static String host1;
-	private static String key1;
-	private static ObservableValue<String> connectionName1AsObservable;
-	private static String connectionName1AsString;
+	private static String clientId1;
+	private static String clientSecret1;
+	private static String userName1;
+	private static String password1;
+	private static String grantType1;
+	private static String code1;
+	private static ObservableValue<String> profileName1AsObservable;
+	private static String profileName1AsString;
+	
 	private static String uri2;
 	private static String host2;
 	private static String key2;
 	private static ObservableValue<String> connectionName2AsObservable;
-	private static String connectionName2AsString;
+	private static String profileName2AsString;
 	
 	private static String defaultUri = ""; 
-	private static String defaultHost = ""; 
-	private static String defaultKey = ""; 
-	private static String defaultConnectionName = ""; 
+	private static String defaultClientId = ""; 
+	private static String defaultClientSecret = ""; 
+	private static String defaultUserName = ""; 
+	private static String defaultPassword = "";
+	private static String defaultGrantType = "";
+	private static String defaultCode = "";
+	private static String defaultProfileName = ""; 
 
 	private static LocalDate mondayCoreDate;
 	private static LocalDate tuesdayCoreDate;
@@ -55,14 +64,19 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private Button clearAllDatesButton;
 
 	@FXML private TextField uriTextField1;
-	@FXML private TextField hostTextField1;
-	@FXML private TextField keyTextField1;
-	@FXML private TextField connectionNameTextField1;
+	@FXML private TextField clientIdField1;
+	@FXML private TextField clientSecretField1;
+	@FXML private TextField userNameField1;
+	@FXML private TextField passwordField1;
+	@FXML private TextField grantTypeField1;
+	@FXML private TextField codeField1;
+	@FXML private TextField profileNameTextField1;
+	
 	@FXML private TextField uriTextField2;
 	@FXML private TextField hostTextField2;
 	@FXML private TextField keyTextField2;
 	@FXML private TextField connectionNameTextField2;
-
+	
 	@FXML private DatePicker mondayCoreDateDatePicker;
 	@FXML private DatePicker tuesdayCoreDateDatePicker;
 	@FXML private DatePicker wednesdayCoreDateDatePicker;
@@ -97,44 +111,98 @@ public class BIASS3CompareScheduleConfigPageController
 		}
 		uri1 = prefs.get("s3_uri1", defaultUri);
 
-		boolean host1Exists = prefs.get("s3_host1", null) != null;
-		if (host1Exists)
+		boolean clientId1Exists = prefs.get("s3_clientId1", null) != null;
+		if (clientId1Exists)
 		{
-			hostTextField1.setText(prefs.get("s3_host1", defaultHost));
+			clientIdField1.setText(prefs.get("s3_clientId1", defaultClientId));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_host1", defaultHost);
-			hostTextField1.setText(prefs.get("s3_host1", defaultHost));
+				prefs.put("s3_clientId1", defaultClientId);
+			clientIdField1.setText(prefs.get("s3_clientId1", defaultClientId));
 		}
-		host1 = prefs.get("s3_host1", defaultHost);
+		clientId1 = prefs.get("s3_clientId1", defaultClientId);
 
-		boolean key1Exists = prefs.get("s3_key1", null) != null;
-		if (key1Exists)
+		boolean clientSecret1Exists = prefs.get("s3_clientSecret1", null) != null;
+		if (clientSecret1Exists)
 		{
-			keyTextField1.setText(prefs.get("s3_key1", defaultKey));
+			clientSecretField1.setText(prefs.get("s3_clientSecret1", defaultClientSecret));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_key1", defaultKey);
-			keyTextField1.setText(prefs.get("s3_key1", defaultKey));
+				prefs.put("s3_clientSecret1", defaultClientSecret);
+			clientSecretField1.setText(prefs.get("s3_clientSecret1", defaultClientSecret));
 		}
-		key1 = prefs.get("s3_key1", defaultKey);
+		clientSecret1 = prefs.get("s3_clientSecret1", defaultClientSecret);
 		
-		boolean connectionName1Exists = prefs.get("s3_connectionName1", null) != null;
-		if (connectionName1Exists)
+		boolean userName1Exists = prefs.get("s3_userName1", null) != null;
+		if (userName1Exists)
 		{
-			connectionNameTextField1.setText(prefs.get("s3_connectionName1", defaultConnectionName));
+			userNameField1.setText(prefs.get("s3_userName1", defaultUserName));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_connectionName1", defaultConnectionName);
-			connectionNameTextField1.setText(prefs.get("s3_connectionName1", defaultConnectionName));
+				prefs.put("s3_userName1", defaultUserName);
+			userNameField1.setText(prefs.get("s3_userName1", defaultUserName));
 		}
-		connectionName1AsObservable = new SimpleStringProperty(prefs.get("s3_connectionName1", defaultConnectionName));
+		userName1 = prefs.get("s3_userName1", defaultUserName);
+		
+		boolean password1Exists = prefs.get("s3_password1", null) != null;
+		if (password1Exists)
+		{
+			passwordField1.setText(prefs.get("s3_password1", defaultPassword));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_password1", defaultPassword);
+			passwordField1.setText(prefs.get("s3_password1", defaultPassword));
+		}
+		password1 = prefs.get("s3_password1", defaultPassword);
+		
+		boolean grantType1Exists = prefs.get("s3_grantType1", null) != null;
+		if (grantType1Exists)
+		{
+			grantTypeField1.setText(prefs.get("s3_grantType1", defaultGrantType));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_grantType1", defaultGrantType);
+			grantTypeField1.setText(prefs.get("s3_grantType1", defaultGrantType));
+		}
+		grantType1 = prefs.get("s3_grantType1", defaultGrantType);
+		
+
+		boolean code1Exists = prefs.get("s3_code1", null) != null;
+		if (code1Exists)
+		{
+			codeField1.setText(prefs.get("s3_code1", defaultCode));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_code1", defaultCode);
+			codeField1.setText(prefs.get("s3_code1", defaultCode));
+		}
+		code1 = prefs.get("s3_code1", defaultCode);
+		
+		boolean profileName1Exists = prefs.get("s3_profileName1", null) != null;
+		if (profileName1Exists)
+		{
+			profileNameTextField1.setText(prefs.get("s3_profileName1", defaultProfileName));
+		}
+		else
+		{
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.put("s3_profileName1", defaultProfileName);
+			profileNameTextField1.setText(prefs.get("s3_profileName1", defaultProfileName));
+		}
+		profileName1AsObservable = new SimpleStringProperty(prefs.get("s3_profileName1", defaultProfileName));
+		profileName1AsString = profileNameTextField1.getText();
 		
 		// See if API 2 parameters are stored
 		boolean uri2Exists = prefs.get("s3_uri2", null) != null;
@@ -153,41 +221,41 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean host2Exists = prefs.get("s3_host2", null) != null;
 		if (host2Exists)
 		{
-			hostTextField2.setText(prefs.get("s3_host2", defaultHost));
+			hostTextField2.setText(prefs.get("s3_host2", defaultClientId));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_host2", defaultHost);
-			hostTextField2.setText(prefs.get("s3_host2", defaultHost));
+				prefs.put("s3_host2", defaultClientId);
+			hostTextField2.setText(prefs.get("s3_host2", defaultClientId));
 		}
-		host2 = prefs.get("s3_host2", defaultHost);
+		host2 = prefs.get("s3_host2", defaultClientId);
 
 		boolean key2Exists = prefs.get("s3_key2", null) != null;
 		if (key2Exists)
 		{
-			keyTextField2.setText(prefs.get("s3_key2", defaultKey));
+			keyTextField2.setText(prefs.get("s3_key2", defaultClientSecret));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_key2", defaultKey);
-			keyTextField2.setText(prefs.get("s3_key2", defaultKey));
+				prefs.put("s3_key2", defaultClientSecret);
+			keyTextField2.setText(prefs.get("s3_key2", defaultClientSecret));
 		}
-		key2 = prefs.get("s3_key2", defaultKey);
+		key2 = prefs.get("s3_key2", defaultClientSecret);
 		
 		boolean connectionName2Exists = prefs.get("s3_connectionName2", null) != null;
 		if (connectionName2Exists)
 		{
-			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultConnectionName));
+			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultProfileName));
 		}
 		else
 		{
 			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
-				prefs.put("s3_connectionName2", defaultConnectionName);
-			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultConnectionName));
+				prefs.put("s3_connectionName2", defaultProfileName);
+			connectionNameTextField2.setText(prefs.get("s3_connectionName2", defaultProfileName));
 		}
-		connectionName2AsObservable = new SimpleStringProperty(prefs.get("s3_connectionName2", defaultConnectionName));
+		connectionName2AsObservable = new SimpleStringProperty(prefs.get("s3_connectionName2", defaultProfileName));
 
 		// See if core dates are stored
 		// Monday
@@ -437,9 +505,9 @@ public class BIASS3CompareScheduleConfigPageController
 		uriTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleTextChangedHostTextField1()
+	@FXML private void handleTextChangedClientIdField1()
 	{
-		hostTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		clientIdField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 	
 	@FXML private void handleTextChangedHostTextField2()
@@ -447,19 +515,39 @@ public class BIASS3CompareScheduleConfigPageController
 		hostTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 
-	@FXML private void handleTextChangedKeyTextField1()
+	@FXML private void handleTextChangedClientSecretField1()
 	{
-		keyTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		clientSecretField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 	
 	@FXML private void handleTextChangedKeyTextField2()
 	{
 		keyTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-
-	@FXML private void handleTextChangedConnectionNameTextField1()
+	
+	@FXML private void handleTextChangedUserNameField1()
 	{
-		connectionNameTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+		userNameField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedPasswordField1()
+	{
+		passwordField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedGrantTypeField1()
+	{
+		grantTypeField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleTextChangedCodeField1()
+	{
+		codeField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+	}
+
+	@FXML private void handleTextChangedProfileNameTextField1()
+	{
+		profileNameTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
 	
 	@FXML private void handleTextChangedConnectionNameTextField2()
@@ -470,22 +558,34 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private void handleUpdateAPI1ParametersButton()
 	{
 		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		hostTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		connectionNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		clientIdField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		clientSecretField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		userNameField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		passwordField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		grantTypeField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		codeField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		profileNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
 		uri1 = uriTextField1.getText();
-		host1 = hostTextField1.getText();
-		key1 = keyTextField1.getText();
-		connectionName1AsString = connectionNameTextField1.getText();
-		((SimpleStringProperty) connectionName1AsObservable).set(connectionNameTextField1.getText());
+		clientId1 = clientIdField1.getText();
+		clientSecret1 = clientSecretField1.getText();
+		userName1 = userNameField1.getText();
+		password1 = passwordField1.getText();
+		grantType1 = grantTypeField1.getText();
+		code1 = codeField1.getText();
+		profileName1AsString = profileNameTextField1.getText();
+		((SimpleStringProperty) profileName1AsObservable).set(profileNameTextField1.getText());
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
 		{
 			prefs.put("s3_uri1", uri1);
-			prefs.put("s3_host1", host1);
-			prefs.put("s3_key1", key1);
-			prefs.put("s3_connectionName1", connectionName1AsString);
+			prefs.put("s3_clientId1", clientId1);
+			prefs.put("s3_clientSecret1", clientSecret1);
+			prefs.put("s3_userName1", userName1);
+			prefs.put("s3_password1", password1);
+			prefs.put("s3_grantType1", grantType1);
+			prefs.put("s3_code1", code1);
+			prefs.put("s3_profileName1", profileName1AsString);
 		}
 	}
 	
@@ -499,7 +599,7 @@ public class BIASS3CompareScheduleConfigPageController
 		uri2 = uriTextField2.getText();
 		host2 = hostTextField2.getText();
 		key2 = keyTextField2.getText();
-		connectionName2AsString = connectionNameTextField2.getText();
+		profileName2AsString = connectionNameTextField2.getText();
 		((SimpleStringProperty) connectionName2AsObservable).set(connectionNameTextField2.getText());
 
 		if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
@@ -507,7 +607,7 @@ public class BIASS3CompareScheduleConfigPageController
 			prefs.put("s3_uri2", uri2);
 			prefs.put("s3_host2", host2);
 			prefs.put("s3_key2", key2);
-			prefs.put("s3_connectionName2", connectionName2AsString);
+			prefs.put("s3_connectionName2", profileName2AsString);
 		}
 	}
 
@@ -516,14 +616,26 @@ public class BIASS3CompareScheduleConfigPageController
 		uriTextField1.setText(uri1);
 		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
-		hostTextField1.setText(host1);
-		hostTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		clientIdField1.setText(clientId1);
+		clientIdField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 
-		keyTextField1.setText(key1);
-		keyTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		clientSecretField1.setText(clientSecret1);
+		clientSecretField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		
-		connectionNameTextField1.setText(connectionName1AsString);
-		connectionNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		userNameField1.setText(userName1);
+		userNameField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
+		passwordField1.setText(password1);
+		passwordField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
+		grantTypeField1.setText(grantType1);
+		grantTypeField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
+		codeField1.setText(code1);
+		codeField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+		
+		profileNameTextField1.setText(profileName1AsString);
+		profileNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 	
 	@FXML private void handleUseLastSavedAPI2ParametersButton()
@@ -537,7 +649,7 @@ public class BIASS3CompareScheduleConfigPageController
 		keyTextField2.setText(key2);
 		keyTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 		
-		connectionNameTextField2.setText(connectionName2AsString);
+		connectionNameTextField2.setText(profileName2AsString);
 		connectionNameTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
 
@@ -583,9 +695,9 @@ public class BIASS3CompareScheduleConfigPageController
 		return uri2;
 	}
 
-	public static String getHost1()
+	public static String getClientId1()
 	{
-		return host1;
+		return clientId1;
 	}
 	
 	public static String getHost2()
@@ -593,9 +705,9 @@ public class BIASS3CompareScheduleConfigPageController
 		return host2;
 	}
 
-	public static String getKey1()
+	public static String getClientSecret1()
 	{
-		return key1;
+		return clientSecret1;
 	}
 	
 	public static String getKey2()
@@ -603,9 +715,29 @@ public class BIASS3CompareScheduleConfigPageController
 		return key2;
 	}
 	
-	public static ObservableValue<String> getConnectionName1()
+	public static String getUserName1()
 	{
-		return connectionName1AsObservable;
+		return userName1;
+	}
+	
+	public static String getPassword1()
+	{
+		return password1;
+	}
+	
+	public static String getGrantType1()
+	{
+		return grantType1;
+	}
+	
+	public static String getCode1()
+	{
+		return code1;
+	}
+	
+	public static ObservableValue<String> getProfileName1AsObservable()
+	{
+		return profileName1AsObservable;
 	}
 	
 	public static ObservableValue<String> getConnectionName2()

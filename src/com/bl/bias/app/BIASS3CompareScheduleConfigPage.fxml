@@ -29,14 +29,14 @@
         <rowConstraints>
             <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="150.0" minHeight="150.0" prefHeight="150.0" />
+            <RowConstraints maxHeight="180.0" minHeight="180.0" prefHeight="180.0" />
             <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
-            <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
+            <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="30.0" />
         </rowConstraints>
          <children>
@@ -68,50 +68,78 @@
                               </Label>
                               <TextField fx:id="uriTextField1" onKeyTyped="#handleTextChangedURITextField1" GridPane.columnSpan="2">
                                  <GridPane.margin>
-                                    <Insets left="55.0" right="30.0" />
+                                    <Insets left="90.0" right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Label text="Host" GridPane.rowIndex="1">
+                              <Label text="Client ID" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="hostTextField1" onKeyTyped="#handleTextChangedHostTextField1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                              <TextField fx:id="clientIdField1" onKeyTyped="#handleTextChangedClientIdField1" GridPane.rowIndex="1">
                                  <GridPane.margin>
-                                    <Insets left="55.0" right="30.0" />
+                                    <Insets left="90.0" right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Label text="Key" GridPane.rowIndex="2">
+                              <Label text="Client Secret" GridPane.rowIndex="2">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="keyTextField1" onKeyTyped="#handleTextChangedKeyTextField1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <TextField fx:id="clientSecretField1" onKeyTyped="#handleTextChangedClientSecretField1" GridPane.rowIndex="2">
                                  <GridPane.margin>
-                                    <Insets left="55.0" right="30.0" />
+                                    <Insets left="90.0" right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Button fx:id="testAPI1ConnectionButton" disable="true" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" prefWidth="180.0" text="Test Connection to API" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                              <Label text="Username" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="userNameField1" onKeyTyped="#handleTextChangedUserNameField1" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="90.0" right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="passwordField1" onKeyTyped="#handleTextChangedPasswordField1" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="65.0" right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Grant Type" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextField fx:id="grantTypeField1" onKeyTyped="#handleTextChangedGrantTypeField1" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="65.0" right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Code" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <TextField fx:id="codeField1" onKeyTyped="#handleTextChangedCodeField1" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="65.0" right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Name" GridPane.rowIndex="4">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Button fx:id="testAPI1ConnectionButton" disable="true" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" prefWidth="180.0" text="Test Connection to API" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets left="55.0" right="5.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Button fx:id="updateAPI1ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateAPI1ParametersButton" prefWidth="180.0" text="Update API Parameters" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
+                              <Button fx:id="updateAPI1ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateAPI1ParametersButton" prefWidth="180.0" text="Update API Parameters" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </Button>
-                              <Button fx:id="useLastSavedAPI1ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedAPI1ParametersButton" prefWidth="180.0" text="Use Last Saved API Parameters" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                              <Button fx:id="useLastSavedAPI1ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedAPI1ParametersButton" prefWidth="180.0" text="Use Last Saved API Parameters" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets right="30.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Label text="Name" GridPane.rowIndex="3">
-                                 <GridPane.margin>
-                                    <Insets left="20.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <TextField fx:id="connectionNameTextField1" maxWidth="150.0" minWidth="150.0" onKeyTyped="#handleTextChangedConnectionNameTextField1" prefWidth="150.0" GridPane.rowIndex="3">
+                              <TextField fx:id="profileNameTextField1" maxWidth="150.0" minWidth="150.0" onKeyTyped="#handleTextChangedProfileNameTextField1" prefWidth="150.0" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets left="55.0" />
                                  </GridPane.margin>
@@ -121,6 +149,7 @@
                               <RowConstraints minHeight="30.0" />
                               <RowConstraints minHeight="30.0" />
                               <RowConstraints minHeight="30.0" />
+                              <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                               <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                            </rowConstraints>
                         </GridPane>

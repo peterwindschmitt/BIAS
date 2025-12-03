@@ -90,7 +90,7 @@ public class BIASS3CompareSchedulePageController
 	{
 		prefs = Preferences.userRoot().node("BIAS");
 
-		con1NameAsObservable = BIASS3CompareScheduleConfigPageController.getConnectionName1();
+		con1NameAsObservable = BIASS3CompareScheduleConfigPageController.getProfileName1AsObservable();
 		con2NameAsObservable = BIASS3CompareScheduleConfigPageController.getConnectionName2();		
 	}
 
@@ -694,7 +694,7 @@ public class BIASS3CompareSchedulePageController
 		{
 			// Read all objects that are required for the modified OTP analysis
 			ReadS3CompareScheduleFiles readData = new ReadS3CompareScheduleFiles(BIASS3CompareScheduleConfigPageController.getUri1(), 
-					BIASS3CompareScheduleConfigPageController.getHost1(), BIASS3CompareScheduleConfigPageController.getKey1());
+					BIASS3CompareScheduleConfigPageController.getClientId1(), BIASS3CompareScheduleConfigPageController.getClientSecret1());
 			message = readData.getResultsMessage();
 			displayMessage(message);
 
