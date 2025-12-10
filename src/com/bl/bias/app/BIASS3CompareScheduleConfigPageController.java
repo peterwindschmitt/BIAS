@@ -1,5 +1,10 @@
 package com.bl.bias.app;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
@@ -29,7 +34,7 @@ public class BIASS3CompareScheduleConfigPageController
 	private static String code1;
 	private static ObservableValue<String> profileName1AsObservable;
 	private static String profileName1AsString;
-	
+
 	private static String uri2;
 	private static String clientId2;
 	private static String clientSecret2;
@@ -39,7 +44,7 @@ public class BIASS3CompareScheduleConfigPageController
 	private static String code2;
 	private static ObservableValue<String> profileName2AsObservable;
 	private static String profileName2AsString;
-	
+
 	private static String defaultUri = ""; 
 	private static String defaultClientId = ""; 
 	private static String defaultClientSecret = ""; 
@@ -61,10 +66,10 @@ public class BIASS3CompareScheduleConfigPageController
 
 	private BIASS3CompareSchedulePageController biass3CompareSchedulePageController = new BIASS3CompareSchedulePageController();
 
-	@FXML private Button testAPI1ConnectionButton;
+	@FXML private Button testUri1Button;
 	@FXML private Button updateAPI1ParametersButton;
 	@FXML private Button useLastSavedAPI1ParametersButton;
-	//@FXML private Button testAPI2ConnectionButton;
+	@FXML private Button testUri2Button;
 	@FXML private Button updateAPI2ParametersButton;
 	@FXML private Button useLastSavedAPI2ParametersButton;
 	@FXML private Button clearAllDatesButton;
@@ -77,7 +82,7 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private TextField grantTypeField1;
 	@FXML private TextField codeField1;
 	@FXML private TextField profileNameTextField1;
-	
+
 	@FXML private TextField uriTextField2;
 	@FXML private TextField clientIdField2;
 	@FXML private TextField clientSecretField2;
@@ -86,7 +91,7 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private TextField grantTypeField2;
 	@FXML private TextField codeField2;
 	@FXML private TextField profileNameTextField2;
-	
+
 	@FXML private DatePicker mondayCoreDateDatePicker;
 	@FXML private DatePicker tuesdayCoreDateDatePicker;
 	@FXML private DatePicker wednesdayCoreDateDatePicker;
@@ -146,7 +151,7 @@ public class BIASS3CompareScheduleConfigPageController
 			clientSecretField1.setText(prefs.get("s3_clientSecret1", defaultClientSecret));
 		}
 		clientSecret1 = prefs.get("s3_clientSecret1", defaultClientSecret);
-		
+
 		boolean userName1Exists = prefs.get("s3_userName1", null) != null;
 		if (userName1Exists)
 		{
@@ -159,7 +164,7 @@ public class BIASS3CompareScheduleConfigPageController
 			userNameField1.setText(prefs.get("s3_userName1", defaultUserName));
 		}
 		userName1 = prefs.get("s3_userName1", defaultUserName);
-		
+
 		boolean password1Exists = prefs.get("s3_password1", null) != null;
 		if (password1Exists)
 		{
@@ -172,7 +177,7 @@ public class BIASS3CompareScheduleConfigPageController
 			passwordField1.setText(prefs.get("s3_password1", defaultPassword));
 		}
 		password1 = prefs.get("s3_password1", defaultPassword);
-		
+
 		boolean grantType1Exists = prefs.get("s3_grantType1", null) != null;
 		if (grantType1Exists)
 		{
@@ -185,7 +190,7 @@ public class BIASS3CompareScheduleConfigPageController
 			grantTypeField1.setText(prefs.get("s3_grantType1", defaultGrantType));
 		}
 		grantType1 = prefs.get("s3_grantType1", defaultGrantType);
-		
+
 
 		boolean code1Exists = prefs.get("s3_code1", null) != null;
 		if (code1Exists)
@@ -199,7 +204,7 @@ public class BIASS3CompareScheduleConfigPageController
 			codeField1.setText(prefs.get("s3_code1", defaultCode));
 		}
 		code1 = prefs.get("s3_code1", defaultCode);
-		
+
 		boolean profileName1Exists = prefs.get("s3_profileName1", null) != null;
 		if (profileName1Exists)
 		{
@@ -213,7 +218,7 @@ public class BIASS3CompareScheduleConfigPageController
 		}
 		profileName1AsObservable = new SimpleStringProperty(prefs.get("s3_profileName1", defaultProfileName));
 		profileName1AsString = profileNameTextField1.getText();
-		
+
 		// See if API 2 parameters are stored
 		boolean uri2Exists = prefs.get("s3_uri2", null) != null;
 		if (uri2Exists)
@@ -253,7 +258,7 @@ public class BIASS3CompareScheduleConfigPageController
 			clientSecretField2.setText(prefs.get("s3_clientSecret2", defaultClientSecret));
 		}
 		clientSecret2 = prefs.get("s3_clientSecret2", defaultClientSecret);
-		
+
 		boolean userName2Exists = prefs.get("s3_userName2", null) != null;
 		if (userName2Exists)
 		{
@@ -266,7 +271,7 @@ public class BIASS3CompareScheduleConfigPageController
 			userNameField2.setText(prefs.get("s3_userName2", defaultUserName));
 		}
 		userName2 = prefs.get("s3_userName2", defaultUserName);
-		
+
 		boolean password2Exists = prefs.get("s3_password2", null) != null;
 		if (password2Exists)
 		{
@@ -279,7 +284,7 @@ public class BIASS3CompareScheduleConfigPageController
 			passwordField2.setText(prefs.get("s3_password2", defaultPassword));
 		}
 		password2 = prefs.get("s3_password2", defaultPassword);
-		
+
 		boolean grantType2Exists = prefs.get("s3_grantType2", null) != null;
 		if (grantType2Exists)
 		{
@@ -292,7 +297,7 @@ public class BIASS3CompareScheduleConfigPageController
 			grantTypeField2.setText(prefs.get("s3_grantType2", defaultGrantType));
 		}
 		grantType2 = prefs.get("s3_grantType2", defaultGrantType);
-		
+
 
 		boolean code2Exists = prefs.get("s3_code2", null) != null;
 		if (code2Exists)
@@ -306,7 +311,7 @@ public class BIASS3CompareScheduleConfigPageController
 			codeField2.setText(prefs.get("s3_code2", defaultCode));
 		}
 		code2 = prefs.get("s3_code2", defaultCode);
-		
+
 		boolean profileName2Exists = prefs.get("s3_profileName2", null) != null;
 		if (profileName2Exists)
 		{
@@ -563,7 +568,7 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		uriTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedURITextField2()
 	{
 		uriTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
@@ -573,7 +578,7 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		clientIdField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedClientIdField2()
 	{
 		clientIdField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
@@ -583,47 +588,47 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		clientSecretField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedClientSecretField2()
 	{
 		clientSecretField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedUserNameField1()
 	{
 		userNameField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedUserNameField2()
 	{
 		userNameField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedPasswordField1()
 	{
 		passwordField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedPasswordField2()
 	{
 		passwordField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedGrantTypeField1()
 	{
 		grantTypeField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedGrantTypeField2()
 	{
 		grantTypeField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedCodeField1()
 	{
 		codeField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedCodeField2()
 	{
 		codeField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
@@ -633,12 +638,12 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		profileNameTextField1.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleTextChangedProfileNameTextField2()
 	{
 		profileNameTextField2.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleUpdateAPI1ParametersButton()
 	{
 		uriTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
@@ -672,7 +677,7 @@ public class BIASS3CompareScheduleConfigPageController
 			prefs.put("s3_profileName1", profileName1AsString);
 		}
 	}
-	
+
 	@FXML private void handleUpdateAPI2ParametersButton()
 	{
 		uriTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
@@ -717,23 +722,23 @@ public class BIASS3CompareScheduleConfigPageController
 
 		clientSecretField1.setText(clientSecret1);
 		clientSecretField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		userNameField1.setText(userName1);
 		userNameField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		passwordField1.setText(password1);
 		passwordField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		grantTypeField1.setText(grantType1);
 		grantTypeField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		codeField1.setText(code1);
 		codeField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		profileNameTextField1.setText(profileName1AsString);
 		profileNameTextField1.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
-	
+
 	@FXML private void handleUseLastSavedAPI2ParametersButton()
 	{
 		uriTextField2.setText(uri2);
@@ -744,19 +749,19 @@ public class BIASS3CompareScheduleConfigPageController
 
 		clientSecretField2.setText(clientSecret2);
 		clientSecretField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		userNameField2.setText(userName2);
 		userNameField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		passwordField2.setText(password2);
 		passwordField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		grantTypeField2.setText(grantType2);
 		grantTypeField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		codeField2.setText(code2);
 		codeField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-		
+
 		profileNameTextField2.setText(profileName2AsString);
 		profileNameTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
 	}
@@ -792,22 +797,95 @@ public class BIASS3CompareScheduleConfigPageController
 
 		validCoreDayList.clear();
 	}
+
+	@FXML private void handleTestUri1Button()
+	{
+		System.out.println("Testing connection Profile 1's URI");
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(uri1))
+				.build();
 		
-	@FXML private void handleTestAPI1ConnectionButton()
-	{
-		System.out.println("Testing API 1 connection");
+		try 
+		{
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
+			{
+				// Extract access token from JSON response
+				System.out.println("Valid response received from S3 Server");
+			} 
+			else 
+			{
+				// Extract access token from JSON response
+				System.out.println("Invalid/No response received from S3 Server");
+			}
+
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*  SAVE FOR READ MODULE
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(uri1))
+				.POST(HttpRequest.BodyPublishers.ofString("{\"client_id\":\""+clientId1+"\","
+						+ "\"client_secret\":\""+clientSecret1+"\","
+						+ "\"username\":\""+userName1+"\","
+						+ "\"password\":\""+password1+"\","
+						+ "\"grant_type\":\""+grantType1+"\","
+						+ "\"code\":\""+code1+"\"}"))
+				.build();
+		*/
 	}
-	
-	@FXML private void handleTestAPI2ConnectionButton()
+
+	@FXML private void handleTestUri2Button()
 	{
-		System.out.println("Testing API 2 connection");
+		System.out.println("Testing connection Profile 2's URI");
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(uri2))
+				.build();
+		
+		try 
+		{
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
+			{
+				// Extract access token from JSON response
+				System.out.println("Valid response received from S3 Server");
+			} 
+			else 
+			{
+				// Extract access token from JSON response
+				System.out.println("Invalid/No response received from S3 Server");
+			}
+
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static String getUri1()
 	{
 		return uri1;
 	}
-	
+
 	public static String getUri2()
 	{
 		return uri2;
@@ -817,7 +895,7 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		return clientId1;
 	}
-	
+
 	public static String getClientId2()
 	{
 		return clientId2;
@@ -827,57 +905,57 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		return clientSecret1;
 	}
-	
+
 	public static String getClientSecret2()
 	{
 		return clientSecret2;
 	}
-	
+
 	public static String getUserName1()
 	{
 		return userName1;
 	}
-	
+
 	public static String getUserName2()
 	{
 		return userName2;
 	}
-	
+
 	public static String getPassword1()
 	{
 		return password1;
 	}
-	
+
 	public static String getPassword2()
 	{
 		return password2;
 	}
-	
+
 	public static String getGrantType1()
 	{
 		return grantType1;
 	}
-	
+
 	public static String getGrantType2()
 	{
 		return grantType2;
 	}
-	
+
 	public static String getCode1()
 	{
 		return code1;
 	}
-	
+
 	public static String getCode2()
 	{
 		return code2;
 	}
-	
+
 	public static ObservableValue<String> getProfileName1AsObservable()
 	{
 		return profileName1AsObservable;
 	}
-	
+
 	public static ObservableValue<String> getProfileName2AsObservable()
 	{
 		return profileName2AsObservable;
