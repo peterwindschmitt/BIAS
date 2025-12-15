@@ -16,9 +16,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import javafx.beans.property.SimpleStringProperty;
 
 public class BIASS3CompareScheduleConfigPageController
@@ -800,38 +804,67 @@ public class BIASS3CompareScheduleConfigPageController
 
 	@FXML private void handleTestUri1Button()
 	{
-		System.out.println("Testing connection Profile 1's URI");
-
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(uri1))
-				.build();
-		
-		try 
+		if (uri1.trim() != "")
 		{
-			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create(uri1))
+					.build();
+
+			try 
 			{
-				// Extract access token from JSON response
-				System.out.println("Valid response received from S3 Server");
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
+				{
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Success!");
+					alert.setHeaderText(null);
+					alert.setContentText("Connection URI is valid.");	
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));			
+					alert.show();
+				} 
+				else 
+				{
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText(null);
+					alert.setContentText("Could not connect to specified URI.");	
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+					alert.show();
+				}
 			} 
-			else 
+			catch (IOException e) 
 			{
-				// Extract access token from JSON response
-				System.out.println("Invalid/No response received from S3 Server");
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText(null);
+				alert.setContentText("Could not connect to specified URI.");	
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+				alert.show();
+			} 
+			catch (InterruptedException e) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText(null);
+				alert.setContentText("Could not connect to specified URI.");	
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+				alert.show();
 			}
-
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
+		else
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("No URI specified.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+			alert.show();
+		}
 		/*  SAVE FOR READ MODULE
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
@@ -843,41 +876,71 @@ public class BIASS3CompareScheduleConfigPageController
 						+ "\"grant_type\":\""+grantType1+"\","
 						+ "\"code\":\""+code1+"\"}"))
 				.build();
-		*/
+		 */
 	}
 
 	@FXML private void handleTestUri2Button()
 	{
-		System.out.println("Testing connection Profile 2's URI");
-
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(uri2))
-				.build();
-		
-		try 
+		if (uri2.trim() != "")
 		{
-			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create(uri2))
+					.build();
+
+			try 
 			{
-				// Extract access token from JSON response
-				System.out.println("Valid response received from S3 Server");
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
+				{
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Success!");
+					alert.setHeaderText(null);
+					alert.setContentText("Connection URI is valid.");	
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));			
+					alert.show();
+				} 
+				else 
+				{
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText(null);
+					alert.setContentText("Could not connect to specified URI.");	
+					Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+					stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+					alert.show();
+				}
 			} 
-			else 
+			catch (IOException e) 
 			{
-				// Extract access token from JSON response
-				System.out.println("Invalid/No response received from S3 Server");
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText(null);
+				alert.setContentText("Could not connect to specified URI.");	
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+				alert.show();
+			} 
+			catch (InterruptedException e) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText(null);
+				alert.setContentText("Could not connect to specified URI.");	
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+				alert.show();
 			}
-
-		} 
-		catch (IOException e) 
+		}
+		else
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("No URI specified.");	
+			Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
+			alert.show();
 		}
 	}
 
