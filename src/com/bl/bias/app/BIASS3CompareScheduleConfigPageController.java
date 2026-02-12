@@ -335,7 +335,8 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean mondayDateExists = prefs.get("s3_mondayCoreDate", null) != null;
 		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("")))
 		{
-			mondayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_mondayCoreDate", "")));
+			mondayCoreDate = LocalDate.parse(prefs.get("s3_mondayCoreDate", ""));
+			mondayCoreDateDatePicker.setValue(mondayCoreDate);
 			validCoreDayList.add("M");
 		}
 		else
@@ -369,6 +370,7 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean tuesdayDateExists = prefs.get("s3_tuesdayCoreDate", null) != null;
 		if ((tuesdayDateExists) && (!prefs.get("s3_tuesdayCoreDate", "").equals("")))
 		{
+			tuesdayCoreDate = LocalDate.parse(prefs.get("s3_tuesdayCoreDate", ""));
 			tuesdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_tuesdayCoreDate", "")));
 			validCoreDayList.add("T");
 		}
@@ -401,6 +403,7 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean wednesdayDateExists = prefs.get("s3_wednesdayCoreDate", null) != null;
 		if ((wednesdayDateExists) && (!prefs.get("s3_wednesdayCoreDate", "").equals("")))
 		{
+			wednesdayCoreDate = LocalDate.parse(prefs.get("s3_wednesdayCoreDate", ""));
 			wednesdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_wednesdayCoreDate", "")));
 			validCoreDayList.add("W");
 		}
@@ -435,6 +438,7 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean thursdayDateExists = prefs.get("s3_thursdayCoreDate", null) != null;
 		if ((thursdayDateExists) && (!prefs.get("s3_thursdayCoreDate", "").equals("")))
 		{
+			thursdayCoreDate = LocalDate.parse(prefs.get("s3_thursdayCoreDate", ""));
 			thursdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_thursdayCoreDate", "")));
 			validCoreDayList.add("R");
 		}
@@ -469,6 +473,7 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean fridayDateExists = prefs.get("s3_fridayCoreDate", null) != null;
 		if ((fridayDateExists) && (!prefs.get("s3_fridayCoreDate", "").equals("")))
 		{
+			fridayCoreDate = LocalDate.parse(prefs.get("s3_fridayCoreDate", ""));
 			fridayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_fridayCoreDate", "")));
 			validCoreDayList.add("F");
 		}
@@ -503,6 +508,7 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean saturdayDateExists = prefs.get("s3_saturdayCoreDate", null) != null;
 		if ((saturdayDateExists) && (!prefs.get("s3_saturdayCoreDate", "").equals("")))
 		{
+			saturdayCoreDate = LocalDate.parse(prefs.get("s3_saturdayCoreDate", ""));
 			saturdayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_saturdayCoreDate", "")));
 			validCoreDayList.add("Sa");
 		}
@@ -537,6 +543,7 @@ public class BIASS3CompareScheduleConfigPageController
 		boolean sundayDateExists = prefs.get("s3_sundayCoreDate", null) != null;
 		if ((sundayDateExists) && (!prefs.get("s3_sundayCoreDate", "").equals("")))
 		{
+			sundayCoreDate = LocalDate.parse(prefs.get("s3_sundayCoreDate", ""));
 			sundayCoreDateDatePicker.setValue(LocalDate.parse(prefs.get("s3_sundayCoreDate", "")));
 			validCoreDayList.add("Su");
 		}
@@ -865,18 +872,6 @@ public class BIASS3CompareScheduleConfigPageController
 			stage.getIcons().add(new Image(getClass().getResourceAsStream(BIASLaunch.getFrameIconFile())));
 			alert.show();
 		}
-		/*  SAVE FOR READ MODULE
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(uri1))
-				.POST(HttpRequest.BodyPublishers.ofString("{\"client_id\":\""+clientId1+"\","
-						+ "\"client_secret\":\""+clientSecret1+"\","
-						+ "\"username\":\""+userName1+"\","
-						+ "\"password\":\""+password1+"\","
-						+ "\"grant_type\":\""+grantType1+"\","
-						+ "\"code\":\""+code1+"\"}"))
-				.build();
-		 */
 	}
 
 	@FXML private void handleTestUri2Button()

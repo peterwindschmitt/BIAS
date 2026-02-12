@@ -37,7 +37,7 @@ import com.bl.bias.read.ReadRTCResultsAnalysisGroupFiles;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.tools.ConvertNumberDatatypes;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math4.legacy.stat.descriptive.DescriptiveStatistics;
 
 public class WriteExtractedFiles3 extends WriteExtractedFiles2
 {

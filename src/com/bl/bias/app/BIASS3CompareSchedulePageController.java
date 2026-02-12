@@ -693,8 +693,21 @@ public class BIASS3CompareSchedulePageController
 		if (continueAnalysis)
 		{
 			// Read all objects that are required for the modified OTP analysis
-			ReadS3CompareScheduleFiles readData = new ReadS3CompareScheduleFiles(BIASS3CompareScheduleConfigPageController.getUri1(), 
-					BIASS3CompareScheduleConfigPageController.getClientId1(), BIASS3CompareScheduleConfigPageController.getClientSecret1());
+			ReadS3CompareScheduleFiles readData = null;
+			if (con1RadioButton.isSelected())
+				readData = new ReadS3CompareScheduleFiles(con1NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri1(), BIASS3CompareScheduleConfigPageController.getClientId1(), 
+						BIASS3CompareScheduleConfigPageController.getClientSecret1(), BIASS3CompareScheduleConfigPageController.getUserName1(), BIASS3CompareScheduleConfigPageController.getPassword1(), 
+						BIASS3CompareScheduleConfigPageController.getGrantType1(), BIASS3CompareScheduleConfigPageController.getCode1(), startDate, endDate,
+						BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
+						BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
+						BIASS3CompareScheduleConfigPageController.getSundayCoreDate());
+			else
+				readData = new ReadS3CompareScheduleFiles(con2NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri2(), BIASS3CompareScheduleConfigPageController.getClientId2(), 
+						BIASS3CompareScheduleConfigPageController.getClientSecret2(), BIASS3CompareScheduleConfigPageController.getUserName2(), BIASS3CompareScheduleConfigPageController.getPassword2(), 
+						BIASS3CompareScheduleConfigPageController.getGrantType2(), BIASS3CompareScheduleConfigPageController.getCode2(), startDate, endDate,
+						BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
+						BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
+						BIASS3CompareScheduleConfigPageController.getSundayCoreDate());
 			message = readData.getResultsMessage();
 			displayMessage(message);
 

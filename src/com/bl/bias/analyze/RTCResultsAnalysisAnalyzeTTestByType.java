@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.apache.commons.math3.distribution.TDistribution;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.commons.math3.stat.inference.TTest;
+import org.apache.commons.statistics.distribution.TDistribution;
+import org.apache.commons.math4.legacy.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math4.legacy.stat.inference.TTest;
 
 import com.bl.bias.app.BIASTtestPageController;
 import com.bl.bias.objects.ResultFromTTest;
@@ -184,8 +184,8 @@ public class RTCResultsAnalysisAnalyzeTTestByType
 				ResultFromTTest resultForTTest = new ResultFromTTest(line, type);
 				
 				// Check to ensure that critical t-value remains constant
-				TDistribution criticalT = new TDistribution(filesASize-1);
-				double criticalTvalue = criticalT.inverseCumulativeProbability(1 - (.5 * levelOfSignificance));
+				TDistribution tDistribution = TDistribution.of(filesASize-1);
+				double criticalTvalue = tDistribution.inverseCumulativeProbability(1 - (.5 * levelOfSignificance));
 			    
 			    resultForTTest.setTCritical(criticalTvalue);
 			    
