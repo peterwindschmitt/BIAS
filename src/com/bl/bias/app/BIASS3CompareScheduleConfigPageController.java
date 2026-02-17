@@ -817,10 +817,12 @@ public class BIASS3CompareScheduleConfigPageController
 			HttpRequest request = HttpRequest.newBuilder()
 					.uri(URI.create(uri1))
 					.build();
-
+			
 			try 
 			{
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				System.out.println(response);
+
 				if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
 				{
 					Alert alert = new Alert(AlertType.INFORMATION);
