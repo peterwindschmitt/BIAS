@@ -22,6 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -30,6 +31,7 @@ import javafx.scene.control.TextArea;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class BIASS3CompareSchedulePageController 
 {
@@ -99,6 +101,7 @@ public class BIASS3CompareSchedulePageController
 		startDateSelectedBP = new SimpleBooleanProperty();
 		endDateSelectedBP = new SimpleBooleanProperty();
 
+		startDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		startDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -116,6 +119,7 @@ public class BIASS3CompareSchedulePageController
 			}
 		});
 
+		endDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		endDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -690,6 +694,28 @@ public class BIASS3CompareSchedulePageController
 			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
 		}
 
+		// Check that selected date range is not in the past
+		if ((startDate.isBefore(LocalDate.now())) || (endDate.isBefore(LocalDate.now())))
+		{
+			continueAnalysis = false;
+			displayMessage("\nSelected Start and/or End Date are in the past.");
+			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
+		}
+
+		// Check that core dates are not past dates
+		if ((BIASS3CompareScheduleConfigPageController.getMondayCoreDate().isBefore(LocalDate.now()))
+				|| (BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate().isBefore(LocalDate.now()))
+				|| (BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate().isBefore(LocalDate.now()))
+				|| (BIASS3CompareScheduleConfigPageController.getThursdayCoreDate().isBefore(LocalDate.now()))
+				|| (BIASS3CompareScheduleConfigPageController.getFridayCoreDate().isBefore(LocalDate.now()))
+				|| (BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate().isBefore(LocalDate.now()))
+				|| (BIASS3CompareScheduleConfigPageController.getSundayCoreDate().isBefore(LocalDate.now())))
+		{
+			continueAnalysis = false;
+			displayMessage("\nOne or more Core Dates are in the past.");
+			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
+		}
+
 		if (continueAnalysis)
 		{
 			// Read all objects that are required for the modified OTP analysis
@@ -800,5 +826,23 @@ public class BIASS3CompareSchedulePageController
 	{
 		validCoreDayList.clear();
 		validCoreDayList.addAll(validCoreDayListFromConfig);
+	}
+
+	private Callback<DatePicker, DateCell> getFutureDatesOnlyFactory(boolean includeToday) {
+		return datePicker -> new DateCell() {
+			@Override
+			public void updateItem(LocalDate item, boolean empty) {
+				super.updateItem(item, empty);
+
+				LocalDate today = LocalDate.now();
+				LocalDate minDate = includeToday ? today : today.plusDays(1);
+
+				// Disable past dates
+				if (item.isBefore(minDate)) {
+					setDisable(true);
+					setStyle("-fx-background-color: #dddddd;"); // Grey out
+				}
+			}
+		};
 	}
 }

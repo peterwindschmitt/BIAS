@@ -18,11 +18,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.beans.property.SimpleStringProperty;
 
 public class BIASS3CompareScheduleConfigPageController
@@ -345,6 +347,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_mondayCoreDate", "");
 		}
 
+		mondayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		mondayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -380,6 +383,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_tuesdayCoreDate", "");
 		}
 
+		tuesdayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		tuesdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -413,6 +417,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_wednesdayCoreDate", "");
 		}
 
+		wednesdayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		wednesdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -448,6 +453,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_thursdayCoreDate", "");
 		}
 
+		thursdayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		thursdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -483,6 +489,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_fridayCoreDate", "");
 		}
 
+		fridayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		fridayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -518,6 +525,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_saturdayCoreDate", "");
 		}
 
+		saturdayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		saturdayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -553,6 +561,7 @@ public class BIASS3CompareScheduleConfigPageController
 				prefs.put("s3_sundayCoreDate", "");
 		}
 
+		sundayCoreDateDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		sundayCoreDateDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
@@ -815,14 +824,12 @@ public class BIASS3CompareScheduleConfigPageController
 		{
 			HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create(uri1))
+					.uri(URI.create(uri1+"/oauth/v2/token"))
 					.build();
 			
 			try 
 			{
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-				System.out.println(response);
-
 				if ((response.statusCode() == 200) && (response.body().contains("S3 Passenger"))) 
 				{
 					Alert alert = new Alert(AlertType.INFORMATION);
@@ -882,7 +889,7 @@ public class BIASS3CompareScheduleConfigPageController
 		{
 			HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create(uri2))
+					.uri(URI.create(uri2+"/oauth/v2/token"))
 					.build();
 
 			try 
@@ -1060,4 +1067,22 @@ public class BIASS3CompareScheduleConfigPageController
 	{
 		return validCoreDayList;
 	}
+	
+	private Callback<DatePicker, DateCell> getFutureDatesOnlyFactory(boolean includeToday) {
+        return datePicker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                LocalDate today = LocalDate.now();
+                LocalDate minDate = includeToday ? today : today.plusDays(1);
+
+                // Disable past dates
+                if (item.isBefore(minDate)) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #dddddd;"); // Grey out
+                }
+            }
+        };
+    }
 }
