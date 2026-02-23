@@ -1,6 +1,6 @@
 package com.bl.bias.objects;
 
-public class ServiceObject 
+public final class ServiceObject 
 {
 	private String date;
 	private String serviceName;
@@ -35,7 +35,7 @@ public class ServiceObject
 	{
 		return serviceType;
 	}
-
+	
 	public String getOriginLocation()
 	{
 		return originLocation;

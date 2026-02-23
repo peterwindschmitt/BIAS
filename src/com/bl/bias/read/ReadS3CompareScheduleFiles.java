@@ -79,44 +79,41 @@ public class ReadS3CompareScheduleFiles
 			if (validFile)
 			{
 				// For each day of week (Monday = 1 .... Sunday = 7)
-				ArrayList<ServiceObject> servicesOnADay = new ArrayList<ServiceObject>();
 				for (int i = 1 ; i <=7; i++)
 				{
-					servicesOnADay.clear();
+					ArrayList<ServiceObject> coreServicesOnADay = new ArrayList<ServiceObject>();
 					String params = "";
 					if (i == 1) 
-						params = "schedule_date="+mondayBaseline+"&page_size=200";
+						params = "date="+mondayBaseline+"&page_size=200";
 					else if (i == 2) 
-						params = "schedule_date="+tuesdayBaseline+"&page_size=200";
+						params = "date="+tuesdayBaseline+"&page_size=200";
 					else if (i == 3) 
-						params = "schedule_date="+wednesdayBaseline+"&page_size=200";
+						params = "date="+wednesdayBaseline+"&page_size=200";
 					else if (i == 4) 
-						params = "schedule_date="+thursdayBaseline+"&page_size=200";
+						params = "date="+thursdayBaseline+"&page_size=200";
 					else if (i == 5) 
-						params = "schedule_date="+fridayBaseline+"&page_size=200";
+						params = "date="+fridayBaseline+"&page_size=200";
 					else if (i == 6) 
-						params = "schedule_date="+saturdayBaseline+"&page_size=200";
+						params = "date="+saturdayBaseline+"&page_size=200";
 					else if (i == 7) 
-						params = "schedule_date="+sundayBaseline+"&page_size=200";
+						params = "date="+sundayBaseline+"&page_size=200";
 					else
 						System.exit(0);
 
 					request = HttpRequest.newBuilder()
-							.uri(URI.create(uri+"/api/v3/navigation/trips?"+params))
+							.uri(URI.create(uri+"/api/v2/orientation/search-services?"+params))
 							.header("Authorization", "Bearer " + accessToken)
 							.GET()
 							.build();
 
 					response = client.send(request, HttpResponse.BodyHandlers.ofString());
 					responseAsJSON = new JSONObject(response.body().toString());
-					JSONArray dataArray = responseAsJSON.getJSONArray("data");
+					JSONArray servicesArray = responseAsJSON.getJSONObject("data").getJSONArray("services");
 
 					//  Get individual service attributes
-					for (int j = 0; j < dataArray.length(); j++)
+					for (int j = 0; j < servicesArray.length(); j++)
 					{
-						JSONObject obj = dataArray.getJSONObject(j);
-						String serviceName = (String) obj.get("service_name");
-						String serviceType = (String) obj.get("service_type_code");
+						JSONObject obj = servicesArray.getJSONObject(j);
 						String serviceIdentifier = (String) obj.get("service_identifier");
 
 						// Get info from service identifier
@@ -125,58 +122,59 @@ public class ReadS3CompareScheduleFiles
 						String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
 						String destinationDateTime = serviceIdentifier.substring(serviceIdentifierLength - 24, serviceIdentifierLength - 8);
 						String originDateTime = serviceIdentifier.substring(serviceIdentifierLength - 41, serviceIdentifierLength - 25);
+						String serviceType = serviceIdentifier.substring(serviceIdentifierLength - 55, serviceIdentifierLength - 53);
+						String serviceName = serviceIdentifier.substring(serviceIdentifierLength - 60, serviceIdentifierLength - 56);
 
-						ServiceObject serviceOnADay = new ServiceObject("CORE", serviceName, serviceType, originLocation, originDateTime, destinationLocation, destinationDateTime);
-						servicesOnADay.add(serviceOnADay);
+						ServiceObject coreServiceOnADay = new ServiceObject("CORE", serviceName, serviceType, originLocation, originDateTime, destinationLocation, destinationDateTime);
+						coreServicesOnADay.add(coreServiceOnADay);
 					}
-					coreDatesData.add(servicesOnADay);
+					coreDatesData.add(coreServicesOnADay);
 				}
+			}
 
-				// Analysis dates
-				// For each day of requested range (start date --> end date)
-				for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
+			// Analysis dates
+			// For each day of requested range (start date --> end date)
+			for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
+			{
+				String params = "date="+date+"&page_size=200";
+				ArrayList<ServiceObject> actualServicesOnADay = new ArrayList<ServiceObject>();
+				
+				request = HttpRequest.newBuilder()
+						.uri(URI.create(uri+"/api/v2/orientation/search-services?"+params))
+						.header("Authorization", "Bearer " + accessToken)
+						.GET()
+						.build();
+
+				response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				responseAsJSON = new JSONObject(response.body().toString());
+				JSONArray servicesArray = responseAsJSON.getJSONObject("data").getJSONArray("services");
+
+				//  Get individual service attributes
+				for (int j = 0; j < servicesArray.length(); j++)
 				{
-					servicesOnADay.clear();
-					String params = "schedule_date="+date+"&page_size=200";
+					JSONObject obj = servicesArray.getJSONObject(j);
+					String serviceIdentifier = (String) obj.get("service_identifier");
 
-					request = HttpRequest.newBuilder()
-							.uri(URI.create(uri+"/api/v3/navigation/trips?"+params))
-							.header("Authorization", "Bearer " + accessToken)
-							.GET()
-							.build();
+					// Get info from service identifier
+					Integer serviceIdentifierLength = serviceIdentifier.length();
+					String destinationLocation = serviceIdentifier.substring(serviceIdentifierLength - 3, serviceIdentifierLength);
+					String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
+					String destinationDateTime = serviceIdentifier.substring(serviceIdentifierLength - 24, serviceIdentifierLength - 8);
+					String originDateTime = serviceIdentifier.substring(serviceIdentifierLength - 41, serviceIdentifierLength - 25);
+					String serviceType = serviceIdentifier.substring(serviceIdentifierLength - 55, serviceIdentifierLength - 53);
+					String serviceName = serviceIdentifier.substring(serviceIdentifierLength - 60, serviceIdentifierLength - 56);
 
-					response = client.send(request, HttpResponse.BodyHandlers.ofString());
-					responseAsJSON = new JSONObject(response.body().toString());
-					JSONArray dataArray = responseAsJSON.getJSONArray("data");
-
-					//  Get individual service attributes
-					for (int j = 0; j < dataArray.length(); j++)
-					{
-						JSONObject obj = dataArray.getJSONObject(j);
-						String serviceName = (String) obj.get("service_name");
-						String serviceType = (String) obj.get("service_type_code");
-						String serviceIdentifier = (String) obj.get("service_identifier");
-
-						// Get info from service identifier
-						Integer serviceIdentifierLength = serviceIdentifier.length();
-						String destinationLocation = serviceIdentifier.substring(serviceIdentifierLength - 3, serviceIdentifierLength);
-						String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
-						String destinationDateTime = serviceIdentifier.substring(serviceIdentifierLength - 24, serviceIdentifierLength - 8);
-						String originDateTime = serviceIdentifier.substring(serviceIdentifierLength - 41, serviceIdentifierLength - 25);
-
-						ServiceObject serviceOnADay = new ServiceObject(date.toString(), serviceName, serviceType, originLocation, originDateTime, destinationLocation, destinationDateTime);
-						servicesOnADay.add(serviceOnADay);
-					}
-					analyzedDatesData.add(servicesOnADay);
-				}
-
+					ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), serviceName, serviceType, originLocation, originDateTime, destinationLocation, destinationDateTime);
+					actualServicesOnADay.add(actualServiceOnADay);
+				}				
+				analyzedDatesData.add(actualServicesOnADay);
 			}
 			resultsMessage += "Loaded core schedules and all active schedules between "+startDate+" and "+endDate+"\n";
 		}
 		catch (IOException e) 
 		{
 			validFile = false;
-			
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText(null);
@@ -187,7 +185,7 @@ public class ReadS3CompareScheduleFiles
 		} 
 		catch (InterruptedException e) {
 			validFile = false;
-			
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText(null);
@@ -198,12 +196,12 @@ public class ReadS3CompareScheduleFiles
 		}
 	}
 
-	public ArrayList<ArrayList<ServiceObject>> getCoreDatesDate()
+	public ArrayList<ArrayList<ServiceObject>> getCoreDatesData()
 	{
 		return coreDatesData;
 	}
 
-	public ArrayList<ArrayList<ServiceObject>> getAnalyzedDatesDate()
+	public ArrayList<ArrayList<ServiceObject>> getAnalyzedDatesData()
 	{
 		return analyzedDatesData;
 	}

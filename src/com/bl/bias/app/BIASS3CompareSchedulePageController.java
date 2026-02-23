@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
+import com.bl.bias.analyze.S3CompareScheduleAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadS3CompareScheduleFiles;
 import com.bl.bias.tools.ConvertDateTime;
@@ -718,7 +719,7 @@ public class BIASS3CompareSchedulePageController
 
 		if (continueAnalysis)
 		{
-			// Read all objects that are required for the modified OTP analysis
+			// Read all objects that are required for the analysis
 			ReadS3CompareScheduleFiles readData = null;
 			if (con1RadioButton.isSelected())
 				readData = new ReadS3CompareScheduleFiles(con1NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri1(), BIASS3CompareScheduleConfigPageController.getClientId1(), 
@@ -737,16 +738,16 @@ public class BIASS3CompareSchedulePageController
 			message = readData.getResultsMessage();
 			displayMessage(message);
 
-			setProgressIndicator(0.20);
-			/*
-				if (ReadModifiedOtpFiles.getEnabledTrainsFromTrainFile().size() > 0)
-				{
-					// Analyze trains' modified OTP
-					ModifiedOtpAnalysis analyze = new ModifiedOtpAnalysis();
-					message = analyze.getResultsMessage();
-					displayMessage(message);
+			if (readData.getValidFile())
+			{
+				setProgressIndicator(0.40);
 
-					setProgressIndicator(0.80);
+				// Analyze trains
+				S3CompareScheduleAnalysis analyze = new S3CompareScheduleAnalysis(startDate, endDate, readData.getCoreDatesData(), readData.getAnalyzedDatesData());
+				message = analyze.getResultsMessage();
+				displayMessage(message);
+
+				/*	setProgressIndicator(0.80);
 
 					// Write results to spreadsheet
 					WriteModifiedOtpFiles2 writeFiles = new WriteModifiedOtpFiles2(textArea.getText().toString(), fileAsString);
@@ -762,14 +763,13 @@ public class BIASS3CompareSchedulePageController
 					{
 						displayMessage("\nError in writing files");
 						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-					}
-				}
-				else
-				{
-					displayMessage("\nNo qualifying run-time trains were found to compare schedule points against.");
-					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-				}
-			 */
+					}*/
+			}
+			else
+			{
+				displayMessage("\nUnable to obtain data from API.");
+				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+			}
 		}
 
 		// Now reset for next case
