@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.bl.bias.app.BIASS3CompareScheduleConfigPageController;
 import com.bl.bias.objects.ServiceObject;
 import com.bl.bias.tools.ConvertDateTime;
 
@@ -28,16 +29,12 @@ public class WriteS3CompareScheduleFiles1
 	protected static String resultsMessage1 = "\nStarted writing output file at "+startWriteFileTime;
 	private static Boolean error = false;
 
-	Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay = new HashMap<>();
-	Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay = new HashMap<>();
-	Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters = new HashMap<>();
-
 	XSSFWorkbook workbook = new XSSFWorkbook();
 	XSSFSheet coreVsOperatedSheet;
 
 	Integer rowCounter = 0;
 
-	public WriteS3CompareScheduleFiles1 (String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters)
+	public WriteS3CompareScheduleFiles1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -54,7 +51,7 @@ public class WriteS3CompareScheduleFiles1
 		CellStyle style11 = workbook.createCellStyle();
 
 		// Write Set A
-		coreVsOperatedSheet = workbook.createSheet("Core vs Operated");
+		coreVsOperatedSheet = workbook.createSheet("Core vs Planned");
 		coreVsOperatedSheet.setDisplayGridlines(false);
 
 		// Fonts
@@ -126,9 +123,9 @@ public class WriteS3CompareScheduleFiles1
 		style6.setFont(font1);
 		style6.setBorderBottom(BorderStyle.THIN);
 
-		// Style 7 - Centered, wrapped, 11pt, black text
+		// Style 7 - Centered, non-wrapped, 11pt, black text
 		style7.setAlignment(HorizontalAlignment.CENTER);  
-		style7.setWrapText(true);
+		style7.setWrapText(false);
 		style7.setFont(font1);
 		style7.setBorderBottom(BorderStyle.THIN);
 
@@ -162,9 +159,19 @@ public class WriteS3CompareScheduleFiles1
 		row = coreVsOperatedSheet.createRow(rowCounter);
 		cell = row.createCell(0);
 		cell.setCellStyle(style0);
-		cell.setCellValue("Core Vs Operated Trains ["+startDate+" to "+endDate+"]");
+		cell.setCellValue("Core vs Planned Trains ["+startDate+" to "+endDate+"]");
 
-		// Data headers
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		if (api1)
+			cell.setCellValue("Source: "+BIASS3CompareScheduleConfigPageController.getProfileName1AsObservable().getValue());
+		else
+			cell.setCellValue("Source: "+BIASS3CompareScheduleConfigPageController.getProfileName2AsObservable().getValue());
+
+		// Data headers section 1
 		rowCounter++;
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -177,65 +184,171 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellStyle(style6);
 		cell.setCellValue("Associated Core Date");
 
-		/*if ((BIASGtmController.getUseCustomAssignments())	 
-				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
-						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
-		{
-			cell = row.createCell(3);
-			cell.setCellStyle(style7);
-			cell.setCellValue("%");
-		}
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
 
-		if ((BIASGtmController.getUseCustomAssignments())	 
-				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
-						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
-		{
-			cell = row.createCell(5);
-			cell.setCellStyle(style7);
-			cell.setCellValue("%");
-		}			
-		if ((BIASGtmController.getUseCustomAssignments())	 
-				&& ((BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))
-						|| (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true))))
-		{
-			cell = row.createCell(6);
-			cell.setCellStyle(style7);
-			cell.setCellValue("Operator");
-		}		
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Monday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getMondayCoreDate().toString());
 
-		if (BIASGtmController.getUseCustomAssignments()	&& (BIASGtmConfigPageController.getValidCustomAssignment2Exists().getValue().equals(true)))
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Tuesday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate().toString());
+
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Wednesday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate().toString());
+
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Thursday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getThursdayCoreDate().toString());
+
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Friday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getFridayCoreDate().toString());
+
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Saturday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate().toString());
+
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Sunday");
+		cell = row.createCell(1);
+		cell.setCellStyle(style5);
+		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getSundayCoreDate().toString());
+		rowCounter++;
+
+		// For each analyzed day
+		for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
 		{
+			String analyzedDayOfWeek = date.getDayOfWeek().toString();
+			
 			rowCounter++;
-			row = gtmSheet.createRow(rowCounter);
+			row = coreVsOperatedSheet.createRow(rowCounter);
+			coreVsOperatedSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 1));
+			
+			cell = row.createCell(0);
+			cell.setCellStyle(style7);
+			cell.setCellValue(date.toString()+" ["+analyzedDayOfWeek+"]");
+			
 			cell = row.createCell(1);
-			cell.setCellStyle(style10);
-			cell.setCellValue(BIASGtmConfigPageController.getUserCategory2Name().getValue());
+			cell.setCellStyle(style7);
+			cell.setCellValue("");
 
-			cell = row.createCell(2);
-			cell.setCellStyle(style11);
-			cell.setCellValue(tmdf.format(GtmAnalysis.getTrainMilesUserAssignment2()));
+			Boolean reporting = false;
+			if (trainsInAnalyzedDayButNotCoreDay.get(date) != null)
+			{
+				for (int i = 0; i < trainsInAnalyzedDayButNotCoreDay.get(date).size(); i++) 
+				{
+					rowCounter++;
+					row = coreVsOperatedSheet.createRow(rowCounter);
 
-			cell = row.createCell(3);
-			cell.setCellStyle(style11);
-			double trainMilesPercentageOperator2 = GtmAnalysis.getTrainMilesUserAssignment2()/totalTrainMiles;
-			cell.setCellValue(percentdf.format(trainMilesPercentageOperator2 * 100).concat("%"));
+					cell = row.createCell(0);
+					cell.setCellStyle(style5);
+					cell.setCellValue(trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getServiceName());
 
-			cell = row.createCell(4);
-			cell.setCellStyle(style11);
-			cell.setCellValue(gtmdf.format(GtmAnalysis.getTonMilesUserAssignment2()/1000));
+					cell = row.createCell(1);
+					cell.setCellStyle(style5);
+					cell.setCellValue("Planned to operate but not in Core");
 
-			cell = row.createCell(5);
-			cell.setCellStyle(style11);
-			double tonMilesPercentageOperator2 = (GtmAnalysis.getTonMilesUserAssignment2()/1000)/totalGtm;
-			cell.setCellValue(percentdf.format(tonMilesPercentageOperator2 * 100).concat("%"));
+					reporting = true;
+				}
+				rowCounter++;
+			}
+
+			if (trainsInCoreDayButNotAnalyzedDay.get(date) != null)
+			{
+				for (int i = 0; i < trainsInCoreDayButNotAnalyzedDay.get(date).size(); i++) 
+				{
+					rowCounter++;
+					row = coreVsOperatedSheet.createRow(rowCounter);
+
+					cell = row.createCell(0);
+					cell.setCellStyle(style5);
+					cell.setCellValue(trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getServiceName());
+
+					cell = row.createCell(1);
+					cell.setCellStyle(style5);
+					cell.setCellValue("In Core but not planned to operate");
+
+					reporting = true;
+				}
+				rowCounter++;
+			}
+
+			if (trainsWithDifferentParameters.get(date) != null)
+			{
+				for (int i = 0; i < trainsWithDifferentParameters.get(date).size(); i++) 
+				{
+					rowCounter++;
+					row = coreVsOperatedSheet.createRow(rowCounter);
+
+					cell = row.createCell(0);
+					cell.setCellStyle(style5);
+					cell.setCellValue(trainsWithDifferentParameters.get(date).get(i).getServiceName());
+
+					cell = row.createCell(1);
+					cell.setCellStyle(style5);
+					cell.setCellValue("In Core and planned to operate but not all parameters are the same");
+
+					reporting = true;
+				}
+				rowCounter++;
+			}
+
+			if (!reporting)
+			{
+				rowCounter++;
+				row = coreVsOperatedSheet.createRow(rowCounter);
+
+				cell = row.createCell(0);
+				cell.setCellStyle(style5);
+				cell.setCellValue("No Discrepancies");
+				rowCounter++;
+			}
 		}
-		*/
 
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
-
-		rowCounter++;
+		
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
 		cell = row.createCell(0);

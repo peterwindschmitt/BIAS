@@ -751,7 +751,7 @@ public class BIASS3CompareSchedulePageController
 				setProgressIndicator(0.80);
 
 				// Write results to spreadsheet
-				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters());
+				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters());
 				message = WriteS3CompareScheduleFiles2.getResultsMessage2();
 				displayMessage(message);
 
