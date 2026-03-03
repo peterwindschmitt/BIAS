@@ -11,6 +11,7 @@ import com.bl.bias.analyze.S3CompareScheduleAnalysis;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadS3CompareScheduleFiles;
 import com.bl.bias.tools.ConvertDateTime;
+import com.bl.bias.write.WriteS3CompareScheduleFiles2;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -747,23 +748,23 @@ public class BIASS3CompareSchedulePageController
 				message = analyze.getResultsMessage();
 				displayMessage(message);
 
-				/*	setProgressIndicator(0.80);
+				setProgressIndicator(0.80);
 
-					// Write results to spreadsheet
-					WriteModifiedOtpFiles2 writeFiles = new WriteModifiedOtpFiles2(textArea.getText().toString(), fileAsString);
-					message = WriteModifiedOtpFiles2.getResultsMessage2();
-					displayMessage(message);
+				// Write results to spreadsheet
+				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters());
+				message = WriteS3CompareScheduleFiles2.getResultsMessage2();
+				displayMessage(message);
 
-					if (!WriteModifiedOtpFiles2.getErrorFound())
-					{
-						setProgressIndicator(1.0);
-						displayMessage("\n*** PROCESSING COMPLETE ***");
-					}
-					else
-					{
-						displayMessage("\nError in writing files");
-						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
-					}*/
+				if (!WriteS3CompareScheduleFiles2.getErrorFound())
+				{
+					setProgressIndicator(1.0);
+					displayMessage("\n*** PROCESSING COMPLETE ***");
+				}
+				else
+				{
+					displayMessage("\nError in writing files");
+					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+				}
 			}
 			else
 			{
@@ -775,11 +776,6 @@ public class BIASS3CompareSchedulePageController
 		// Now reset for next case
 		// Rebind buttons
 		executeButton.disableProperty().bind(disableExecuteButton);
-		//con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-		//con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-		//con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-		//con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);

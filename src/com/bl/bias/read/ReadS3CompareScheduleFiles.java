@@ -120,12 +120,12 @@ public class ReadS3CompareScheduleFiles
 						Integer serviceIdentifierLength = serviceIdentifier.length();
 						String destinationLocation = serviceIdentifier.substring(serviceIdentifierLength - 3, serviceIdentifierLength);
 						String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
-						String destinationDateTime = serviceIdentifier.substring(serviceIdentifierLength - 24, serviceIdentifierLength - 8);
-						String originDateTime = serviceIdentifier.substring(serviceIdentifierLength - 41, serviceIdentifierLength - 25);
+						String destinationTime = serviceIdentifier.substring(serviceIdentifierLength - 13, serviceIdentifierLength - 8);
+						String originTime = serviceIdentifier.substring(serviceIdentifierLength - 30, serviceIdentifierLength - 25);
 						String serviceType = serviceIdentifier.substring(serviceIdentifierLength - 55, serviceIdentifierLength - 53);
 						String serviceName = serviceIdentifier.substring(serviceIdentifierLength - 60, serviceIdentifierLength - 56);
 
-						ServiceObject coreServiceOnADay = new ServiceObject("CORE", serviceName, serviceType, originLocation, originDateTime, destinationLocation, destinationDateTime);
+						ServiceObject coreServiceOnADay = new ServiceObject("CORE", String.valueOf(i), serviceName, serviceType, originLocation, originTime, destinationLocation, destinationTime);
 						coreServicesOnADay.add(coreServiceOnADay);
 					}
 					coreDatesData.add(coreServicesOnADay);
@@ -159,12 +159,12 @@ public class ReadS3CompareScheduleFiles
 					Integer serviceIdentifierLength = serviceIdentifier.length();
 					String destinationLocation = serviceIdentifier.substring(serviceIdentifierLength - 3, serviceIdentifierLength);
 					String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
-					String destinationDateTime = serviceIdentifier.substring(serviceIdentifierLength - 24, serviceIdentifierLength - 8);
-					String originDateTime = serviceIdentifier.substring(serviceIdentifierLength - 41, serviceIdentifierLength - 25);
+					String destinationTime = serviceIdentifier.substring(serviceIdentifierLength - 13, serviceIdentifierLength - 8);
+					String originTime = serviceIdentifier.substring(serviceIdentifierLength - 30, serviceIdentifierLength - 25);
 					String serviceType = serviceIdentifier.substring(serviceIdentifierLength - 55, serviceIdentifierLength - 53);
 					String serviceName = serviceIdentifier.substring(serviceIdentifierLength - 60, serviceIdentifierLength - 56);
 
-					ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), serviceName, serviceType, originLocation, originDateTime, destinationLocation, destinationDateTime);
+					ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), String.valueOf(date.getDayOfWeek().getValue()), serviceName, serviceType, originLocation, originTime, destinationLocation, destinationTime);
 					actualServicesOnADay.add(actualServiceOnADay);
 				}				
 				analyzedDatesData.add(actualServicesOnADay);

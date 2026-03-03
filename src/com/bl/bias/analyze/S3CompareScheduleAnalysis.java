@@ -3,6 +3,8 @@ package com.bl.bias.analyze;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -129,7 +131,7 @@ public class S3CompareScheduleAnalysis
 					else if (b == analyzedDatesData.get(i).size()-1)
 					{
 						differences++;
-						
+
 						// Check if key exists
 						if (trainsInCoreDayButNotAnalyzedDay.containsKey(startDate.plusDays(i))) 
 						{
@@ -149,24 +151,116 @@ public class S3CompareScheduleAnalysis
 			}
 
 			// Check for trains that exist on Analyzed Day AND Core Day but at least one attribute doesn't match
+			// Load all services for selected days' schedules into a hashset
+			HashSet<ServiceObject> analyzedDaysServiceObjectHashSet = new HashSet<ServiceObject>();
+			for (int n = 0; n < analyzedDatesData.get(i).size(); n++)
+			{
+				analyzedDaysServiceObjectHashSet.add(analyzedDatesData.get(i).get(n));
+			}
 
+			// Remove analyzedService from hashset if there is a match on a core day
+			for (int n = 0; n < 7; n++)
+			{
+				for (int o = 0; o < coreDatesData.get(n).size(); o++)
+				{
+					Iterator<ServiceObject> analyzedDaysServiceObjectsIterator = analyzedDaysServiceObjectHashSet.iterator(); 
+					while (analyzedDaysServiceObjectsIterator.hasNext()) 
+					{
+						ServiceObject analyzedService = analyzedDaysServiceObjectsIterator.next();
+
+						// Remove if all parameters match
+						if ((coreDatesData.get(n).get(o).getDayOfWeek().equals(analyzedService.getDayOfWeek()))
+								&& (coreDatesData.get(n).get(o).getServiceName().equals(analyzedService.getServiceName()))
+								&& (coreDatesData.get(n).get(o).getServiceType().equals(analyzedService.getServiceType()))
+								&& (coreDatesData.get(n).get(o).getOriginLocation().equals(analyzedService.getOriginLocation()))
+								&& (coreDatesData.get(n).get(o).getOriginTime().equals(analyzedService.getOriginTime()))
+								&& (coreDatesData.get(n).get(o).getDestinationLocation().equals(analyzedService.getDestinationLocation()))
+								&& (coreDatesData.get(n).get(o).getDestinationTime().equals(analyzedService.getDestinationTime())))
+						{
+							analyzedDaysServiceObjectsIterator.remove();
+						}
+						else
+						{
+							// Remove if train exists only on analyzed day but not on core day
+							Boolean removeTrain = true;
+							for (int w = 0; w < coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).size(); w++)
+							{
+								if ((analyzedService.getDayOfWeek().equals(coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).get(w).getDayOfWeek()))
+										&& (analyzedService.getServiceName().equals(coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).get(w).getServiceName())))
+								{
+									removeTrain = false;
+									break;	
+								}
+							}
+							if (removeTrain)
+							{
+								analyzedDaysServiceObjectsIterator.remove();
+							}
+						}
+					}
+				}
+			}
+
+			//  Remaining entries added to trainsWithDifferentParameters hashmap
+			Iterator<ServiceObject> analyzedDaysServiceObjectsIterator = analyzedDaysServiceObjectHashSet.iterator(); 
+			while (analyzedDaysServiceObjectsIterator.hasNext()) 
+			{
+				ServiceObject trainWithDifferentParameter = analyzedDaysServiceObjectsIterator.next();
+				differences++;
+
+				// Check if key exists
+				if (trainsWithDifferentParameters.containsKey(LocalDate.parse(trainWithDifferentParameter.getDate())))
+				{
+					trainsWithDifferentParameters.get(LocalDate.parse(trainWithDifferentParameter.getDate())).add(trainWithDifferentParameter);
+				} 
+				else 
+				{
+					ArrayList<ServiceObject> list = new ArrayList<>();
+					list.add(trainWithDifferentParameter);
+					trainsWithDifferentParameters.put(LocalDate.parse(trainWithDifferentParameter.getDate()), list);
+				}
+			}
 		}
 
 		// Results
-		for (Entry<LocalDate, ArrayList<ServiceObject>> entry : trainsInAnalyzedDayButNotCoreDay.entrySet()) 
+		if (debug)
 		{
-			for (int i = 0; i < entry.getValue().size(); i++)
-				System.out.println("On "+entry.getKey() + " train " + entry.getValue().get(i).getServiceName()+" is planned to operate but does not show in Core Schedule.");
+			for (Entry<LocalDate, ArrayList<ServiceObject>> entry : trainsInAnalyzedDayButNotCoreDay.entrySet()) 
+			{
+				for (int x = 0; x < entry.getValue().size(); x++)
+					System.out.println("On "+entry.getKey() + " train " + entry.getValue().get(x).getServiceName()+" is planned to operate but does not show in Core Schedule.");
+			}
+
+			for (Entry<LocalDate, ArrayList<ServiceObject>> entry : trainsInCoreDayButNotAnalyzedDay.entrySet()) 
+			{
+				for (int x = 0; x < entry.getValue().size(); x++)
+					System.out.println("On "+entry.getKey() + " train " + entry.getValue().get(x).getServiceName()+" is in Core Schedule but is not planned to operate.");
+			}
+
+			for (Entry<LocalDate, ArrayList<ServiceObject>> entry : trainsWithDifferentParameters.entrySet()) 
+			{
+				for (int x = 0; x < entry.getValue().size(); x++)
+					System.out.println("On "+entry.getKey() + " train " + entry.getValue().get(x).getServiceName()+" is in Core Schedule and is planned to operate but has different parameters.");
+			}
 		}
 
-		for (Entry<LocalDate, ArrayList<ServiceObject>> entry : trainsInCoreDayButNotAnalyzedDay.entrySet()) 
-		{
-			for (int i = 0; i < entry.getValue().size(); i++)
-			System.out.println("On "+entry.getKey() + " train " + entry.getValue().get(i).getServiceName()+" is in Core Schedule but is not planned to operate.");
-		}
-
-		resultsMessage += "Found "+differences+" inconsistencies in S3 schedules\n";
+		resultsMessage += "Found "+differences+" inconsistencies between Core and Planned schedules\n";
 		resultsMessage += "Finished analyzing loaded schedules at "+ConvertDateTime.getTimeStamp()+"\n";
+	}
+
+	public Map<LocalDate, ArrayList<ServiceObject>> getTrainsInAnalyzedDayButNotCoreDay()
+	{
+		return trainsInAnalyzedDayButNotCoreDay;
+	}
+
+	public Map<LocalDate, ArrayList<ServiceObject>> getTrainsInCoreDayButNotAnalyzedDay()
+	{
+		return trainsInCoreDayButNotAnalyzedDay;
+	}
+
+	public Map<LocalDate, ArrayList<ServiceObject>> getTrainsWithDifferentParameters()
+	{
+		return trainsWithDifferentParameters;
 	}
 
 	public String getResultsMessage()

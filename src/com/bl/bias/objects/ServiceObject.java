@@ -3,27 +3,34 @@ package com.bl.bias.objects;
 public final class ServiceObject 
 {
 	private String date;
+	private String dayOfWeek;
 	private String serviceName;
 	private String serviceType;
 	private String originLocation;
-	private String originDateTime;
+	private String originTime;
 	private String destinationLocation;
-	private String destinationDateTime;
+	private String destinationTime;
 	
-	public ServiceObject(String date, String serviceName, String serviceType, String originLocation, String originDateTime, String destinationLocation, String destinationDateTime) 
+	public ServiceObject(String date, String dayOfWeek, String serviceName, String serviceType, String originLocation, String originTime, String destinationLocation, String destinationTime) 
     {
         this.date = date; // either the short date as string or "CORE"
+        this.dayOfWeek = dayOfWeek;
 		this.serviceName = serviceName;
         this.serviceType = serviceType;
         this.originLocation = originLocation;
-        this.originDateTime = originDateTime;
+        this.originTime = originTime;
         this.destinationLocation = destinationLocation;
-        this.destinationDateTime = destinationDateTime;
+        this.destinationTime = destinationTime;
     }
 		
 	public String getDate()
 	{
 		return date;
+	}
+	
+	public String getDayOfWeek()
+	{
+		return dayOfWeek;
 	}
 	
 	public String getServiceName()
@@ -41,9 +48,9 @@ public final class ServiceObject
 		return originLocation;
 	}
 	
-	public String getOriginDateTime()
+	public String getOriginTime()
 	{
-		return originDateTime;
+		return originTime;
 	}
 	
 	public String getDestinationLocation()
@@ -51,8 +58,8 @@ public final class ServiceObject
 		return destinationLocation;
 	}
 	
-	public String getDestinationDateTime()
+	public String getDestinationTime()
 	{
-		return destinationDateTime;
+		return destinationTime;
 	}
 }
