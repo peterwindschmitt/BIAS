@@ -3,7 +3,6 @@ package com.bl.bias.write;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hssf.util.HSSFColor;
@@ -33,6 +32,7 @@ public class WriteS3CompareScheduleFiles1
 	XSSFSheet coreVsOperatedSheet;
 
 	Integer rowCounter = 0;
+	Integer totalDiscrepancies = 0;
 
 	public WriteS3CompareScheduleFiles1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters)
 	{
@@ -277,6 +277,7 @@ public class WriteS3CompareScheduleFiles1
 			{
 				for (int i = 0; i < trainsInAnalyzedDayButNotCoreDay.get(date).size(); i++) 
 				{
+					totalDiscrepancies++; 
 					rowCounter++;
 					row = coreVsOperatedSheet.createRow(rowCounter);
 
@@ -297,6 +298,7 @@ public class WriteS3CompareScheduleFiles1
 			{
 				for (int i = 0; i < trainsInCoreDayButNotAnalyzedDay.get(date).size(); i++) 
 				{
+					totalDiscrepancies++;
 					rowCounter++;
 					row = coreVsOperatedSheet.createRow(rowCounter);
 
@@ -317,6 +319,7 @@ public class WriteS3CompareScheduleFiles1
 			{
 				for (int i = 0; i < trainsWithDifferentParameters.get(date).size(); i++) 
 				{
+					totalDiscrepancies++;
 					rowCounter++;
 					row = coreVsOperatedSheet.createRow(rowCounter);
 
@@ -344,6 +347,13 @@ public class WriteS3CompareScheduleFiles1
 				rowCounter++;
 			}
 		}
+		
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+		cell = row.createCell(0);
+		cell.setCellStyle(style5);
+		cell.setCellValue("Total discrepancies: "+totalDiscrepancies);
+		rowCounter++;
 
 		// Timestamp and footnote
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
@@ -356,7 +366,6 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Created on "+creationDate+" at "+creationTime);
 
 		// Resize all columns to fit the content size
-
 		for (int i = 0; i < 2; i++) 
 		{
 			if (i == 0)   // Core Day of Week
