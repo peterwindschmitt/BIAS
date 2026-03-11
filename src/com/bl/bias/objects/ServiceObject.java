@@ -6,21 +6,21 @@ public final class ServiceObject
 	private String dayOfWeek;
 	private String serviceName;
 	private String serviceType;
-	private String originLocation;
-	private String originTime;
-	private String destinationLocation;
-	private String destinationTime;
+	private String departureLocation;
+	private String departureTimestamp;
+	private String arrivalLocation;
+	private String arrivalTimestamp;
 	
-	public ServiceObject(String date, String dayOfWeek, String serviceName, String serviceType, String originLocation, String originTime, String destinationLocation, String destinationTime) 
+	public ServiceObject(String date, String dayOfWeek, String serviceName, String serviceType, String departureStation, String departureTimestamp, String arrivalStation, String arrivalTimestamp) 
     {
         this.date = date; // either the short date as string or "CORE"
         this.dayOfWeek = dayOfWeek;
 		this.serviceName = serviceName;
         this.serviceType = serviceType;
-        this.originLocation = originLocation;
-        this.originTime = originTime;
-        this.destinationLocation = destinationLocation;
-        this.destinationTime = destinationTime;
+        this.departureLocation = departureStation;
+        this.departureTimestamp = departureTimestamp;
+        this.arrivalLocation = arrivalStation;
+        this.arrivalTimestamp = arrivalTimestamp;
     }
 		
 	public String getDate()
@@ -43,23 +43,23 @@ public final class ServiceObject
 		return serviceType;
 	}
 	
-	public String getOriginLocation()
+	public String getDepartureLocation()
 	{
-		return originLocation;
+		return departureLocation;
 	}
 	
-	public String getOriginTime()
+	public String getDepartureTimestamp()
 	{
-		return originTime;
+		return departureTimestamp;
 	}
 	
-	public String getDestinationLocation()
+	public String getArrivalLocation()
 	{
-		return destinationLocation;
+		return arrivalLocation;
 	}
 	
-	public String getDestinationTime()
+	public String getArrivalTimestamp()
 	{
-		return destinationTime;
+		return arrivalTimestamp;
 	}
 }

@@ -172,10 +172,10 @@ public class S3CompareScheduleAnalysis
 						if ((coreDatesData.get(n).get(o).getDayOfWeek().equals(analyzedService.getDayOfWeek()))
 								&& (coreDatesData.get(n).get(o).getServiceName().equals(analyzedService.getServiceName()))
 								&& (coreDatesData.get(n).get(o).getServiceType().equals(analyzedService.getServiceType()))
-								&& (coreDatesData.get(n).get(o).getOriginLocation().equals(analyzedService.getOriginLocation()))
-								&& (coreDatesData.get(n).get(o).getOriginTime().equals(analyzedService.getOriginTime()))
-								&& (coreDatesData.get(n).get(o).getDestinationLocation().equals(analyzedService.getDestinationLocation()))
-								&& (coreDatesData.get(n).get(o).getDestinationTime().equals(analyzedService.getDestinationTime())))
+								&& (coreDatesData.get(n).get(o).getDepartureLocation().equals(analyzedService.getDepartureLocation()))
+								&& (coreDatesData.get(n).get(o).getDepartureTimestamp().equals(analyzedService.getDepartureTimestamp()))
+								&& (coreDatesData.get(n).get(o).getArrivalLocation().equals(analyzedService.getArrivalLocation()))
+								&& (coreDatesData.get(n).get(o).getArrivalTimestamp().equals(analyzedService.getArrivalTimestamp())))
 						{
 							analyzedDaysServiceObjectsIterator.remove();
 						}

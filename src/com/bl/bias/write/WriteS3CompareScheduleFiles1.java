@@ -287,7 +287,7 @@ public class WriteS3CompareScheduleFiles1
 
 					cell = row.createCell(1);
 					cell.setCellStyle(style5);
-					cell.setCellValue("Planned to operate but not in Core");
+					cell.setCellValue("Planned to operate but not in Core [ADD]");
 
 					reporting = true;
 				}
@@ -308,7 +308,7 @@ public class WriteS3CompareScheduleFiles1
 
 					cell = row.createCell(1);
 					cell.setCellStyle(style5);
-					cell.setCellValue("In Core but not planned to operate");
+					cell.setCellValue("In Core but not planned to operate [CANCEL]");
 
 					reporting = true;
 				}
@@ -329,7 +329,7 @@ public class WriteS3CompareScheduleFiles1
 
 					cell = row.createCell(1);
 					cell.setCellStyle(style5);
-					cell.setCellValue("In Core and planned to operate but not all parameters are the same");
+					cell.setCellValue("In Core and planned to operate but not all parameters are the same [RETIMEs and others]");
 
 					reporting = true;
 				}
@@ -372,9 +372,9 @@ public class WriteS3CompareScheduleFiles1
 			{
 				coreVsOperatedSheet.setColumnWidth(i, 9000);
 			}
-			else if (i == 1)   // Associated Core Date
+			else if (i == 1)   // Associated Core Date, Reason
 			{
-				coreVsOperatedSheet.setColumnWidth(i, 9000);
+				coreVsOperatedSheet.setColumnWidth(i, 16000);
 			}
 		}
 	}

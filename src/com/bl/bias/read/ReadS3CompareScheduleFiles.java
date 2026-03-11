@@ -114,18 +114,16 @@ public class ReadS3CompareScheduleFiles
 					for (int j = 0; j < servicesArray.length(); j++)
 					{
 						JSONObject obj = servicesArray.getJSONObject(j);
-						String serviceIdentifier = (String) obj.get("service_identifier");
-
-						// Get info from service identifier
-						Integer serviceIdentifierLength = serviceIdentifier.length();
-						String destinationLocation = serviceIdentifier.substring(serviceIdentifierLength - 3, serviceIdentifierLength);
-						String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
-						String destinationTime = serviceIdentifier.substring(serviceIdentifierLength - 13, serviceIdentifierLength - 8);
-						String originTime = serviceIdentifier.substring(serviceIdentifierLength - 30, serviceIdentifierLength - 25);
-						String serviceType = serviceIdentifier.substring(serviceIdentifierLength - 55, serviceIdentifierLength - 53);
-						String serviceName = serviceIdentifier.substring(serviceIdentifierLength - 60, serviceIdentifierLength - 56);
-
-						ServiceObject coreServiceOnADay = new ServiceObject("CORE", String.valueOf(i), serviceName, serviceType, originLocation, originTime, destinationLocation, destinationTime);
+						Object serviceName = obj.get("name");
+						Object serviceType = obj.getJSONObject("service_type").get("code");
+						Object departureStation = obj.getJSONObject("departure_station").get("name");
+						Object departureTimestamp = obj.getJSONObject("departure_station").get("departure_timestamp");
+						String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length());
+						Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
+						Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
+						String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
+						
+						ServiceObject coreServiceOnADay = new ServiceObject("CORE", String.valueOf(i), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
 						coreServicesOnADay.add(coreServiceOnADay);
 					}
 					coreDatesData.add(coreServicesOnADay);
@@ -153,18 +151,17 @@ public class ReadS3CompareScheduleFiles
 				for (int j = 0; j < servicesArray.length(); j++)
 				{
 					JSONObject obj = servicesArray.getJSONObject(j);
-					String serviceIdentifier = (String) obj.get("service_identifier");
-
-					// Get info from service identifier
-					Integer serviceIdentifierLength = serviceIdentifier.length();
-					String destinationLocation = serviceIdentifier.substring(serviceIdentifierLength - 3, serviceIdentifierLength);
-					String originLocation = serviceIdentifier.substring(serviceIdentifierLength - 7, serviceIdentifierLength - 4);
-					String destinationTime = serviceIdentifier.substring(serviceIdentifierLength - 13, serviceIdentifierLength - 8);
-					String originTime = serviceIdentifier.substring(serviceIdentifierLength - 30, serviceIdentifierLength - 25);
-					String serviceType = serviceIdentifier.substring(serviceIdentifierLength - 55, serviceIdentifierLength - 53);
-					String serviceName = serviceIdentifier.substring(serviceIdentifierLength - 60, serviceIdentifierLength - 56);
-
-					ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), String.valueOf(date.getDayOfWeek().getValue()), serviceName, serviceType, originLocation, originTime, destinationLocation, destinationTime);
+					
+					Object serviceName = obj.get("name");
+					Object serviceType = obj.getJSONObject("service_type").get("code");
+					Object departureStation = obj.getJSONObject("departure_station").get("name");
+					Object departureTimestamp = obj.getJSONObject("departure_station").get("departure_timestamp");
+					String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length());
+					Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
+					Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
+					String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
+					
+					ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), String.valueOf(date.getDayOfWeek().getValue()), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
 					actualServicesOnADay.add(actualServiceOnADay);
 				}				
 				analyzedDatesData.add(actualServicesOnADay);
