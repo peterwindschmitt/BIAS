@@ -59,6 +59,7 @@ public class ReadS3CompareScheduleFiles
 						.build();
 				response = client.send(request, HttpResponse.BodyHandlers.ofString());
 				responseAsJSON = new JSONObject(response.body().toString());
+
 				if (responseAsJSON.has("access_token")) 
 				{
 					accessToken = responseAsJSON.getString("access_token");
@@ -107,6 +108,7 @@ public class ReadS3CompareScheduleFiles
 							.build();
 
 					response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
 					responseAsJSON = new JSONObject(response.body().toString());
 					JSONArray servicesArray = responseAsJSON.getJSONObject("data").getJSONArray("services");
 
@@ -122,7 +124,7 @@ public class ReadS3CompareScheduleFiles
 						Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
 						Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
 						String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
-						
+
 						ServiceObject coreServiceOnADay = new ServiceObject("CORE", String.valueOf(i), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
 						coreServicesOnADay.add(coreServiceOnADay);
 					}
@@ -131,42 +133,45 @@ public class ReadS3CompareScheduleFiles
 			}
 
 			// Analysis dates
-			// For each day of requested range (start date --> end date)
-			for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
+			if (validFile)
 			{
-				String params = "date="+date+"&page_size=200";
-				ArrayList<ServiceObject> actualServicesOnADay = new ArrayList<ServiceObject>();
-				
-				request = HttpRequest.newBuilder()
-						.uri(URI.create(uri+"/api/v2/orientation/search-services?"+params))
-						.header("Authorization", "Bearer " + accessToken)
-						.GET()
-						.build();
-
-				response = client.send(request, HttpResponse.BodyHandlers.ofString());
-				responseAsJSON = new JSONObject(response.body().toString());
-				JSONArray servicesArray = responseAsJSON.getJSONObject("data").getJSONArray("services");
-
-				//  Get individual service attributes
-				for (int j = 0; j < servicesArray.length(); j++)
+				// For each day of requested range (start date --> end date)
+				for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
 				{
-					JSONObject obj = servicesArray.getJSONObject(j);
-					
-					Object serviceName = obj.get("name");
-					Object serviceType = obj.getJSONObject("service_type").get("code");
-					Object departureStation = obj.getJSONObject("departure_station").get("name");
-					Object departureTimestamp = obj.getJSONObject("departure_station").get("departure_timestamp");
-					String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length());
-					Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
-					Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
-					String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
-					
-					ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), String.valueOf(date.getDayOfWeek().getValue()), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
-					actualServicesOnADay.add(actualServiceOnADay);
-				}				
-				analyzedDatesData.add(actualServicesOnADay);
+					String params = "date="+date+"&page_size=200";
+					ArrayList<ServiceObject> actualServicesOnADay = new ArrayList<ServiceObject>();
+
+					request = HttpRequest.newBuilder()
+							.uri(URI.create(uri+"/api/v2/orientation/search-services?"+params))
+							.header("Authorization", "Bearer " + accessToken)
+							.GET()
+							.build();
+
+					response = client.send(request, HttpResponse.BodyHandlers.ofString());
+					responseAsJSON = new JSONObject(response.body().toString());
+					JSONArray servicesArray = responseAsJSON.getJSONObject("data").getJSONArray("services");
+
+					//  Get individual service attributes
+					for (int j = 0; j < servicesArray.length(); j++)
+					{
+						JSONObject obj = servicesArray.getJSONObject(j);
+
+						Object serviceName = obj.get("name");
+						Object serviceType = obj.getJSONObject("service_type").get("code");
+						Object departureStation = obj.getJSONObject("departure_station").get("name");
+						Object departureTimestamp = obj.getJSONObject("departure_station").get("departure_timestamp");
+						String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length());
+						Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
+						Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
+						String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
+
+						ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), String.valueOf(date.getDayOfWeek().getValue()), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
+						actualServicesOnADay.add(actualServiceOnADay);
+					}				
+					analyzedDatesData.add(actualServicesOnADay);
+				}
+				resultsMessage += "Loaded core schedules and all active schedules between "+startDate+" and "+endDate+"\n";
 			}
-			resultsMessage += "Loaded core schedules and all active schedules between "+startDate+" and "+endDate+"\n";
 		}
 		catch (IOException e) 
 		{
