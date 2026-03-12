@@ -32,7 +32,7 @@ public class ConvertAnyCellFormatToString
 	                }
 	                break;
 	            case BOOLEAN:
-	                strCellValue = new String(new Boolean(cell.getBooleanCellValue()).toString());
+	                strCellValue = new String(Boolean.valueOf(cell.getBooleanCellValue()).toString());
 	                break;
 	            case BLANK:
 	                strCellValue = "";

@@ -495,10 +495,6 @@ public class BIASS3CompareSchedulePageController
 				step3TextLabel.setDisable(false);
 				startDatePicker.setDisable(false);
 				endDatePicker.setDisable(false);
-				con1RadioButton.setDisable(false);
-				con2RadioButton.setDisable(false);
-				con1Label.setDisable(false);
-				con2Label.setDisable(false);
 				coreDateLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
@@ -597,10 +593,6 @@ public class BIASS3CompareSchedulePageController
 				step3TextLabel.setDisable(false);
 				startDatePicker.setDisable(false);
 				endDatePicker.setDisable(false);
-				con1Label.setDisable(false);
-				con2Label.setDisable(false);
-				con1RadioButton.setDisable(false);
-				con2RadioButton.setDisable(false);
 				coreDateLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
@@ -752,7 +744,7 @@ public class BIASS3CompareSchedulePageController
 
 				// Write results to spreadsheet
 				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters());
-				message = WriteS3CompareScheduleFiles2.getResultsMessage2();
+				message = writeFiles.getResultsMessage2();
 				displayMessage(message);
 
 				if (!WriteS3CompareScheduleFiles2.getErrorFound())
