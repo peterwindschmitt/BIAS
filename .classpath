@@ -24,18 +24,34 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files/Java/json-20251224.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-core-4.0-beta1.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-core-4.0-beta1-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-core-4.0-beta1-javadoc.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program%20Files/Java/commons-math4-core-4.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-core-4.0-beta1-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-4.0-beta1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-4.0-beta1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program%20Files/Java/commons-math4-legacy-4.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-4.0-beta1-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-4.0-beta1-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-core-4.0-beta1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-core-4.0-beta1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program%20Files/Java/commons-math4-legacy-core-4.0-beta1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-core-4.0-beta1-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-core-4.0-beta1-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-exception-4.0-beta1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-exception-4.0-beta1-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/commons-math4-legacy-exception-4.0-beta1-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/commons-statistics-distribution-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/commons-statistics-distribution-1.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://commons.apache.org/proper/commons-statistics/commons-statistics-docs/apidocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX25"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
