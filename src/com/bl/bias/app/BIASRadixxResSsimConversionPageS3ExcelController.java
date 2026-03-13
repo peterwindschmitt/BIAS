@@ -11,6 +11,7 @@ import com.bl.bias.read.ReadRadixxResSSIMS3FileForConversionToExcel;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteRadixxS3ToExcelFiles2;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -326,7 +327,9 @@ public class BIASRadixxResSsimConversionPageS3ExcelController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

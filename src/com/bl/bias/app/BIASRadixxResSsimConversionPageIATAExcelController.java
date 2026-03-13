@@ -13,6 +13,7 @@ import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteExcelToRadixxFile1;
 import com.bl.bias.write.WriteRadixxIATAToExcelFiles2;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -405,7 +406,9 @@ public class BIASRadixxResSsimConversionPageIATAExcelController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

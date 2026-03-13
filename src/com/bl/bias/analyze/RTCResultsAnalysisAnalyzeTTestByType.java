@@ -386,6 +386,7 @@ public class RTCResultsAnalysisAnalyzeTTestByType
 	   return error;
 	}
 	
+	@SuppressWarnings("unused") // Used for debug 
 	private static double computeSumOfSquares(double[] parameterA, double[] parameterB)
 	{
 		double sumOfSquares = 0;

@@ -13,6 +13,7 @@ import com.bl.bias.read.ReadExcelFileForBridgeCompliance;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteBridgeComplianceFiles3;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -854,7 +855,9 @@ public class BIASUscgBridgeComplianceAnalysisController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

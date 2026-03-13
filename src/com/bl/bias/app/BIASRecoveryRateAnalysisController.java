@@ -12,6 +12,7 @@ import com.bl.bias.read.ReadRecoveryRateAnalysisFiles;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteRecoveryRateFiles6;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -395,7 +396,9 @@ public class BIASRecoveryRateAnalysisController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

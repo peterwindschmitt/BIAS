@@ -12,6 +12,7 @@ import com.bl.bias.write.WriteJuaComplianceFiles7;
 import com.bl.bias.analyze.AnalyzeJuaComplianceFiles;
 import com.bl.bias.exception.ErrorShutdown;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -372,7 +373,9 @@ public class BIASJuaComplianceController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

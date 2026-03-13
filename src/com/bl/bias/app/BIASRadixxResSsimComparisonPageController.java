@@ -653,7 +653,9 @@ public class BIASRadixxResSsimComparisonPageController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	public static File getSaveFileLocation()

@@ -13,6 +13,7 @@ import com.bl.bias.read.ReadS3CompareScheduleFiles;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteS3CompareScheduleFiles2;
 
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -787,7 +788,9 @@ public class BIASS3CompareSchedulePageController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

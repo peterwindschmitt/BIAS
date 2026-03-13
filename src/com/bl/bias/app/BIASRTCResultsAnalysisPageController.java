@@ -16,6 +16,7 @@ import com.bl.bias.read.ReadRTCResultsAnalysisTypeFiles;
 import com.bl.bias.write.WriteExtractedFiles5;
 import com.bl.bias.analyze.RTCResultsAnalysisCleanFiles;
 
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -679,7 +680,9 @@ public class BIASRTCResultsAnalysisPageController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);   
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	public static File getSaveDirectoryLocation()

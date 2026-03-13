@@ -13,6 +13,7 @@ import com.bl.bias.tools.AssignTrainTypeNameToTrainGroupName;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteGradeXingFiles4;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -530,9 +531,10 @@ public class BIASGradeXingSpeedsController
 
 	private void displayMessage(String message)
 	{
-		processTextArea.appendText(message);
+		Platform.runLater(() -> {
+        	processTextArea.appendText(message);
+        });
 	}
-
 	private void setProgressIndicator(double value)
 	{
 		progressBar.setProgress(value);

@@ -19,6 +19,7 @@ import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.tools.PartitionLineIntoSubLines;
 import com.bl.bias.write.WriteMaintenanceWindowFiles5;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -663,7 +664,9 @@ public class BIASMaintenanceWindowAnalysisPageController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)

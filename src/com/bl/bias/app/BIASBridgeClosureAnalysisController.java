@@ -17,6 +17,7 @@ import com.bl.bias.tools.CheckIfLineIsProperlyFormed;
 import com.bl.bias.tools.ConvertDateTime;
 import com.bl.bias.write.WriteBridgeFiles5;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -652,7 +653,9 @@ public class BIASBridgeClosureAnalysisController
 
 	private void displayMessage(String message)
 	{
-		textArea.appendText(message);
+		Platform.runLater(() -> {
+        	textArea.appendText(message);
+        });
 	}
 
 	private void setProgressIndicator(double value)
