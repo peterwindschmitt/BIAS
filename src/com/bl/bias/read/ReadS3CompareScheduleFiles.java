@@ -29,6 +29,8 @@ public class ReadS3CompareScheduleFiles
 	private ArrayList<ArrayList<ServiceObject>> analyzedDatesData = new ArrayList<ArrayList<ServiceObject>>();
 
 	private Boolean validFile = true;
+	
+	private Boolean showDetailsForRetimedTrains;
 
 	private HttpClient client;
 	private HttpRequest request;
@@ -37,9 +39,11 @@ public class ReadS3CompareScheduleFiles
 	private JSONObject responseAsJSON;
 
 	public ReadS3CompareScheduleFiles(String profileName, String uri, String clientId, String clientSecret, String userName, String password, String grantType, String code, LocalDate startDate, LocalDate endDate, 
-			LocalDate mondayBaseline, LocalDate tuesdayBaseline, LocalDate wednesdayBaseline, LocalDate thursdayBaseline, LocalDate fridayBaseline, LocalDate saturdayBaseline, LocalDate sundayBaseline) throws Exception 
+			LocalDate mondayBaseline, LocalDate tuesdayBaseline, LocalDate wednesdayBaseline, LocalDate thursdayBaseline, LocalDate fridayBaseline, LocalDate saturdayBaseline, LocalDate sundayBaseline, Boolean showDetailsForRetimedTrains) throws Exception 
 	{
 		resultsMessage = "\nAttempting to connect to S3's API ...\n";
+		
+		this.showDetailsForRetimedTrains = showDetailsForRetimedTrains;
 
 		try
 		{
@@ -206,6 +210,11 @@ public class ReadS3CompareScheduleFiles
 	public ArrayList<ArrayList<ServiceObject>> getAnalyzedDatesData()
 	{
 		return analyzedDatesData;
+	}
+	
+	public Boolean getShowDetailsForRetimedTrains()
+	{
+		return showDetailsForRetimedTrains;
 	}
 
 	public Boolean getValidFile()

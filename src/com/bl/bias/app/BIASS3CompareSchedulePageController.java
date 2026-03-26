@@ -721,14 +721,14 @@ public class BIASS3CompareSchedulePageController
 						BIASS3CompareScheduleConfigPageController.getGrantType1(), BIASS3CompareScheduleConfigPageController.getCode1(), startDate, endDate,
 						BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
 						BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
-						BIASS3CompareScheduleConfigPageController.getSundayCoreDate());
+						BIASS3CompareScheduleConfigPageController.getSundayCoreDate(), BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
 			else
 				readData = new ReadS3CompareScheduleFiles(con2NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri2(), BIASS3CompareScheduleConfigPageController.getClientId2(), 
 						BIASS3CompareScheduleConfigPageController.getClientSecret2(), BIASS3CompareScheduleConfigPageController.getUserName2(), BIASS3CompareScheduleConfigPageController.getPassword2(), 
 						BIASS3CompareScheduleConfigPageController.getGrantType2(), BIASS3CompareScheduleConfigPageController.getCode2(), startDate, endDate,
 						BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
 						BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
-						BIASS3CompareScheduleConfigPageController.getSundayCoreDate());
+						BIASS3CompareScheduleConfigPageController.getSundayCoreDate(), BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
 			message = readData.getResultsMessage();
 			displayMessage(message);
 
@@ -744,7 +744,7 @@ public class BIASS3CompareSchedulePageController
 				setProgressIndicator(0.80);
 
 				// Write results to spreadsheet
-				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters());
+				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters(), readData.getShowDetailsForRetimedTrains(), readData.getCoreDatesData(), readData.getAnalyzedDatesData());
 				message = writeFiles.getResultsMessage2();
 				displayMessage(message);
 

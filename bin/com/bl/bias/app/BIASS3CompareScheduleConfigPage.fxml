@@ -235,12 +235,12 @@
                               </Button>
                               <Button fx:id="updateAPI2ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateAPI2ParametersButton" prefWidth="180.0" text="Update API Parameters" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                                  <GridPane.margin>
-                                    <Insets />
+                                    <Insets left="10.0" />
                                  </GridPane.margin>
                               </Button>
                               <Button fx:id="useLastSavedAPI2ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedAPI2ParametersButton" prefWidth="180.0" text="Use Last Saved API Parameters" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                  <GridPane.margin>
-                                    <Insets right="30.0" />
+                                    <Insets right="10.0" />
                                  </GridPane.margin>
                               </Button>
                               <TextField fx:id="profileNameTextField2" maxWidth="150.0" minWidth="150.0" onKeyTyped="#handleTextChangedProfileNameTextField2" prefWidth="150.0" GridPane.rowIndex="4">

@@ -1,5 +1,6 @@
 package com.bl.bias.write;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class WriteS3CompareScheduleFiles1
 	Integer rowCounter = 0;
 	Integer totalDiscrepancies = 0;
 
-	public WriteS3CompareScheduleFiles1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters)
+	public WriteS3CompareScheduleFiles1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -259,15 +260,15 @@ public class WriteS3CompareScheduleFiles1
 		for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
 		{
 			String analyzedDayOfWeek = date.getDayOfWeek().toString();
-			
+
 			rowCounter++;
 			row = coreVsOperatedSheet.createRow(rowCounter);
 			coreVsOperatedSheet.addMergedRegion(new CellRangeAddress(rowCounter, rowCounter, 0, 1));
-			
+
 			cell = row.createCell(0);
 			cell.setCellStyle(style7);
 			cell.setCellValue(date.toString()+" ["+analyzedDayOfWeek+"]");
-			
+
 			cell = row.createCell(1);
 			cell.setCellStyle(style7);
 			cell.setCellValue("");
@@ -331,6 +332,54 @@ public class WriteS3CompareScheduleFiles1
 					cell.setCellStyle(style5);
 					cell.setCellValue("In Core and planned to operate but not all parameters are the same [RETIMEs and others]");
 
+					if (showDetailsForRetimedTrains)
+					{
+						// Build core train string
+						String coreTrainDetails = "";
+						for (int j = 0; j < coreDates.get(date.getDayOfWeek().getValue()).size(); j++)
+						{
+							if (coreDates.get(date.getDayOfWeek().getValue()).get(j).getServiceName().equals(trainsWithDifferentParameters.get(date).get(i).getServiceName()))
+							{
+								coreTrainDetails = "     Core Train Type: "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getServiceType();
+								coreTrainDetails += ", Origin: "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getDepartureLocation();
+								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getDepartureTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue()).get(j).getDepartureTimestamp().length() - 5);
+								coreTrainDetails += ", Destination: "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getArrivalLocation();
+								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getArrivalTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue()).get(j).getArrivalTimestamp().length() - 5);
+								break;
+							}
+						}
+
+						// Build planned train string
+						String analyzedTrainDetails = "";
+						outerLoop:
+						for (int j = 0; j < analyzedDates.size(); j++)
+						{
+							for (int k = 0; k < analyzedDates.get(j).size(); k++)
+							{
+								if (trainsWithDifferentParameters.get(date).get(i).getServiceName().equals(analyzedDates.get(j).get(k).getServiceName()))
+								{
+									analyzedTrainDetails = "     Planned Train Type: "+analyzedDates.get(j).get(k).getServiceType();
+									analyzedTrainDetails += ", Origin: "+analyzedDates.get(j).get(k).getDepartureLocation();
+									analyzedTrainDetails += " at "+analyzedDates.get(j).get(k).getDepartureTimestamp().substring(0, analyzedDates.get(j).get(k).getDepartureTimestamp().length() - 5);
+									analyzedTrainDetails += ", Destination: "+analyzedDates.get(j).get(k).getArrivalLocation();
+									analyzedTrainDetails += " at "+analyzedDates.get(j).get(k).getArrivalTimestamp().substring(0, analyzedDates.get(j).get(k).getArrivalTimestamp().length() - 5);
+									break outerLoop;
+								}
+							}
+						}
+						
+						rowCounter++;
+						row = coreVsOperatedSheet.createRow(rowCounter);
+						cell = row.createCell(1);
+						cell.setCellStyle(style2);
+						cell.setCellValue(coreTrainDetails);
+
+						rowCounter++;
+						row = coreVsOperatedSheet.createRow(rowCounter);
+						cell = row.createCell(1);
+						cell.setCellStyle(style2);
+						cell.setCellValue(analyzedTrainDetails);
+					}
 					reporting = true;
 				}
 				rowCounter++;
@@ -347,7 +396,7 @@ public class WriteS3CompareScheduleFiles1
 				rowCounter++;
 			}
 		}
-		
+
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
 		cell = row.createCell(0);
@@ -364,7 +413,7 @@ public class WriteS3CompareScheduleFiles1
 
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
-		
+
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
 		cell = row.createCell(0);
