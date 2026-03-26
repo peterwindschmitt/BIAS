@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
@@ -11,18 +12,18 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="TOP_CENTER" centerShape="true" maxHeight="407.0" maxWidth="800.0" minHeight="407.0" minWidth="800.0" prefHeight="407.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASS3CompareScheduleConfigPageController">
+<GridPane alignment="TOP_CENTER" centerShape="true" maxHeight="407.0" maxWidth="800.0" minHeight="407.0" minWidth="800.0" prefHeight="407.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASS3CompareScheduleConfigPageController">
        <columnConstraints>
              <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="481.0" />
        </columnConstraints>
        <rowConstraints>
-      <RowConstraints fillHeight="false" maxHeight="357.0" minHeight="357.0" percentHeight="0.0" prefHeight="357.0" valignment="TOP" vgrow="ALWAYS" />
-      <RowConstraints fillHeight="false" maxHeight="50.0" minHeight="50.0" percentHeight="0.0" prefHeight="50.0" valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints fillHeight="false" maxHeight="407.0" minHeight="407.0" percentHeight="0.0" prefHeight="407.0" valignment="TOP" vgrow="ALWAYS" />
        </rowConstraints>
    <children>
       <GridPane>
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -50,7 +51,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <TabPane GridPane.columnSpan="3" GridPane.rowIndex="2">
+            <TabPane GridPane.columnSpan="4" GridPane.rowIndex="2">
                <tabs>
                   <Tab text="API Connection #1">
                      <content>
@@ -131,12 +132,12 @@
                               </Button>
                               <Button fx:id="updateAPI1ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUpdateAPI1ParametersButton" prefWidth="180.0" text="Update API Parameters" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                                  <GridPane.margin>
-                                    <Insets />
+                                    <Insets left="10.0" />
                                  </GridPane.margin>
                               </Button>
                               <Button fx:id="useLastSavedAPI1ParametersButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleUseLastSavedAPI1ParametersButton" prefWidth="180.0" text="Use Last Saved API Parameters" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                  <GridPane.margin>
-                                    <Insets right="30.0" />
+                                    <Insets right="10.0" />
                                  </GridPane.margin>
                               </Button>
                               <TextField fx:id="profileNameTextField1" maxWidth="150.0" minWidth="150.0" onKeyTyped="#handleTextChangedProfileNameTextField1" prefWidth="150.0" GridPane.rowIndex="4">
@@ -266,28 +267,33 @@
                </GridPane.margin>
             </Label>
             <Label text="Monday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Label text="Tuesday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Label text="Wednesday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <DatePicker fx:id="mondayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </DatePicker>
+            <Label text="Tuesday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <DatePicker fx:id="tuesdayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+            <Label text="Wednesday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <DatePicker fx:id="wednesdayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-            <Label text="Thursday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-            <Label text="Friday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-            <Label text="Saturday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-            <DatePicker fx:id="thursdayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-            <DatePicker fx:id="fridayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-            <DatePicker fx:id="saturdayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-            <Label text="Sunday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-            <DatePicker fx:id="sundayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-            <Button fx:id="clearAllDatesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleClearAllDatesButton" prefWidth="180.0" text="Clear All Dates" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+            <Label text="Thursday" underline="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <DatePicker fx:id="thursdayCoreDateDatePicker" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+            <Label text="Friday" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <DatePicker fx:id="fridayCoreDateDatePicker" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <Label text="Saturday" underline="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <DatePicker fx:id="saturdayCoreDateDatePicker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <Label text="Sunday" underline="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <DatePicker fx:id="sundayCoreDateDatePicker" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <Button fx:id="clearAllDatesButton" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#handleClearAllDatesButton" prefWidth="180.0" text="Clear All Dates" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
                <GridPane.margin>
-                  <Insets right="30.0" />
+                  <Insets right="10.0" />
                </GridPane.margin>
             </Button>
+            <CheckBox fx:id="showDetailsForRetimedTrainsCheckBox" mnemonicParsing="false" onAction="#handleShowDetailsForRetimedTrainsCheckBox" text="3.  Show details for RETIMED trains" GridPane.columnSpan="2" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
          </children>
          <opaqueInsets>
             <Insets />

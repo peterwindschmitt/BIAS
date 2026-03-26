@@ -18,6 +18,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -67,6 +68,9 @@ public class BIASS3CompareScheduleConfigPageController
 	private static LocalDate fridayCoreDate;
 	private static LocalDate saturdayCoreDate;
 	private static LocalDate sundayCoreDate;
+	
+	private static Boolean defaultShowDetailsForRetimedTrains = true;
+	private static Boolean showDetailsForRetimedTrains;
 
 	private ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
 
@@ -79,6 +83,8 @@ public class BIASS3CompareScheduleConfigPageController
 	@FXML private Button updateAPI2ParametersButton;
 	@FXML private Button useLastSavedAPI2ParametersButton;
 	@FXML private Button clearAllDatesButton;
+	
+	@FXML private CheckBox showDetailsForRetimedTrainsCheckBox;
 
 	@FXML private TextField uriTextField1;
 	@FXML private TextField clientIdField1;
@@ -582,6 +588,20 @@ public class BIASS3CompareScheduleConfigPageController
 				}
 			}
 		});
+		
+		if (prefs.getBoolean("s3_showDetailsForRetimedTrains", defaultShowDetailsForRetimedTrains))
+		{
+			showDetailsForRetimedTrains = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("s3_showDetailsForRetimedTrains", true);
+			showDetailsForRetimedTrainsCheckBox.setSelected(true);
+		}
+		else
+		{
+			showDetailsForRetimedTrains = false;
+			showDetailsForRetimedTrainsCheckBox.setSelected(false);
+		}
+		
 	};
 
 	@FXML private void handleTextChangedURITextField1()
@@ -784,6 +804,22 @@ public class BIASS3CompareScheduleConfigPageController
 
 		profileNameTextField2.setText(profileName2AsString);
 		profileNameTextField2.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+	}
+	
+	@FXML private void handleShowDetailsForRetimedTrainsCheckBox(ActionEvent event)
+	{
+		if (showDetailsForRetimedTrains)
+		{
+			showDetailsForRetimedTrains = false;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("s3_showDetailsForRetimedTrains", false);
+		}
+		else
+		{
+			showDetailsForRetimedTrains = true;
+			if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				prefs.putBoolean("s3_showDetailsForRetimedTrains", true);
+		}
 	}
 
 	@FXML private void handleClearAllDatesButton()
@@ -1066,6 +1102,11 @@ public class BIASS3CompareScheduleConfigPageController
 	public ObservableList<String> getValidCoreDatesMap()
 	{
 		return validCoreDayList;
+	}
+	
+	public static Boolean getShowDetailsForRetimedTrains()
+	{
+		return showDetailsForRetimedTrains;
 	}
 	
 	private Callback<DatePicker, DateCell> getFutureDatesOnlyFactory(boolean includeToday) {

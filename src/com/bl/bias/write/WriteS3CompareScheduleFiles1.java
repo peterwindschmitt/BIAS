@@ -182,7 +182,7 @@ public class WriteS3CompareScheduleFiles1
 
 		cell = row.createCell(1);
 		cell.setCellStyle(style6);
-		cell.setCellValue("Associated Core Date");
+		cell.setCellValue("Associated Core Date*");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -356,6 +356,12 @@ public class WriteS3CompareScheduleFiles1
 		rowCounter++;
 
 		// Timestamp and footnote
+		rowCounter++;
+		row = coreVsOperatedSheet.createRow(rowCounter);
+		cell = row.createCell(0);
+		cell.setCellStyle(style2);
+		cell.setCellValue("*Core Date does not have to match Core Day of Week (i.e., a Core Date which is a Wednesday can be assigned to a Core Day of Monday)");
+
 		LocalDate creationDate = ConvertDateTime.getDateStamp();
 		LocalTime creationTime = ConvertDateTime.getTimeStamp();
 		
@@ -374,7 +380,7 @@ public class WriteS3CompareScheduleFiles1
 			}
 			else if (i == 1)   // Associated Core Date, Reason
 			{
-				coreVsOperatedSheet.setColumnWidth(i, 16000);
+				coreVsOperatedSheet.setColumnWidth(i, 20100);
 			}
 		}
 	}
