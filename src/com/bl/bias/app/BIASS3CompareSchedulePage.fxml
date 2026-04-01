@@ -6,13 +6,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASS3CompareSchedulePageController">
+<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASS3CompareSchedulePageController">
 	<columnConstraints>
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
 		<ColumnConstraints hgrow="SOMETIMES" maxWidth="275.0" minWidth="275.0" prefWidth="275.0" />
@@ -24,11 +26,12 @@
 	</columnConstraints>
 	<rowConstraints>
 		<RowConstraints />
-		<RowConstraints maxHeight="35.0" minHeight="35.0" percentHeight="0.0" prefHeight="35.0" vgrow="NEVER" />
-		<RowConstraints maxHeight="72.0" minHeight="72.0" percentHeight="0.0" prefHeight="72.0" vgrow="NEVER" />
       <RowConstraints maxHeight="35.0" minHeight="35.0" percentHeight="0.0" prefHeight="35.0" vgrow="NEVER" />
-		<RowConstraints maxHeight="72.0" minHeight="72.0" percentHeight="0.0" prefHeight="72.0" vgrow="NEVER" />
-      <RowConstraints maxHeight="100.0" minHeight="100.0" percentHeight="0.0" prefHeight="100.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="35.0" minHeight="1.0" percentHeight="0.0" prefHeight="35.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="37.0" minHeight="37.0" percentHeight="0.0" prefHeight="37.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="35.0" minHeight="35.0" percentHeight="0.0" prefHeight="35.0" vgrow="NEVER" />
+		<RowConstraints maxHeight="37.0" minHeight="37.0" percentHeight="0.0" prefHeight="37.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="135.0" minHeight="135.0" percentHeight="0.0" prefHeight="135.0" vgrow="NEVER" />
         <RowConstraints maxHeight="75.0" minHeight="75.0" percentHeight="0.0" prefHeight="75.0" vgrow="ALWAYS" />
       <RowConstraints />
       <RowConstraints />
@@ -37,86 +40,101 @@
       <RowConstraints />
 	</rowConstraints>
 	<children>
-		<Label fx:id="step1Label" text="1." GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnSpan="2" GridPane.rowIndex="1">
+        <tabs>
+          <Tab text="Core vs Plan" />
+          <Tab text="Plan vs Plan" />
+        </tabs>
+         <padding>
+            <Insets right="5.0" />
+         </padding>
+      </TabPane>
+	
+	
+	
+		
+      <Label fx:id="planVsCoreStep1TextLabel" alignment="CENTER" text="Start checking schedules on:" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+      <DatePicker fx:id="planVsCoreStartDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="TOP" />  
+      <Label fx:id="planVsCoreStep2TextLabel" alignment="CENTER" disable="true" text="Finish checking schedules on:" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
+      <DatePicker fx:id="planVsCoreEndDatePicker" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+    
+    
+      <Label fx:id="step1Label" text="1." GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin>
 		</Label>
-      <Label fx:id="step1TextLabel" alignment="CENTER" text="Start checking schedules on:" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
-      <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="TOP" />
-      <Label fx:id="step2Label" disable="true" text="2." GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+	  <Label fx:id="step2Label" disable="true" text="2." GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="step2TextLabel" alignment="CENTER" disable="true" text="Finish checking schedules on:" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-      <DatePicker fx:id="endDatePicker" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="TOP" />
-      <TextArea fx:id="textArea" editable="false" text="Select processing options..." GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowSpan="7">
+      <TextArea fx:id="textArea" editable="false" text="Select processing options..." GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowSpan="8">
          <GridPane.margin>
-            <Insets bottom="10.0" right="10.0" top="15.0" />
+            <Insets bottom="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
       </TextArea>
-		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+		<Button fx:id="executeButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleExecuteButton" prefHeight="30.0" prefWidth="80.0" text="Execute" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
 			<GridPane.margin>
 				<Insets bottom="10.0" left="10.0" />
 			</GridPane.margin>
 		</Button>
-      <Label fx:id="coreDateLabel" text="Core day status:" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateLabel" text="Core day status:" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin></Label>
-      <Label fx:id="coreDateStatusMLabel" text="M" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusMLabel" text="M" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="90.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="coreDateStatusTLabel" text="T" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusTLabel" text="T" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="110.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="coreDateStatusWLabel" text="W" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusWLabel" text="W" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="130.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="coreDateStatusRLabel" text="R" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusRLabel" text="R" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="150.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="coreDateStatusFLabel" text="F" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusFLabel" text="F" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="170.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="coreDateStatusSaLabel" text="Sa" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusSaLabel" text="Sa" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="190.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="coreDateStatusSuLabel" text="Su" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
+      <Label fx:id="coreDateStatusSuLabel" text="Su" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="215.0" />
          </GridPane.margin>
       </Label>
-      <Button fx:id="resetButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleResetButton" prefHeight="30.0" prefWidth="80.0" text="Reset" visible="false" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+      <Button fx:id="resetButton" disable="true" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleResetButton" prefHeight="30.0" prefWidth="80.0" text="Reset" visible="false" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" />
          </GridPane.margin>
       </Button>
-     <ProgressBar fx:id="progressBar" prefWidth="180.0" progress="0.0" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+     <ProgressBar fx:id="progressBar" prefWidth="180.0" progress="0.0" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
          <GridPane.margin>
             <Insets bottom="15.0" left="80.0" />
          </GridPane.margin>
       </ProgressBar>
-      <Label fx:id="step3Label" disable="true" text="3." GridPane.rowIndex="5" GridPane.valignment="TOP">
+      <Label fx:id="step3Label" disable="true" text="3." GridPane.rowIndex="6" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="step3TextLabel" alignment="CENTER" disable="true" text="S3 API:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
-      <RadioButton fx:id="con1RadioButton" disable="true" mnemonicParsing="false" selected="true" text="Connection 1:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP">
+      <Label fx:id="step3TextLabel" alignment="CENTER" disable="true" text="S3 API:" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+      <RadioButton fx:id="con1RadioButton" disable="true" mnemonicParsing="false" selected="true" text="Connection 1:" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets top="25.0" />
          </GridPane.margin>
@@ -124,19 +142,19 @@
             <ToggleGroup fx:id="apiToggleGroup" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="con2RadioButton" disable="true" mnemonicParsing="false" text="Connection 2:" toggleGroup="$apiToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="5">
+      <RadioButton fx:id="con2RadioButton" disable="true" mnemonicParsing="false" text="Connection 2:" toggleGroup="$apiToggleGroup" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
          <GridPane.margin>
-            <Insets top="20.0" />
+            <Insets top="50.0" />
          </GridPane.margin>
       </RadioButton>
-      <Label fx:id="con1Label" disable="true" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP">
+      <Label fx:id="con1Label" disable="true" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets left="100.0" top="25.0" />
          </GridPane.margin>
       </Label>
-      <Label fx:id="con2Label" disable="true" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5">
+      <Label fx:id="con2Label" disable="true" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP">
          <GridPane.margin>
-            <Insets left="100.0" top="20.0" />
+            <Insets left="100.0" top="50.0" />
          </GridPane.margin>
       </Label>
 	</children>

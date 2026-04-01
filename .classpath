@@ -53,7 +53,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX25"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/or-tools_x64_VisualStudio2022_java_v9.12.4544/ortools-java-9.12.4544.jar" sourcepath="C:/Program Files/Java/or-tools_x64_VisualStudio2022_java_v9.12.4544/ortools-java-9.12.4544-javadoc.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/or-tools_x64_VisualStudio2022_java_v9.12.4544/ortools-java-9.12.4544-javadoc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -72,18 +72,22 @@ public class BIASS3CompareSchedulePageController
 	@FXML private Label coreDateStatusFLabel;
 	@FXML private Label coreDateStatusSaLabel;
 	@FXML private Label coreDateStatusSuLabel;
-	@FXML private Label step1TextLabel;
-	@FXML private Label step2TextLabel;
+	@FXML private Label planVsCoreStep1TextLabel;
+	@FXML private Label planVsCoreStep2TextLabel;
 	@FXML private Label step3TextLabel;
 	@FXML private Label step1Label;
 	@FXML private Label step2Label;
 	@FXML private Label step3Label;
 	@FXML private Label con1Label;
 	@FXML private Label con2Label;
+	@FXML private Label planVsPlanStep1TextLabel;
+	@FXML private Label planVsPlanStep2TextLabel;
 
-	@FXML private DatePicker startDatePicker;
-	@FXML private DatePicker endDatePicker;
-
+	@FXML private DatePicker planVsCoreStartDatePicker;
+	@FXML private DatePicker planVsCoreEndDatePicker;
+	@FXML private DatePicker planVsPlanDatePicker1;
+	@FXML private DatePicker planVsPlanDatePicker2;
+	
 	@FXML private RadioButton con1RadioButton;
 	@FXML private RadioButton con2RadioButton;
 
@@ -104,15 +108,15 @@ public class BIASS3CompareSchedulePageController
 		startDateSelectedBP = new SimpleBooleanProperty();
 		endDateSelectedBP = new SimpleBooleanProperty();
 
-		startDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
-		startDatePicker.setOnAction(new EventHandler<ActionEvent>() 
+		planVsCoreStartDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
+		planVsCoreStartDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
 			public void handle(ActionEvent event) 
 			{
-				if (startDatePicker.getValue() != null)
+				if (planVsCoreStartDatePicker.getValue() != null)
 				{
-					startDate = startDatePicker.getValue();
+					startDate = planVsCoreStartDatePicker.getValue();
 					startDateSelectedBP.set(true);
 				}
 				else
@@ -122,15 +126,15 @@ public class BIASS3CompareSchedulePageController
 			}
 		});
 
-		endDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
-		endDatePicker.setOnAction(new EventHandler<ActionEvent>() 
+		planVsCoreEndDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
+		planVsCoreEndDatePicker.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			@Override
 			public void handle(ActionEvent event) 
 			{
-				if (endDatePicker.getValue() != null)
+				if (planVsCoreEndDatePicker.getValue() != null)
 				{
-					endDate = endDatePicker.getValue();
+					endDate = planVsCoreEndDatePicker.getValue();
 					endDateSelectedBP.set(true);
 				}
 				else
@@ -143,15 +147,15 @@ public class BIASS3CompareSchedulePageController
 		startDateSelectedBP.addListener((observable, oldValue, newValue) -> {
 			if (newValue.equals(true)) 
 			{
-				endDatePicker.setDisable(false);
-				step2TextLabel.setDisable(false);
+				planVsCoreEndDatePicker.setDisable(false);
+				planVsCoreStep2TextLabel.setDisable(false);
 				step2Label.setDisable(false);
 			}
 			else
 			{
-				endDatePicker.setDisable(true);
-				endDatePicker.setValue(null);
-				step2TextLabel.setDisable(true);
+				planVsCoreEndDatePicker.setDisable(true);
+				planVsCoreEndDatePicker.setValue(null);
+				planVsCoreStep2TextLabel.setDisable(true);
 				step2Label.setDisable(true);
 			}
 		});
@@ -450,13 +454,13 @@ public class BIASS3CompareSchedulePageController
 
 				// Disable controls
 				step1Label.setDisable(true);
-				step1TextLabel.setDisable(true);
+				planVsCoreStep1TextLabel.setDisable(true);
 				step2Label.setDisable(true);
-				step2TextLabel.setDisable(true);
+				planVsCoreStep2TextLabel.setDisable(true);
 				step3Label.setDisable(true);
 				step3TextLabel.setDisable(true);
-				startDatePicker.setDisable(true);
-				endDatePicker.setDisable(true);
+				planVsCoreStartDatePicker.setDisable(true);
+				planVsCoreEndDatePicker.setDisable(true);
 				con1RadioButton.setDisable(true);
 				con2RadioButton.setDisable(true);
 				con1Label.setDisable(true);
@@ -489,13 +493,13 @@ public class BIASS3CompareSchedulePageController
 
 				// Enable controls
 				step1Label.setDisable(false);
-				step1TextLabel.setDisable(false);
+				planVsCoreStep1TextLabel.setDisable(false);
 				step2Label.setDisable(false);
-				step2TextLabel.setDisable(false);
+				planVsCoreStep2TextLabel.setDisable(false);
 				step3Label.setDisable(false);
 				step3TextLabel.setDisable(false);
-				startDatePicker.setDisable(false);
-				endDatePicker.setDisable(false);
+				planVsCoreStartDatePicker.setDisable(false);
+				planVsCoreEndDatePicker.setDisable(false);
 				coreDateLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
@@ -504,8 +508,8 @@ public class BIASS3CompareSchedulePageController
 				coreDateStatusFLabel.setDisable(false);
 				coreDateStatusSaLabel.setDisable(false);
 				coreDateStatusSuLabel.setDisable(false);
-				startDatePicker.setValue(null);
-				endDatePicker.setValue(null);
+				planVsCoreStartDatePicker.setValue(null);
+				planVsCoreEndDatePicker.setValue(null);
 
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -548,13 +552,13 @@ public class BIASS3CompareSchedulePageController
 
 				// Disable controls
 				step1Label.setDisable(true);
-				step1TextLabel.setDisable(true);
+				planVsCoreStep1TextLabel.setDisable(true);
 				step2Label.setDisable(true);
-				step2TextLabel.setDisable(true);
+				planVsCoreStep2TextLabel.setDisable(true);
 				step3Label.setDisable(true);
 				step3TextLabel.setDisable(true);
-				startDatePicker.setDisable(true);
-				endDatePicker.setDisable(true);
+				planVsCoreStartDatePicker.setDisable(true);
+				planVsCoreEndDatePicker.setDisable(true);
 				con1Label.setDisable(true);
 				con2Label.setDisable(true);
 				con1RadioButton.setDisable(true);
@@ -587,13 +591,13 @@ public class BIASS3CompareSchedulePageController
 
 				// Enable controls
 				step1Label.setDisable(false);
-				step1TextLabel.setDisable(false);
+				planVsCoreStep1TextLabel.setDisable(false);
 				step2Label.setDisable(false);
-				step2TextLabel.setDisable(false);
+				planVsCoreStep2TextLabel.setDisable(false);
 				step3Label.setDisable(false);
 				step3TextLabel.setDisable(false);
-				startDatePicker.setDisable(false);
-				endDatePicker.setDisable(false);
+				planVsCoreStartDatePicker.setDisable(false);
+				planVsCoreEndDatePicker.setDisable(false);
 				coreDateLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
@@ -602,8 +606,8 @@ public class BIASS3CompareSchedulePageController
 				coreDateStatusFLabel.setDisable(false);
 				coreDateStatusSaLabel.setDisable(false);
 				coreDateStatusSuLabel.setDisable(false);
-				startDatePicker.setValue(null);
-				endDatePicker.setValue(null);
+				planVsCoreStartDatePicker.setValue(null);
+				planVsCoreEndDatePicker.setValue(null);
 
 				executeButton.setVisible(true);
 				resetButton.setVisible(false);
@@ -620,13 +624,13 @@ public class BIASS3CompareSchedulePageController
 
 		// Enable controls
 		step1Label.setDisable(false);
-		step1TextLabel.setDisable(false);
+		planVsCoreStep1TextLabel.setDisable(false);
 		step2Label.setDisable(false);
-		step2TextLabel.setDisable(false);
+		planVsCoreStep2TextLabel.setDisable(false);
 		step3Label.setDisable(false);
 		step3TextLabel.setDisable(false);
-		startDatePicker.setDisable(false);
-		endDatePicker.setDisable(false);	
+		planVsCoreStartDatePicker.setDisable(false);
+		planVsCoreEndDatePicker.setDisable(false);	
 		con1Label.setDisable(false);
 		con2Label.setDisable(false);
 		con1RadioButton.setDisable(false);
@@ -639,8 +643,8 @@ public class BIASS3CompareSchedulePageController
 		coreDateStatusFLabel.setDisable(false);
 		coreDateStatusSaLabel.setDisable(false);
 		coreDateStatusSuLabel.setDisable(false);
-		startDatePicker.setValue(null);
-		endDatePicker.setValue(null);
+		planVsCoreStartDatePicker.setValue(null);
+		planVsCoreEndDatePicker.setValue(null);
 
 		// Rebind buttons
 		executeButton.disableProperty().bind(disableExecuteButton);

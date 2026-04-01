@@ -1,6 +1,5 @@
 package com.bl.bias.write;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -336,22 +335,21 @@ public class WriteS3CompareScheduleFiles1
 					{
 						// Build core train string
 						String coreTrainDetails = "";
-						for (int j = 0; j < coreDates.get(date.getDayOfWeek().getValue()).size(); j++)
+						for (int j = 0; j < coreDates.get(date.getDayOfWeek().getValue() - 1).size(); j++)
 						{
-							if (coreDates.get(date.getDayOfWeek().getValue()).get(j).getServiceName().equals(trainsWithDifferentParameters.get(date).get(i).getServiceName()))
+							if (coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getServiceName().equals(trainsWithDifferentParameters.get(date).get(i).getServiceName()))
 							{
-								coreTrainDetails = "     Core Train Type: "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getServiceType();
-								coreTrainDetails += ", Origin: "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getDepartureLocation();
-								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getDepartureTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue()).get(j).getDepartureTimestamp().length() - 5);
-								coreTrainDetails += ", Destination: "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getArrivalLocation();
-								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue()).get(j).getArrivalTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue()).get(j).getArrivalTimestamp().length() - 5);
+								coreTrainDetails = "     Core Train Type: "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getServiceType();
+								coreTrainDetails += ", Origin: "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureLocation();
+								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureTimestamp().length() - 5);
+								coreTrainDetails += ", Destination: "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalLocation();
+								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalTimestamp().length() - 5);
 								break;
 							}
 						}
 
 						// Build planned train string
 						String analyzedTrainDetails = "";
-						outerLoop:
 						for (int j = 0; j < analyzedDates.size(); j++)
 						{
 							for (int k = 0; k < analyzedDates.get(j).size(); k++)
@@ -363,7 +361,7 @@ public class WriteS3CompareScheduleFiles1
 									analyzedTrainDetails += " at "+analyzedDates.get(j).get(k).getDepartureTimestamp().substring(0, analyzedDates.get(j).get(k).getDepartureTimestamp().length() - 5);
 									analyzedTrainDetails += ", Destination: "+analyzedDates.get(j).get(k).getArrivalLocation();
 									analyzedTrainDetails += " at "+analyzedDates.get(j).get(k).getArrivalTimestamp().substring(0, analyzedDates.get(j).get(k).getArrivalTimestamp().length() - 5);
-									break outerLoop;
+									break;
 								}
 							}
 						}
