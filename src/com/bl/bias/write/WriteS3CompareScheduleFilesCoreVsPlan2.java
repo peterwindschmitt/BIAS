@@ -14,17 +14,17 @@ import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.objects.ServiceObject;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteS3CompareScheduleFiles2 extends WriteS3CompareScheduleFiles1
+public class WriteS3CompareScheduleFilesCoreVsPlan2 extends WriteS3CompareScheduleFilesCoreVsPlan1
 {
 	private static String resultsMessage2 = "";
 	
 	static Boolean error = false;
 	
-	public WriteS3CompareScheduleFiles2(Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
+	public WriteS3CompareScheduleFilesCoreVsPlan2(Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
 	{
 		super(api1, api2, textArea, startDate, endDate, trainsInAnalyzedDayButNotCoreDay, trainsInCoreDayButNotAnalyzedDay, trainsWithDifferentParameters, showDetailsForRetimedTrains, coreDates, analyzedDates);
 		
-		resultsMessage2 = WriteS3CompareScheduleFiles1.getResultsMessage1();
+		resultsMessage2 = WriteS3CompareScheduleFilesCoreVsPlan1.getResultsMessage1();
 				
     	//  Write spreadsheet
 		try 

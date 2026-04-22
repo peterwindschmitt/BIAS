@@ -7,16 +7,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
-import com.bl.bias.analyze.S3CompareScheduleAnalysis;
+import com.bl.bias.analyze.S3CompareScheduleAnalysisCoreVsPlan;
+import com.bl.bias.analyze.S3CompareScheduleAnalysisPlanVsPlan;
 import com.bl.bias.exception.ErrorShutdown;
-import com.bl.bias.read.ReadS3CompareScheduleFiles;
+import com.bl.bias.read.ReadS3CompareScheduleFilesCoreVsPlan;
+import com.bl.bias.read.ReadS3CompareScheduleFilesPlanVsPlan;
 import com.bl.bias.tools.ConvertDateTime;
-import com.bl.bias.write.WriteS3CompareScheduleFiles2;
+import com.bl.bias.write.WriteS3CompareScheduleFilesCoreVsPlan2;
+import com.bl.bias.write.WriteS3CompareScheduleFilesPlanVsPlan2;
 
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -30,6 +32,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -46,25 +49,34 @@ public class BIASS3CompareSchedulePageController
 
 	private static Boolean continueAnalysis = true;
 
-	private static BooleanBinding disableExecuteButton;
-	private static BooleanBinding disableAPIConnectionsRadioButton;
-	private static BooleanBinding coreDayCountBP;
-	private static SimpleIntegerProperty coreDayCountSelectedIP;
+	private static BooleanBinding disableApiConnectionsAndExecuteButton;
 	private static SimpleBooleanProperty startDateSelectedBP;
 	private static SimpleBooleanProperty endDateSelectedBP;
+	private static SimpleBooleanProperty firstDateSelectedBP;
+	private static SimpleBooleanProperty secondDateSelectedBP;
+	private static SimpleBooleanProperty coreVsPlanBP;
+	private static SimpleBooleanProperty planVsPlanBP;
+
 
 	private static LocalDate startDate;
 	private static LocalDate endDate;
+	private static LocalDate scheduleDateA;
+	private static LocalDate scheduleDateB;
 
 	private static ObservableList<String> validCoreDayList = FXCollections.observableList(new ArrayList<String>());
+	private static ObservableList<String> validPlanDayListCoreVsPlan = FXCollections.observableList(new ArrayList<String>());
+	private static ObservableList<String> validPlanDayListPlanVsPlan = FXCollections.observableList(new ArrayList<String>());
 
 	private static ObservableValue<String> con1NameAsObservable;
 	private static ObservableValue<String> con2NameAsObservable;
 
+	@FXML private Tab coreVsPlanTab;
+	@FXML private Tab planVsPlanTab;
+
 	@FXML private Button executeButton;
 	@FXML private Button resetButton;
 
-	@FXML private Label coreDateLabel;
+	@FXML private Label coreDatesLabel;
 	@FXML private Label coreDateStatusMLabel;
 	@FXML private Label coreDateStatusTLabel;
 	@FXML private Label coreDateStatusWLabel;
@@ -72,11 +84,21 @@ public class BIASS3CompareSchedulePageController
 	@FXML private Label coreDateStatusFLabel;
 	@FXML private Label coreDateStatusSaLabel;
 	@FXML private Label coreDateStatusSuLabel;
+	@FXML private Label planDatesLabel;
+	@FXML private Label planDateStatusMLabel;
+	@FXML private Label planDateStatusTLabel;
+	@FXML private Label planDateStatusWLabel;
+	@FXML private Label planDateStatusRLabel;
+	@FXML private Label planDateStatusFLabel;
+	@FXML private Label planDateStatusSaLabel;
+	@FXML private Label planDateStatusSuLabel;
 	@FXML private Label planVsCoreStep1TextLabel;
 	@FXML private Label planVsCoreStep2TextLabel;
 	@FXML private Label step3TextLabel;
-	@FXML private Label step1Label;
-	@FXML private Label step2Label;
+	@FXML private Label step1LabelPlanVsCore;
+	@FXML private Label step2LabelPlanVsCore;
+	@FXML private Label step1LabelPlanVsPlan;
+	@FXML private Label step2LabelPlanVsPlan;
 	@FXML private Label step3Label;
 	@FXML private Label con1Label;
 	@FXML private Label con2Label;
@@ -87,7 +109,7 @@ public class BIASS3CompareSchedulePageController
 	@FXML private DatePicker planVsCoreEndDatePicker;
 	@FXML private DatePicker planVsPlanDatePicker1;
 	@FXML private DatePicker planVsPlanDatePicker2;
-	
+
 	@FXML private RadioButton con1RadioButton;
 	@FXML private RadioButton con2RadioButton;
 
@@ -105,8 +127,62 @@ public class BIASS3CompareSchedulePageController
 
 	@FXML private void initialize()
 	{
+		coreVsPlanBP = new SimpleBooleanProperty();
+		planVsPlanBP = new SimpleBooleanProperty();
+
+		planDateStatusMLabel.setStyle("-fx-text-fill: red");
+		planDateStatusTLabel.setStyle("-fx-text-fill: red");
+		planDateStatusWLabel.setStyle("-fx-text-fill: red");
+		planDateStatusRLabel.setStyle("-fx-text-fill: red");
+		planDateStatusFLabel.setStyle("-fx-text-fill: red");
+		planDateStatusSaLabel.setStyle("-fx-text-fill: red");
+		planDateStatusSuLabel.setStyle("-fx-text-fill: red");
+
+		coreVsPlanBP.setValue(true);
+
+		coreVsPlanTab.setOnSelectionChanged(_ -> {
+			if (coreVsPlanTab.isSelected()) 
+			{ 
+				coreVsPlanBP.setValue(true);
+				planVsPlanBP.setValue(false);
+
+				coreDatesLabel.setVisible(true);
+				coreDateStatusMLabel.setVisible(true);
+				coreDateStatusTLabel.setVisible(true);
+				coreDateStatusWLabel.setVisible(true);
+				coreDateStatusRLabel.setVisible(true);
+				coreDateStatusFLabel.setVisible(true);
+				coreDateStatusSaLabel.setVisible(true);
+				coreDateStatusSuLabel.setVisible(true); 
+
+				updatePlanDaysForCoreVsPlan();
+			}
+		});
+
+		planVsPlanTab.setOnSelectionChanged(_ -> {
+			if (planVsPlanTab.isSelected()) 
+			{ 
+				coreVsPlanBP.setValue(false);
+				planVsPlanBP.setValue(true);
+
+				coreDatesLabel.setVisible(false);
+				coreDateStatusMLabel.setVisible(false);
+				coreDateStatusTLabel.setVisible(false);
+				coreDateStatusWLabel.setVisible(false);
+				coreDateStatusRLabel.setVisible(false);
+				coreDateStatusFLabel.setVisible(false);
+				coreDateStatusSaLabel.setVisible(false);
+				coreDateStatusSuLabel.setVisible(false);
+
+				updatePlanDaysForPlanVsPlan();
+			}
+		});
+
 		startDateSelectedBP = new SimpleBooleanProperty();
 		endDateSelectedBP = new SimpleBooleanProperty();
+
+		firstDateSelectedBP = new SimpleBooleanProperty();
+		secondDateSelectedBP = new SimpleBooleanProperty();
 
 		planVsCoreStartDatePicker.setDayCellFactory(getFutureDatesOnlyFactory(true));
 		planVsCoreStartDatePicker.setOnAction(new EventHandler<ActionEvent>() 
@@ -122,7 +198,10 @@ public class BIASS3CompareSchedulePageController
 				else
 				{
 					startDateSelectedBP.set(false);
+					startDate = null;
 				}
+
+				updatePlanDaysForCoreVsPlan();
 			}
 		});
 
@@ -140,50 +219,125 @@ public class BIASS3CompareSchedulePageController
 				else
 				{
 					endDateSelectedBP.set(false);
+					endDate = null;
 				}
+
+				updatePlanDaysForCoreVsPlan();
 			}
 		});
 
-		startDateSelectedBP.addListener((observable, oldValue, newValue) -> {
+		planVsPlanDatePicker1.setDayCellFactory(getFutureDatesOnlyFactory(true));
+		planVsPlanDatePicker1.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				if (planVsPlanDatePicker1.getValue() != null)
+				{
+					scheduleDateA = planVsPlanDatePicker1.getValue();
+					firstDateSelectedBP.set(true);
+				}
+				else
+				{
+					firstDateSelectedBP.set(false);
+					scheduleDateA = null;
+				}
+				updatePlanDaysForPlanVsPlan();
+			}
+		});
+
+		planVsPlanDatePicker2.setDayCellFactory(getFutureDatesOnlyFactory(true));
+		planVsPlanDatePicker2.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				if (planVsPlanDatePicker2.getValue() != null)
+				{
+					scheduleDateB = planVsPlanDatePicker2.getValue();
+					secondDateSelectedBP.set(true);
+				}
+				else
+				{
+					secondDateSelectedBP.set(false);
+					scheduleDateB = null;
+				}
+
+				updatePlanDaysForPlanVsPlan();
+			}
+		});
+
+		startDateSelectedBP.addListener((_, _, newValue) -> {
 			if (newValue.equals(true)) 
 			{
 				planVsCoreEndDatePicker.setDisable(false);
 				planVsCoreStep2TextLabel.setDisable(false);
-				step2Label.setDisable(false);
+				step2LabelPlanVsCore.setDisable(false);
 			}
 			else
 			{
 				planVsCoreEndDatePicker.setDisable(true);
 				planVsCoreEndDatePicker.setValue(null);
 				planVsCoreStep2TextLabel.setDisable(true);
-				step2Label.setDisable(true);
+				step2LabelPlanVsCore.setDisable(true);
 			}
 		});
 
-		endDateSelectedBP.addListener((observable, oldValue, newValue) -> {
+		endDateSelectedBP.addListener((_, _, newValue) -> {
 			if (newValue.equals(true)) 
 			{
-				step3TextLabel.setDisable(false);
-				step3Label.setDisable(false);
-
 				con1Label.disableProperty().unbind();
 				con2Label.disableProperty().unbind();
 				con1Label.setDisable(false);
 				con2Label.setDisable(false);
-				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 			}
 			else
 			{
-				step3TextLabel.setDisable(true);
-				step3Label.setDisable(true);
-
 				con1Label.disableProperty().unbind();
 				con2Label.disableProperty().unbind();
 				con1Label.setDisable(true);
 				con2Label.setDisable(true);
-				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+			}
+		});
+
+		firstDateSelectedBP.addListener((_, _, newValue) -> {
+			if (newValue.equals(true)) 
+			{
+				planVsPlanDatePicker2.setDisable(false);
+				planVsPlanStep2TextLabel.setDisable(false);
+				step2LabelPlanVsPlan.setDisable(false);
+			}
+			else
+			{
+				planVsPlanDatePicker2.setDisable(true);
+				planVsPlanDatePicker2.setValue(null);
+				planVsPlanStep2TextLabel.setDisable(true);
+				step2LabelPlanVsPlan.setDisable(true);
+			}
+		});
+
+		secondDateSelectedBP.addListener((_, _, newValue) -> {
+			if (newValue.equals(true)) 
+			{
+				con1Label.disableProperty().unbind();
+				con2Label.disableProperty().unbind();
+				con1Label.setDisable(false);
+				con2Label.setDisable(false);
+				con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+			}
+			else
+			{
+				con1Label.disableProperty().unbind();
+				con2Label.disableProperty().unbind();
+				con1Label.setDisable(true);
+				con2Label.setDisable(true);
+				con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 			}
 		});
 
@@ -191,7 +345,6 @@ public class BIASS3CompareSchedulePageController
 			@Override
 			//onChanged method
 			public void onChanged(ListChangeListener.Change c) {
-				coreDayCountSelectedIP.set(validCoreDayList.size());
 
 				if (validCoreDayList.contains("M"))
 				{
@@ -258,8 +411,74 @@ public class BIASS3CompareSchedulePageController
 			}
 		});
 
-		coreDayCountSelectedIP = new SimpleIntegerProperty();
-		coreDayCountBP = coreDayCountSelectedIP.isEqualTo(7);
+		validPlanDayListCoreVsPlan.addListener(new ListChangeListener<String>() {
+			@Override
+			//onChanged method
+			public void onChanged(ListChangeListener.Change c) {
+				if (validPlanDayListCoreVsPlan.contains("M"))
+				{
+					planDateStatusMLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusMLabel.setStyle("-fx-text-fill: red");
+				}
+
+				if (validPlanDayListCoreVsPlan.contains("T"))
+				{
+					planDateStatusTLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusTLabel.setStyle("-fx-text-fill: red");
+				}
+
+				if (validPlanDayListCoreVsPlan.contains("W"))
+				{
+					planDateStatusWLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusWLabel.setStyle("-fx-text-fill: red");
+				}
+
+				if (validPlanDayListCoreVsPlan.contains("R"))
+				{
+					planDateStatusRLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusRLabel.setStyle("-fx-text-fill: red");
+				}
+
+				if (validPlanDayListCoreVsPlan.contains("F"))
+				{
+					planDateStatusFLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusFLabel.setStyle("-fx-text-fill: red");
+				}
+
+				if (validPlanDayListCoreVsPlan.contains("Sa"))
+				{
+					planDateStatusSaLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusSaLabel.setStyle("-fx-text-fill: red");
+				}
+
+				if (validPlanDayListCoreVsPlan.contains("Su"))
+				{
+					planDateStatusSuLabel.setStyle("-fx-text-fill: green");
+				}
+				else
+				{
+					planDateStatusSuLabel.setStyle("-fx-text-fill: red");
+				}
+			}
+		});
 
 		// Update API connection 1 labels
 		if (con1NameAsObservable.getValue().equals(""))
@@ -267,7 +486,7 @@ public class BIASS3CompareSchedulePageController
 		else
 			con1Label.setText(con1NameAsObservable.getValue());
 
-		con1NameAsObservable.addListener((observable, oldValue, newValue) -> {
+		con1NameAsObservable.addListener((_, _, newValue) -> {
 			if (newValue.equals(""))
 				con1Label.setText("N/A");
 			else
@@ -280,21 +499,24 @@ public class BIASS3CompareSchedulePageController
 		else
 			con2Label.setText(con2NameAsObservable.getValue());
 
-		con2NameAsObservable.addListener((observable, oldValue, newValue) -> {
+		con2NameAsObservable.addListener((_, _, newValue) -> {
 			if (newValue.equals(""))
 				con2Label.setText("N/A");
 			else
 				con2Label.setText(newValue);
 		});	
 
-		// disable execute button and API radio buttons if 1)there isn't a start and 2) an end date and 3) if all DOW are not present in core assignments
-		disableExecuteButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not());   
-		disableAPIConnectionsRadioButton = startDateSelectedBP.not().or(endDateSelectedBP.not()).or(coreDayCountBP.not()); 
-		executeButton.disableProperty().bind(disableExecuteButton);
-		con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-		con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-		con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-		con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+		// disable execute button and API radio buttons if 
+		// CONDITION A:  1) there isn't a start or 2) an there isn't an end date or 3) if all plan DOW are not present in core assignments or 4) on core vs plan tab
+		// CONDITION B:  1) there isn't a first date or 2) there isn't a second date or 3) on plan vs plan tab
+		disableApiConnectionsAndExecuteButton = (planVsPlanBP.or(startDateSelectedBP.not().or(endDateSelectedBP.not()))).and((coreVsPlanBP.or(firstDateSelectedBP.not().or(secondDateSelectedBP.not()))));
+		executeButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con1RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con2RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		step3TextLabel.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		step3Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 
 		boolean mondayDateExists = Boolean.getBoolean(prefs.get("s3_mondayCoreDate", null));
 		if ((mondayDateExists) && (!prefs.get("s3_mondayCoreDate", "").equals("M")))
@@ -400,8 +622,6 @@ public class BIASS3CompareSchedulePageController
 		{
 			coreDateStatusSuLabel.setStyle("-fx-text-fill: red");
 		}
-
-		coreDayCountSelectedIP.set(validCoreDayList.size());
 	}
 
 	@FXML private void handleExecuteButton(ActionEvent event) 
@@ -442,7 +662,10 @@ public class BIASS3CompareSchedulePageController
 					ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
 				}
 
-				message = "Starting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
+				if (coreVsPlanBP.getValue())
+					message = "Starting S3 Core vs Plan Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
+				else
+					message = "Starting S3 Plan vs Plan Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
 				displayMessage(message);
 
 				// Unbind buttons
@@ -451,21 +674,26 @@ public class BIASS3CompareSchedulePageController
 				con2RadioButton.disableProperty().unbind();
 				con1Label.disableProperty().unbind();
 				con2Label.disableProperty().unbind();
+				step3Label.disableProperty().unbind();
+				step3TextLabel.disableProperty().unbind();
 
 				// Disable controls
-				step1Label.setDisable(true);
+				coreVsPlanTab.setDisable(true);
+				planVsPlanTab.setDisable(true);
+				step1LabelPlanVsCore.setDisable(true);
 				planVsCoreStep1TextLabel.setDisable(true);
-				step2Label.setDisable(true);
+				step2LabelPlanVsCore.setDisable(true);
 				planVsCoreStep2TextLabel.setDisable(true);
-				step3Label.setDisable(true);
-				step3TextLabel.setDisable(true);
 				planVsCoreStartDatePicker.setDisable(true);
 				planVsCoreEndDatePicker.setDisable(true);
+				step3Label.setDisable(true);
+				step3TextLabel.setDisable(true);
 				con1RadioButton.setDisable(true);
 				con2RadioButton.setDisable(true);
 				con1Label.setDisable(true);
 				con2Label.setDisable(true);
-				coreDateLabel.setDisable(true);
+				coreDatesLabel.setDisable(true);
+				planDatesLabel.setDisable(true);
 				coreDateStatusMLabel.setDisable(true);
 				coreDateStatusTLabel.setDisable(true);
 				coreDateStatusWLabel.setDisable(true);
@@ -473,6 +701,13 @@ public class BIASS3CompareSchedulePageController
 				coreDateStatusFLabel.setDisable(true);
 				coreDateStatusSaLabel.setDisable(true);
 				coreDateStatusSuLabel.setDisable(true);
+				planDateStatusMLabel.setDisable(true);
+				planDateStatusTLabel.setDisable(true);
+				planDateStatusWLabel.setDisable(true);
+				planDateStatusRLabel.setDisable(true);
+				planDateStatusFLabel.setDisable(true);
+				planDateStatusSaLabel.setDisable(true);
+				planDateStatusSuLabel.setDisable(true);
 				executeButton.setDisable(true);
 
 				continueAnalysis = true;
@@ -485,22 +720,25 @@ public class BIASS3CompareSchedulePageController
 				resetMessage();
 
 				// Rebind buttons
-				executeButton.disableProperty().bind(disableExecuteButton);
-				con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				executeButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con1RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				step3Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				step3TextLabel.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 
 				// Enable controls
-				step1Label.setDisable(false);
+				coreVsPlanTab.setDisable(false);
+				planVsPlanTab.setDisable(false);
+				step1LabelPlanVsCore.setDisable(false);
 				planVsCoreStep1TextLabel.setDisable(false);
-				step2Label.setDisable(false);
+				step2LabelPlanVsCore.setDisable(false);
 				planVsCoreStep2TextLabel.setDisable(false);
-				step3Label.setDisable(false);
-				step3TextLabel.setDisable(false);
 				planVsCoreStartDatePicker.setDisable(false);
 				planVsCoreEndDatePicker.setDisable(false);
-				coreDateLabel.setDisable(false);
+				coreDatesLabel.setDisable(false);
+				planDatesLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
 				coreDateStatusWLabel.setDisable(false);
@@ -508,6 +746,13 @@ public class BIASS3CompareSchedulePageController
 				coreDateStatusFLabel.setDisable(false);
 				coreDateStatusSaLabel.setDisable(false);
 				coreDateStatusSuLabel.setDisable(false);
+				planDateStatusMLabel.setDisable(false);
+				planDateStatusTLabel.setDisable(false);
+				planDateStatusWLabel.setDisable(false);
+				planDateStatusRLabel.setDisable(false);
+				planDateStatusFLabel.setDisable(false);
+				planDateStatusSaLabel.setDisable(false);
+				planDateStatusSuLabel.setDisable(false);
 				planVsCoreStartDatePicker.setValue(null);
 				planVsCoreEndDatePicker.setValue(null);
 
@@ -535,7 +780,10 @@ public class BIASS3CompareSchedulePageController
 			if (directory != null)
 			{
 				clearMessage();
-				message = "Starting S3 Core Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
+				if (coreVsPlanBP.getValue())
+					message = "Starting S3 Core vs Plan Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
+				else
+					message = "Starting S3 Plan vs Plan Schedule Analysis at "+ConvertDateTime.getTimeStamp()+"\n";
 				displayMessage(message);
 
 				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
@@ -549,21 +797,26 @@ public class BIASS3CompareSchedulePageController
 				con2RadioButton.disableProperty().unbind();
 				con1Label.disableProperty().unbind();
 				con2Label.disableProperty().unbind();
+				step3Label.disableProperty().unbind();
+				step3TextLabel.disableProperty().unbind();
 
 				// Disable controls
-				step1Label.setDisable(true);
+				coreVsPlanTab.setDisable(true);
+				planVsPlanTab.setDisable(true);
+				step1LabelPlanVsCore.setDisable(true);
 				planVsCoreStep1TextLabel.setDisable(true);
-				step2Label.setDisable(true);
+				step2LabelPlanVsCore.setDisable(true);
 				planVsCoreStep2TextLabel.setDisable(true);
-				step3Label.setDisable(true);
-				step3TextLabel.setDisable(true);
 				planVsCoreStartDatePicker.setDisable(true);
 				planVsCoreEndDatePicker.setDisable(true);
+				step3Label.setDisable(true);
+				step3TextLabel.setDisable(true);
 				con1Label.setDisable(true);
 				con2Label.setDisable(true);
 				con1RadioButton.setDisable(true);
 				con2RadioButton.setDisable(true);
-				coreDateLabel.setDisable(true);
+				coreDatesLabel.setDisable(true);
+				planDatesLabel.setDisable(true);
 				coreDateStatusMLabel.setDisable(true);
 				coreDateStatusTLabel.setDisable(true);
 				coreDateStatusWLabel.setDisable(true);
@@ -571,6 +824,13 @@ public class BIASS3CompareSchedulePageController
 				coreDateStatusFLabel.setDisable(true);
 				coreDateStatusSaLabel.setDisable(true);
 				coreDateStatusSuLabel.setDisable(true);
+				planDateStatusMLabel.setDisable(true);
+				planDateStatusTLabel.setDisable(true);
+				planDateStatusWLabel.setDisable(true);
+				planDateStatusRLabel.setDisable(true);
+				planDateStatusFLabel.setDisable(true);
+				planDateStatusSaLabel.setDisable(true);
+				planDateStatusSuLabel.setDisable(true);
 				executeButton.setDisable(true);
 
 				continueAnalysis = true;
@@ -583,22 +843,25 @@ public class BIASS3CompareSchedulePageController
 				resetMessage();
 
 				// Rebind buttons
-				executeButton.disableProperty().bind(disableExecuteButton);
-				con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-				con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+				executeButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con1RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				step3Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+				step3TextLabel.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 
 				// Enable controls
-				step1Label.setDisable(false);
+				coreVsPlanTab.setDisable(false);
+				planVsPlanTab.setDisable(false);
+				step1LabelPlanVsCore.setDisable(false);
 				planVsCoreStep1TextLabel.setDisable(false);
-				step2Label.setDisable(false);
+				step2LabelPlanVsCore.setDisable(false);
 				planVsCoreStep2TextLabel.setDisable(false);
-				step3Label.setDisable(false);
-				step3TextLabel.setDisable(false);
 				planVsCoreStartDatePicker.setDisable(false);
 				planVsCoreEndDatePicker.setDisable(false);
-				coreDateLabel.setDisable(false);
+				coreDatesLabel.setDisable(false);
+				planDatesLabel.setDisable(false);
 				coreDateStatusMLabel.setDisable(false);
 				coreDateStatusTLabel.setDisable(false);
 				coreDateStatusWLabel.setDisable(false);
@@ -606,6 +869,13 @@ public class BIASS3CompareSchedulePageController
 				coreDateStatusFLabel.setDisable(false);
 				coreDateStatusSaLabel.setDisable(false);
 				coreDateStatusSuLabel.setDisable(false);
+				planDateStatusMLabel.setDisable(false);
+				planDateStatusTLabel.setDisable(false);
+				planDateStatusWLabel.setDisable(false);
+				planDateStatusRLabel.setDisable(false);
+				planDateStatusFLabel.setDisable(false);
+				planDateStatusSaLabel.setDisable(false);
+				planDateStatusSuLabel.setDisable(false);
 				planVsCoreStartDatePicker.setValue(null);
 				planVsCoreEndDatePicker.setValue(null);
 
@@ -623,19 +893,22 @@ public class BIASS3CompareSchedulePageController
 		setProgressIndicator(0.00);
 
 		// Enable controls
-		step1Label.setDisable(false);
+		coreVsPlanTab.setDisable(false);
+		planVsPlanTab.setDisable(false);
+		step1LabelPlanVsCore.setDisable(false);
 		planVsCoreStep1TextLabel.setDisable(false);
-		step2Label.setDisable(false);
+		step2LabelPlanVsCore.setDisable(false);
 		planVsCoreStep2TextLabel.setDisable(false);
-		step3Label.setDisable(false);
-		step3TextLabel.setDisable(false);
 		planVsCoreStartDatePicker.setDisable(false);
 		planVsCoreEndDatePicker.setDisable(false);	
+		step3Label.setDisable(false);
+		step3TextLabel.setDisable(false);
 		con1Label.setDisable(false);
 		con2Label.setDisable(false);
 		con1RadioButton.setDisable(false);
 		con2RadioButton.setDisable(false);
-		coreDateLabel.setDisable(false);
+		coreDatesLabel.setDisable(false);
+		planDatesLabel.setDisable(false);
 		coreDateStatusMLabel.setDisable(false);
 		coreDateStatusTLabel.setDisable(false);
 		coreDateStatusWLabel.setDisable(false);
@@ -643,19 +916,30 @@ public class BIASS3CompareSchedulePageController
 		coreDateStatusFLabel.setDisable(false);
 		coreDateStatusSaLabel.setDisable(false);
 		coreDateStatusSuLabel.setDisable(false);
+		planDateStatusMLabel.setDisable(false);
+		planDateStatusTLabel.setDisable(false);
+		planDateStatusWLabel.setDisable(false);
+		planDateStatusRLabel.setDisable(false);
+		planDateStatusFLabel.setDisable(false);
+		planDateStatusSaLabel.setDisable(false);
+		planDateStatusSuLabel.setDisable(false);
 		planVsCoreStartDatePicker.setValue(null);
 		planVsCoreEndDatePicker.setValue(null);
+		planVsPlanDatePicker1.setValue(null);
+		planVsPlanDatePicker2.setValue(null);
 
 		// Rebind buttons
-		executeButton.disableProperty().bind(disableExecuteButton);
-		con1RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-		con2RadioButton.disableProperty().bind(disableAPIConnectionsRadioButton);
-		con1Label.disableProperty().bind(disableAPIConnectionsRadioButton);
-		con2Label.disableProperty().bind(disableAPIConnectionsRadioButton);
+		executeButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con1RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con2RadioButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con1Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		con2Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		step3Label.disableProperty().bind(disableApiConnectionsAndExecuteButton);
+		step3TextLabel.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 
 		executeButton.setVisible(true);
 		resetButton.setVisible(false);
-	}     
+	}     	
 
 	private void startTask()
 	{
@@ -685,94 +969,278 @@ public class BIASS3CompareSchedulePageController
 	private void runTask() throws Exception
 	{
 		continueAnalysis = true;
-		// Check date range is ordered properly
-		if (startDate.isAfter(endDate))
+
+		if (coreVsPlanBP.getValue())
 		{
-			continueAnalysis = false;
-			displayMessage("\nSelected Start Date is after End Date.");
-			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
+			// Check date range is ordered properly
+			if (startDate.isAfter(endDate))
+			{
+				continueAnalysis = false;
+				displayMessage("\nSelected Start Date is after End Date.");
+			}
+
+			// Check that selected date range is not in the past
+			if ((startDate.isBefore(LocalDate.now())) || (endDate.isBefore(LocalDate.now())))
+			{
+				continueAnalysis = false;
+				displayMessage("\nSelected Start and/or End Date are in the past.");
+			}
+
+			// Check that planned DOWs intersects with core DOWs
+			if (((validPlanDayListCoreVsPlan.contains("M")) && (!validCoreDayList.contains("M"))) 
+					|| ((validPlanDayListCoreVsPlan.contains("T")) && (!validCoreDayList.contains("T"))) 
+					|| ((validPlanDayListCoreVsPlan.contains("W")) && (!validCoreDayList.contains("W")))
+					|| ((validPlanDayListCoreVsPlan.contains("R")) && (!validCoreDayList.contains("R")))
+					|| ((validPlanDayListCoreVsPlan.contains("F")) && (!validCoreDayList.contains("F")))
+					|| ((validPlanDayListCoreVsPlan.contains("Sa")) && (!validCoreDayList.contains("Sa")))
+					|| ((validPlanDayListCoreVsPlan.contains("Su")) && (!validCoreDayList.contains("Su"))))
+			{
+				continueAnalysis = false;
+				displayMessage("\nPlanned day-of-weeks must intersect with Core day-of-weeks.");
+			}
+
+			// Check that core dates are not null
+			if  ((coreVsPlanBP.getValue()) 
+					&& (validPlanDayListCoreVsPlan.contains("M"))
+					&& (BIASS3CompareScheduleConfigPageController.getMondayCoreDate() == null))	
+			{
+				continueAnalysis = false;
+				displayMessage("\nMonday's Core Date is null.");
+			}
+
+			if  ((coreVsPlanBP.getValue()) 
+					&& (validPlanDayListCoreVsPlan.contains("T"))
+					&& (BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate() == null))
+			{
+				continueAnalysis = false;
+				displayMessage("\nTuesday's Core Date is null.");
+			}
+
+			if  ((coreVsPlanBP.getValue())
+					&& (validPlanDayListCoreVsPlan.contains("W"))
+					&& (BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate() == null))
+			{
+				continueAnalysis = false;
+				displayMessage("\nWednesday's Core Date is null.");
+			}
+
+			if  ((coreVsPlanBP.getValue()) 
+					&& (validPlanDayListCoreVsPlan.contains("R"))
+					&& (BIASS3CompareScheduleConfigPageController.getThursdayCoreDate() == null))
+			{
+				continueAnalysis = false;
+				displayMessage("\nThursday's Core Date is null.");
+			}
+
+			if  ((coreVsPlanBP.getValue()) 
+					&& (validPlanDayListCoreVsPlan.contains("F"))
+					&& (BIASS3CompareScheduleConfigPageController.getFridayCoreDate() == null))
+			{
+				continueAnalysis = false;
+				displayMessage("\nFriday's Core Date is null.");
+			}
+
+			if  ((coreVsPlanBP.getValue()) 
+					&& (validPlanDayListCoreVsPlan.contains("Sa"))
+					&& (BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate() == null))
+			{
+				continueAnalysis = false;
+				displayMessage("\nSaturday's Core Date is null.");
+			}
+
+			if  ((coreVsPlanBP.getValue()) 
+					&& (validPlanDayListCoreVsPlan.contains("Su"))
+					&& (BIASS3CompareScheduleConfigPageController.getSundayCoreDate() == null))
+			{
+				continueAnalysis = false;
+				displayMessage("\nSunday's Core Date is null.");
+			}
+
+			// Check that required core dates are not in the past
+			if (continueAnalysis) 
+			{
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("M"))
+						&& (BIASS3CompareScheduleConfigPageController.getMondayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nMonday's Core Date is in the past.");
+				}
+
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("T"))
+						&& (BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nTuesday's Core Date is in the past.");
+				}
+
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("W"))
+						&& (BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nWednesday's Core Date is in the past.");
+				}
+
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("R"))
+						&& (BIASS3CompareScheduleConfigPageController.getThursdayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nThursday's Core Date is in the past.");
+				}
+
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("F"))
+						&& (BIASS3CompareScheduleConfigPageController.getFridayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nFriday's Core Date is in the past.");
+				}
+
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("Sa"))
+						&& (BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nSaturday's Core Date is in the past.");
+				}
+
+				if  ((coreVsPlanBP.getValue()) 
+						&& (validPlanDayListCoreVsPlan.contains("Su"))
+						&& (BIASS3CompareScheduleConfigPageController.getSundayCoreDate().isBefore(LocalDate.now())))
+				{
+					continueAnalysis = false;
+					displayMessage("\nSunday's Core Date is in the past.");
+				}
+			}
+		}
+		else
+		{
+			// Check if dates are the same
+			if (scheduleDateA.isEqual(scheduleDateB))
+			{
+				continueAnalysis = false;
+				displayMessage("\nSelected dates are identical.");
+			}
 		}
 
-		// Check that selected date range is not in the past
-		if ((startDate.isBefore(LocalDate.now())) || (endDate.isBefore(LocalDate.now())))
-		{
-			continueAnalysis = false;
-			displayMessage("\nSelected Start and/or End Date are in the past.");
+		if (!continueAnalysis)
 			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
-		}
-
-		// Check that core dates are not past dates
-		if ((BIASS3CompareScheduleConfigPageController.getMondayCoreDate().isBefore(LocalDate.now()))
-				|| (BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate().isBefore(LocalDate.now()))
-				|| (BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate().isBefore(LocalDate.now()))
-				|| (BIASS3CompareScheduleConfigPageController.getThursdayCoreDate().isBefore(LocalDate.now()))
-				|| (BIASS3CompareScheduleConfigPageController.getFridayCoreDate().isBefore(LocalDate.now()))
-				|| (BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate().isBefore(LocalDate.now()))
-				|| (BIASS3CompareScheduleConfigPageController.getSundayCoreDate().isBefore(LocalDate.now())))
-		{
-			continueAnalysis = false;
-			displayMessage("\nOne or more Core Dates are in the past.");
-			displayMessage("\n\n*** PROCESSING NOT COMPLETE!!! ***");
-		}
 
 		if (continueAnalysis)
 		{
 			// Read all objects that are required for the analysis
-			ReadS3CompareScheduleFiles readData = null;
-			if (con1RadioButton.isSelected())
-				readData = new ReadS3CompareScheduleFiles(con1NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri1(), BIASS3CompareScheduleConfigPageController.getClientId1(), 
-						BIASS3CompareScheduleConfigPageController.getClientSecret1(), BIASS3CompareScheduleConfigPageController.getUserName1(), BIASS3CompareScheduleConfigPageController.getPassword1(), 
-						BIASS3CompareScheduleConfigPageController.getGrantType1(), BIASS3CompareScheduleConfigPageController.getCode1(), startDate, endDate,
-						BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
-						BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
-						BIASS3CompareScheduleConfigPageController.getSundayCoreDate(), BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
-			else
-				readData = new ReadS3CompareScheduleFiles(con2NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri2(), BIASS3CompareScheduleConfigPageController.getClientId2(), 
-						BIASS3CompareScheduleConfigPageController.getClientSecret2(), BIASS3CompareScheduleConfigPageController.getUserName2(), BIASS3CompareScheduleConfigPageController.getPassword2(), 
-						BIASS3CompareScheduleConfigPageController.getGrantType2(), BIASS3CompareScheduleConfigPageController.getCode2(), startDate, endDate,
-						BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
-						BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
-						BIASS3CompareScheduleConfigPageController.getSundayCoreDate(), BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
-			message = readData.getResultsMessage();
-			displayMessage(message);
-
-			if (readData.getValidFile())
+			// Core vs Plan
+			if (coreVsPlanBP.getValue())
 			{
-				setProgressIndicator(0.40);
-
-				// Analyze trains
-				S3CompareScheduleAnalysis analyze = new S3CompareScheduleAnalysis(startDate, endDate, readData.getCoreDatesData(), readData.getAnalyzedDatesData());
-				message = analyze.getResultsMessage();
+				ReadS3CompareScheduleFilesCoreVsPlan readDataCoreVsPlan = null;
+				if (con1RadioButton.isSelected())
+					readDataCoreVsPlan = new ReadS3CompareScheduleFilesCoreVsPlan(con1NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri1(), BIASS3CompareScheduleConfigPageController.getClientId1(), 
+							BIASS3CompareScheduleConfigPageController.getClientSecret1(), BIASS3CompareScheduleConfigPageController.getUserName1(), BIASS3CompareScheduleConfigPageController.getPassword1(), 
+							BIASS3CompareScheduleConfigPageController.getGrantType1(), BIASS3CompareScheduleConfigPageController.getCode1(), startDate, endDate,
+							BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
+							BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
+							BIASS3CompareScheduleConfigPageController.getSundayCoreDate(), BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
+				else
+					readDataCoreVsPlan = new ReadS3CompareScheduleFilesCoreVsPlan(con2NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri2(), BIASS3CompareScheduleConfigPageController.getClientId2(), 
+							BIASS3CompareScheduleConfigPageController.getClientSecret2(), BIASS3CompareScheduleConfigPageController.getUserName2(), BIASS3CompareScheduleConfigPageController.getPassword2(), 
+							BIASS3CompareScheduleConfigPageController.getGrantType2(), BIASS3CompareScheduleConfigPageController.getCode2(), startDate, endDate,
+							BIASS3CompareScheduleConfigPageController.getMondayCoreDate(), BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate(), BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate(),
+							BIASS3CompareScheduleConfigPageController.getThursdayCoreDate(), BIASS3CompareScheduleConfigPageController.getFridayCoreDate(), BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate(),
+							BIASS3CompareScheduleConfigPageController.getSundayCoreDate(), BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
+				message = readDataCoreVsPlan.getResultsMessage();
 				displayMessage(message);
 
-				setProgressIndicator(0.80);
-
-				// Write results to spreadsheet
-				WriteS3CompareScheduleFiles2 writeFiles = new WriteS3CompareScheduleFiles2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters(), readData.getShowDetailsForRetimedTrains(), readData.getCoreDatesData(), readData.getAnalyzedDatesData());
-				message = writeFiles.getResultsMessage2();
-				displayMessage(message);
-
-				if (!WriteS3CompareScheduleFiles2.getErrorFound())
+				if (readDataCoreVsPlan.getValidFile())
 				{
-					setProgressIndicator(1.0);
-					displayMessage("\n*** PROCESSING COMPLETE ***");
+					setProgressIndicator(0.40);
+
+					// Analyze trains
+					S3CompareScheduleAnalysisCoreVsPlan analyze = new S3CompareScheduleAnalysisCoreVsPlan(startDate, endDate, readDataCoreVsPlan.getCoreDatesData(), readDataCoreVsPlan.getAnalyzedDatesData());
+					message = analyze.getResultsMessage();
+					displayMessage(message);
+
+					setProgressIndicator(0.80);
+
+					// Write results to spreadsheet
+					WriteS3CompareScheduleFilesCoreVsPlan2 writeFiles = new WriteS3CompareScheduleFilesCoreVsPlan2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), startDate, endDate, analyze.getTrainsInAnalyzedDayButNotCoreDay(), analyze.getTrainsInCoreDayButNotAnalyzedDay(), analyze.getTrainsWithDifferentParameters(), readDataCoreVsPlan.getShowDetailsForRetimedTrains(), readDataCoreVsPlan.getCoreDatesData(), readDataCoreVsPlan.getAnalyzedDatesData());
+					message = writeFiles.getResultsMessage2();
+					displayMessage(message);
+
+					if (!WriteS3CompareScheduleFilesCoreVsPlan2.getErrorFound())
+					{
+						setProgressIndicator(1.0);
+						displayMessage("\n*** PROCESSING COMPLETE ***");
+					}
+					else
+					{
+						displayMessage("\nError in writing files");
+						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+					}
 				}
 				else
 				{
-					displayMessage("\nError in writing files");
+					displayMessage("\nUnable to obtain data from API.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
 			else
 			{
-				displayMessage("\nUnable to obtain data from API.");
-				displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+				//Plan vs Plan
+				ReadS3CompareScheduleFilesPlanVsPlan readDataPlanVsPlan = null;
+				if (con1RadioButton.isSelected())
+					readDataPlanVsPlan = new ReadS3CompareScheduleFilesPlanVsPlan(con1NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri1(), BIASS3CompareScheduleConfigPageController.getClientId1(), 
+							BIASS3CompareScheduleConfigPageController.getClientSecret1(), BIASS3CompareScheduleConfigPageController.getUserName1(), BIASS3CompareScheduleConfigPageController.getPassword1(), 
+							BIASS3CompareScheduleConfigPageController.getGrantType1(), BIASS3CompareScheduleConfigPageController.getCode1(), scheduleDateA, scheduleDateB,
+							BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
+				else
+					readDataPlanVsPlan = new ReadS3CompareScheduleFilesPlanVsPlan(con2NameAsObservable.getValue().toString(), BIASS3CompareScheduleConfigPageController.getUri2(), BIASS3CompareScheduleConfigPageController.getClientId2(), 
+							BIASS3CompareScheduleConfigPageController.getClientSecret2(), BIASS3CompareScheduleConfigPageController.getUserName2(), BIASS3CompareScheduleConfigPageController.getPassword2(), 
+							BIASS3CompareScheduleConfigPageController.getGrantType2(), BIASS3CompareScheduleConfigPageController.getCode2(), scheduleDateA, scheduleDateB,
+							BIASS3CompareScheduleConfigPageController.getShowDetailsForRetimedTrains());
+				message = readDataPlanVsPlan.getResultsMessage();
+				displayMessage(message);
+
+				if (readDataPlanVsPlan.getValidFile())
+				{
+					setProgressIndicator(0.40);
+
+					// Analyze trains
+					S3CompareScheduleAnalysisPlanVsPlan analyze = new S3CompareScheduleAnalysisPlanVsPlan(scheduleDateA, scheduleDateB, readDataPlanVsPlan.getAnalyzedDatesData());
+					message = analyze.getResultsMessage();
+					displayMessage(message);
+
+					setProgressIndicator(0.80);
+
+					// Write results to spreadsheet
+					WriteS3CompareScheduleFilesPlanVsPlan2 writeFiles = new WriteS3CompareScheduleFilesPlanVsPlan2(con1RadioButton.isSelected(), con2RadioButton.isSelected(), textArea.getText().toString(), scheduleDateA, scheduleDateB, analyze.getTrainsInScheduleDateAButNotScheduleDateB(), analyze.getTrainsInScheduleDateBButNotScheduleDateA(), analyze.getTrainsWithDifferentParameters(), readDataPlanVsPlan.getShowDetailsForRetimedTrains(), readDataPlanVsPlan.getAnalyzedDatesData());
+					message = writeFiles.getResultsMessage2();
+					displayMessage(message);
+
+					if (!WriteS3CompareScheduleFilesPlanVsPlan2.getErrorFound())
+					{
+						setProgressIndicator(1.0);
+						displayMessage("\n*** PROCESSING COMPLETE ***");
+					}
+					else
+					{
+						displayMessage("\nError in writing files");
+						displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+					}
+				}
+				else
+				{
+					displayMessage("\nUnable to obtain data from API.");
+					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
+				}
 			}
 		}
 
 		// Now reset for next case
 		// Rebind buttons
-		executeButton.disableProperty().bind(disableExecuteButton);
+		executeButton.disableProperty().bind(disableApiConnectionsAndExecuteButton);
 		executeButton.setVisible(false);
 		resetButton.setVisible(true);
 		resetButton.setDisable(false);
@@ -793,8 +1261,8 @@ public class BIASS3CompareSchedulePageController
 	private void displayMessage(String message)
 	{
 		Platform.runLater(() -> {
-        	textArea.appendText(message);
-        });
+			textArea.appendText(message);
+		});
 	}
 
 	private void setProgressIndicator(double value)
@@ -821,6 +1289,159 @@ public class BIASS3CompareSchedulePageController
 	{
 		validCoreDayList.clear();
 		validCoreDayList.addAll(validCoreDayListFromConfig);
+	}
+
+	private void updatePlanDaysForCoreVsPlan()
+	{
+		validPlanDayListCoreVsPlan.clear();
+
+		planDateStatusMLabel.setStyle("-fx-text-fill: red");
+		planDateStatusTLabel.setStyle("-fx-text-fill: red");
+		planDateStatusWLabel.setStyle("-fx-text-fill: red");
+		planDateStatusRLabel.setStyle("-fx-text-fill: red");
+		planDateStatusFLabel.setStyle("-fx-text-fill: red");
+		planDateStatusSaLabel.setStyle("-fx-text-fill: red");
+		planDateStatusSuLabel.setStyle("-fx-text-fill: red");
+
+		if (((startDate != null) && (endDate != null)) && (!endDate.isBefore(startDate)))
+		{
+			for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) 
+			{
+				if(date.getDayOfWeek().toString().equals("SUNDAY"))
+					validPlanDayListCoreVsPlan.add("Su");
+				else if(date.getDayOfWeek().toString().equals("MONDAY"))
+					validPlanDayListCoreVsPlan.add("M");
+				else if(date.getDayOfWeek().toString().equals("TUESDAY"))
+					validPlanDayListCoreVsPlan.add("T");
+				else if(date.getDayOfWeek().toString().equals("WEDNESDAY"))
+					validPlanDayListCoreVsPlan.add("W");
+				else if(date.getDayOfWeek().toString().equals("THURSDAY"))
+					validPlanDayListCoreVsPlan.add("R");
+				else if(date.getDayOfWeek().toString().equals("FRIDAY"))
+					validPlanDayListCoreVsPlan.add("F");
+				else if(date.getDayOfWeek().toString().equals("SATURDAY"))
+					validPlanDayListCoreVsPlan.add("Sa");
+			}
+
+			if (validPlanDayListCoreVsPlan.contains("Su"))
+				planDateStatusSuLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusSuLabel.setStyle("-fx-text-fill: red");
+
+			if (validPlanDayListCoreVsPlan.contains("M"))
+				planDateStatusMLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusMLabel.setStyle("-fx-text-fill: red");
+
+			if (validPlanDayListCoreVsPlan.contains("T"))
+				planDateStatusTLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusTLabel.setStyle("-fx-text-fill: red");
+
+			if (validPlanDayListCoreVsPlan.contains("W"))
+				planDateStatusWLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusWLabel.setStyle("-fx-text-fill: red");
+
+			if (validPlanDayListCoreVsPlan.contains("R"))
+				planDateStatusRLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusRLabel.setStyle("-fx-text-fill: red");
+
+			if (validPlanDayListCoreVsPlan.contains("F"))
+				planDateStatusFLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusFLabel.setStyle("-fx-text-fill: red");
+
+			if (validPlanDayListCoreVsPlan.contains("Sa"))
+				planDateStatusSaLabel.setStyle("-fx-text-fill: green");
+			else
+				planDateStatusSaLabel.setStyle("-fx-text-fill: red");
+		}
+	}
+
+	private void updatePlanDaysForPlanVsPlan()
+	{
+		validPlanDayListPlanVsPlan.clear();
+
+		planDateStatusMLabel.setStyle("-fx-text-fill: red");
+		planDateStatusTLabel.setStyle("-fx-text-fill: red");
+		planDateStatusWLabel.setStyle("-fx-text-fill: red");
+		planDateStatusRLabel.setStyle("-fx-text-fill: red");
+		planDateStatusFLabel.setStyle("-fx-text-fill: red");
+		planDateStatusSaLabel.setStyle("-fx-text-fill: red");
+		planDateStatusSuLabel.setStyle("-fx-text-fill: red");
+
+		if (scheduleDateA != null)
+		{
+			if(scheduleDateA.getDayOfWeek().toString().equals("SUNDAY"))
+				validPlanDayListPlanVsPlan.add("Su");
+			else if(scheduleDateA.getDayOfWeek().toString().equals("MONDAY"))
+				validPlanDayListPlanVsPlan.add("M");
+			else if(scheduleDateA.getDayOfWeek().toString().equals("TUESDAY"))
+				validPlanDayListPlanVsPlan.add("T");
+			else if(scheduleDateA.getDayOfWeek().toString().equals("WEDNESDAY"))
+				validPlanDayListPlanVsPlan.add("W");
+			else if(scheduleDateA.getDayOfWeek().toString().equals("THURSDAY"))
+				validPlanDayListPlanVsPlan.add("R");
+			else if(scheduleDateA.getDayOfWeek().toString().equals("FRIDAY"))
+				validPlanDayListPlanVsPlan.add("F");
+			else if(scheduleDateA.getDayOfWeek().toString().equals("SATURDAY"))
+				validPlanDayListPlanVsPlan.add("Sa");
+		}
+
+		if (scheduleDateB != null)
+		{
+			if(scheduleDateB.getDayOfWeek().toString().equals("SUNDAY"))
+				validPlanDayListPlanVsPlan.add("Su");
+			else if(scheduleDateB.getDayOfWeek().toString().equals("MONDAY"))
+				validPlanDayListPlanVsPlan.add("M");
+			else if(scheduleDateB.getDayOfWeek().toString().equals("TUESDAY"))
+				validPlanDayListPlanVsPlan.add("T");
+			else if(scheduleDateB.getDayOfWeek().toString().equals("WEDNESDAY"))
+				validPlanDayListPlanVsPlan.add("W");
+			else if(scheduleDateB.getDayOfWeek().toString().equals("THURSDAY"))
+				validPlanDayListPlanVsPlan.add("R");
+			else if(scheduleDateB.getDayOfWeek().toString().equals("FRIDAY"))
+				validPlanDayListPlanVsPlan.add("F");
+			else if(scheduleDateB.getDayOfWeek().toString().equals("SATURDAY"))
+				validPlanDayListPlanVsPlan.add("Sa");
+		}
+
+		if (validPlanDayListPlanVsPlan.contains("Su"))
+			planDateStatusSuLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusSuLabel.setStyle("-fx-text-fill: red");
+
+		if (validPlanDayListPlanVsPlan.contains("M"))
+			planDateStatusMLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusMLabel.setStyle("-fx-text-fill: red");
+
+		if (validPlanDayListPlanVsPlan.contains("T"))
+			planDateStatusTLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusTLabel.setStyle("-fx-text-fill: red");
+
+		if (validPlanDayListPlanVsPlan.contains("W"))
+			planDateStatusWLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusWLabel.setStyle("-fx-text-fill: red");
+
+		if (validPlanDayListPlanVsPlan.contains("R"))
+			planDateStatusRLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusRLabel.setStyle("-fx-text-fill: red");
+
+		if (validPlanDayListPlanVsPlan.contains("F"))
+			planDateStatusFLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusFLabel.setStyle("-fx-text-fill: red");
+
+		if (validPlanDayListPlanVsPlan.contains("Sa"))
+			planDateStatusSaLabel.setStyle("-fx-text-fill: green");
+		else
+			planDateStatusSaLabel.setStyle("-fx-text-fill: red");
 	}
 
 	private Callback<DatePicker, DateCell> getFutureDatesOnlyFactory(boolean includeToday) {

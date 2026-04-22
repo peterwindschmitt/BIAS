@@ -12,7 +12,7 @@ import com.bl.bias.app.BIASS3CompareScheduleConfigPageController;
 import com.bl.bias.objects.ServiceObject;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class S3CompareScheduleAnalysis 
+public class S3CompareScheduleAnalysisCoreVsPlan 
 {
 	private String resultsMessage = "";
 	private Integer differences = 0;
@@ -23,7 +23,7 @@ public class S3CompareScheduleAnalysis
 
 	private Boolean debug = false;
 
-	public S3CompareScheduleAnalysis(LocalDate startDate, LocalDate endDate, ArrayList<ArrayList<ServiceObject>> coreDatesData, ArrayList<ArrayList<ServiceObject>> analyzedDatesData) 
+	public S3CompareScheduleAnalysisCoreVsPlan(LocalDate startDate, LocalDate endDate, ArrayList<ArrayList<ServiceObject>> coreDatesData, ArrayList<ArrayList<ServiceObject>> analyzedDatesData) 
 	{
 		resultsMessage = "\nStarted analyzing loaded schedules at "+ConvertDateTime.getTimeStamp()+"\n";
 
@@ -91,62 +91,69 @@ public class S3CompareScheduleAnalysis
 			// Check for trains that exist on Analyzed Day but not on Core Day
 			for (int a = 0; a < analyzedDatesData.get(i).size(); a++)
 			{
-				innerloop:  for (int b = 0; b < coreDatesData.get(coreDayOfWeekValue - 1).size(); b++)
+				if (coreDatesData.get(coreDayOfWeekValue - 1) != null)
 				{
-					if ((analyzedDatesData.get(i).get(a).getServiceName().equals(coreDatesData.get(coreDayOfWeekValue - 1).get(b).getServiceName())))
+					innerloop:  for (int b = 0; b < coreDatesData.get(coreDayOfWeekValue - 1).size(); b++)
 					{
-						break innerloop;
-					}
-					else if (b == coreDatesData.get(coreDayOfWeekValue - 1).size()-1)
-					{
-						differences++;
 
-						// Check if key exists
-						if (trainsInAnalyzedDayButNotCoreDay.containsKey(startDate.plusDays(i))) 
+						if ((analyzedDatesData.get(i).get(a).getServiceName().equals(coreDatesData.get(coreDayOfWeekValue - 1).get(b).getServiceName())))
 						{
-							trainsInAnalyzedDayButNotCoreDay.get(startDate.plusDays(i)).add(analyzedDatesData.get(i).get(a));
-						} 
-						else 
-						{
-							ArrayList<ServiceObject> list = new ArrayList<>();
-							list.add(analyzedDatesData.get(i).get(a));
-							trainsInAnalyzedDayButNotCoreDay.put(startDate.plusDays(i), list);
+							break innerloop;
 						}
-						break innerloop;
+						else if (b == coreDatesData.get(coreDayOfWeekValue - 1).size()-1)
+						{
+							differences++;
+
+							// Check if key exists
+							if (trainsInAnalyzedDayButNotCoreDay.containsKey(startDate.plusDays(i))) 
+							{
+								trainsInAnalyzedDayButNotCoreDay.get(startDate.plusDays(i)).add(analyzedDatesData.get(i).get(a));
+							} 
+							else 
+							{
+								ArrayList<ServiceObject> list = new ArrayList<>();
+								list.add(analyzedDatesData.get(i).get(a));
+								trainsInAnalyzedDayButNotCoreDay.put(startDate.plusDays(i), list);
+							}
+							break innerloop;
+						}
+						else
+							continue;
 					}
-					else
-						continue;
 				}
 			}
 
 			// Check for trains that exist on Core Day but not on Analyzed Day
-			for (int a = 0; a < coreDatesData.get(coreDayOfWeekValue - 1).size(); a++)
+			if (coreDatesData.get(coreDayOfWeekValue - 1) != null)
 			{
-				innerloop:  for (int b = 0; b < analyzedDatesData.get(i).size(); b++)
+				for (int a = 0; a < coreDatesData.get(coreDayOfWeekValue - 1).size(); a++)
 				{
-					if ((coreDatesData.get(coreDayOfWeekValue - 1).get(a).getServiceName().equals(analyzedDatesData.get(i).get(b).getServiceName())))
+					innerloop:  for (int b = 0; b < analyzedDatesData.get(i).size(); b++)
 					{
-						break innerloop;
-					}
-					else if (b == analyzedDatesData.get(i).size()-1)
-					{
-						differences++;
-
-						// Check if key exists
-						if (trainsInCoreDayButNotAnalyzedDay.containsKey(startDate.plusDays(i))) 
+						if ((coreDatesData.get(coreDayOfWeekValue - 1).get(a).getServiceName().equals(analyzedDatesData.get(i).get(b).getServiceName())))
 						{
-							trainsInCoreDayButNotAnalyzedDay.get(startDate.plusDays(i)).add(coreDatesData.get(coreDayOfWeekValue - 1).get(a));
-						} 
-						else 
-						{
-							ArrayList<ServiceObject> list = new ArrayList<>();
-							list.add(coreDatesData.get(coreDayOfWeekValue - 1).get(a));
-							trainsInCoreDayButNotAnalyzedDay.put(startDate.plusDays(i), list);
+							break innerloop;
 						}
-						break innerloop;
+						else if (b == analyzedDatesData.get(i).size()-1)
+						{
+							differences++;
+
+							// Check if key exists
+							if (trainsInCoreDayButNotAnalyzedDay.containsKey(startDate.plusDays(i))) 
+							{
+								trainsInCoreDayButNotAnalyzedDay.get(startDate.plusDays(i)).add(coreDatesData.get(coreDayOfWeekValue - 1).get(a));
+							} 
+							else 
+							{
+								ArrayList<ServiceObject> list = new ArrayList<>();
+								list.add(coreDatesData.get(coreDayOfWeekValue - 1).get(a));
+								trainsInCoreDayButNotAnalyzedDay.put(startDate.plusDays(i), list);
+							}
+							break innerloop;
+						}
+						else
+							continue;
 					}
-					else
-						continue;
 				}
 			}
 
@@ -161,40 +168,43 @@ public class S3CompareScheduleAnalysis
 			// Remove analyzedService from hashset if there is a match on a core day
 			for (int n = 0; n < 7; n++)
 			{
-				for (int o = 0; o < coreDatesData.get(n).size(); o++)
+				if (coreDatesData.get(n) != null)
 				{
-					Iterator<ServiceObject> analyzedDaysServiceObjectsIterator = analyzedDaysServiceObjectHashSet.iterator(); 
-					while (analyzedDaysServiceObjectsIterator.hasNext()) 
+					for (int o = 0; o < coreDatesData.get(n).size(); o++)
 					{
-						ServiceObject analyzedService = analyzedDaysServiceObjectsIterator.next();
+						Iterator<ServiceObject> analyzedDaysServiceObjectsIterator = analyzedDaysServiceObjectHashSet.iterator(); 
+						while (analyzedDaysServiceObjectsIterator.hasNext()) 
+						{
+							ServiceObject analyzedService = analyzedDaysServiceObjectsIterator.next();
 
-						// Remove if all parameters match
-						if ((coreDatesData.get(n).get(o).getDayOfWeek().equals(analyzedService.getDayOfWeek()))
-								&& (coreDatesData.get(n).get(o).getServiceName().equals(analyzedService.getServiceName()))
-								&& (coreDatesData.get(n).get(o).getServiceType().equals(analyzedService.getServiceType()))
-								&& (coreDatesData.get(n).get(o).getDepartureLocation().equals(analyzedService.getDepartureLocation()))
-								&& (coreDatesData.get(n).get(o).getDepartureTimestamp().equals(analyzedService.getDepartureTimestamp()))
-								&& (coreDatesData.get(n).get(o).getArrivalLocation().equals(analyzedService.getArrivalLocation()))
-								&& (coreDatesData.get(n).get(o).getArrivalTimestamp().equals(analyzedService.getArrivalTimestamp())))
-						{
-							analyzedDaysServiceObjectsIterator.remove();
-						}
-						else
-						{
-							// Remove if train exists only on analyzed day but not on core day
-							Boolean removeTrain = true;
-							for (int w = 0; w < coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).size(); w++)
-							{
-								if ((analyzedService.getDayOfWeek().equals(coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).get(w).getDayOfWeek()))
-										&& (analyzedService.getServiceName().equals(coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).get(w).getServiceName())))
-								{
-									removeTrain = false;
-									break;	
-								}
-							}
-							if (removeTrain)
+							// Remove if all parameters match
+							if ((coreDatesData.get(n).get(o).getDayOfWeek().equals(analyzedService.getDayOfWeek()))
+									&& (coreDatesData.get(n).get(o).getServiceName().equals(analyzedService.getServiceName()))
+									&& (coreDatesData.get(n).get(o).getServiceType().equals(analyzedService.getServiceType()))
+									&& (coreDatesData.get(n).get(o).getDepartureLocation().equals(analyzedService.getDepartureLocation()))
+									&& (coreDatesData.get(n).get(o).getDepartureTimestamp().equals(analyzedService.getDepartureTimestamp()))
+									&& (coreDatesData.get(n).get(o).getArrivalLocation().equals(analyzedService.getArrivalLocation()))
+									&& (coreDatesData.get(n).get(o).getArrivalTimestamp().equals(analyzedService.getArrivalTimestamp())))
 							{
 								analyzedDaysServiceObjectsIterator.remove();
+							}
+							else
+							{
+								// Remove if train exists only on analyzed day but not on core day
+								Boolean removeTrain = true;
+								for (int w = 0; w < coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).size(); w++)
+								{
+									if ((analyzedService.getDayOfWeek().equals(coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).get(w).getDayOfWeek()))
+											&& (analyzedService.getServiceName().equals(coreDatesData.get(Integer.valueOf(analyzedService.getDayOfWeek())-1).get(w).getServiceName())))
+									{
+										removeTrain = false;
+										break;	
+									}
+								}
+								if (removeTrain)
+								{
+									analyzedDaysServiceObjectsIterator.remove();
+								}
 							}
 						}
 					}
@@ -212,6 +222,7 @@ public class S3CompareScheduleAnalysis
 				if (trainsWithDifferentParameters.containsKey(LocalDate.parse(trainWithDifferentParameter.getDate())))
 				{
 					trainsWithDifferentParameters.get(LocalDate.parse(trainWithDifferentParameter.getDate())).add(trainWithDifferentParameter);
+
 				} 
 				else 
 				{

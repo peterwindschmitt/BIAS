@@ -22,7 +22,7 @@ import com.bl.bias.app.BIASS3CompareScheduleConfigPageController;
 import com.bl.bias.objects.ServiceObject;
 import com.bl.bias.tools.ConvertDateTime;
 
-public class WriteS3CompareScheduleFiles1 
+public class WriteS3CompareScheduleFilesCoreVsPlan1 
 {
 	private static LocalTime startWriteFileTime = ConvertDateTime.getTimeStamp();
 	protected static String resultsMessage1 = "\nStarted writing output file at "+startWriteFileTime;
@@ -34,7 +34,7 @@ public class WriteS3CompareScheduleFiles1
 	Integer rowCounter = 0;
 	Integer totalDiscrepancies = 0;
 
-	public WriteS3CompareScheduleFiles1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
+	public WriteS3CompareScheduleFilesCoreVsPlan1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -192,7 +192,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Monday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getMondayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getMondayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getMondayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -202,7 +205,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Tuesday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getTuesdayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -212,7 +218,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Wednesday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getWednesdayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -222,7 +231,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Thursday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getThursdayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getThursdayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getThursdayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -232,7 +244,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Friday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getFridayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getFridayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getFridayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -242,7 +257,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Saturday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getSaturdayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 
 		rowCounter++;
 		row = coreVsOperatedSheet.createRow(rowCounter);
@@ -252,7 +270,10 @@ public class WriteS3CompareScheduleFiles1
 		cell.setCellValue("Sunday");
 		cell = row.createCell(1);
 		cell.setCellStyle(style5);
-		cell.setCellValue(BIASS3CompareScheduleConfigPageController.getSundayCoreDate().toString());
+		if (BIASS3CompareScheduleConfigPageController.getSundayCoreDate() != null)
+			cell.setCellValue(BIASS3CompareScheduleConfigPageController.getSundayCoreDate().toString());
+		else
+			cell.setCellValue("N/A");
 		rowCounter++;
 
 		// For each analyzed day
@@ -350,18 +371,19 @@ public class WriteS3CompareScheduleFiles1
 
 						// Build planned train string
 						String analyzedTrainDetails = "";
+						outerloop:
 						for (int j = 0; j < analyzedDates.size(); j++)
 						{
 							for (int k = 0; k < analyzedDates.get(j).size(); k++)
 							{
 								if (trainsWithDifferentParameters.get(date).get(i).getServiceName().equals(analyzedDates.get(j).get(k).getServiceName()))
 								{
-									analyzedTrainDetails = "     Planned Train Type: "+analyzedDates.get(j).get(k).getServiceType();
-									analyzedTrainDetails += ", Origin: "+analyzedDates.get(j).get(k).getDepartureLocation();
-									analyzedTrainDetails += " at "+analyzedDates.get(j).get(k).getDepartureTimestamp().substring(0, analyzedDates.get(j).get(k).getDepartureTimestamp().length() - 5);
-									analyzedTrainDetails += ", Destination: "+analyzedDates.get(j).get(k).getArrivalLocation();
-									analyzedTrainDetails += " at "+analyzedDates.get(j).get(k).getArrivalTimestamp().substring(0, analyzedDates.get(j).get(k).getArrivalTimestamp().length() - 5);
-									break;
+									analyzedTrainDetails = "     Planned Train Type: "+trainsWithDifferentParameters.get(date).get(i).getServiceType();
+									analyzedTrainDetails += ", Origin: "+trainsWithDifferentParameters.get(date).get(i).getDepartureLocation();
+									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().length() - 5);
+									analyzedTrainDetails += ", Destination: "+trainsWithDifferentParameters.get(date).get(i).getArrivalLocation();
+									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().length() - 5);
+									break outerloop;
 								}
 							}
 						}

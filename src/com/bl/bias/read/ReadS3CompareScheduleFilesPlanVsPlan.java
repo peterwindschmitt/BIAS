@@ -20,16 +20,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class ReadS3CompareScheduleFiles 
+public class ReadS3CompareScheduleFilesPlanVsPlan 
 {
 	private String resultsMessage;
 	private String accessToken;
 
-	private ArrayList<ArrayList<ServiceObject>> coreDatesData = new ArrayList<ArrayList<ServiceObject>>();
 	private ArrayList<ArrayList<ServiceObject>> analyzedDatesData = new ArrayList<ArrayList<ServiceObject>>();
 
 	private Boolean validFile = true;
-	
+
 	private Boolean showDetailsForRetimedTrains;
 
 	private HttpClient client;
@@ -38,11 +37,11 @@ public class ReadS3CompareScheduleFiles
 
 	private JSONObject responseAsJSON;
 
-	public ReadS3CompareScheduleFiles(String profileName, String uri, String clientId, String clientSecret, String userName, String password, String grantType, String code, LocalDate startDate, LocalDate endDate, 
-			LocalDate mondayBaseline, LocalDate tuesdayBaseline, LocalDate wednesdayBaseline, LocalDate thursdayBaseline, LocalDate fridayBaseline, LocalDate saturdayBaseline, LocalDate sundayBaseline, Boolean showDetailsForRetimedTrains) throws Exception 
+	public ReadS3CompareScheduleFilesPlanVsPlan(String profileName, String uri, String clientId, String clientSecret, String userName, String password, 
+			String grantType, String code, LocalDate scheduleDateA, LocalDate scheduleDateB, Boolean showDetailsForRetimedTrains) throws Exception 
 	{
 		resultsMessage = "\nAttempting to connect to S3's API ...\n";
-		
+
 		this.showDetailsForRetimedTrains = showDetailsForRetimedTrains;
 
 		try
@@ -79,69 +78,19 @@ public class ReadS3CompareScheduleFiles
 				validFile = false;
 				resultsMessage += "\nINVALID CREDENTIALS SPECIFIED!\n";
 			}
-
-			// Core schedule dates
-			if (validFile)
-			{
-				// For each day of week (Monday = 1 .... Sunday = 7)
-				for (int i = 1 ; i <=7; i++)
-				{
-					ArrayList<ServiceObject> coreServicesOnADay = new ArrayList<ServiceObject>();
-					String params = "";
-					if (i == 1) 
-						params = "date="+mondayBaseline+"&page_size=200";
-					else if (i == 2) 
-						params = "date="+tuesdayBaseline+"&page_size=200";
-					else if (i == 3) 
-						params = "date="+wednesdayBaseline+"&page_size=200";
-					else if (i == 4) 
-						params = "date="+thursdayBaseline+"&page_size=200";
-					else if (i == 5) 
-						params = "date="+fridayBaseline+"&page_size=200";
-					else if (i == 6) 
-						params = "date="+saturdayBaseline+"&page_size=200";
-					else if (i == 7) 
-						params = "date="+sundayBaseline+"&page_size=200";
-					else
-						System.exit(0);
-
-					request = HttpRequest.newBuilder()
-							.uri(URI.create(uri+"/api/v2/orientation/search-services?"+params))
-							.header("Authorization", "Bearer " + accessToken)
-							.GET()
-							.build();
-
-					response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-					responseAsJSON = new JSONObject(response.body().toString());
-					JSONArray servicesArray = responseAsJSON.getJSONObject("data").getJSONArray("services");
-
-					//  Get individual service attributes
-					for (int j = 0; j < servicesArray.length(); j++)
-					{
-						JSONObject obj = servicesArray.getJSONObject(j);
-						Object serviceName = obj.get("name");
-						Object serviceType = obj.getJSONObject("service_type").get("code");
-						Object departureStation = obj.getJSONObject("departure_station").get("name");
-						Object departureTimestamp = obj.getJSONObject("departure_station").get("departure_timestamp");
-						String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length());
-						Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
-						Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
-						String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
-
-						ServiceObject coreServiceOnADay = new ServiceObject("CORE", String.valueOf(i), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
-						coreServicesOnADay.add(coreServiceOnADay);
-					}
-					coreDatesData.add(coreServicesOnADay);
-				}
-			}
-
+			
 			// Analysis dates
 			if (validFile)
 			{
 				// For each day of requested range (start date --> end date)
-				for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1))
+				for (int i = 0; i < 2; i++)
 				{
+					LocalDate date;
+					if (i == 0)
+						date = scheduleDateA;
+					else
+						date = scheduleDateB;
+					
 					String params = "date="+date+"&page_size=200";
 					ArrayList<ServiceObject> actualServicesOnADay = new ArrayList<ServiceObject>();
 
@@ -174,7 +123,7 @@ public class ReadS3CompareScheduleFiles
 					}				
 					analyzedDatesData.add(actualServicesOnADay);
 				}
-				resultsMessage += "Loaded core schedules and all active schedules between "+startDate+" and "+endDate+"\n";
+				resultsMessage += "Loaded planned schedules for "+scheduleDateA+" and "+scheduleDateB+"\n";
 			}
 		}
 		catch (IOException e) 
@@ -202,16 +151,11 @@ public class ReadS3CompareScheduleFiles
 		}
 	}
 
-	public ArrayList<ArrayList<ServiceObject>> getCoreDatesData()
-	{
-		return coreDatesData;
-	}
-
 	public ArrayList<ArrayList<ServiceObject>> getAnalyzedDatesData()
 	{
 		return analyzedDatesData;
 	}
-	
+
 	public Boolean getShowDetailsForRetimedTrains()
 	{
 		return showDetailsForRetimedTrains;
