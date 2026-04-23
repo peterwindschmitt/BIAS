@@ -1182,7 +1182,6 @@ public class BIASS3CompareSchedulePageController
 				}
 				else
 				{
-					displayMessage("\nUnable to obtain data from API.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}
@@ -1232,7 +1231,6 @@ public class BIASS3CompareSchedulePageController
 				}
 				else
 				{
-					displayMessage("\nUnable to obtain data from API.");
 					displayMessage("\n*** PROCESSING NOT COMPLETE!!! ***");
 				}
 			}

@@ -82,7 +82,9 @@ public class ReadS3CompareScheduleFilesPlanVsPlan
 			// Analysis dates
 			if (validFile)
 			{
-				// For each day of requested range (start date --> end date)
+				Boolean bothDaysHaveAtLeastOneTrain = true;
+				
+				// For each day 
 				for (int i = 0; i < 2; i++)
 				{
 					LocalDate date;
@@ -122,8 +124,16 @@ public class ReadS3CompareScheduleFilesPlanVsPlan
 						actualServicesOnADay.add(actualServiceOnADay);
 					}				
 					analyzedDatesData.add(actualServicesOnADay);
+					if (actualServicesOnADay.size() == 0)
+						bothDaysHaveAtLeastOneTrain = false;
 				}
-				resultsMessage += "Loaded planned schedules for "+scheduleDateA+" and "+scheduleDateB+"\n";
+				if (bothDaysHaveAtLeastOneTrain)
+					resultsMessage += "Loaded planned schedules for "+scheduleDateA+" and "+scheduleDateB+"\n";
+				else
+				{
+					resultsMessage += "No services found for at least one day.\n";
+					validFile = false;
+				}
 			}
 		}
 		catch (IOException e) 
