@@ -17,7 +17,7 @@ import com.bl.bias.tools.ConvertDateTime;
 public class BridgeClosureAnalysis 
 {
 	private static String resultsMessage;
-	
+
 	private static Integer endOfExclusionPeriodInSeconds;
 	private static Integer endOfAnalysisPeriodInSeconds;
 
@@ -25,24 +25,24 @@ public class BridgeClosureAnalysis
 	private static ArrayList<BridgeAnalysisCrossing> sortedCrossings = new ArrayList<BridgeAnalysisCrossing>();
 	private static ArrayList<BridgeAnalysisOccupancy> occupancies = new ArrayList<BridgeAnalysisOccupancy>(); 
 	private static ArrayList<BridgeAnalysisClosure> closures = new ArrayList<BridgeAnalysisClosure>(); 
-	
+
 	public BridgeClosureAnalysis(HashSet<String> bridgeClassLinkNodesFromCondition1, HashSet<String> absoluteSignalsFromCondition2, HashSet<String> nodesFromLineFile, 
 			HashSet<BridgeAnalysisLink> returnLinksFromLinkFile, ArrayList<BridgeAnalysisRouteTraversal> occupanciesFromRouteFile) 
 	{
 		resultsMessage = "\nStarted creating bridge closure results at "+ConvertDateTime.getTimeStamp()+"\n";
-		
+
 		// Compute the end of the exclusion period (sim start day and time + warm-up period + exclusion period)
 		endOfExclusionPeriodInSeconds = ConvertDateTime.convertDaytoSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginDay())
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginTime()+":00")
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getWarmUpDuration()+":00")
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisConfigPageController.getResultsExclusionPeriodInHours()+":00:00");
+				+ ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginTime()+":00")
+				+ ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getWarmUpDuration()+":00")
+				+ ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisConfigPageController.getResultsExclusionPeriodInHours()+":00:00");
 
 		// Compute the end of the statistical period (sim start day and time + duration of simulation - cool-down period)
 		endOfAnalysisPeriodInSeconds = ConvertDateTime.convertDaytoSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginDay())
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginTime()+":00")
-		     + ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationDuration()+":00")
-		     - ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getCoolDownDuration()+":00");
-		
+				+ ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationBeginTime()+":00")
+				+ ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getSimulationDuration()+":00")
+				- ConvertDateTime.convertDDHHMMSSStringToSeconds(BIASBridgeClosureAnalysisController.getCoolDownDuration()+":00");
+
 		resultsMessage += "THE ANALYZED PERIOD IS FROM "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfExclusionPeriodInSeconds).toUpperCase()+" TO "+ConvertDateTime.convertSecondsToDayHHMMSSString(endOfAnalysisPeriodInSeconds).toUpperCase()+"\n";
 
 		// 1.  Create a crossing object for each applicable train in the BridgeAnalysisRouteTraversal objects.  There may be more than one object created for
@@ -101,7 +101,7 @@ public class BridgeClosureAnalysis
 
 			// Create Crossing object
 			if ((exitNodeDepartureTimeInSeconds + (BIASBridgeClosureAnalysisConfigPageController.getRaiseMinutes() * 60) >= endOfExclusionPeriodInSeconds)
-				&& ((entryNodeArrivalTimeInSeconds - BIASBridgeClosureAnalysisConfigPageController.getSignalPreferredMinutesInAdvanceOfTrain() - BIASBridgeClosureAnalysisConfigPageController.getLowerMinutes()) < endOfAnalysisPeriodInSeconds))
+					&& ((entryNodeArrivalTimeInSeconds - BIASBridgeClosureAnalysisConfigPageController.getSignalPreferredMinutesInAdvanceOfTrain() - BIASBridgeClosureAnalysisConfigPageController.getLowerMinutes()) < endOfAnalysisPeriodInSeconds))
 			{
 				BridgeAnalysisCrossing crossing = new BridgeAnalysisCrossing(currentTrainSymbol, currentTrainDirection, entryNode, entryNodeArrivalTimeInSeconds, exitNode, exitNodeDepartureTimeInSeconds);
 				crossings.add(crossing);
@@ -124,15 +124,15 @@ public class BridgeClosureAnalysis
 		String currentCrossingTrainDirection = null;
 		Integer currentCrossingEntryNodeArrivalTimeInSeconds = null;
 		Integer currentCrossingExitNodeDepartureTimeInSeconds = null;
-		
+
 		Integer nextCrossingEntryNodeArrivalTimeInSeconds = null;
-		
+
 		Boolean overlappingCrossing = null;
-		
+
 		ArrayList<String> symbolsAndDirectionsInOccupancy = new ArrayList<String>();
 		Integer occupancyStartTime = null;
 		Integer occupancyEndTime = null;
-		
+
 		// For each entry in sortedCrossings	
 		for (int i = 0; i < sortedCrossings.size(); i++)
 		{
@@ -140,12 +140,12 @@ public class BridgeClosureAnalysis
 			currentCrossingTrainDirection = sortedCrossings.get(i).getTrainDirection();
 			currentCrossingEntryNodeArrivalTimeInSeconds = sortedCrossings.get(i).getEntryNodeOSSeconds();
 			currentCrossingExitNodeDepartureTimeInSeconds = sortedCrossings.get(i).getExitNodeOSSeconds();
-			
+
 			if (i < (sortedCrossings.size() - 1))
 				nextCrossingEntryNodeArrivalTimeInSeconds = sortedCrossings.get(i+1).getEntryNodeOSSeconds();
 			else
 				nextCrossingEntryNodeArrivalTimeInSeconds = Integer.MAX_VALUE;
-			
+
 			if ((nextCrossingEntryNodeArrivalTimeInSeconds <= currentCrossingExitNodeDepartureTimeInSeconds) && (i < (sortedCrossings.size() - 1)))
 			{
 				if (overlappingCrossing)
@@ -156,7 +156,7 @@ public class BridgeClosureAnalysis
 						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
 					else if (occupancyStartTime > currentCrossingEntryNodeArrivalTimeInSeconds)
 						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-					
+
 					if (occupancyEndTime == null)
 						occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
 					else if (occupancyEndTime < currentCrossingExitNodeDepartureTimeInSeconds)
@@ -171,7 +171,7 @@ public class BridgeClosureAnalysis
 						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
 					else if (occupancyStartTime > currentCrossingEntryNodeArrivalTimeInSeconds)
 						occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-					
+
 					if (occupancyEndTime == null)
 						occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
 					else if (occupancyEndTime < currentCrossingExitNodeDepartureTimeInSeconds)
@@ -183,17 +183,17 @@ public class BridgeClosureAnalysis
 				// No more trains in this occupancy
 				// Add current train to the Occupancy object
 				symbolsAndDirectionsInOccupancy.add(currentCrossingTrainSymbol+"-"+currentCrossingTrainDirection);
-				
+
 				if (occupancyStartTime == null)
 					occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
 				else if (occupancyStartTime > currentCrossingEntryNodeArrivalTimeInSeconds)
 					occupancyStartTime = currentCrossingEntryNodeArrivalTimeInSeconds;
-				
+
 				if (occupancyEndTime == null)
 					occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
 				else if (occupancyEndTime < currentCrossingExitNodeDepartureTimeInSeconds)
 					occupancyEndTime = currentCrossingExitNodeDepartureTimeInSeconds;
-				
+
 				// Create new occupancy object
 				BridgeAnalysisOccupancy occupancy = new BridgeAnalysisOccupancy(symbolsAndDirectionsInOccupancy, occupancyStartTime, occupancyEndTime);
 				occupancies.add(occupancy);
@@ -211,44 +211,44 @@ public class BridgeClosureAnalysis
 		//  between occupancies than the minimum up-time, the bridge must remain down.  Reported values (incorporating ceiling functions) are used only in writing 
 		//  the results to a spreadsheet (classes in the WRITE package).  They are not considered in achieving minimum up-time. This is a different handling than in MOW analysis where
 		//  a ceiling/floor value must be applied and is used to determine whether a window is valid.
-		
+
 		Integer currentOccupancyStartTimeInSeconds = null;
 		Integer currentOccupancyFinishTimeInSeconds = null;
-		
+
 		Integer nextOccupancyStartTimeInSeconds = null;
-		
+
 		Boolean combineWithNextOccupancy = false;
-		
+
 		ArrayList<String> symbolsAndDirectionsInClosure = new ArrayList<String>();
-		
+
 		Integer bridgeMoveDownDurationInSeconds = BIASBridgeClosureAnalysisConfigPageController.getLowerMinutes() * 60;
 		Integer bridgeMoveUpDurationInSeconds = BIASBridgeClosureAnalysisConfigPageController.getRaiseMinutes() * 60;
 		Integer signalSetUpDurationInSeconds = BIASBridgeClosureAnalysisConfigPageController.getSignalPreferredMinutesInAdvanceOfTrain() * 60;
 		Integer minimumUpTimeInSeconds = BIASBridgeClosureAnalysisConfigPageController.getMinimumUpTimeMinutes() * 60;
-		
+
 		Integer tentativePreferredClosureStartTimeInSeconds = null;
 		Integer latestClosureStartTimeInSeconds = null;
 		Integer tentativeClosureEndTimeInSeconds = null;
-		
+
 		Integer finaledPreferredClosureStartTimeInSeconds = null;
 		Integer finaledClosureEndTimeInSeconds = null;
-		
+
 		Integer nextClosureStartTimeInSeconds = null;
 		Integer upTimeBetweenCurrentAndNextClosureInSeconds = null;
-						
+
 		for (int i = 0; i < occupancies.size(); i++)
 		{
 			// From occupancies
 			currentOccupancyStartTimeInSeconds = occupancies.get(i).getOccupancyStartTimeInSeconds();
 			currentOccupancyFinishTimeInSeconds = occupancies.get(i).getOccupancyEndTimeInSeconds();
-			
+
 			if (!combineWithNextOccupancy)
 			{
 				tentativePreferredClosureStartTimeInSeconds = currentOccupancyStartTimeInSeconds - signalSetUpDurationInSeconds - bridgeMoveDownDurationInSeconds;
 				latestClosureStartTimeInSeconds = currentOccupancyStartTimeInSeconds - bridgeMoveDownDurationInSeconds;
 			}
 			tentativeClosureEndTimeInSeconds = currentOccupancyFinishTimeInSeconds + bridgeMoveUpDurationInSeconds;
-			
+
 			if (i < (occupancies.size() - 1))
 			{
 				// All occupancies except the last one
@@ -258,6 +258,7 @@ public class BridgeClosureAnalysis
 				
 				if (upTimeBetweenCurrentAndNextClosureInSeconds < minimumUpTimeInSeconds)
 				{
+
 					// Continue closure
 					finaledPreferredClosureStartTimeInSeconds = tentativePreferredClosureStartTimeInSeconds;
 					symbolsAndDirectionsInClosure.addAll(occupancies.get(i).getTrainSymbolsAndDirectionsInOccupancy());
@@ -273,7 +274,7 @@ public class BridgeClosureAnalysis
 					
 					BridgeAnalysisClosure closure = new BridgeAnalysisClosure(symbolsAndDirectionsInClosure, finaledPreferredClosureStartTimeInSeconds, latestClosureStartTimeInSeconds, finaledClosureEndTimeInSeconds, bridgeMoveDownDurationInSeconds, signalSetUpDurationInSeconds, bridgeMoveUpDurationInSeconds, upTimeBetweenCurrentAndNextClosureInSeconds);
 					closures.add(closure);
-					
+
 					symbolsAndDirectionsInClosure.clear();
 				}
 			}
@@ -282,17 +283,17 @@ public class BridgeClosureAnalysis
 				// Final occupancy
 				if (!combineWithNextOccupancy)
 					finaledPreferredClosureStartTimeInSeconds = tentativePreferredClosureStartTimeInSeconds;
-								
+
 				combineWithNextOccupancy = false;
 				finaledClosureEndTimeInSeconds = tentativeClosureEndTimeInSeconds;
 				symbolsAndDirectionsInClosure.addAll(occupancies.get(i).getTrainSymbolsAndDirectionsInOccupancy());
-				
+
 				BridgeAnalysisClosure closure = new BridgeAnalysisClosure(symbolsAndDirectionsInClosure, finaledPreferredClosureStartTimeInSeconds, latestClosureStartTimeInSeconds, finaledClosureEndTimeInSeconds, bridgeMoveDownDurationInSeconds, signalSetUpDurationInSeconds, bridgeMoveUpDurationInSeconds, null);
-				closures.add(closure);				
+				closures.add(closure);
 			}
 		}
-		resultsMessage += "Created "+closures.size()+" bridge closures\n";
 		
+		resultsMessage += "Created "+closures.size()+" bridge closures\n";
 		resultsMessage += "Finished creating bridge closure results at "+ConvertDateTime.getTimeStamp()+"\n";
 	}
 
@@ -300,7 +301,7 @@ public class BridgeClosureAnalysis
 	{
 		return sortedCrossings;
 	}
-	
+
 	public static ArrayList<BridgeAnalysisOccupancy> getOccupancies()
 	{
 		return occupancies;
@@ -325,27 +326,27 @@ public class BridgeClosureAnalysis
 	{
 		occupancies.clear();
 	}
-	
+
 	public static void clearClosures()
 	{
 		closures.clear();
 	}
-	
+
 	public String getResultsMessage()
 	{
 		return resultsMessage;
 	}
-	
+
 	public static Integer getBeginningOfAnalysisPeriodInSeconds()
 	{
 		return endOfExclusionPeriodInSeconds;
 	}
-	
+
 	public static Integer getEndOfAnalysisPeriodInSeconds()
 	{
 		return endOfAnalysisPeriodInSeconds;
 	}
-	
+
 	class TimeSorter implements Comparator<BridgeAnalysisCrossing> 
 	{ 
 		@Override

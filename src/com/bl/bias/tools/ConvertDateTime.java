@@ -773,14 +773,14 @@ public class ConvertDateTime
 
 	public static double ceilingToNearestIncrementOfSeconds(int numberOfSeconds, int multipleToBeIncrementedToInSeconds)
 	{
-		double incrementedValue =  Math.ceil((double) numberOfSeconds / (double) multipleToBeIncrementedToInSeconds) * multipleToBeIncrementedToInSeconds;
-
+		double incrementedValue =  1 + Math.ceil((double) numberOfSeconds / (double) multipleToBeIncrementedToInSeconds) * multipleToBeIncrementedToInSeconds;
+		
 		return incrementedValue;
 	}
 
 	public static double floorToNearestIncrementOfSeconds(int numberOfSeconds, int multipleToBeDecrementedToInSeconds)
 	{
-		double decrementedValue =  Math.floor((double) numberOfSeconds / (double) multipleToBeDecrementedToInSeconds) * multipleToBeDecrementedToInSeconds;
+		double decrementedValue =  -1 + Math.floor((double) numberOfSeconds / (double) multipleToBeDecrementedToInSeconds) * multipleToBeDecrementedToInSeconds;
 
 		return decrementedValue;
 	}
