@@ -308,9 +308,9 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 						{
 							scheduleATrainDetails = "     "+ scheduleDateA+" Schedule Train Type: "+analyzedDaysData.get(0).get(k).getServiceType();
 							scheduleATrainDetails += ", Origin: "+analyzedDaysData.get(0).get(k).getDepartureLocation();
-							scheduleATrainDetails += " at "+analyzedDaysData.get(0).get(k).getDepartureTimestamp().substring(0, analyzedDaysData.get(0).get(k).getDepartureTimestamp().length() - 5);
+							scheduleATrainDetails += " at "+analyzedDaysData.get(0).get(k).getDepartureTimestamp().substring(0, analyzedDaysData.get(0).get(k).getDepartureTimestamp().length());
 							scheduleATrainDetails += ", Destination: "+analyzedDaysData.get(0).get(k).getArrivalLocation();
-							scheduleATrainDetails += " at "+analyzedDaysData.get(0).get(k).getArrivalTimestamp().substring(0, analyzedDaysData.get(0).get(k).getArrivalTimestamp().length() - 5);
+							scheduleATrainDetails += " at "+analyzedDaysData.get(0).get(k).getArrivalTimestamp().substring(0, analyzedDaysData.get(0).get(k).getArrivalTimestamp().length());
 							break;
 						}
 					}
@@ -323,9 +323,9 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 						{
 							scheduleBTrainDetails = "     " + scheduleDateB+" Schedule Train Type: "+analyzedDaysData.get(1).get(k).getServiceType();
 							scheduleBTrainDetails += ", Origin: "+analyzedDaysData.get(1).get(k).getDepartureLocation();
-							scheduleBTrainDetails += " at "+analyzedDaysData.get(1).get(k).getDepartureTimestamp().substring(0, analyzedDaysData.get(1).get(k).getDepartureTimestamp().length() - 5);
+							scheduleBTrainDetails += " at "+analyzedDaysData.get(1).get(k).getDepartureTimestamp().substring(0, analyzedDaysData.get(1).get(k).getDepartureTimestamp().length());
 							scheduleBTrainDetails += ", Destination: "+analyzedDaysData.get(1).get(k).getArrivalLocation();
-							scheduleBTrainDetails += " at "+analyzedDaysData.get(1).get(k).getArrivalTimestamp().substring(0, analyzedDaysData.get(1).get(k).getArrivalTimestamp().length() - 5);
+							scheduleBTrainDetails += " at "+analyzedDaysData.get(1).get(k).getArrivalTimestamp().substring(0, analyzedDaysData.get(1).get(k).getArrivalTimestamp().length());
 							break;
 						}
 					}

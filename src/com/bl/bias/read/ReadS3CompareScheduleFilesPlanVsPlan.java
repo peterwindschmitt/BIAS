@@ -115,10 +115,10 @@ public class ReadS3CompareScheduleFilesPlanVsPlan
 						Object serviceType = obj.getJSONObject("service_type").get("code");
 						Object departureStation = obj.getJSONObject("departure_station").get("name");
 						Object departureTimestamp = obj.getJSONObject("departure_station").get("departure_timestamp");
-						String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length());
+						String departureTimeAsString = departureTimestamp.toString().substring(departureTimestamp.toString().length()-13, departureTimestamp.toString().length()-5);
 						Object arrivalStation = obj.getJSONObject("arrival_station").get("name");
 						Object arrivalTimestamp = obj.getJSONObject("arrival_station").get("arrival_timestamp");
-						String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length());
+						String arrivalTimeAsString = arrivalTimestamp.toString().substring(arrivalTimestamp.toString().length()-13, arrivalTimestamp.toString().length()-5);
 
 						ServiceObject actualServiceOnADay = new ServiceObject(date.toString(), String.valueOf(date.getDayOfWeek().getValue()), serviceName.toString(), serviceType.toString(), departureStation.toString(), departureTimeAsString, arrivalStation.toString(), arrivalTimeAsString);
 						actualServicesOnADay.add(actualServiceOnADay);

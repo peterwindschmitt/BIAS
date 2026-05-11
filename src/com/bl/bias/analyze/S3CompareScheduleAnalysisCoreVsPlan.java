@@ -176,7 +176,6 @@ public class S3CompareScheduleAnalysisCoreVsPlan
 						while (analyzedDaysServiceObjectsIterator.hasNext()) 
 						{
 							ServiceObject analyzedService = analyzedDaysServiceObjectsIterator.next();
-
 							// Remove if all parameters match
 							if ((coreDatesData.get(n).get(o).getDayOfWeek().equals(analyzedService.getDayOfWeek()))
 									&& (coreDatesData.get(n).get(o).getServiceName().equals(analyzedService.getServiceName()))
@@ -222,7 +221,6 @@ public class S3CompareScheduleAnalysisCoreVsPlan
 				if (trainsWithDifferentParameters.containsKey(LocalDate.parse(trainWithDifferentParameter.getDate())))
 				{
 					trainsWithDifferentParameters.get(LocalDate.parse(trainWithDifferentParameter.getDate())).add(trainWithDifferentParameter);
-
 				} 
 				else 
 				{

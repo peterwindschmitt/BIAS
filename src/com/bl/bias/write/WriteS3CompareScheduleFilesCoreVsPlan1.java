@@ -362,9 +362,9 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 							{
 								coreTrainDetails = "     Core Train Type: "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getServiceType();
 								coreTrainDetails += ", Origin: "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureLocation();
-								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureTimestamp().length() - 5);
+								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getDepartureTimestamp().length());
 								coreTrainDetails += ", Destination: "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalLocation();
-								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalTimestamp().length() - 5);
+								coreTrainDetails += " at "+coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalTimestamp().substring(0, coreDates.get(date.getDayOfWeek().getValue() - 1).get(j).getArrivalTimestamp().length());
 								break;
 							}
 						}
@@ -380,9 +380,9 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 								{
 									analyzedTrainDetails = "     Planned Train Type: "+trainsWithDifferentParameters.get(date).get(i).getServiceType();
 									analyzedTrainDetails += ", Origin: "+trainsWithDifferentParameters.get(date).get(i).getDepartureLocation();
-									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().length() - 5);
+									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().length());
 									analyzedTrainDetails += ", Destination: "+trainsWithDifferentParameters.get(date).get(i).getArrivalLocation();
-									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().length() - 5);
+									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().length());
 									break outerloop;
 								}
 							}
