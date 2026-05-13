@@ -205,6 +205,23 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 				cell.setCellValue("Planned to operate on "+scheduleDateA+" but not on "+scheduleDateB);
 
 				reporting = true;
+				if (showDetailsForTrains)
+				{
+					// Build planned train string
+					String analyzedTrainDetails = "";
+
+					analyzedTrainDetails = "Train Type: "+trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getServiceType();
+					analyzedTrainDetails += ", Origin: "+trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getDepartureLocation();
+					analyzedTrainDetails += " at "+trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getDepartureTimestamp().substring(0, trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getDepartureTimestamp().length());
+					analyzedTrainDetails += ", Destination: "+trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getArrivalLocation();
+					analyzedTrainDetails += " at "+trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getArrivalTimestamp().substring(0, trainsInScheduleDateAButNotScheduleDateB.get(scheduleDateA).get(i).getArrivalTimestamp().length());
+
+					rowCounter++;
+					row = plannedVsPlanned.createRow(rowCounter);
+					cell = row.createCell(1);
+					cell.setCellStyle(style2);
+					cell.setCellValue(analyzedTrainDetails);
+				}
 			}
 			rowCounter++;
 		}
@@ -253,6 +270,24 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 				cell.setCellValue("Planned to operate on "+scheduleDateB+" but not on "+scheduleDateA);
 
 				reporting = true;
+				
+				if (showDetailsForTrains)
+				{
+					// Build planned train string
+					String analyzedTrainDetails = "";
+
+					analyzedTrainDetails = "Train Type: "+trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getServiceType();
+					analyzedTrainDetails += ", Origin: "+trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getDepartureLocation();
+					analyzedTrainDetails += " at "+trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getDepartureTimestamp().substring(0, trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getDepartureTimestamp().length());
+					analyzedTrainDetails += ", Destination: "+trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getArrivalLocation();
+					analyzedTrainDetails += " at "+trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getArrivalTimestamp().substring(0, trainsInScheduleDateBButNotScheduleDateA.get(scheduleDateB).get(i).getArrivalTimestamp().length());
+
+					rowCounter++;
+					row = plannedVsPlanned.createRow(rowCounter);
+					cell = row.createCell(1);
+					cell.setCellStyle(style2);
+					cell.setCellValue(analyzedTrainDetails);
+				}
 			}
 			rowCounter++;
 		}
@@ -306,7 +341,7 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 					{
 						if (analyzedDaysData.get(0).get(k).getServiceName().equals(trainsWithDifferentParameters.get(i)))
 						{
-							scheduleATrainDetails = "     "+ scheduleDateA+" Schedule Train Type: "+analyzedDaysData.get(0).get(k).getServiceType();
+							scheduleATrainDetails = scheduleDateA+" Schedule Train Type: "+analyzedDaysData.get(0).get(k).getServiceType();
 							scheduleATrainDetails += ", Origin: "+analyzedDaysData.get(0).get(k).getDepartureLocation();
 							scheduleATrainDetails += " at "+analyzedDaysData.get(0).get(k).getDepartureTimestamp().substring(0, analyzedDaysData.get(0).get(k).getDepartureTimestamp().length());
 							scheduleATrainDetails += ", Destination: "+analyzedDaysData.get(0).get(k).getArrivalLocation();
@@ -321,7 +356,7 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 					{
 						if (analyzedDaysData.get(1).get(k).getServiceName().equals(trainsWithDifferentParameters.get(i)))
 						{
-							scheduleBTrainDetails = "     " + scheduleDateB+" Schedule Train Type: "+analyzedDaysData.get(1).get(k).getServiceType();
+							scheduleBTrainDetails = scheduleDateB+" Schedule Train Type: "+analyzedDaysData.get(1).get(k).getServiceType();
 							scheduleBTrainDetails += ", Origin: "+analyzedDaysData.get(1).get(k).getDepartureLocation();
 							scheduleBTrainDetails += " at "+analyzedDaysData.get(1).get(k).getDepartureTimestamp().substring(0, analyzedDaysData.get(1).get(k).getDepartureTimestamp().length());
 							scheduleBTrainDetails += ", Destination: "+analyzedDaysData.get(1).get(k).getArrivalLocation();
