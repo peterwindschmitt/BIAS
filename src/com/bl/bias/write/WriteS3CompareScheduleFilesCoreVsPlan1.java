@@ -34,7 +34,7 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 	Integer rowCounter = 0;
 	Integer totalDiscrepancies = 0;
 
-	public WriteS3CompareScheduleFilesCoreVsPlan1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
+	public WriteS3CompareScheduleFilesCoreVsPlan1 (Boolean api1, Boolean api2, String textArea, LocalDate startDate, LocalDate endDate, Map<LocalDate, ArrayList<ServiceObject>> trainsInAnalyzedDayButNotCoreDay, Map<LocalDate, ArrayList<ServiceObject>> trainsInCoreDayButNotAnalyzedDay, Map<LocalDate, ArrayList<ServiceObject>> trainsWithDifferentParameters, Boolean showDetailsForTrains, ArrayList<ArrayList<ServiceObject>> coreDates, ArrayList<ArrayList<ServiceObject>> analyzedDates)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -311,6 +311,24 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 					cell.setCellValue("Planned to operate but not in Core [ADD]");
 
 					reporting = true;
+
+					if (showDetailsForTrains)
+					{
+						// Build planned train string
+						String analyzedTrainDetails = "";
+
+						analyzedTrainDetails = "     Added Train Type: "+trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getServiceType();
+						analyzedTrainDetails += ", Origin: "+trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getDepartureLocation();
+						analyzedTrainDetails += " at "+trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getDepartureTimestamp().substring(0, trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getDepartureTimestamp().length());
+						analyzedTrainDetails += ", Destination: "+trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getArrivalLocation();
+						analyzedTrainDetails += " at "+trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getArrivalTimestamp().substring(0, trainsInAnalyzedDayButNotCoreDay.get(date).get(i).getArrivalTimestamp().length());
+
+						rowCounter++;
+						row = coreVsOperatedSheet.createRow(rowCounter);
+						cell = row.createCell(1);
+						cell.setCellStyle(style2);
+						cell.setCellValue(analyzedTrainDetails);
+					}
 				}
 				rowCounter++;
 			}
@@ -332,6 +350,24 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 					cell.setCellValue("In Core but not planned to operate [CANCEL]");
 
 					reporting = true;
+
+
+					if (showDetailsForTrains)
+					{
+						// Build core train string
+						String coreTrainDetails = "";
+						coreTrainDetails = "     Cancelled Train Type: "+trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getServiceType();
+						coreTrainDetails += ", Origin: "+trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getDepartureLocation();
+						coreTrainDetails += " at "+trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getDepartureTimestamp().substring(0, trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getDepartureTimestamp().length());
+						coreTrainDetails += ", Destination: "+trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getArrivalLocation();
+						coreTrainDetails += " at "+trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getArrivalTimestamp().substring(0, trainsInCoreDayButNotAnalyzedDay.get(date).get(i).getArrivalTimestamp().length());
+
+						rowCounter++;
+						row = coreVsOperatedSheet.createRow(rowCounter);
+						cell = row.createCell(1);
+						cell.setCellStyle(style2);
+						cell.setCellValue(coreTrainDetails);
+					}
 				}
 				rowCounter++;
 			}
@@ -352,7 +388,7 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 					cell.setCellStyle(style5);
 					cell.setCellValue("In Core and planned to operate but not all parameters are the same [RETIMEs and others]");
 
-					if (showDetailsForRetimedTrains)
+					if (showDetailsForTrains)
 					{
 						// Build core train string
 						String coreTrainDetails = "";
@@ -372,22 +408,22 @@ public class WriteS3CompareScheduleFilesCoreVsPlan1
 						// Build planned train string
 						String analyzedTrainDetails = "";
 						outerloop:
-						for (int j = 0; j < analyzedDates.size(); j++)
-						{
-							for (int k = 0; k < analyzedDates.get(j).size(); k++)
+							for (int j = 0; j < analyzedDates.size(); j++)
 							{
-								if (trainsWithDifferentParameters.get(date).get(i).getServiceName().equals(analyzedDates.get(j).get(k).getServiceName()))
+								for (int k = 0; k < analyzedDates.get(j).size(); k++)
 								{
-									analyzedTrainDetails = "     Planned Train Type: "+trainsWithDifferentParameters.get(date).get(i).getServiceType();
-									analyzedTrainDetails += ", Origin: "+trainsWithDifferentParameters.get(date).get(i).getDepartureLocation();
-									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().length());
-									analyzedTrainDetails += ", Destination: "+trainsWithDifferentParameters.get(date).get(i).getArrivalLocation();
-									analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().length());
-									break outerloop;
+									if (trainsWithDifferentParameters.get(date).get(i).getServiceName().equals(analyzedDates.get(j).get(k).getServiceName()))
+									{
+										analyzedTrainDetails = "     Planned Train Type: "+trainsWithDifferentParameters.get(date).get(i).getServiceType();
+										analyzedTrainDetails += ", Origin: "+trainsWithDifferentParameters.get(date).get(i).getDepartureLocation();
+										analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getDepartureTimestamp().length());
+										analyzedTrainDetails += ", Destination: "+trainsWithDifferentParameters.get(date).get(i).getArrivalLocation();
+										analyzedTrainDetails += " at "+trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().substring(0, trainsWithDifferentParameters.get(date).get(i).getArrivalTimestamp().length());
+										break outerloop;
+									}
 								}
 							}
-						}
-						
+
 						rowCounter++;
 						row = coreVsOperatedSheet.createRow(rowCounter);
 						cell = row.createCell(1);

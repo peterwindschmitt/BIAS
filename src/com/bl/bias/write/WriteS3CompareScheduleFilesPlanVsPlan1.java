@@ -34,7 +34,7 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 	Integer rowCounter = 0;
 	Integer totalDiscrepancies = 0;
 
-	public WriteS3CompareScheduleFilesPlanVsPlan1 (Boolean api1, Boolean api2, String textArea, LocalDate scheduleDateA, LocalDate scheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateAButNotScheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateBButNotScheduleDateA, ArrayList<String> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> analyzedDaysData)
+	public WriteS3CompareScheduleFilesPlanVsPlan1 (Boolean api1, Boolean api2, String textArea, LocalDate scheduleDateA, LocalDate scheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateAButNotScheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateBButNotScheduleDateA, ArrayList<String> trainsWithDifferentParameters, Boolean showDetailsForTrains, ArrayList<ArrayList<ServiceObject>> analyzedDaysData)
 	{
 		// Set styles
 		CellStyle style0 = workbook.createCellStyle();
@@ -298,7 +298,7 @@ public class WriteS3CompareScheduleFilesPlanVsPlan1
 				cell.setCellStyle(style5);
 				cell.setCellValue("In both schedules but not all parameters are the same");
 
-				if (showDetailsForRetimedTrains)
+				if (showDetailsForTrains)
 				{
 					// Build schedule A train string
 					String scheduleATrainDetails = "";

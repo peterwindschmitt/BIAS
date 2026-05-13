@@ -20,9 +20,9 @@ public class WriteS3CompareScheduleFilesPlanVsPlan2 extends WriteS3CompareSchedu
 	
 	static Boolean error = false;
 	
-	public WriteS3CompareScheduleFilesPlanVsPlan2 (Boolean api1, Boolean api2, String textArea, LocalDate scheduleDateA, LocalDate scheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateAButNotScheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateBButNotScheduleDateA, ArrayList<String> trainsWithDifferentParameters, Boolean showDetailsForRetimedTrains, ArrayList<ArrayList<ServiceObject>> analyzedDaysData)
+	public WriteS3CompareScheduleFilesPlanVsPlan2 (Boolean api1, Boolean api2, String textArea, LocalDate scheduleDateA, LocalDate scheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateAButNotScheduleDateB, Map<LocalDate, ArrayList<ServiceObject>> trainsInScheduleDateBButNotScheduleDateA, ArrayList<String> trainsWithDifferentParameters, Boolean showDetailsForTrains, ArrayList<ArrayList<ServiceObject>> analyzedDaysData)
 	{
-		super(api1, api2, textArea, scheduleDateA, scheduleDateB, trainsInScheduleDateAButNotScheduleDateB, trainsInScheduleDateBButNotScheduleDateA, trainsWithDifferentParameters, showDetailsForRetimedTrains, analyzedDaysData);
+		super(api1, api2, textArea, scheduleDateA, scheduleDateB, trainsInScheduleDateAButNotScheduleDateB, trainsInScheduleDateBButNotScheduleDateA, trainsWithDifferentParameters, showDetailsForTrains, analyzedDaysData);
 		
 		resultsMessage2 = WriteS3CompareScheduleFilesCoreVsPlan1.getResultsMessage1();
 				
