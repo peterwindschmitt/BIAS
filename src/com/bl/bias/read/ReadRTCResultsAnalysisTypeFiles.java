@@ -29,8 +29,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 
 	public ReadRTCResultsAnalysisTypeFiles(Boolean parseEntireNetwork, Boolean parseLines, Boolean parseSubdivisions, List<String> listOfLines, List<String> listOfSubdivisions, ArrayList<File> files)
 	{
-		LocalTime startParseFilesTime = LocalTime.now();
-		resultsMessage = "\nStarted parsing "+files.size()+" file(s) by train type at "+startParseFilesTime+"\n";
+		resultsMessage = "\nStarted parsing "+files.size()+" file(s) by train type at "+ConvertDateTime.getTimeStamp()+"\n";
 
 		Scanner scanner = null;
 		
@@ -405,8 +404,7 @@ public class ReadRTCResultsAnalysisTypeFiles
 				}
 				scanner.close();
 			}
-			LocalTime finishParseFilesTime = LocalTime.now();
-			resultsMessage += "Finished parsing "+files.size()+" train type file(s) at "+finishParseFilesTime+"\n";
+			resultsMessage += "Finished parsing "+files.size()+" train type file(s) at "+ConvertDateTime.getTimeStamp()+"\n";
 		}
 		catch (Exception e) 
 		{

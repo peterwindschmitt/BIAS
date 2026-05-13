@@ -11,6 +11,7 @@ import com.bl.bias.app.BIASGeneralConfigController;
 import com.bl.bias.exception.ErrorShutdown;
 import com.bl.bias.read.ReadRTCResultsAnalysisGroupFiles;
 import com.bl.bias.read.ReadRTCResultsAnalysisTypeFiles;
+import com.bl.bias.tools.ConvertDateTime;
 
 public class WriteExtractedFiles5 extends WriteExtractedFiles4
 {
@@ -26,8 +27,7 @@ public class WriteExtractedFiles5 extends WriteExtractedFiles4
 		
 		try 
 	    {
-			LocalTime endWriteFileTime = LocalTime.now();
-			resultsMessage +="\nFinished writing output file at "+endWriteFileTime;
+			resultsMessage +="\nFinished writing output file at "+ConvertDateTime.getTimeStamp();
 			
 			if (ReadRTCResultsAnalysisTypeFiles.returnRTCVersion() != null)
 				resultsMessage +="\n\nResults extracted from files created with RTC Version "+ReadRTCResultsAnalysisTypeFiles.returnRTCVersion()+"\n";
