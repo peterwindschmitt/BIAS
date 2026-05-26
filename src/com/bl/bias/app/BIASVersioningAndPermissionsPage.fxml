@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASVersioningAndPermissionsPageController">
+<GridPane alignment="CENTER_RIGHT" centerShape="false" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bl.bias.app.BIASVersioningAndPermissionsPageController">
 	<columnConstraints>
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
 		<ColumnConstraints hgrow="ALWAYS" maxWidth="165.0" minWidth="165.0" prefWidth="165.0" />
@@ -25,7 +25,8 @@
       <RowConstraints maxHeight="25.0" minHeight="25.0" percentHeight="0.0" prefHeight="25.0" vgrow="NEVER" />
       <RowConstraints maxHeight="25.0" minHeight="25.0" percentHeight="0.0" prefHeight="25.0" vgrow="NEVER" />
       <RowConstraints maxHeight="82.0" minHeight="82.0" percentHeight="0.0" prefHeight="82.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="200.0" percentHeight="0.0" prefHeight="200.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="25.0" minHeight="25.0" percentHeight="0.0" prefHeight="25.0" vgrow="ALWAYS" />
+      <RowConstraints minHeight="175.0" percentHeight="0.0" prefHeight="175.0" vgrow="ALWAYS" />
 	</rowConstraints>
    <children>
       <Label text="BIAS Software" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -74,6 +75,12 @@
       <Label fx:id="availableModules" alignment="TOP_LEFT" prefHeight="78.0" prefWidth="637.0" text="Error" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="9" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets right="10.0" top="4.0" />
+         </GridPane.margin>
+      </Label>
+      <Label text="Last login at" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+      <Label fx:id="lastLogin" text="Error" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="10">
+         <GridPane.margin>
+            <Insets left="70.0" />
          </GridPane.margin>
       </Label>
    </children>

@@ -3,8 +3,10 @@ package com.bl.bias.app;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Random;
+import java.util.prefs.Preferences;
 
 import com.bl.bias.exception.ErrorShutdown;
+import com.bl.bias.tools.ConvertDateTime;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +41,8 @@ public class BIASLaunch extends Application
 	// 8.0 was 3/9/2026    (added S3 Compare Schedule.  extended validity date until 12/31/2026)
 	private final static String version = "8.0 (March 9, 2026)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 4;
+	private static String lastLogin = null;
+	private final static String thisLogin = ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
  	//
 	// Session validity 
 	private static Boolean validSession = true;
@@ -65,10 +69,13 @@ public class BIASLaunch extends Application
 		+ "JUA Compliance, Modified OTP, S3 Compare Schedule, GTM Analysis, General Config, Parse Config",
 	};
 	//************************************************************************************************
-
+	private static Preferences prefs;
+	
 	@Override
 	public void start(Stage primaryStage)
 	{
+		prefs = Preferences.userRoot().node("BIAS");
+		
 		//  Check to see if software is valid given date
 		Calendar cal = Calendar.getInstance();
 		int currentDay = cal.get(Calendar.DAY_OF_MONTH);
@@ -143,6 +150,19 @@ public class BIASLaunch extends Application
 		{
 			try 
 			{
+				if (BIASProcessPermissions.verifiedWriteUserPrefsToRegistry.toLowerCase().equals("true"))
+				{
+					lastLogin = prefs.get("xx_lastLogin", "N/A");
+					prefs.put("xx_lastLogin", thisLogin);
+				}
+			} 
+			catch (Exception e) 
+			{
+				ErrorShutdown.displayError(e, this.getClass().getCanonicalName());
+			}
+			
+			try 
+			{
 				root1 = FXMLLoader.load(getClass().getResource("BIASMainWindow.fxml"));
 			} 
 			catch (IOException e) 
@@ -177,6 +197,11 @@ public class BIASLaunch extends Application
 	public static String getSoftwareVersion() 
 	{  
 		return version;
+	}
+	
+	public static String getLastLogIn() 
+	{  
+		return lastLogin;
 	}
 
 	public static String getReducedSoftwareVersion()
