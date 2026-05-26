@@ -78,9 +78,9 @@
          </GridPane.margin>
       </Label>
       <Label text="Last login at" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-      <Label fx:id="lastLogin" text="Error" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="10">
+      <Label fx:id="lastLogin" text="Error" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="10">
          <GridPane.margin>
-            <Insets left="70.0" />
+            <Insets left="69.0" />
          </GridPane.margin>
       </Label>
    </children>

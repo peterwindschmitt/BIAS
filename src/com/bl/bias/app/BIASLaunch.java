@@ -42,7 +42,8 @@ public class BIASLaunch extends Application
 	private final static String version = "8.0 (March 9, 2026)";
 	private final static Integer lastIndexOfVersionToShowForReduced = 4;
 	private static String lastLogin = null;
-	private final static String thisLogin = ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp();
+	private final static String thisLogin = ConvertDateTime.getTimeStamp()+" on "+ConvertDateTime.getDateStamp().getMonthValue()+"/"
+			+ConvertDateTime.getDateStamp().getDayOfMonth()+"/"+ConvertDateTime.getDateStamp().getYear();
  	//
 	// Session validity 
 	private static Boolean validSession = true;
